@@ -1,5 +1,0 @@
-# gitlab
-
-- cache
-- bash
-- expect
