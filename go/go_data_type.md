@@ -1,0 +1,27 @@
+# go 数据类型
+
+- 数据类型把数据分成所需内存大小不同的数据
+  - 布尔型：true 或 false
+  - 数字类型：
+    - 整型
+      - 有符号 int(int8, int16, int32, int64)
+      - 无符号 uint(uint8, uint16, uint32, unit64)
+    - 浮点型 float(float32, float64)
+    - 复数 complex(complex64, complex128)
+      - complex64 32 位实数和虚数
+      - complex128 64 位实数和虚数
+    - byte 类似 uint8
+    - rune 类似 int32
+    - uint 32 或 64 位
+    - int 与 uint 一样大小
+    - uintptr 无符号整型，用于存放一个指针
+  - 字符串类型：字节使用 UTF-8 编码标识 Unicode 文本
+  - 派生类型：
+    - 指针类型 pointer
+    - 数组类型
+    - 结构化类型 struct
+    - Channel 类型
+    - 函数类型
+    - 切片类型
+    - 接口类型 interface
+    - map 类型

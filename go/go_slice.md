@@ -1,0 +1,25 @@
+# go 切片
+
+- 切片是对数组的抽象，是一种“动态数组”，长度不固定，可以追加元素
+- 定义`var slice_name []type`
+- 可使用 make 函数创建切片`var slice_name []type = make([]type, len)`或`slice_name := make([]type, len)`
+  - make 函数`make([]T, length, capacity)`
+  - length 是数组的长度也是切片的初始长度
+- 初始化
+  - 直接初始化`slice_name := [] int {var1, var2..., varn}`
+  - 引用数组初始化`slice_name := arr_name[:]`
+  - 引用部分数组初始化
+    - `slice_name := arr_name[startIndex:endIndex]`，引用下标 startIndex 到 endIndex-1 下的元素创建为一个新的切片
+    - `slice_name := arr_name[startIndex:]`，引用下标 startIndex 到最后一个元素创建为一个新的切片
+    - `slice_name := arr_name[startIndex:]`，引用第一个元素到 endIndex-1 下的元素创建为一个新的切片
+  - 通过切片初始化`slice_name := origina_slice[startIndex:endIndex]`
+  - 通过内置 make 函数初始化`slice_name := make([]type, len, cap)`
+- 使用 len() 方法获取切片长度
+- 使用 cap() 方法获取切片容量，即最长可以达到多少
+- 空切片 nil，即未初始化的切片，长度为 0，容量为 0
+- 切片截取`slice_name[lower_bound : upper_bound]`
+  - 下限默认为 0
+  - 上限默认为 len(slice_name)
+- 增加切片容量：创建一个更大的切片并把原切片的内容拷贝到新切片
+  - 使用 append(slice_name, [param_list]) 函数往切片追加新元素
+  - 使用 copy(dst_slice, ori_slice) 函数拷贝切片
