@@ -62,7 +62,7 @@
     - UDP（User Datagram Protocol）是不可靠的协议，不会检查数据到达终端或者是完好无损的
     - 相比 TCP，UDP 增加了很小的数据负载，因此在高质量的物理介质上传输更快
 
-# [总结](https://github.com/ipfs/ipfs#quick-summary)
+## [总结](https://github.com/ipfs/ipfs#quick-summary)
 
 - IPFS 协议：定义了基于内容寻址的文件系统；协调内容分发；合并了 Kademlia + BitTorrent + Git
 - IPFS 文件系统：有目录和文件；可挂载的文件系统（通过 FUSE）

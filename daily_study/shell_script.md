@@ -1,5 +1,28 @@
 # shell 脚本
 
+- [在 shell 脚本中调用另一个脚本](#在-shell-脚本中调用另一个脚本)
+- [shell 命令行选项解析](#shell-命令行选项解析)
+- [shell 获取脚本的进程 ID](#shell-获取脚本的进程-ID)
+- [shell 脚本获取当前时间](#shell-脚本获取当前时间)
+- [shell 执行多个命令的方法](#shell-执行多个命令的方法)
+- [shell test 命令](#shell-test-命令)
+  - [数值测试](#数值测试)
+  - [字符串测试](#字符串测试)
+  - [文件测试](#文件测试)
+  - [连接测试条件](#连接测试条件)
+- [shell 变量](#shell-变量)
+- [shell 脚本上传 ftp](#shell-脚本上传-ftp)
+  - [上传单个文件脚本](#上传单个文件脚本)
+- [shell if](#shell-if)
+- [shell 操作符](#shell-操作符)
+  - [算术操作符](#算术操作符)
+  - [关系操作符](#关系操作符)
+  - [布尔操作符](#布尔操作符)
+  - [string 操作符](#string-操作符)
+  - [文件测试运算符](#文件测试运算符)
+  - [C Shell 操作符](#C-Shell-操作符)
+  - [Korn Shell 操作符](#Korn-Shell-操作符)
+
 ## 在 shell 脚本中调用另一个脚本
 
 - fork：直接调用`script_path/filename.sh`(有可执行权限)或者`sh script_path/filename.sh`(没有可执行权限)
@@ -138,6 +161,13 @@
   - F 完整的日志(%Y-%m-%d)
 - 输出另外一个时区的时间`env TZ=timezone date`或`env TZ=timezone date  +%Y%m%d`
   - timezone 是指定的时区，比如`America/Los_Angeles`或`Asia/Shanghai`
+
+```shell
+starttime=`date +%s`
+sleep 10 #sleep 10 sec
+endtime=`date +%s`
+difftime=$(( endtime - starttime ))
+```
 
 ## shell 执行多个命令的方法
 
@@ -280,6 +310,22 @@ bye
   - `if...fi`
   - `if...else...fi`
   - `if...elif...else...fi`
+
+  ```shell
+  if [ $useEncryption != "false" ] && [ $softEncryption != "false" ]
+  then
+      # do sth
+  elif [ $useEncryption != "false" ] && [ $softEncryption == "false" ]
+  then
+      # do sth
+  elif [ $useEncryption == "false" ] && [ $softEncryption != "false" ]
+  then
+      # do sth
+  elif [ $useEncryption == "false" ] && [ $softEncryption == "false" ] # or else
+  then
+      # do sth
+  fi
+  ```
 
 ## shell 操作符
 
