@@ -12,3 +12,26 @@
 - 安装命令程序：`update-alternatives --install link generic_name path priority`
   - `update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 100`
 - 删除命令程序：`update-alternatives --remove name path`
+
+以 Ubuntu14.04 配置 java1.8 为例
+
+- 安装 java1.6 和 java1.7 可以直接用`sudo apt-get install openjdk-6-gre(openjdk-7-gre)`
+- 访问 oracle 官网下载 jdk
+- 解压下载的 tar.gz 压缩包
+- 执行命令安装：
+  - `mkdir -p /usr/lib/jvm`
+  - `sudo cp -a jdk1.8.0_162/ /usr/lib/jvm/`
+  - `sudo ln -s /usr/lib/jvm/jdk1.8.0_162/ /usr/lib/jvm/java-8`
+- 设置环境变量：
+  - `vi ~/.bashrc`在文件最后加入
+    - `export JAVA_HOME=/usr/lib/jvm/java-8`
+    - `export JRE_HOME=${JAVA_HOME}/jre`
+    - `export CLASSPATH=.:${JAVA_HOME}/lib:${JRE_HOME}/lib`
+    - `export PATH=${JAVA_HOME}/bin:$PATH`
+  - `source ~/.bashrc`
+- 配置默认 jdk 版本
+  - `sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/java-8/bin/java 300`
+  - `sudo update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/java-8/bin/javac 300`
+  - `sudo update-alternatives --config java`
+  - `sudo update-alternatives --config javac`
+- 测试验证`java -version`

@@ -22,6 +22,7 @@
   - [文件测试运算符](#文件测试运算符)
   - [C Shell 操作符](#C-Shell-操作符)
   - [Korn Shell 操作符](#Korn-Shell-操作符)
+- [字符串截取](#字符串截取)
 
 ## 在 shell 脚本中调用另一个脚本
 
@@ -408,3 +409,19 @@ bye
 ### [C Shell 操作符](https://www.tutorialspoint.com/unix/unix-c-shell-operators.htm)
 
 ### [Korn Shell 操作符](https://www.tutorialspoint.com/unix/unix-korn-shell-operators.htm)
+
+## 字符串截取
+
+- 按指定长度截取
+  - `${str:n1:n2}`从左边第 n1+1 个字符串开始，长度为 n2
+  - `${str:0-n1:n2}`从右边第 n1 个字符串开始，长度为 n2
+  - `${str:n1}`从左边第 n1+1 个字符串开始到最后
+
+```shell
+var="aa1c10e139bf750b3335e896f366665cfa40d95f"
+
+echo ${var:1:3}   #a1c
+echo ${var:0-1:3} #f
+echo ${var:0-4:3} #d95
+echo ${var:1}     #a1c10e139bf750b3335e896f366665cfa40d95f
+```
