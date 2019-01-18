@@ -1,5 +1,12 @@
 # auto_ptr, unique_ptr, shared_ptr and weak_ptr
 
+- [auto_ptr, unique_ptr, shared_ptr and weak_ptr](#autoptr-uniqueptr-sharedptr-and-weakptr)
+  - [auto_ptr](#autoptr)
+  - [unique_ptr](#uniqueptr)
+  - [shared_ptr](#sharedptr)
+  - [weak_ptr](#weakptr)
+  - [reference](#reference)
+
 ## auto_ptr
 
 - C++11 已经弃用。`unique_ptr`是新的具有相似功能的智能指针，但是安全性更高。
