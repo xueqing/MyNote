@@ -1,7 +1,7 @@
 # My notes for daily study
 
 - [学习 c++](./cplusplus/)
-- [学习脚本和 ubuntu 系统](./daily_study/)
+- [学习脚本和 ubuntu 系统](./ubuntu_study/)
 - [学习 docker](./docker)
 - [关于 git 命令](./git/)
 - [关于 p2p 学习](./p2p/)

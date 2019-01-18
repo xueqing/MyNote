@@ -1,5 +1,10 @@
 # awk 命令
 
+- [awk 命令](#awk-%E5%91%BD%E4%BB%A4)
+  - [脚本基本架构](#%E8%84%9A%E6%9C%AC%E5%9F%BA%E6%9C%AC%E6%9E%B6%E6%9E%84)
+  - [工作原理](#%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86)
+  - [将外部变量传递给 awk](#%E5%B0%86%E5%A4%96%E9%83%A8%E5%8F%98%E9%87%8F%E4%BC%A0%E9%80%92%E7%BB%99-awk)
+
 ## 脚本基本架构
 
 - `awk 'BEGIN{ print "start" } pattern{ commands } END{ print "end" }' file`
