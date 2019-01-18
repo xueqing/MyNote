@@ -9,6 +9,7 @@
 - [学习 Python](https://github.com/xueqing/Python.git)
 - [阅读笔记整理](./quote_collection/)
 - [shell 脚本学习](./shell/)
+- [sip 相关资料阅读](./sip/)
 - [软件工程和软件架构学习](./software_architecture/README.md)
 - [整理 stackoverflow 的问题](./stackoverflow/)
 - [关于 vim 命令](./vim/)
