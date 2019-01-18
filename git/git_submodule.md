@@ -1,5 +1,10 @@
 # git submodule
 
+- [git submodule](#git-submodule)
+  - [应用场景](#%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF)
+  - [问题](#%E9%97%AE%E9%A2%98)
+  - [高级命令](#%E9%AB%98%E7%BA%A7%E5%91%BD%E4%BB%A4)
+
 - `git`将`submodule`有关的信息保存在两个地方：
   - `.gitmodules`在仓库中，有版本控制，修改之后会同步到其他仓库，使用`submodule`相关命令的时候会自动更新
   - `.git/config`在本地，需要手动更新，或者执行`git submodule sync`将新的配置从`.gitmodules`拷贝到`.git/config`

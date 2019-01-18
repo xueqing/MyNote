@@ -1,5 +1,10 @@
 # channel
 
+- [channel](#channel)
+  - [单向 channel](#%E5%8D%95%E5%90%91-channel)
+  - [for 循环接受数据](#for-%E5%BE%AA%E7%8E%AF%E6%8E%A5%E5%8F%97%E6%95%B0%E6%8D%AE)
+  - [有缓冲的 channel](#%E6%9C%89%E7%BC%93%E5%86%B2%E7%9A%84-channel)
+
 - channel 可认为是 pipe，goroutine 通过 channel 通信
 - 每个 channel 有一个关联的类型，这个类型是 channel 允许传输的数据类型
   - `chan T`是一个 T 类型的通道

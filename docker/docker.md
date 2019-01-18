@@ -1,5 +1,16 @@
 # docker
 
+- [docker](#docker)
+  - [更新Ubuntu内核](#%E6%9B%B4%E6%96%B0ubuntu%E5%86%85%E6%A0%B8)
+  - [安装lxc-docker](#%E5%AE%89%E8%A3%85lxc-docker)
+  - [测试doctor是否安装成功](#%E6%B5%8B%E8%AF%95doctor%E6%98%AF%E5%90%A6%E5%AE%89%E8%A3%85%E6%88%90%E5%8A%9F)
+  - [编译](#%E7%BC%96%E8%AF%91)
+  - [运行](#%E8%BF%90%E8%A1%8C)
+  - [docker ps 命令：](#docker-ps-%E5%91%BD%E4%BB%A4)
+  - [删除容器](#%E5%88%A0%E9%99%A4%E5%AE%B9%E5%99%A8)
+  - [其他命令](#%E5%85%B6%E4%BB%96%E5%91%BD%E4%BB%A4)
+  - [提交/保存镜像](#%E6%8F%90%E4%BA%A4%E4%BF%9D%E5%AD%98%E9%95%9C%E5%83%8F)
+
 ## 更新Ubuntu内核
 
 - 使用如下命令行更新内核至 3.8.0-25

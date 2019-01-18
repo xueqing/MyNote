@@ -1,5 +1,10 @@
 # 异常处理
 
+- [异常处理](#%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86)
+  - [defer 使用](#defer-%E4%BD%BF%E7%94%A8)
+  - [panic 使用](#panic-%E4%BD%BF%E7%94%A8)
+  - [recover 使用](#recover-%E4%BD%BF%E7%94%A8)
+
 - Go 不支持 try..catch..finally 这种异常。使用多值返回来返回错误
 - 在极端情况下才用异常（如除数为 0），异常处理使用了 defer(#defer-使用)，panic(#panic-使用)，recover(#recover-使用)
 - go 可以抛出一个 panic 的异常，在 defer 中通过 recover 捕获异常，然后处理
