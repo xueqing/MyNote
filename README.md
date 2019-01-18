@@ -8,6 +8,7 @@
 - [关于 p2p 学习](./p2p/)
 - [学习 Python](https://github.com/xueqing/Python.git)
 - [阅读笔记整理](./quote_collection/)
+- [shell 脚本学习](./shell/)
 - [软件工程和软件架构学习](./software_architecture/README.md)
 - [整理 stackoverflow 的问题](./stackoverflow/)
 - [关于 vim 命令](./vim/)
