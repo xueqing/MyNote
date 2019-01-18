@@ -1,5 +1,17 @@
 # P2P 中 DHT 网络介绍
 
+- [P2P 中 DHT 网络介绍](#p2p-%E4%B8%AD-dht-%E7%BD%91%E7%BB%9C%E4%BB%8B%E7%BB%8D)
+  - [分布式哈希表 DHT](#%E5%88%86%E5%B8%83%E5%BC%8F%E5%93%88%E5%B8%8C%E8%A1%A8-dht)
+  - [Kademlia](#kademlia)
+    - [Kademlia: A Peer-to-Peer Information System Based on the XOR Metric 论文阅读](#kademlia-a-peer-to-peer-information-system-based-on-the-xor-metric-%E8%AE%BA%E6%96%87%E9%98%85%E8%AF%BB)
+      - [异或度量](#%E5%BC%82%E6%88%96%E5%BA%A6%E9%87%8F)
+      - [节点状态](#%E8%8A%82%E7%82%B9%E7%8A%B6%E6%80%81)
+      - [KAD 协议](#kad-%E5%8D%8F%E8%AE%AE)
+      - [路由表](#%E8%B7%AF%E7%94%B1%E8%A1%A8)
+      - [有效的 key re-publishing](#%E6%9C%89%E6%95%88%E7%9A%84-key-re-publishing)
+      - [优化](#%E4%BC%98%E5%8C%96)
+    - [DHT 中 KAD 的应用](#dht-%E4%B8%AD-kad-%E7%9A%84%E5%BA%94%E7%94%A8)
+
 - P2P(peer-to-peer) 技术的应用：文件分享、即时通信、协同处理、流媒体通信等
 - P2P 文件分享网络的发展阶段：
   - 包含 tracker 服务器的网络

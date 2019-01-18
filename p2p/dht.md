@@ -1,5 +1,14 @@
 # **分布式原理**
 
+- [**分布式原理**](#%E5%88%86%E5%B8%83%E5%BC%8F%E5%8E%9F%E7%90%86)
+  - [Bittorrent协议](#bittorrent%E5%8D%8F%E8%AE%AE)
+  - [中心化原理](#%E4%B8%AD%E5%BF%83%E5%8C%96%E5%8E%9F%E7%90%86)
+  - [去中心化原理](#%E5%8E%BB%E4%B8%AD%E5%BF%83%E5%8C%96%E5%8E%9F%E7%90%86)
+    - [DHT/kademlia](#dhtkademlia)
+    - [NAT](#nat)
+    - [IPFS/libp2p](#ipfslibp2p)
+  - [去中心化流媒体应用livepeer](#%E5%8E%BB%E4%B8%AD%E5%BF%83%E5%8C%96%E6%B5%81%E5%AA%92%E4%BD%93%E5%BA%94%E7%94%A8livepeer)
+
 - [Bittorrent协议](#Bittorrent协议)
 - [中心化原理](#中心化原理)
 - [去中心化原理](#去中心化原理)

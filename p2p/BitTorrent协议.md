@@ -1,4 +1,19 @@
-# BitTorrent 协议
+# [BitTorrent 协议](http://www.bittorrent.org/beps/bep_0005.html)
+
+- [BitTorrent 协议](#bittorrent-%E5%8D%8F%E8%AE%AE)
+  - [约定](#%E7%BA%A6%E5%AE%9A)
+  - [重要概念](#%E9%87%8D%E8%A6%81%E6%A6%82%E5%BF%B5)
+  - [BitTorrent DHT 协议](#bittorrent-dht-%E5%8D%8F%E8%AE%AE)
+    - [概述](#%E6%A6%82%E8%BF%B0)
+    - [路由表](#%E8%B7%AF%E7%94%B1%E8%A1%A8)
+    - [BitTorrent 协议扩展](#bittorrent-%E5%8D%8F%E8%AE%AE%E6%89%A9%E5%B1%95)
+    - [种子文件扩展](#%E7%A7%8D%E5%AD%90%E6%96%87%E4%BB%B6%E6%89%A9%E5%B1%95)
+    - [KRPC 协议](#krpc-%E5%8D%8F%E8%AE%AE)
+    - [DHT 查询](#dht-%E6%9F%A5%E8%AF%A2)
+  - [Bittorrent DHT 几个重要过程](#bittorrent-dht-%E5%87%A0%E4%B8%AA%E9%87%8D%E8%A6%81%E8%BF%87%E7%A8%8B)
+    - [种子制作](#%E7%A7%8D%E5%AD%90%E5%88%B6%E4%BD%9C)
+    - [启动过程](#%E5%90%AF%E5%8A%A8%E8%BF%87%E7%A8%8B)
+    - [刷新路由表](#%E5%88%B7%E6%96%B0%E8%B7%AF%E7%94%B1%E8%A1%A8)
 
 ## 约定
 

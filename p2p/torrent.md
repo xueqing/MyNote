@@ -1,5 +1,10 @@
 # torrent 文件
 
+- [torrent 文件](#torrent-%E6%96%87%E4%BB%B6)
+  - [BT](#bt)
+    - [BT 下载](#bt-%E4%B8%8B%E8%BD%BD)
+  - [种子市场](#%E7%A7%8D%E5%AD%90%E5%B8%82%E5%9C%BA)
+
 - torrent 文件（种子文件）是被下载文件的“索引”。本质上是文本文件，主要包含 Tracker 信息和文件信息
   - Tracker 信息：BT 下载中需要用到的 Tracker 服务器的地址和针对 Tracker 服务器的设置
   - 文件信息：根据对目标文件的计算生成，计算结果根据 BitTorrent 协议内的 B 编码规则进行编码

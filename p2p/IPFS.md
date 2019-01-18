@@ -1,5 +1,13 @@
 # IPFS 入门
 
+- [IPFS 入门](#ipfs-%E5%85%A5%E9%97%A8)
+  - [IPFS 的优点](#ipfs-%E7%9A%84%E4%BC%98%E7%82%B9)
+  - [IPNS（去中心化命名系统）](#ipns%E5%8E%BB%E4%B8%AD%E5%BF%83%E5%8C%96%E5%91%BD%E5%90%8D%E7%B3%BB%E7%BB%9F)
+  - [IPFS HTTP 网关](#ipfs-http-%E7%BD%91%E5%85%B3)
+  - [IPFS vs SC（Sia coin）](#ipfs-vs-scsia-coin)
+  - [不可靠（Unreliable） VS 可靠（Reliable）](#%E4%B8%8D%E5%8F%AF%E9%9D%A0unreliable-vs-%E5%8F%AF%E9%9D%A0reliable)
+  - [总结](#%E6%80%BB%E7%BB%93)
+
 - IPFS(InterPlanetary File Syatem，星际文件系统)是一个面向全球的、点对点的分布式版本文件系统，目标是为了补充甚至取代目前通知互联网的 HTTP（超文本传输协议），将所有具有相同文件系统的计算机设备连接在一起
   - 永久的、去中心化保存、共享文件
   - 内容可寻址：通过文件内容生成唯一哈希值来标识文件。相同内容的文件在系统中只存在一份，节约存储空间
