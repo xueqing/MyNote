@@ -1,6 +1,7 @@
 # My notes for daily study
 
 - [coolshell 网站](./coolshell/)
+- [一些学习网站/链接](./course/)
 - [学习 c++](./cplusplus/)
 - [学习脚本和 ubuntu 系统](./ubuntu_study/)
 - [学习 docker](./docker)
