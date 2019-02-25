@@ -1,9 +1,12 @@
 # linux 下其他命令
 
 - [linux 下其他命令](#linux-%E4%B8%8B%E5%85%B6%E4%BB%96%E5%91%BD%E4%BB%A4)
+  - [其他](#%E5%85%B6%E4%BB%96)
   - [文件格式](#%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F)
   - [ftp](#ftp)
   - [压缩命令 tar](#%E5%8E%8B%E7%BC%A9%E5%91%BD%E4%BB%A4-tar)
+
+## 其他
 
 - 添加可执行权限`chmod a+x filename`
 - 修改本机 IP 地址`ifconfig eth0 192.168.1.110`
@@ -15,6 +18,7 @@
   - `sudo gpasswd -a user-name group-name`
 - 从用户组删除删除`：`sudo gpasswd -d user-name user-group`
 - 安装 deb 文件缺少依赖库时继续执行`sudo apt-get install -f`即可自动安装依赖库并安装 deb 包
+- 查看指定监听端口的服务`lsof -i :3000`
 
 ## 文件格式
 
