@@ -1,0 +1,272 @@
+# git 教程
+
+  题目：Markdown规范
+  作者：kiki
+  日期：2017/9/26
+
+## git 安装
+
+- [Linux](https://git-scm.com/download/linux)
+  - Fedora
+    - `sudo yum install git`
+  - Debian
+    - `sudo apt-get install git`
+    - `sudo apt-get install gitk git-gui`
+  - 源码安装
+    - [下载地址](http://git-scm.com/download)
+    - `sudo apt-get install libcurl4-gnutls-dev libexpat1-dev gettext libz-dev libssl-dev`
+    - `export GIT_VER=2.0.0`
+    - `wget https://www.kernel.org/pub/software/scm/git/git-$GIT_VER.tar.gz`
+    - `tar -zxf git-$GIT_VER.tar.gz`
+    - `pushd git-$GIT_VER`
+    - `make prefix=/usr/local all`
+    - `sudo make prefix=/usr/local install`
+    - `popd`
+- Windows
+  - [msysgit](http://git-scm.com/download/win)
+  - Git 图形化操作程序, [TortoiseGit]()
+  - [GitHub for Windows](http://windows.github.com/)
+- Mac
+  - 安装 Xcode 后自动装上 Git
+  - [使用图形化的Git 安装工具Git OS X](https://sourceforge.net/projects/git-osx-installer/)
+
+## git 配置
+
+- /etc/gitconfig：包含系统上每一个用户及他们仓库的通用配置, 使用`--system`会从此文件读写配置变量
+  - `git config --system core.quotepath false`  # 输出中文文件名显示问题
+  - `git config --system color.ui true`      # 开启颜色显示
+- ~/.gitconfig 或 ~/.config/git/config：只针对当前用户.  使用`--global`让 git 读写此文件
+  - `git config --global user.name kiki`      # 配置全局用户名
+  - `git config --global user.email kiki@bmi.com`  # 配置全局 email
+  - `git config --global core.editor emacs`    # 配置默认文本编辑器(默认 vim)
+  - 为 git 命令设置别名
+    - `git config --global alias.co checkout`
+    - `git config --global alias.br branch`
+    - `git config --global alias.ci commit`
+    - `git config --global alias.st status`
+    - `git config --global alias.unstage 'reset HEAD --'`  # 取消暂存文件
+    - `git config --global alias.last 'log -1 HEAD'`    # 查看最后一次提交
+    - `git config --global alias.visual '!gitk'`      # 执行外部命令在命令前加 ! 符, 如将 git visual 定义为 gitk 的别名
+- rep-dir/.git/config：当前使用仓库的 Git 目录中的 config 文件, 只针对该仓库
+  - `git config --local user.name kiki_VDMS`    # 配置某个项目用户名
+  - `git config --local user.email kiki_VDMS@bmi.com`  # 配置某个项目 email
+- 每一个级别覆盖上一级别的配置, 所以 .git/config 的配置变量会覆盖 /etc/gitconfig 中的配置变量. 
+- 查看 git 配置信息
+  - `git config --list`              # 列出所有 git 当时能找到的配置
+  - git config <key>： 检查 Git 的某一项配置
+    - `git config user.name`          # 查看用户名
+- git 帮助
+  - 有三种命令可以找到 git 命令的使用手册
+    - git help <verb>
+    - git <verb> --help
+    - man git-<verb>
+      - `git help config`            # 查看 config 命令的手册
+
+## git 基础
+
+- git仓库、工作目录、暂存区域、文件状态
+  - git仓库：git 用来保存项目的元数据和对象数据库的地方
+  - 工作目录：对项目的某个版本独立提取出来的内容.  是从 git 仓库的压缩数据库中提取出来的文件, 放在磁盘上使用或修改
+  - 暂存区域(索引)：一个文件, 保存了下次将提交的文件列表信息, 一般在 Git 仓库目录中
+  - 基本的 Git 工作流程如下：
+    - 在工作目录中修改文件
+    - 暂存文件, 将文件的快照放入暂存区域
+    - 提交更新, 找到暂存区域的文件, 将快照永久性存储到 git 仓库目录
+  - 文件状态：![git-文件的状态变化周期](gitfilestatus.png "git-文件的状态变化周期")
+    - 已提交状态(commited)：git 目录中保存着的特定版本文件
+    - 已暂存状态(staged)：作了修改并已放入暂存区域
+    - 工作目录下的每一个文件都属于已跟踪(tracked)或未跟踪(untracked),已跟踪的文件状态可处于未修改(unmodified)、已修改(modified)或已放入暂存区(staged)
+- 初始化版本库
+  - 新建版本库
+    - `mkdir dirname`  # 确定版本库目录
+    - `pushd dirname`
+    - `git init`    # 生成.git目录以及其下的版本历史记录文件, push 时易出现冲突
+    - `git init --bare`  # 创建一个裸仓库, 只保存git历史提交的版本信息, 不允许用户在上面进行各种git操作
+  - 克隆版本库
+    - 自动将其添加为远程仓库并默认以 “origin” 为简写
+    - 自动设置本地 master 分支跟踪克隆的远程仓库的 master 分支
+    - `git clone bmi@192.168.1.254:~/kiki/VDMSSip`          # 使用 ssh 协议
+      - 在当前目录下创建 VDMSSip 目录, 并在这个目录下初始化一个 .git 文件夹, 从远程仓库拉取下所有数据放入 .git 文件夹, 然后从中读取最新版本的文件的拷贝
+      - `git clone bmi@192.168.1.254:~/kiki/VDMSSip MyVDMSSip`  # 自定义本地仓库的名字
+    - `git clone https://github.com/tensorflow/tensorflow.git`    # 使用 https:// 协议
+  - 版本库目录 .git
+    - HEAD, git项目当前所处分支
+    - config, 项目的配置信息, git config 命令会改动它
+    - description, 项目的描述信息
+    - hooks, 系统默认钩子脚本目录
+    - index, 索引文件
+    - logs, 各个 refs 的历史信息
+    - objects, git 本地仓库的所有对象(commits, trees, blobs, tags)
+    - refs, 标识项目里的每个分支指向了哪个提交(commit)
+- 添加文件
+  - git add: 添加内容到下一次提交中. 当使用 git commit 时, git 将依据暂存区域的内容来进行文件的提交. 
+    - 可以用它开始跟踪新文件, 或者把已跟踪的文件放到暂存区, 还能用于合并时把有冲突的文件标记为已解决状态等
+  - git add <path>: 把 <path> 添加到索引库, <path> 可以是文件或目录
+  - `git add .`        # 添加所有文件
+  - `git add file1 file2`    # 添加指定文件
+  - `git add -u [<path>]`    # 不处理未跟踪(untracked)的文件
+  - `git add -A [<path>]`    # 添加所有
+  - `git add -i [<path>]`    # 查看所有修改过或已删除文件但是未提交的文件
+  - 防止文件误添加
+    - 修改 .gitignore
+    - 修改 .git/info/exclude
+    - 格式规范
+      - 所有空行或者以 ＃ 开头的行都会被 git 忽略
+      - 可以使用标准的 glob 模式匹配[^glob]
+      - 匹配模式可以以(/)开头防止递归
+      - 匹配模式可以以(/)结尾指定目录
+      - 要忽略指定模式以外的文件或目录, 可以在模式前加上惊叹号(!)取反
+    - 忽略文件示例
+      - `# 注释行`
+      - `*.[oa]`    # 忽略所有以 .a 或 .o 为扩展名的文件
+      - `!lib.a`    # 但是 lib.a 文件或者目录不要忽略
+      - `/TODO`      # 只忽略根目录下的 TODO, 子目录的 TODO 不忽略
+      - `build/`    # 忽略所有 build/ 目录下的文件
+      - `doc/*.txt`    # 忽略 doc/*.txt, 但 doc/server/*.txt 不忽略
+      - `doc/**/*.pdf`  # 忽略 doc文件夹下所有的*.pdf
+- 提交更新
+  - `git commit -m "add README"`    # 将提交信息与命令放在同一行
+  - `git commit -a -m "add README"`  # 自动把所有已经跟踪过的文件暂存起来一并提交, 跳过 git add 步骤
+  - `git commit -s, --signoff`
+  - `git commit <file>...`
+  - `git commit -p`
+  - `git commit –allow-empty`
+  - `git commit --amend`
+- 版本比较[^diff插件]
+  - `git diff`      # 工作目录中当前文件和暂存区域快照之间的差异, 即修改之后还没有暂存起来的变化内容
+  - `git diff --cached`  # HEAD和暂存区比较, 即已暂存的将要添加到下次提交里的内容, --staged
+  - `git diff HEAD`    # HEAD和工作区比较
+  - `git diff HEAD HEAD^`  # HEAD和HEAD的父版本比较
+  - `git diff HEAD~2 HEAD^`  # HEAD父父版本和HEAD的父版本比较
+- 撤消操作
+  - `git commit --amend`  # 尝试重新提交
+  - `git reset HEAD f1`   # 取消暂存文件 f1
+  - `git checkout -- f1`  # 撤消之前对文件 f1 所做的修改
+  - git reset [--hard | soft | mixed | merge | keep] [HEAD | <commit>]
+    - 将当前的分支重设(reset)到指定的 <commit> 或 HEAD(默认), mixed 是默认模式
+  - `git reset --hard`  # 重设暂存区和工作区, 丢弃所有改变, 把HEAD指向<commit>
+  - `git reset --soft`  # 暂存区和工作区内容不做任何改变, 仅把HEAD指向<commit>, 可用于删除提交历史记录, 只生成一次提交
+  - `git reset --mixed`  # 仅重设暂存区, 不改变工作区
+- 跟踪状态
+  - `git status`      # 查看哪些文件处于什么状态
+  - `git status -s`    # 得到一种更为紧凑的格式输出, --short
+  - `git status --ignored`
+- 查看提交日志
+  - `git log`
+  - git log --pretty      # 使用其他格式显示历史提交信息. 可用 oneline/short/full/fuller/format(后跟指定格式)
+    - `git log --pretty=oneline`  # 按行显示每次提交
+    - git log --pretty=format    # 定制要显示的记录格式
+  - git log --stat      # 显示每次更新的文件修改统计信息
+  - git log --graph      # 显示 ASCII 图形表示的分支合并历史
+  - git log -p        # 按补丁格式显示每个更新之间的差异
+    - `git log -p master..origin/master`  # 比较本地 master 分支和 origin/master 分支的差别
+    - `git log -p -2`            # 显示最近两次提交的差别
+  - git log --decorate    # 查看各个分支当前所指的对象
+    - git log --oneline --decorate --graph --all # 输出提交历史、各个分支的指向以及项目的分支分叉情况
+    - git log --abbrev-commit  # 显示简短且唯一的 SHA-1 值
+  - git log -(n)        # 仅显示最近的 n 条提交
+  - git log --since, --after  # 仅显示指定时间之后的提交
+  - git log --until, --before  # 仅显示指定时间之前的提交
+  - git log --author      # 仅显示指定作者相关的提交
+  - git log --committer    # 仅显示指定提交者相关的提交
+  - git log --grep      # 仅显示含指定关键字的提交
+  - git log -S        # 仅显示添加或移除了某个关键字的提交
+- 移除文件
+  - `git rm file1`        # 从工作目录中删除指定的文件并存入暂存区
+  - `git rm -f file1`        # 删除之前修改过并且已经放到暂存区域的文件, --forced, 用于防止误删还没有添加到快照的数据
+  - `git rm --cached file1`    # 从 git 仓库中删除文件, 即从暂存区域移除, 但仍然保留在当前工作目录
+  - 可以使用 glob 模式
+    - `git rm log/\*.log`    # 删除 log/ 目录下扩展名为 .log 的所有文件
+- 移动文件
+  - `git mv file_from file_to`  # git rm + git add
+- 远程仓库
+  - `git remote`            # 查看指定的每一个远程服务器的简写
+  - `git remote -v`          # 查看需要读写远程仓库使用的 git 保存的简写与其对应的 URL
+  - `git remote show [remote-name]`  # 查看某一个远程仓库信息
+  - `git remote add <shortname> <url>`# 添加一个新的远程 git 仓库, 同时指定一个简写
+  - `git remote rm lvlin`        # 移除一个远程仓库
+  - `git remote rename temp lvlin`  # 修改一个远程仓库的简写名, 这同样也会修改远程分支名字
+- 推送数据
+  - `git fetch origin master`    # 从远程获取最新版本到本地, 不会自动merge
+  - `git merge origin/master`    # 合并 origin/master 至本地分支
+  - `git pull origin master`    # = git fetch + git merge
+  - `git push origin master:dev`  # 将本地的 master 分支推送至 origin 服务器的 dev 分支
+  - `git push lirui@192.168.1.80~/MyWorks/VideoHandler master`
+- 标签
+  - 标签不能像分支一样来回移动. 分为轻量标签（lightweight）与附注标签（annotated）
+    - 轻量标签：很像一个不会改变的分支, 只是一个特定提交的引用. 本质上是将提交校验和存储到一个文件中 - 没有保存任何其他信息
+    - 附注标签：存储在 Git 数据库中的一个完整对象.  是可以被校验的；包含打标签者的名字、电子邮件地址、日期时间；还有一个标签信息；并且可以使用 GNU Privacy Guard （GPG）签名与验证
+  - `git tag`            # 列出已有的标签
+  - `git tag -l 'v1.8.5*'`    # 列出1.8.5 系列的标签
+  - `git tag -a v1.4 -m 'v1.4'`  # 创建一个附注标签
+  - `git show v1.4`        # 查看标签信息与对应的提交信息
+  - `git tag v1.4-lw`        # 创建一个轻量标签
+  - `git show v1.4-lw`      # 不会看到额外的标签信息.  只会显示出提交信息
+  - `git tag -a v1.2 <commit-id>` # 在<commit-id>提交上打标签
+  - `git push origin --tags`    # 把所有不在远程仓库服务器上的标签全部推送到远程仓库服务器
+  - `git push origin [tagname]`  # 把[tagname]标签推送到远程仓库服务器
+  - `git checkout -b v2 v2.0.0`  # 在标签 v2.0.0 上创建分支 v2
+
+## git 分支
+
+- 分支管理
+- HEAD：一个指针, 指向当前所在的本地分支
+  - HEAD 分支随着提交操作自动向前移动
+  - 检出时 HEAD 随之移动
+- `git branch`            # 查看当前所有分支列表, 星号表示HEAD指向的分支
+- `git branch dev`           # 创建新分支 dev
+- `git checkout dev`         # 切换至 dev 分支
+- `git checkout -b dev`       # 创建并切换至分支 dev
+- `git checkout -b deve origin/dev`  # 从远程 dev 分支创建本地分支 deve, 本地 deve 分支会自动从 origin/dev 分支拉取
+- `git checkout --track origin/dev`  # 从远程 dev 分支创建本地分支 dev, 本地 dev 分支会自动从 origin/dev 分支拉取
+- `git merge dev`          # 合并 dev 分支至当前分支
+- `git branch -d dev`        # 删除 dev 分支
+- `git branch -D dev`        # 强制删除 dev 分支
+- `git branch -v`          # 查看每个分支的最后一次提交
+- `git branch --merged`        # 查看哪些分支已经合并到当前分支
+- `git branch --no-merged`      # 查看所有包含未合并工作的分支
+- `git branch -u origin/dev`    # 设置已有的本地分支正在跟踪的上游分支,--set-upstream-to
+  - 当设置好跟踪分支后, 可以通过 @{upstream} 或 @{u} 快捷方式来引用它.  所以在 master 分支时并且它正在跟踪 origin/master 时, 可以使用 git merge @{u} 来取代 git merge origin/master
+- `git fetch --all`          # 抓取所有的远程仓库
+- `git branch -vv`          # 列举所有本地分支并显示具体信息
+- `git push origin --delete dev`  # 删除远程 dev 分支
+- 变基
+  - 变基和三方合并整合的最终结果指向的快照始终是一样的, 只是提交历史不同
+  - 变基是将一系列提交按照原有次序依次应用到另一分支上, 而三方合并是把最终结果合在一起.
+  - 变基使得提交历史更加简洁
+  - 不要对在你的仓库外有副本的分支执行变基
+  - 例子1
+    - `git checkout dev; git rebase master`  # 找到 dev 和 master 分支最近共同祖先, 提取 dev 分支相对于最近共同祖先所做的所有提交修改并存为临时文件, 然后将 dev 分支 指向 master 分支, 最后将之前另存的临时文件的修改依次应用
+    - `git checkout master; git merge dev`  # 切回 master 分支, 进行一次快进合并
+  - 例子2
+    - `git rebase --onto master server client`  # 取出 client 分支, 找出处于 client 和 server 分支的共同祖先之后的修改, 然后把它们在 master 分支上重放一遍
+    - `git checkout master; git merge client`  # 切回 master 分支, 进行一次快进合并
+    - `git rebase master server`        # 将 server 分支变基到目标分支 master (git checkout server; git rebase master)
+    - `git checkout master; git merge server`  # 切回 master 分支, 进行一次快进合并
+    - `git branch -d client server`        # 删除两个分支
+- 分支引用
+  - `git rev-parse branchname`  # 查看某个分支指向的SHA-1
+- 引用日志
+  - 工作时,  Git 会在后台保存一个引用日志(reflog), 引用日志记录了最近几个月你的 HEAD 和分支引用所指向的历史
+  - 每当 HEAD 指向的位置发生了变化, git 就会将这个信息存储到引用日志
+  - 引用日志只存在于本地仓库, 一个记录你在你自己的仓库里做过什么的日志
+  - `git reflog`          # 查看引用日志
+  - `git show HEAD@{5}`      # 使用`@{n}`引用reflog中输出的提交记录
+  - `git show master@{yesterday}`  # 查看 master 分支在昨天的时候指向了哪个提交
+  - `git log -g`          # 查看类似于 git log 输出格式的引用日志信息
+- 祖先引用
+  - 祖先引用是另一种指明一个提交的方式.  如果在引用的尾部加上一个 ^,  git 会将其解析为该引用的上一个提交
+    - `git show HEAD^`      # 查看上一个提交, 也就是 “HEAD 的父提交”
+    - `git show d921970^2`    # d921970^2 代表 “d921970 的第二父提交” 这个语法只适用于合并(merge)的提交
+    - `git show HEAD~3`      # HEAD^^^, 也是第一父提交的第一父提交的第一父提交
+    - `git show HEAD~3^2`    # HEAD^^^, 也是第一父提交的第一父提交的第一父提交的第二父提交
+
+## git 服务器
+
+- 协议
+  - 本地协议: 远程版本库就是硬盘内的另一个目录. 常见于团队每一个成员都对一个共享的文件系统(例如一个挂载的 NFS)拥有访问权, 或者比较少见的多人共用同一台电脑的情况
+    - `git clone /opt/git/project.git`      # Git 会尝试使用硬链接（hard link）或直接复制所需要的文件
+    - `git clone file:///opt/git/project.git`
+
+[^glob]: glob 模式指 shell 所使用的简化了的正则表达式.  星号匹配零个或多个任意字符；[abc] 匹配任何一个列在方括号中的字符；问号只匹配一个任意字符；如果在方括号中使用短划线分隔两个字符, 表示所有在这两个字符范围内的都可以匹配(比如 [0-9] 表示匹配所有 0 到 9 的数字).  使用两个星号表示匹配任意中间目录.
+[^diff插件]: 可以使用 git difftool 命令来用 Araxis , emerge 或 vimdiff 等软件通过图形化的方式或其它格式输出方式输出 diff 分析结果.  使用 git difftool --tool-help 命令查看系统支持哪些 Git Diff 插件.
