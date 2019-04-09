@@ -13,7 +13,7 @@
   - `update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 100`
 - 删除命令程序：`update-alternatives --remove name path`
 
-以 Ubuntu14.04 配置 java1.8 为例
+## 以 Ubuntu14.04 配置 java1.8 为例
 
 - 安装 java1.6 和 java1.7 可以直接用`sudo apt-get install openjdk-6-gre(openjdk-7-gre)`
 - 访问 oracle 官网下载 jdk
@@ -35,3 +35,17 @@
   - `sudo update-alternatives --config java`
   - `sudo update-alternatives --config javac`
 - 测试验证`java -version`
+
+## 安装 gcc-4.8、g++-4.8、gcc-5.4、g++-5 以及多版本切换
+
+```sh
+sudo apt-get install gcc-4.8 gcc-4.8-multilib g++-4.8 g++-4.8-multilib
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 50
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5.4 40
+sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50
+sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 40
+#切换版本
+sudo update-alternatives --config gcc
+#删除切换版本的选项
+sudo update-alternatives --remove gcc /usr/bin/gcc-4.5
+```
