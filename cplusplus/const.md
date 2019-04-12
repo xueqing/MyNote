@@ -55,7 +55,7 @@ void g2(std::string* sp);       //pass by pointer-to-non-const
 
 ```cpp
 const char *Function1() { return "Some text"; }
-Function1()[1]=’a’; //error
+Function1()[1]='a'; //error
 ```
 
 - 常量指针指向变量：变量可修改，且未从内存移除
