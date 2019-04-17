@@ -14,6 +14,7 @@
   - [GM/T 0006-2012](#gmt-0006-2012)
   - [GM/T 0009-2012](#gmt-0009-2012)
   - [GM/T 0010-2012](#gmt-0010-2012)
+  - [GM/T 0011-2012](#gmt-0011-2012)
   - [GM/T 0014-2012](#gmt-0014-2012)
   - [GM/T 0015-2012](#gmt-0015-2012)
   - [GM/T 0016-2012](#gmt-0016-2012)
@@ -203,6 +204,23 @@
 | 算法标识 | algorithm identifier | - | 用于标明算法机制的数字化信息 |
 | 椭圆曲线密码算法 | elliptic curve cryptography | ECC | - |
 | 用户标识 | identity | ID | - |
+
+## GM/T 0011-2012
+
+| 术语 | 定义 | 缩写 | 详细信息 |
+| --- | --- | --- | --- |
+| 可信计算平台 | trusted computing platform | - | 构建在计算系统中，用于实现可信计算功能的支撑系统 |
+| 可信计算密码支撑平台 | cryptographic support platform for trusted computing | - | 为可信计算平台自身的完整性、身份可信性和数据安全性提供密码支持，产品形态主要表现为 TCM 和 TSM |
+| 可信密码模块 | trusted cryptography module | TCM | 可信计算平台的硬件模块，为可信计算平台提供密码运算功能，具有受保护的存储空间 |
+| TCM 服务模块 | TCM service module | TSM | 可信计算密码支撑平台内部的软件模块，对平台外部提供访问 TCM 的软件接口 |
+| 密码模块密钥 | TCM endorsement key | EK | TCM 的初始密钥 |
+| 非易失性 | non-volatility | NV | - |
+| 完整性度量 | integrity measurement | - | 使用密码杂凑算法对被度量对象计算其杂凑值的过程 |
+| 完整性度量值 | integrity measurement value | - | 部件被度量后得到的杂凑值 |
+| 平台配置寄存器 | platform configuration register | PCR | TCM 内部用于存储平台完整性度量值的存储单元 |
+| 平台身份密钥 | platform identity key | PIK | TCM 的身份密钥 |
+| 平台加密密钥 | platform encryption key | PEK | TCM 中与平台身份密钥关联的加密密钥 |
+| 存储主密钥 | storage master key | SMK | 用于保护平台身份密钥和用户密钥的主密钥 |
 
 ## GM/T 0014-2012
 
