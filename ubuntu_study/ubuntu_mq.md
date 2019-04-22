@@ -3,8 +3,10 @@
 - [rabbitMQ 环境搭建](#rabbitmq-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA)
   - [1 安装依赖](#1-%E5%AE%89%E8%A3%85%E4%BE%9D%E8%B5%96)
   - [2 安装 RabbitMQ](#2-%E5%AE%89%E8%A3%85-rabbitmq)
-  - [3 启用 WEB UI](#3-%E5%90%AF%E7%94%A8-web-ui)
+  - [3 启用 RabbitMQ 管理控制台](#3-%E5%90%AF%E7%94%A8-rabbitmq-%E7%AE%A1%E7%90%86%E6%8E%A7%E5%88%B6%E5%8F%B0)
     - [3.1 创建用户并设置角色](#31-%E5%88%9B%E5%BB%BA%E7%94%A8%E6%88%B7%E5%B9%B6%E8%AE%BE%E7%BD%AE%E8%A7%92%E8%89%B2)
+  - [4 RabbitMQ 服务命令](#4-rabbitmq-%E6%9C%8D%E5%8A%A1%E5%91%BD%E4%BB%A4)
+  - [5 修改服务配置文件](#5-%E4%BF%AE%E6%94%B9%E6%9C%8D%E5%8A%A1%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6)
 
 ## 1 安装依赖
 
@@ -29,9 +31,9 @@ sudo apt-get update  #（可忽略不运行）
 sudo apt-get install rabbitmq-server
 ```
 
-## 3 启用 WEB UI
+## 3 启用 RabbitMQ 管理控制台
 
-启用管理插件和STOMP插件:
+启用管理插件和 STOMP 插件:
 
 ```sh
 sudo rabbitmq-plugins enable rabbitmq_management rabbitmq_stomp
@@ -69,4 +71,25 @@ sudo rabbitmqctl set_user_tags admin administrator
 sudo rabbitmqctl  set_permissions -p / admin '.*' '.*' '.*'
 # 查看权限
 sudo rabbitmqctl list_user_permissions admin
+```
+
+## 4 RabbitMQ 服务命令
+
+```sh
+# 启动服务
+# sudo service rabbitmq-server start
+sudo systemctl start rabbitmq-server
+# 停止服务
+sudo systemctl stop rabbitmq-server
+# 重启服务
+sudo systemctl restart rabbitmq-server
+# 检查服务状态
+sudo systemctl status rabbitmq-server
+```
+
+## 5 修改服务配置文件
+
+```sh
+# 如果需要管理最大连接数，修改配置文件
+sudo vim /etc/default/rabbitmq-server
 ```
