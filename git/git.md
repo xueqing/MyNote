@@ -4,6 +4,13 @@
   作者：kiki
   日期：2017/9/26
 
+- [git 教程](#git-%E6%95%99%E7%A8%8B)
+  - [git 安装](#git-%E5%AE%89%E8%A3%85)
+  - [git 配置](#git-%E9%85%8D%E7%BD%AE)
+  - [git 基础](#git-%E5%9F%BA%E7%A1%80)
+  - [git 分支](#git-%E5%88%86%E6%94%AF)
+  - [git 服务器](#git-%E6%9C%8D%E5%8A%A1%E5%99%A8)
+
 ## git 安装
 
 - [Linux](https://git-scm.com/download/linux)
@@ -24,7 +31,7 @@
     - `popd`
 - Windows
   - [msysgit](http://git-scm.com/download/win)
-  - Git 图形化操作程序, [TortoiseGit]()
+  - Git 图形化操作程序, [TortoiseGit](https://tortoisegit.org/)
   - [GitHub for Windows](http://windows.github.com/)
 - Mac
   - 安装 Xcode 后自动装上 Git
@@ -50,16 +57,16 @@
 - rep-dir/.git/config：当前使用仓库的 Git 目录中的 config 文件, 只针对该仓库
   - `git config --local user.name kiki_VDMS`    # 配置某个项目用户名
   - `git config --local user.email kiki_VDMS@bmi.com`  # 配置某个项目 email
-- 每一个级别覆盖上一级别的配置, 所以 .git/config 的配置变量会覆盖 /etc/gitconfig 中的配置变量. 
+- 每一个级别覆盖上一级别的配置, 所以 .git/config 的配置变量会覆盖 /etc/gitconfig 中的配置变量
 - 查看 git 配置信息
   - `git config --list`              # 列出所有 git 当时能找到的配置
-  - git config <key>： 检查 Git 的某一项配置
+  - `git config <key>`： 检查 Git 的某一项配置
     - `git config user.name`          # 查看用户名
 - git 帮助
   - 有三种命令可以找到 git 命令的使用手册
-    - git help <verb>
-    - git <verb> --help
-    - man git-<verb>
+    - `git help <verb>`
+    - `git <verb> --help`
+    - `man git-<verb>`
       - `git help config`            # 查看 config 命令的手册
 
 ## git 基础
@@ -88,7 +95,7 @@
     - `git clone bmi@192.168.1.254:~/kiki/VDMSSip`          # 使用 ssh 协议
       - 在当前目录下创建 VDMSSip 目录, 并在这个目录下初始化一个 .git 文件夹, 从远程仓库拉取下所有数据放入 .git 文件夹, 然后从中读取最新版本的文件的拷贝
       - `git clone bmi@192.168.1.254:~/kiki/VDMSSip MyVDMSSip`  # 自定义本地仓库的名字
-    - `git clone https://github.com/tensorflow/tensorflow.git`    # 使用 https:// 协议
+    - `git clone https://github.com/tensorflow/tensorflow.git`    # use https://
   - 版本库目录 .git
     - HEAD, git项目当前所处分支
     - config, 项目的配置信息, git config 命令会改动它
@@ -99,9 +106,9 @@
     - objects, git 本地仓库的所有对象(commits, trees, blobs, tags)
     - refs, 标识项目里的每个分支指向了哪个提交(commit)
 - 添加文件
-  - git add: 添加内容到下一次提交中. 当使用 git commit 时, git 将依据暂存区域的内容来进行文件的提交. 
+  - git add: 添加内容到下一次提交中. 当使用 git commit 时, git 将依据暂存区域的内容来进行文件的提交
     - 可以用它开始跟踪新文件, 或者把已跟踪的文件放到暂存区, 还能用于合并时把有冲突的文件标记为已解决状态等
-  - git add <path>: 把 <path> 添加到索引库, <path> 可以是文件或目录
+  - `git add <path>`: 把 path 添加到索引库, path 可以是文件或目录
   - `git add .`        # 添加所有文件
   - `git add file1 file2`    # 添加指定文件
   - `git add -u [<path>]`    # 不处理未跟踪(untracked)的文件
@@ -134,18 +141,18 @@
   - `git commit --amend`
 - 版本比较[^diff插件]
   - `git diff`      # 工作目录中当前文件和暂存区域快照之间的差异, 即修改之后还没有暂存起来的变化内容
-  - `git diff --cached`  # HEAD和暂存区比较, 即已暂存的将要添加到下次提交里的内容, --staged
-  - `git diff HEAD`    # HEAD和工作区比较
-  - `git diff HEAD HEAD^`  # HEAD和HEAD的父版本比较
-  - `git diff HEAD~2 HEAD^`  # HEAD父父版本和HEAD的父版本比较
+  - `git diff --cached`  # HEAD 和暂存区比较, 即已暂存的将要添加到下次提交里的内容, --staged
+  - `git diff HEAD`    # HEAD 和工作区比较
+  - `git diff HEAD HEAD^`  # HEAD 和 HEAD 的父版本比较
+  - `git diff HEAD~2 HEAD^`  # HEAD 父父版本和 HEAD 的父版本比较
 - 撤消操作
   - `git commit --amend`  # 尝试重新提交
   - `git reset HEAD f1`   # 取消暂存文件 f1
   - `git checkout -- f1`  # 撤消之前对文件 f1 所做的修改
-  - git reset [--hard | soft | mixed | merge | keep] [HEAD | <commit>]
-    - 将当前的分支重设(reset)到指定的 <commit> 或 HEAD(默认), mixed 是默认模式
-  - `git reset --hard`  # 重设暂存区和工作区, 丢弃所有改变, 把HEAD指向<commit>
-  - `git reset --soft`  # 暂存区和工作区内容不做任何改变, 仅把HEAD指向<commit>, 可用于删除提交历史记录, 只生成一次提交
+  - `git reset [--hard | soft | mixed | merge | keep] [HEAD | <commit>]`
+    - 将当前的分支重设(reset)到指定的 commit 或 HEAD(默认), mixed 是默认模式
+  - `git reset --hard`  # 重设暂存区和工作区, 丢弃所有改变, 把 HEAD 指向 commit
+  - `git reset --soft`  # 暂存区和工作区内容不做任何改变, 仅把 HEAD 指向 commit, 可用于删除提交历史记录, 只生成一次提交
   - `git reset --mixed`  # 仅重设暂存区, 不改变工作区
 - 跟踪状态
   - `git status`      # 查看哪些文件处于什么状态
@@ -202,7 +209,7 @@
   - `git show v1.4`        # 查看标签信息与对应的提交信息
   - `git tag v1.4-lw`        # 创建一个轻量标签
   - `git show v1.4-lw`      # 不会看到额外的标签信息.  只会显示出提交信息
-  - `git tag -a v1.2 <commit-id>` # 在<commit-id>提交上打标签
+  - `git tag -a v1.2 <commit-id>` # 在 commit-id 提交上打标签
   - `git push origin --tags`    # 把所有不在远程仓库服务器上的标签全部推送到远程仓库服务器
   - `git push origin [tagname]`  # 把[tagname]标签推送到远程仓库服务器
   - `git checkout -b v2 v2.0.0`  # 在标签 v2.0.0 上创建分支 v2
@@ -251,7 +258,7 @@
   - 每当 HEAD 指向的位置发生了变化, git 就会将这个信息存储到引用日志
   - 引用日志只存在于本地仓库, 一个记录你在你自己的仓库里做过什么的日志
   - `git reflog`          # 查看引用日志
-  - `git show HEAD@{5}`      # 使用`@{n}`引用reflog中输出的提交记录
+  - `git show HEAD@{5}`      # 使用`@{n}`引用 reflog 中输出的提交记录
   - `git show master@{yesterday}`  # 查看 master 分支在昨天的时候指向了哪个提交
   - `git log -g`          # 查看类似于 git log 输出格式的引用日志信息
 - 祖先引用
