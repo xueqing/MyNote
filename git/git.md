@@ -95,7 +95,7 @@
     - `git clone bmi@192.168.1.254:~/kiki/VDMSSip`          # 使用 ssh 协议
       - 在当前目录下创建 VDMSSip 目录, 并在这个目录下初始化一个 .git 文件夹, 从远程仓库拉取下所有数据放入 .git 文件夹, 然后从中读取最新版本的文件的拷贝
       - `git clone bmi@192.168.1.254:~/kiki/VDMSSip MyVDMSSip`  # 自定义本地仓库的名字
-    - `git clone https://github.com/tensorflow/tensorflow.git`    # use https://
+    - `git clone https://github.com/tensorflow/tensorflow.git`    # use <https://>
   - 版本库目录 .git
     - HEAD, git项目当前所处分支
     - config, 项目的配置信息, git config 命令会改动它

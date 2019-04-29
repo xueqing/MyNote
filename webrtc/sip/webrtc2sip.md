@@ -464,7 +464,7 @@ sudo chown -R ubuntu:ubuntu ./
   - 假定 webrtc2sip 运行在 192.168.1.140 机器，端口是 10060(默认)
 
 | 网关配置项 | 值 |
-| --- | --- | --- |
+| --- | --- |
 | WebSocket Server URL | ws://192.168.1.140:10060 |
 | SIP outbound Proxy URL | udp://192.168.1.140:5060 |
 
