@@ -8,8 +8,23 @@
   - [git 安装](#git-%E5%AE%89%E8%A3%85)
   - [git 配置](#git-%E9%85%8D%E7%BD%AE)
   - [git 基础](#git-%E5%9F%BA%E7%A1%80)
+    - [git 仓库、工作目录、暂存区域、文件状态](#git-%E4%BB%93%E5%BA%93%E5%B7%A5%E4%BD%9C%E7%9B%AE%E5%BD%95%E6%9A%82%E5%AD%98%E5%8C%BA%E5%9F%9F%E6%96%87%E4%BB%B6%E7%8A%B6%E6%80%81)
+    - [初始化版本库](#%E5%88%9D%E5%A7%8B%E5%8C%96%E7%89%88%E6%9C%AC%E5%BA%93)
+    - [添加文件](#%E6%B7%BB%E5%8A%A0%E6%96%87%E4%BB%B6)
+    - [提交更新](#%E6%8F%90%E4%BA%A4%E6%9B%B4%E6%96%B0)
+    - [版本比较[^diff插件]](#%E7%89%88%E6%9C%AC%E6%AF%94%E8%BE%83diff%E6%8F%92%E4%BB%B6)
+    - [撤消操作](#%E6%92%A4%E6%B6%88%E6%93%8D%E4%BD%9C)
+    - [跟踪状态](#%E8%B7%9F%E8%B8%AA%E7%8A%B6%E6%80%81)
+    - [查看提交日志](#%E6%9F%A5%E7%9C%8B%E6%8F%90%E4%BA%A4%E6%97%A5%E5%BF%97)
+    - [移除文件](#%E7%A7%BB%E9%99%A4%E6%96%87%E4%BB%B6)
+    - [移动文件](#%E7%A7%BB%E5%8A%A8%E6%96%87%E4%BB%B6)
+    - [远程仓库](#%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93)
+    - [推送数据](#%E6%8E%A8%E9%80%81%E6%95%B0%E6%8D%AE)
+    - [标签](#%E6%A0%87%E7%AD%BE)
   - [git 分支](#git-%E5%88%86%E6%94%AF)
   - [git 服务器](#git-%E6%9C%8D%E5%8A%A1%E5%99%A8)
+  - [参考网站](#%E5%8F%82%E8%80%83%E7%BD%91%E7%AB%99)
+  - [好玩的网站](#%E5%A5%BD%E7%8E%A9%E7%9A%84%E7%BD%91%E7%AB%99)
 
 ## git 安装
 
@@ -71,148 +86,155 @@
 
 ## git 基础
 
-- git仓库、工作目录、暂存区域、文件状态
-  - git仓库：git 用来保存项目的元数据和对象数据库的地方
-  - 工作目录：对项目的某个版本独立提取出来的内容.  是从 git 仓库的压缩数据库中提取出来的文件, 放在磁盘上使用或修改
-  - 暂存区域(索引)：一个文件, 保存了下次将提交的文件列表信息, 一般在 Git 仓库目录中
-  - 基本的 Git 工作流程如下：
-    - 在工作目录中修改文件
-    - 暂存文件, 将文件的快照放入暂存区域
-    - 提交更新, 找到暂存区域的文件, 将快照永久性存储到 git 仓库目录
-  - 文件状态：![git-文件的状态变化周期](gitfilestatus.png "git-文件的状态变化周期")
-    - 已提交状态(commited)：git 目录中保存着的特定版本文件
-    - 已暂存状态(staged)：作了修改并已放入暂存区域
-    - 工作目录下的每一个文件都属于已跟踪(tracked)或未跟踪(untracked),已跟踪的文件状态可处于未修改(unmodified)、已修改(modified)或已放入暂存区(staged)
-- 初始化版本库
-  - 新建版本库
-    - `mkdir dirname`  # 确定版本库目录
-    - `pushd dirname`
-    - `git init`    # 生成.git目录以及其下的版本历史记录文件, push 时易出现冲突
-    - `git init --bare`  # 创建一个裸仓库, 只保存git历史提交的版本信息, 不允许用户在上面进行各种git操作
-  - 克隆版本库
-    - 自动将其添加为远程仓库并默认以 “origin” 为简写
-    - 自动设置本地 master 分支跟踪克隆的远程仓库的 master 分支
-    - `git clone bmi@192.168.1.254:~/kiki/VDMSSip`          # 使用 ssh 协议
-      - 在当前目录下创建 VDMSSip 目录, 并在这个目录下初始化一个 .git 文件夹, 从远程仓库拉取下所有数据放入 .git 文件夹, 然后从中读取最新版本的文件的拷贝
-      - `git clone bmi@192.168.1.254:~/kiki/VDMSSip MyVDMSSip`  # 自定义本地仓库的名字
-    - `git clone https://github.com/tensorflow/tensorflow.git`    # use <https://>
-  - 版本库目录 .git
-    - HEAD, git项目当前所处分支
-    - config, 项目的配置信息, git config 命令会改动它
-    - description, 项目的描述信息
-    - hooks, 系统默认钩子脚本目录
-    - index, 索引文件
-    - logs, 各个 refs 的历史信息
-    - objects, git 本地仓库的所有对象(commits, trees, blobs, tags)
-    - refs, 标识项目里的每个分支指向了哪个提交(commit)
-- 添加文件
-  - git add: 添加内容到下一次提交中. 当使用 git commit 时, git 将依据暂存区域的内容来进行文件的提交
-    - 可以用它开始跟踪新文件, 或者把已跟踪的文件放到暂存区, 还能用于合并时把有冲突的文件标记为已解决状态等
-  - `git add <path>`: 把 path 添加到索引库, path 可以是文件或目录
-  - `git add .`        # 添加所有文件
-  - `git add file1 file2`    # 添加指定文件
-  - `git add -u [<path>]`    # 不处理未跟踪(untracked)的文件
-  - `git add -A [<path>]`    # 添加所有
-  - `git add -i [<path>]`    # 查看所有修改过或已删除文件但是未提交的文件
-  - 防止文件误添加
-    - 修改 .gitignore
-    - 修改 .git/info/exclude
-    - 格式规范
-      - 所有空行或者以 ＃ 开头的行都会被 git 忽略
-      - 可以使用标准的 glob 模式匹配[^glob]
-      - 匹配模式可以以(/)开头防止递归
-      - 匹配模式可以以(/)结尾指定目录
-      - 要忽略指定模式以外的文件或目录, 可以在模式前加上惊叹号(!)取反
-    - 忽略文件示例
-      - `# 注释行`
-      - `*.[oa]`    # 忽略所有以 .a 或 .o 为扩展名的文件
-      - `!lib.a`    # 但是 lib.a 文件或者目录不要忽略
-      - `/TODO`      # 只忽略根目录下的 TODO, 子目录的 TODO 不忽略
-      - `build/`    # 忽略所有 build/ 目录下的文件
-      - `doc/*.txt`    # 忽略 doc/*.txt, 但 doc/server/*.txt 不忽略
-      - `doc/**/*.pdf`  # 忽略 doc文件夹下所有的*.pdf
-- 提交更新
-  - `git commit -m "add README"`    # 将提交信息与命令放在同一行
-  - `git commit -a -m "add README"`  # 自动把所有已经跟踪过的文件暂存起来一并提交, 跳过 git add 步骤
-  - `git commit -s, --signoff`
-  - `git commit <file>...`
-  - `git commit -p`
-  - `git commit –allow-empty`
-  - `git commit --amend`
-- 版本比较[^diff插件]
-  - `git diff`      # 工作目录中当前文件和暂存区域快照之间的差异, 即修改之后还没有暂存起来的变化内容
-  - `git diff --cached`  # HEAD 和暂存区比较, 即已暂存的将要添加到下次提交里的内容, --staged
-  - `git diff HEAD`    # HEAD 和工作区比较
-  - `git diff HEAD HEAD^`  # HEAD 和 HEAD 的父版本比较
-  - `git diff HEAD~2 HEAD^`  # HEAD 父父版本和 HEAD 的父版本比较
-- 撤消操作
-  - `git commit --amend`  # 尝试重新提交
-  - `git reset HEAD f1`   # 取消暂存文件 f1
-  - `git checkout -- f1`  # 撤消之前对文件 f1 所做的修改
-  - `git reset [--hard | soft | mixed | merge | keep] [HEAD | <commit>]`
-    - 将当前的分支重设(reset)到指定的 commit 或 HEAD(默认), mixed 是默认模式
-  - `git reset --hard`  # 重设暂存区和工作区, 丢弃所有改变, 把 HEAD 指向 commit
-  - `git reset --soft`  # 暂存区和工作区内容不做任何改变, 仅把 HEAD 指向 commit, 可用于删除提交历史记录, 只生成一次提交
-  - `git reset --mixed`  # 仅重设暂存区, 不改变工作区
-- 跟踪状态
-  - `git status`      # 查看哪些文件处于什么状态
-  - `git status -s`    # 得到一种更为紧凑的格式输出, --short
-  - `git status --ignored`
-- 查看提交日志
-  - `git log`
-  - git log --pretty      # 使用其他格式显示历史提交信息. 可用 oneline/short/full/fuller/format(后跟指定格式)
-    - `git log --pretty=oneline`  # 按行显示每次提交
-    - git log --pretty=format    # 定制要显示的记录格式
-  - git log --stat      # 显示每次更新的文件修改统计信息
-  - git log --graph      # 显示 ASCII 图形表示的分支合并历史
-  - git log -p        # 按补丁格式显示每个更新之间的差异
-    - `git log -p master..origin/master`  # 比较本地 master 分支和 origin/master 分支的差别
-    - `git log -p -2`            # 显示最近两次提交的差别
-  - git log --decorate    # 查看各个分支当前所指的对象
-    - git log --oneline --decorate --graph --all # 输出提交历史、各个分支的指向以及项目的分支分叉情况
-    - git log --abbrev-commit  # 显示简短且唯一的 SHA-1 值
-  - git log -(n)        # 仅显示最近的 n 条提交
-  - git log --since, --after  # 仅显示指定时间之后的提交
-  - git log --until, --before  # 仅显示指定时间之前的提交
-  - git log --author      # 仅显示指定作者相关的提交
-  - git log --committer    # 仅显示指定提交者相关的提交
-  - git log --grep      # 仅显示含指定关键字的提交
-  - git log -S        # 仅显示添加或移除了某个关键字的提交
-- 移除文件
-  - `git rm file1`        # 从工作目录中删除指定的文件并存入暂存区
-  - `git rm -f file1`        # 删除之前修改过并且已经放到暂存区域的文件, --forced, 用于防止误删还没有添加到快照的数据
-  - `git rm --cached file1`    # 从 git 仓库中删除文件, 即从暂存区域移除, 但仍然保留在当前工作目录
-  - 可以使用 glob 模式
-    - `git rm log/\*.log`    # 删除 log/ 目录下扩展名为 .log 的所有文件
-- 移动文件
-  - `git mv file_from file_to`  # git rm + git add
-- 远程仓库
-  - `git remote`            # 查看指定的每一个远程服务器的简写
-  - `git remote -v`          # 查看需要读写远程仓库使用的 git 保存的简写与其对应的 URL
-  - `git remote show [remote-name]`  # 查看某一个远程仓库信息
-  - `git remote add <shortname> <url>`# 添加一个新的远程 git 仓库, 同时指定一个简写
-  - `git remote rm lvlin`        # 移除一个远程仓库
-  - `git remote rename temp lvlin`  # 修改一个远程仓库的简写名, 这同样也会修改远程分支名字
-- 推送数据
-  - `git fetch origin master`    # 从远程获取最新版本到本地, 不会自动merge
-  - `git merge origin/master`    # 合并 origin/master 至本地分支
-  - `git pull origin master`    # = git fetch + git merge
-  - `git push origin master:dev`  # 将本地的 master 分支推送至 origin 服务器的 dev 分支
-  - `git push lirui@192.168.1.80~/MyWorks/VideoHandler master`
-- 标签
-  - 标签不能像分支一样来回移动. 分为轻量标签（lightweight）与附注标签（annotated）
-    - 轻量标签：很像一个不会改变的分支, 只是一个特定提交的引用. 本质上是将提交校验和存储到一个文件中 - 没有保存任何其他信息
-    - 附注标签：存储在 Git 数据库中的一个完整对象.  是可以被校验的；包含打标签者的名字、电子邮件地址、日期时间；还有一个标签信息；并且可以使用 GNU Privacy Guard （GPG）签名与验证
-  - `git tag`            # 列出已有的标签
-  - `git tag -l 'v1.8.5*'`    # 列出1.8.5 系列的标签
-  - `git tag -a v1.4 -m 'v1.4'`  # 创建一个附注标签
-  - `git show v1.4`        # 查看标签信息与对应的提交信息
-  - `git tag v1.4-lw`        # 创建一个轻量标签
-  - `git show v1.4-lw`      # 不会看到额外的标签信息.  只会显示出提交信息
-  - `git tag -a v1.2 <commit-id>` # 在 commit-id 提交上打标签
-  - `git push origin --tags`    # 把所有不在远程仓库服务器上的标签全部推送到远程仓库服务器
-  - `git push origin [tagname]`  # 把[tagname]标签推送到远程仓库服务器
-  - `git checkout -b v2 v2.0.0`  # 在标签 v2.0.0 上创建分支 v2
+### git 仓库、工作目录、暂存区域、文件状态
+
+- git仓库：git 用来保存项目的元数据和对象数据库的地方
+- 工作目录：对项目的某个版本独立提取出来的内容.  是从 git 仓库的压缩数据库中提取出来的文件, 放在磁盘上使用或修改
+- 暂存区域(索引)：一个文件, 保存了下次将提交的文件列表信息, 一般在 Git 仓库目录中
+- 基本的 Git 工作流程如下：
+  - 在工作目录中修改文件
+  - 暂存文件, 将文件的快照放入暂存区域
+  - 提交更新, 找到暂存区域的文件, 将快照永久性存储到 git 仓库目录
+- 文件状态：![git-文件的状态变化周期](gitfilestatus.png "git-文件的状态变化周期")
+  - 已提交状态(commited)：git 目录中保存着的特定版本文件
+  - 已暂存状态(staged)：作了修改并已放入暂存区域
+  - 工作目录下的每一个文件都属于已跟踪(tracked)或未跟踪(untracked),已跟踪的文件状态可处于未修改(unmodified)、已修改(modified)或已放入暂存区(staged)
+
+### 初始化版本库
+
+- 新建版本库
+  - `mkdir dirname`  # 确定版本库目录
+  - `pushd dirname`
+  - `git init`    # 生成.git目录以及其下的版本历史记录文件, push 时易出现冲突
+  - `git init --bare`  # 创建一个裸仓库, 只保存git历史提交的版本信息, 不允许用户在上面进行各种git操作
+- 克隆版本库
+  - 自动将其添加为远程仓库并默认以 “origin” 为简写
+  - 自动设置本地 master 分支跟踪克隆的远程仓库的 master 分支
+  - `git clone bmi@192.168.1.254:~/kiki/VDMSSip`          # 使用 ssh 协议
+    - 在当前目录下创建 VDMSSip 目录, 并在这个目录下初始化一个 .git 文件夹, 从远程仓库拉取下所有数据放入 .git 文件夹, 然后从中读取最新版本的文件的拷贝
+    - `git clone bmi@192.168.1.254:~/kiki/VDMSSip MyVDMSSip`  # 自定义本地仓库的名字
+  - `git clone https://github.com/tensorflow/tensorflow.git`    # use <https://>
+- 版本库目录 .git
+  - HEAD, git项目当前所处分支
+  - config, 项目的配置信息, git config 命令会改动它
+  - description, 项目的描述信息
+  - hooks, 系统默认钩子脚本目录
+  - index, 索引文件
+  - logs, 各个 refs 的历史信息
+  - objects, git 本地仓库的所有对象(commits, trees, blobs, tags)
+  - refs, 标识项目里的每个分支指向了哪个提交(commit)
+
+### 添加文件
+
+- git add: 添加内容到下一次提交中. 当使用 git commit 时, git 将依据暂存区域的内容来进行文件的提交
+  - 可以用它开始跟踪新文件, 或者把已跟踪的文件放到暂存区, 还能用于合并时把有冲突的文件标记为已解决状态等
+- `git add <path>`: 把 path 添加到索引库, path 可以是文件或目录
+- `git add .`        # 添加所有文件
+- `git add file1 file2`    # 添加指定文件
+- `git add -u [<path>]`    # 不处理未跟踪(untracked)的文件
+- `git add -A [<path>]`    # 添加所有
+- `git add -i [<path>]`    # 查看所有修改过或已删除文件但是未提交的文件
+- 防止文件误添加
+  - 修改 .gitignore
+  - 修改 .git/info/exclude
+  - 格式规范
+    - 所有空行或者以 ＃ 开头的行都会被 git 忽略
+    - 可以使用标准的 glob 模式匹配[^glob]
+    - 匹配模式可以以(/)开头防止递归
+    - 匹配模式可以以(/)结尾指定目录
+    - 要忽略指定模式以外的文件或目录, 可以在模式前加上惊叹号(!)取反
+  - 忽略文件示例
+    - `# 注释行`
+    - `*.[oa]`    # 忽略所有以 .a 或 .o 为扩展名的文件
+    - `!lib.a`    # 但是 lib.a 文件或者目录不要忽略
+    - `/TODO`      # 只忽略根目录下的 TODO, 子目录的 TODO 不忽略
+    - `build/`    # 忽略所有 build/ 目录下的文件
+    - `doc/*.txt`    # 忽略 doc/*.txt, 但 doc/server/*.txt 不忽略
+    - `doc/**/*.pdf`  # 忽略 doc文件夹下所有的*.pdf
+
+### 提交更新
+
+- `git commit -m "add README"`    # 将提交信息与命令放在同一行
+- `git commit -a -m "add README"`  # 自动把所有已经跟踪过的文件暂存起来一并提交, 跳过 git add 步骤
+- `git commit -s, --signoff`
+- `git commit <file>...`
+- `git commit -p`
+- `git commit –allow-empty`
+- `git commit --amend`
+
+### 版本比较[^diff插件]
+
+- `git diff`      # 工作目录中当前文件和暂存区域快照之间的差异, 即修改之后还没有暂存起来的变化内容
+- `git diff --cached`  # HEAD 和暂存区比较, 即已暂存的将要添加到下次提交里的内容, --staged
+- `git diff HEAD`    # HEAD 和工作区比较
+- `git diff HEAD HEAD^`  # HEAD 和 HEAD 的父版本比较
+- `git diff HEAD~2 HEAD^`  # HEAD 父父版本和 HEAD 的父版本比较
+
+### 撤消操作
+
+- `git commit --amend`  # 尝试重新提交
+- `git reset HEAD f1`   # 取消暂存文件 f1
+- `git checkout -- f1`  # 撤消之前对文件 f1 所做的修改
+- `git reset [--hard | soft | mixed | merge | keep] [HEAD | <commit>]`
+  - 将当前的分支重设(reset)到指定的 commit 或 HEAD(默认), mixed 是默认模式
+- `git reset --hard`  # 重设暂存区和工作区, 丢弃所有改变, 把 HEAD 指向 commit
+- `git reset --soft`  # 暂存区和工作区内容不做任何改变, 仅把 HEAD 指向 commit, 可用于删除提交历史记录, 只生成一次提交
+- `git reset --mixed`  # 仅重设暂存区, 不改变工作区
+
+### 跟踪状态
+
+- `git status`      # 查看哪些文件处于什么状态
+- `git status -s`    # 得到一种更为紧凑的格式输出, --short
+- `git status --ignored`
+
+### 查看提交日志
+
+- 参考[git_log](./git_log.md)
+
+### 移除文件
+
+- `git rm file1`        # 从工作目录中删除指定的文件并存入暂存区
+- `git rm -f file1`        # 删除之前修改过并且已经放到暂存区域的文件, --forced, 用于防止误删还没有添加到快照的数据
+- `git rm --cached file1`    # 从 git 仓库中删除文件, 即从暂存区域移除, 但仍然保留在当前工作目录
+- 可以使用 glob 模式
+  - `git rm log/\*.log`    # 删除 log/ 目录下扩展名为 .log 的所有文件
+
+### 移动文件
+
+- `git mv file_from file_to`  # git rm + git add
+
+### 远程仓库
+
+- `git remote`            # 查看指定的每一个远程服务器的简写
+- `git remote -v`          # 查看需要读写远程仓库使用的 git 保存的简写与其对应的 URL
+- `git remote show [remote-name]`  # 查看某一个远程仓库信息
+- `git remote add <shortname> <url>`# 添加一个新的远程 git 仓库, 同时指定一个简写
+- `git remote rm lvlin`        # 移除一个远程仓库
+- `git remote rename temp lvlin`  # 修改一个远程仓库的简写名, 这同样也会修改远程分支名字
+
+### 推送数据
+
+- `git fetch origin master`    # 从远程获取最新版本到本地, 不会自动merge
+- `git merge origin/master`    # 合并 origin/master 至本地分支
+- `git pull origin master`    # = git fetch + git merge
+- `git push origin master:dev`  # 将本地的 master 分支推送至 origin 服务器的 dev 分支
+- `git push lirui@192.168.1.80~/MyWorks/VideoHandler master`
+
+### 标签
+
+- 标签不能像分支一样来回移动. 分为轻量标签（lightweight）与附注标签（annotated）
+  - 轻量标签：很像一个不会改变的分支, 只是一个特定提交的引用. 本质上是将提交校验和存储到一个文件中 - 没有保存任何其他信息
+  - 附注标签：存储在 Git 数据库中的一个完整对象.  是可以被校验的；包含打标签者的名字、电子邮件地址、日期时间；还有一个标签信息；并且可以使用 GNU Privacy Guard （GPG）签名与验证
+- `git tag`            # 列出已有的标签
+- `git tag -l 'v1.8.5*'`    # 列出1.8.5 系列的标签
+- `git tag -a v1.4 -m 'v1.4'`  # 创建一个附注标签
+- `git show v1.4`        # 查看标签信息与对应的提交信息
+- `git tag v1.4-lw`        # 创建一个轻量标签
+- `git show v1.4-lw`      # 不会看到额外的标签信息.  只会显示出提交信息
+- `git tag -a v1.2 <commit-id>` # 在 commit-id 提交上打标签
+- `git push origin --tags`    # 把所有不在远程仓库服务器上的标签全部推送到远程仓库服务器
+- `git push origin [tagname]`  # 把[tagname]标签推送到远程仓库服务器
+- `git checkout -b v2 v2.0.0`  # 在标签 v2.0.0 上创建分支 v2
 
 ## git 分支
 
@@ -274,6 +296,15 @@
   - 本地协议: 远程版本库就是硬盘内的另一个目录. 常见于团队每一个成员都对一个共享的文件系统(例如一个挂载的 NFS)拥有访问权, 或者比较少见的多人共用同一台电脑的情况
     - `git clone /opt/git/project.git`      # Git 会尝试使用硬链接（hard link）或直接复制所需要的文件
     - `git clone file:///opt/git/project.git`
+
+## 参考网站
+
+- [Git Magic](http://www-cs-students.stanford.edu/~blynn//gitmagic/)
+- [git-scm](https://git-scm.com/book/en/v2)
+
+## 好玩的网站
+
+- [github blog](https://github.blog/)
 
 [^glob]: glob 模式指 shell 所使用的简化了的正则表达式.  星号匹配零个或多个任意字符；[abc] 匹配任何一个列在方括号中的字符；问号只匹配一个任意字符；如果在方括号中使用短划线分隔两个字符, 表示所有在这两个字符范围内的都可以匹配(比如 [0-9] 表示匹配所有 0 到 9 的数字).  使用两个星号表示匹配任意中间目录.
 [^diff插件]: 可以使用 git difftool 命令来用 Araxis , emerge 或 vimdiff 等软件通过图形化的方式或其它格式输出方式输出 diff 分析结果.  使用 git difftool --tool-help 命令查看系统支持哪些 Git Diff 插件.
