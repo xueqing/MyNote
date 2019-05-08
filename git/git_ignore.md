@@ -5,7 +5,7 @@
   - [斜线](#%E6%96%9C%E7%BA%BF)
   - [两个星号](#%E4%B8%A4%E4%B8%AA%E6%98%9F%E5%8F%B7)
   - ["!" 取消忽视](#%22%22-%E5%8F%96%E6%B6%88%E5%BF%BD%E8%A7%86)
-  - [ignore 模板](#ignore-%E6%A8%A1%E6%9D%BF)
+  - [参考](#%E5%8F%82%E8%80%83)
 
 ## 通配符
 
@@ -42,6 +42,7 @@ build/debug/*
 # build/**
 ```
 
-## ignore 模板
+## 参考
 
-- [参考](https://github.com/github/gitignore)
+- [教程](https://git-scm.com/docs/gitignore)
+- [ignore 模板](https://github.com/github/gitignore)
