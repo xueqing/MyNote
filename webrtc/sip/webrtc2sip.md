@@ -42,7 +42,9 @@
     - [8.4.1 webrtc2sip 解析 sipML5 请求失败](#841-webrtc2sip-%E8%A7%A3%E6%9E%90-sipml5-%E8%AF%B7%E6%B1%82%E5%A4%B1%E8%B4%A5)
     - [8.5 关于 Chrome 使用](#85-%E5%85%B3%E4%BA%8E-chrome-%E4%BD%BF%E7%94%A8)
     - [8.6 守护进程](#86-%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B)
-  - [9 参考](#9-%E5%8F%82%E8%80%83)
+  - [9 运行问题](#9-%E8%BF%90%E8%A1%8C%E9%97%AE%E9%A2%98)
+    - [9.1 ERR_SSL_VERSION_OR_CIPHER_MISMATCH](#91-errsslversionorciphermismatch)
+  - [10 参考](#10-%E5%8F%82%E8%80%83)
 
 ## 1 术语
 
@@ -449,13 +451,13 @@ sudo chown -R ubuntu:ubuntu ./
 - 开启 sipML5 服务，使用[lite_server](https://www.npmjs.com/package/lite-server)，网址默认`http://localhost:3000/`
 - 配置注册信息，具体值见下面的表格
   - 假定 sipML5 服务运行在 192.168.1.140 机器
-  - 传统的 SIP 网关接收待认证的注册，用户编码是 34020000001310000001，密码是 12345678(默认)，端口是 5062(默认)
+  - 传统的 SIP 网关接收待认证的注册，用户编码是 34020000001110000001，密码是 12345678(默认)，端口是 5062(默认)
 
 | 注册项 | 值 | 必填(Y/N) |
 | --- | --- | --- |
 | Display Name | test | N |
-| Private Identity | 34020000001310000001 | Y |
-| Public Identity | sip:34020000001310000001@192.168.1.140:5062 | Y |
+| Private Identity | 34020000001110000001 | Y |
+| Public Identity | sip:34020000001110000001@192.168.1.140:5062 | Y |
 | Password | 12345678 | N |
 | Realm | 192.168.1.140 | Y |
 
@@ -467,6 +469,8 @@ sudo chown -R ubuntu:ubuntu ./
 | --- | --- |
 | WebSocket Server URL | ws://192.168.1.140:10060 |
 | SIP outbound Proxy URL | udp://192.168.1.140:5060 |
+
+- 会话配置 phonenumber 为 34020000001310000001
 
 ## 6 互操作性
 
@@ -626,7 +630,16 @@ MSG: Failed to parse SIP message
   - 拷贝二进制文件 process-monitor 到 webrtc2sip 的 sbin 目录
   - 执行命令 `./process-monitor webrtc2sip`
 
-## 9 参考
+## 9 运行问题
+
+### 9.1 ERR_SSL_VERSION_OR_CIPHER_MISMATCH
+
+- sipML5 报错：Error in connection establishment: net::ERR_SSL_VERSION_OR_CIPHER_MISMATCH
+- webrtc2sip 报错：Remote party requesting DTLS-DTLS (UDP/TLS/RTP/SAVPF) but this option is not enabled
+  - <https://github.com/DoubangoTelecom/webrtc2sip/blob/master/FAQ.md#i-see-remote-party-requesting-dtls-dtls-udptlsrtpsavpf-but-this-option-is-not-enabled-how-can-i-fix-this>
+  - <https://stackoverflow.com/questions/36293964/dtls-dtls-is-not-enabled>
+
+## 10 参考
 
 - [webrtc2sip - Building_Source_v2_0.wiki](https://code.google.com/archive/p/webrtc2sip/wikis/Building_Source_v2_0.wiki)
 - [ice](https://doc.zeroc.com/ice/3.7/introduction)
