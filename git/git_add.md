@@ -16,4 +16,8 @@ git add -u [<path>]
 git add -A [<path>]
 # 查看所有修改过或已删除文件但是未提交的文件
 git add -i [<path>]
+# 交互式添加修改内容到本次提交
+git add -i
+# 交互式选择当前的修改添加到本次提交，只需输入 y/n
+git add -p
 ```

@@ -31,9 +31,9 @@ git config --global core.editor emacs
 
 ```sh
 # 配置某个项目用户名
-git config --local user.name xueqing
+git config user.name xueqing
 # 配置某个项目 email
-git config --local user.email haijuanchen.sun@gmail.com
+git config user.email haijuanchen.sun@gmail.com
 ```
 
 - 每一个级别覆盖上一级别的配置, 所以 .git/config 的配置变量会覆盖 /etc/gitconfig 中的配置变量

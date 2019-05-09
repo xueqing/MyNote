@@ -4,6 +4,7 @@
   - [变基](#%E5%8F%98%E5%9F%BA)
   - [git rebase](#git-rebase)
     - [git rebase -i](#git-rebase--i)
+  - [参考](#%E5%8F%82%E8%80%83)
 
 ## 变基
 
@@ -36,4 +37,10 @@ git rebase base_branch topic_branch
 ```sh
 # 放弃修改
 git rebase --abort
+# 重写从初次提交到达 commit 的所有历史
+git rebase -i --root <commit>
 ```
+
+## 参考
+
+- [git rebase](https://git-scm.com/docs/git-rebase)

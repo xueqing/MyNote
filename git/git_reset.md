@@ -1,7 +1,15 @@
-# 重设分支
+# 重设状态
 
-- 将当前的分支重设(reset)到指定的 commit 或 HEAD(默认), mixed 是默认模式
-  -`git reset [--hard | soft | mixed | merge | keep] [HEAD | <commit>]`
+- 将当前分支的 HEAD 重设到指定的状态
+
+## 语法
+
+- `git reset [<mode>] [-q] [<commit>]`
+  - mode 包括`--soft | --mixed [N] | --hard | --merge | --keep`
+  - 设置当前分支的 HEAD 到 `<commit>`
+  - mixed 是默认模式
+- `reset` 之前，git 会保存原本的 `HEAD` 到 `ORIG_HEAD`
+  - `git reset <commit>` 之后可通过 `git reset ORIG_HEAD` 回到原来的地方
 
 ```sh
 # 重设暂存区和工作区, 丢弃所有改变, 把 HEAD 指向 commit

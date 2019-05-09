@@ -11,6 +11,12 @@
   - [git 基础](#git-%E5%9F%BA%E7%A1%80)
     - [git 仓库、工作目录、暂存区域、文件状态](#git-%E4%BB%93%E5%BA%93%E5%B7%A5%E4%BD%9C%E7%9B%AE%E5%BD%95%E6%9A%82%E5%AD%98%E5%8C%BA%E5%9F%9F%E6%96%87%E4%BB%B6%E7%8A%B6%E6%80%81)
     - [初始化版本库](#%E5%88%9D%E5%A7%8B%E5%8C%96%E7%89%88%E6%9C%AC%E5%BA%93)
+      - [新建版本库](#%E6%96%B0%E5%BB%BA%E7%89%88%E6%9C%AC%E5%BA%93)
+      - [克隆版本库](#%E5%85%8B%E9%9A%86%E7%89%88%E6%9C%AC%E5%BA%93)
+      - [版本库目录 .git](#%E7%89%88%E6%9C%AC%E5%BA%93%E7%9B%AE%E5%BD%95-git)
+      - [blob 对象](#blob-%E5%AF%B9%E8%B1%A1)
+      - [tree 对象](#tree-%E5%AF%B9%E8%B1%A1)
+      - [commit 对象](#commit-%E5%AF%B9%E8%B1%A1)
     - [常用 git 命令](#%E5%B8%B8%E7%94%A8-git-%E5%91%BD%E4%BB%A4)
   - [git 服务器](#git-%E6%9C%8D%E5%8A%A1%E5%99%A8)
   - [参考网站](#%E5%8F%82%E8%80%83%E7%BD%91%E7%AB%99)
@@ -75,7 +81,7 @@ popd
 
 ### 初始化版本库
 
-- 新建版本库
+#### 新建版本库
 
 ```sh
 # 确定版本库目录
@@ -87,9 +93,10 @@ git init
 git init --bare
 ```
 
-- 克隆版本库
-  - 自动将其添加为远程仓库并默认以 “origin” 为简写
-  - 自动设置本地 master 分支跟踪克隆的远程仓库的 master 分支
+#### 克隆版本库
+
+- 自动将其添加为远程仓库并默认以 “origin” 为简写
+- 自动设置本地 master 分支跟踪克隆的远程仓库的 master 分支
 
 ```sh
 # 1 使用 ssh 协议克隆
@@ -103,18 +110,34 @@ git clone git@github.com:tensorflow/tensorflow.git MyTensorflow
 git clone https://github.com/tensorflow/tensorflow.git
 ```
 
-- 版本库目录 .git
+#### 版本库目录 .git
 
 | 文件(夹)名 | 描述 |
 | --- | --- |
-| HEAD | git项目当前所处分支 |
+| HEAD | 指向最新提交 |
 | config | 项目的配置信息, git config 命令会改动它 |
 | description | 项目的描述信息 |
 | hooks | 系统默认钩子脚本目录 |
-| index | 索引文件 |
+| index | 索引文件，记录统计版本库的每个文件，如大小、创建时间和最后修改时间，对比当前统计信息和索引确定文件是否被修改 |
 | logs | 各个 refs 的历史信息 |
 | objects | git 本地仓库的所有对象(commits, trees, blobs, tags) |
 | refs | 标识项目里的每个分支指向了哪个提交(commit) |
+
+#### blob 对象
+
+- git 基于“内容寻址”：文件不是按照文件名存储，而是按照包含内容的哈希值，存在一个叫“blob 对象”的文件中
+- 可以把文件内容的哈希值看做一个唯一 ID
+- blob 对象存储文件内容，与文件名无关
+
+#### tree 对象
+
+- tree 对象：一组包含文件类型、文件名和哈希值的数据
+- tree 对象存储文件名
+
+#### commit 对象
+
+- commit 对象存储提交信息及其创建的日期和时间
+- commit 对象是原子性的，即一个提交不会部分地记录变更
 
 ### 常用 git 命令
 

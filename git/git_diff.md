@@ -1,5 +1,9 @@
 # 版本比较
 
+- [版本比较](#%E7%89%88%E6%9C%AC%E6%AF%94%E8%BE%83)
+  - [diff 插件](#diff-%E6%8F%92%E4%BB%B6)
+  - [git diff](#git-diff)
+
 ## diff 插件
 
 - 可以使用 `git difftool` 命令来用 Araxis , emerge 或 vimdiff 等软件通过图形化的方式或其它格式输出方式输出 diff 分析结果

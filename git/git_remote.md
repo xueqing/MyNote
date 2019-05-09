@@ -13,4 +13,6 @@ git remote add <shortname> <url>
 git remote rm lvlin
 # 修改一个远程仓库的简写名, 这同样也会修改远程分支名字
 git remote rename temp lvlin
+# 列出远端分支
+git remote -r
 ```
