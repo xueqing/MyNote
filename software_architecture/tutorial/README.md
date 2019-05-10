@@ -43,3 +43,11 @@
 - [10 基于组件的架构](./10-component-based-architecture.md)
 - [11 用户界面](./11-user-interface.md)
 - [12 架构技术](./12-architecture-techniques.md)
+
+## 有用的书
+
+- [Software Architecture in Practice (3rd Edition) (SEI Series in Software Engineering)](https://www.amazon.com/Software-Architecture-Practice-3rd-Engineering/dp/0321815734/httpwwwtuto0a-20)
+- [Beyond Software Architecture: Creating and Sustaining Winning Solutions](https://www.amazon.com/Beyond-Software-Architecture-Sustaining-Solutions/dp/0201775948/httpwwwtuto0a-20)
+- [Software Systems Architecture: Working With Stakeholders Using Viewpoints and Perspectives (2nd Edition)](https://www.amazon.com/Software-Systems-Architecture-Stakeholders-Perspectives/dp/032171833X/httpwwwtuto0a-20)
+- [Software Architecture: Foundations, Theory, and Practice](https://www.amazon.com/Software-Architecture-Foundations-Theory-Practice/dp/0470167742/httpwwwtuto0a-20)
+- [Software Architecture in Practice (2nd Edition)](https://www.amazon.com/Software-Architecture-Practice-2nd-Bass/dp/0321154959/httpwwwtuto0a-20)
