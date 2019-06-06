@@ -57,10 +57,19 @@ hget key_name field_name
 sudo vim /etc/redis/redis.conf
 # 开启远程访问
 # 注释掉 bind 127.0.0.1
+# 如果有其他 bind 语句也注释
+
+## 配置外网访问需要修改 Linux 防火墙(iptables)，开启 redis 端口
+# -A INPUT -m state -state NEW -m tcp -p tcp -dport 6379 -j ACCEPT
+# ...
+# -A INPUT -j REJECT -reject-with icmp-host-prohibited
+# 执行 service iptables restart
 
 # 加密访问
 # 打开注释 requirepass xxxxx，并且把密码 xxxx 改为 admin
 ```
+
+- 不建议在公网访问 redis，因为 redis 处理速度非常快。所以如果密码简单，外部用户可通过暴力破解密码
 
 ## 4 参考
 
