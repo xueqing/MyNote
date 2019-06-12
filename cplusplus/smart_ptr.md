@@ -49,6 +49,7 @@
         return 0;
     }
     ```
+
 - 输出结果如下
 
     ```code
@@ -58,6 +59,7 @@
     0           // NULL
     0x1b42c20
     ```
+
 - `auto_ptr`的拷贝构造函数和赋值运算符实际上不会拷贝存储的指针，而是转移指针，从而使得源指针为空。`auto_ptr`实现了严格的所有权管理，使得同一时刻只有一个`auto_ptr`对象可以拥有该指针。
 - 丢弃`auto_ptr`的原因：`auto_ptr`的赋值运算转移所有权，并且重置右值的`auto_ptr`为空指针。因此，`auto_ptr`不能用于 STL 容器。
 
@@ -71,6 +73,7 @@
     unique_ptr<A> ptr1 (new A);
     unique_ptr<A> ptr2 = ptr1; // Error: can't copy unique_ptr
     ```
+
 - 可以使用`std::move()`语法转移持有指针的所有权给另外一个`unique_ptr`。`unique_ptr<A> ptr2 = move(ptr1);`
 - 下面的代码阐述了`unique_ptr`的使用
 
@@ -111,6 +114,7 @@
         return 0;
     }
     ```
+
   - 输出结果如下：
 
     ```code
@@ -179,6 +183,7 @@
         return 0;
     }
     ```
+
   - 输出结果如下：
 
     ```code

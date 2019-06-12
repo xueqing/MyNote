@@ -25,5 +25,4 @@
     - 架构师和开发者。这个系统也可以让我们查看属于单个文件的评语，这样有利于我们重构代码
 - [Jupiter](https://code.google.com/archive/p/jupiter-eclipse-plugin)
   - 是一个 Eclipse IDE 的插件
-
 - 风格检查工具：PC-Lint

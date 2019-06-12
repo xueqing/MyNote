@@ -76,5 +76,5 @@
 - 在[docker 网站](https://index.docker.io/)注册一个账号
 - 构建镜像`docker build -t $image_name`
 - 登录`docker login`
-- 提交到 Docker 索引仓库`docker push $image_name`上传 OK 的话，可以得到类似地址：https://index.docker.io/u/yongboy/java7/
+- 提交到 Docker 索引仓库`docker push $image_name`上传 OK 的话，可以得到类似地址：(https://index.docker.io/u/yongboy/java7/)
 - 使用镜像`docker pull $image_name`

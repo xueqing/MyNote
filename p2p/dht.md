@@ -29,7 +29,8 @@
   BitTorrent DHT 协议是扩充协议没有中心化的
   [Bittorrent DHT 去中心化协议](https://www.jianshu.com/p/ffeed4801b0e)
   关键名词
-  >- peers:在本文档中，一个peer可以是任何参与下载的 BitTorrent 客户端
+
+  >- peers: 在本文档中，一个 peer 可以是任何参与下载的 BitTorrent 客户端
   >- tracker 是一个响应HTTP GET请求的HTTP/HTTPS服务
   >- node 是一个dht节点
 

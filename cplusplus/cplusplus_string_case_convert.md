@@ -20,7 +20,7 @@ void CString::StringToLower(std::string &str)
 - 可使用 boost 库
 
 ```c++
-#include <boost/algorithm/string.hpp> 
+#include <boost/algorithm/string.hpp>
 using namespace boost;
 // use to_lower/to_upper function
 ```
