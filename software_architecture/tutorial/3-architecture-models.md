@@ -45,7 +45,7 @@
   - 和其他 4 个视图一起展现架构
 
 4+1 视图的关系如下
-![4+1视图](four_plus_one_view_model.jpg)
+![4+1视图](ref/four_plus_one_view_model.jpg)
 
 ## 3.3 架构描述语言
 

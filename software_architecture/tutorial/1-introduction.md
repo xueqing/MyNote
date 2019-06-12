@@ -9,7 +9,7 @@
   - [1.6 质量情景](#16-%E8%B4%A8%E9%87%8F%E6%83%85%E6%99%AF)
 
 软件架构和设计有关的元素如下图
-![软件架构类型](./software_architecture_types.jpg)
+![软件架构类型](ref/software_architecture_types.jpg)
 
 ## 1.1 软件架构
 
@@ -30,7 +30,7 @@
   - 作为开发过程中的一个蓝图
   - 指导执行任务，包括详细设计、编码、集成、测试
 - 软件设计在详细设计、编码、继承和测试之前，在领域分析、需求分析和风险分析之后
-  ![软件设计](software_design.jpg)
+  ![软件设计](ref/software_design.jpg)
 
 ## 1.3 架构目标
 

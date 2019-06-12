@@ -20,15 +20,15 @@
   - 可发送命令给模型，更新模型的状态
   - 也可发送命令给相关的视图，改变视图的展示
 - 视图：格式化模型的数据并展示给用户
-- 如图![MVC](mvc_component.jpg)
+- 如图![MVC](ref/mvc_component.jpg)
 - 可分为
   - MVC-I
-    - 如图![MVC-I](mvc_1_architecture.jpg)
+    - 如图![MVC-I](ref/mvc_1_architecture.jpg)
     - 模型模块通知控制器-视图模块数据的变化，随之改变对应的图形化数据展示
     - 模型模块提供所有的数据和域服务
     - 二者的连接可以是订阅-通知式的，即控制器视图订阅模型，模型将变化通知给控制器-视图
   - MVC-II
-    - 如图![MVC-II](mvc_2_architecture.jpg)
+    - 如图![MVC-II](ref/mvc_2_architecture.jpg)
     - 视图层展示数据
     - 控制器接收输入请求，验证输入数据，初始化模型、视图以及二者的连接，分发任务
 - 应用：适用于交互式应用
@@ -48,10 +48,10 @@
   - 展示组件：格式化数据并展示给用户
   - 抽象组件：取回并处理数据
   - 控制器组件：处理组件之间的控制流或通信等任务
-- 如图![PAC](pac_design.jpg)
+- 如图![PAC](ref/pac_design.jpg)
 - 展示组件和抽象组件只能通过控制器组件通信
 - 多代理的 PAC
-  - 如图![多代理的 PAC](multiple_agent_in_pac.jpg)
+  - 如图![多代理的 PAC](ref/multiple_agent_in_pac.jpg)
   - 每个代理有自己特别指定的工作
     - 顶层代理提供核心数据和业务逻辑
     - 底层代理定义特定的数据和展示

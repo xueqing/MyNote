@@ -6,7 +6,7 @@
   - [9.3 代理(Broker)架构](#93-%E4%BB%A3%E7%90%86broker%E6%9E%B6%E6%9E%84)
   - [9.4 面向服务的架构](#94-%E9%9D%A2%E5%90%91%E6%9C%8D%E5%8A%A1%E7%9A%84%E6%9E%B6%E6%9E%84)
 
-- 中间件是分布式架构的基础结构。如图![中间件](concepts_distributed_architecture.jpg)
+- 中间件是分布式架构的基础结构。如图![中间件](ref/concepts_distributed_architecture.jpg)
 - 分布式架构侧重于透明性、可靠性、可用性
 - 关于透明性
   - 访问：隐藏访问资源的方式和数据平台的差异
@@ -22,7 +22,7 @@
 
 ## 9.1 客户端服务端架构
 
-- 如图![客户端-服务端架构](two_tier_client_server_architecture.jpg)
+- 如图![客户端-服务端架构](ref/two_tier_client_server_architecture.jpg)
 - 服务端提供服务，客户端使用这些服务
 - 服务端不需要知道客户端，客户端需要知道服务端的身份
 - 优点：分离用户接口展示和业务逻辑处理；服务组件复用，可能并发；简化设计和开发；易迁移或整合已有应用到分布式环境；多客户端访问一个高性能的服务可充分利用资源
@@ -30,9 +30,9 @@
 
 ## 9.2 多层架构
 
-- 如图![多层架构](n_tier_architecture.jpg)
+- 如图![多层架构](ref/n_tier_architecture.jpg)
 - 一般分为三层：展示层、应用层(也叫业务逻辑层、逻辑层、中间层)和数据层
-  - 如图![三层架构](data_tier.jpg)
+  - 如图![三层架构](ref/data_tier.jpg)
 - 优点：易管理、性能好；可复用，易扩展；多线程支持，降低网络负载；易维护，灵活性高
 - 缺点：不易测试，缺少测试工具；可靠性和可用性对服务要求更高
 
@@ -57,18 +57,18 @@
     - 接收请求，解包请求，分割方法参数，调用合适的服务，发送结果，发送给客户端
   - bridge：基于不同的通信协议连接两个不同的网络，协调不同的 broker
     - 可选组件，隐藏两个 broker 互相操作的实现细节
-- 如图![代理架构](broker_model.jpg)
+- 如图![代理架构](ref/broker_model.jpg)
 - CORBA 是针对对象请求代理的国际化标准——一个管理分布式对象通信的中间件
-  - 如图![CORBA](corba_architecture.jpg)
+  - 如图![CORBA](ref/corba_architecture.jpg)
 
 ## 9.4 面向服务的架构
 
-- 如图![面向服务的架构](soa.jpg)
+- 如图![面向服务的架构](ref/soa.jpg)
 - 面向服务的架构(SOA, service-oriented architecture)是一个客户端/服务端设计，支持业务驱动
   - 应用包含软件服务端和软件服务消费者
   - 服务之间的连接通过通用的基于消息的协议(比如 SOAP 网络服务协议)，可以在服务之间发送请求和回复
 - 特点：分布式部署；可组合性；互用性；复用性
-- SOA 操作如图![SOA 操作](soa_operations.jpg)
+- SOA 操作如图![SOA 操作](ref/soa_operations.jpg)
 - 优点：
   - 低耦合，可以充分利用已有的服务资源，无关平台和技术限制
   - 无状态，每个服务组件和其他服务相互独立
