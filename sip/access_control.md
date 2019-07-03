@@ -35,15 +35,17 @@
 
 ## 3 访问控制模型
 
-- 基于属性的访问控制(Attribute-based access control, ABAC)：通过使用策略评估属性(用户属性、资源属性和环境条件)授予访问权限
-- 自主访问控制(Discretionary access control, DAC)：由数据所有者确定谁可以访问指定的资源
-- 基于历史的访问控制(History-based access control, HBAC)：根据请求组的历史活动(行为、请求时间间隔、请求内容等)实时评估授予或取消访问权限。比如，当请求间隔超过一秒一个时，可以授予或取消对服务或数据源的访问权限
-- 基于身份的访问控制(Identity-based access control, IBAC)：网络管理员使用此模型可基于个人需求更加有效地管理活动和访问
-- 强制访问控制(Mandatory access control, MAC)：用户没有太多自由确定谁可以访问他们的文件。由系统对用户创建的对象进行统一的强制性控制
-- 基于组织的访问控制(Organization-based access control, OrBAC)：允许策略设计者定义一个与实现无关的安全策略
-- 基于角色的访问控制(Role-based access control, RBAC)：根据工作标题允许访问。RBAC 在提供对对象的访问时很大程度上忽略了自由。例如，一个人类资源专家不应该允许创建网络账户，此角色应该保留给网络管理员
-- 基于规则的访问控制(Rule-based access control, RAC)：大部分基于上下文。比如只允许学生在一天的一部分时间段使用实验室
-- 基于责任的访问控制(Responsibility based access control)：基于分配给一个演员或业务角色的责任访问信息
+| 访问控制模型 | 描述 |
+| --- | --- |
+| 基于属性的访问控制(Attribute-based access control, ABAC) | 通过使用策略评估属性(用户属性、资源属性和环境条件)授予访问权限 |
+| 自主访问控制(Discretionary access control, DAC) | 由数据所有者确定谁可以访问指定的资源 |
+| 基于历史的访问控制(History-based access control, HBAC) | 根据请求组的历史活动(行为、请求时间间隔、请求内容等)实时评估授予或取消访问权限。比如，当请求间隔超过一秒一个时，可以授予或取消对服务或数据源的访问权限 |
+| 基于身份的访问控制(Identity-based access control, IBAC) | 网络管理员使用此模型可基于个人需求更加有效地管理活动和访问 |
+| 强制访问控制(Mandatory access control, MAC) | 用户没有太多自由确定谁可以访问他们的文件。由系统对用户创建的对象进行统一的强制性控制 |
+| 基于组织的访问控制(Organization-based access control, OrBAC) | 允许策略设计者定义一个与实现无关的安全策略 |
+| 基于角色的访问控制(Role-based access control, RBAC) | 根据工作标题允许访问。RBAC 在提供对对象的访问时很大程度上忽略了自由。例如，一个人类资源专家不应该允许创建网络账户，此角色应该保留给网络管理员 |
+| 基于规则的访问控制(Rule-based access control, RAC) | 大部分基于上下文。比如只允许学生在一天的一部分时间段使用实验室 |
+| 基于责任的访问控制(Responsibility based access control) | 基于分配给一个演员或业务角色的责任访问信息 |
 
 ## 4 基于角色的访问控制 vs 基于属性的访问控制
 
