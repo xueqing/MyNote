@@ -17,7 +17,7 @@
         - 实部 r 和虚部 i 应该是同一类型，float32 或 float64，返回的复数类型是 complex64 或 complex128
       - 也可直接生成复数`c := 6 + 7i`
     - byte 是 uint8 的别名
-    - rune 是 int32 的别名
+    - rune 是 int32 的别名，表示 Unicode code point
     - uintptr 无符号整型，用于存放一个指针
   - 字符串类型：字节使用 UTF-8 编码标识 Unicode 文本，是字节的集合
   - 派生类型：
