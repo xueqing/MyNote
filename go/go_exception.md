@@ -1,18 +1,18 @@
 # 异常处理
 
-- [异常处理](#%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86)
-  - [defer 使用](#defer-%E4%BD%BF%E7%94%A8)
-  - [panic 使用](#panic-%E4%BD%BF%E7%94%A8)
-  - [recover 使用](#recover-%E4%BD%BF%E7%94%A8)
+- [异常处理](#%e5%bc%82%e5%b8%b8%e5%a4%84%e7%90%86)
+  - [defer 使用](#defer-%e4%bd%bf%e7%94%a8)
+    - [defer 栈](#defer-%e6%a0%88)
+  - [panic 使用](#panic-%e4%bd%bf%e7%94%a8)
+  - [recover 使用](#recover-%e4%bd%bf%e7%94%a8)
 
 - Go 不支持 try..catch..finally 这种异常。使用多值返回来返回错误
-- 在极端情况下才用异常（如除数为 0），异常处理使用了 defer(#defer-使用)，panic(#panic-使用)，recover(#recover-使用)
+- 在极端情况下才用异常（如除数为 0），异常处理使用了 defer，panic，recover
 - go 可以抛出一个 panic 的异常，在 defer 中通过 recover 捕获异常，然后处理
 
 ## defer 使用
 
-- 可以在函数中添加多个 defer 语句。当函数执行到最后，返回之前，会逆序执行这些语句，类似一个 defer 栈
-- defer 的参数值是在执行 defer 语句的地方计算的，而不是在调用实际函数的时候计算
+- defer 的参数值是在执行 defer 语句的地方立即计算的，而不是在调用实际函数的时候计算，但是会在对应环境返回时调用函数
 - 应用场景：与代码流无关必须执行的函数或方法调用
   - 等待并发结束
   - 打开一些资源的时候，遇到错误需要提前返回，在返回前需要关闭对应的资源
@@ -33,6 +33,28 @@
       return true
   }
   ```
+
+### defer 栈
+
+- 可以在函数中添加多个 defer 语句。当函数执行到最后，返回之前，会逆序执行这些语句，类似一个 defer 栈
+
+```go
+package main
+
+import (
+    "fmt"
+)
+
+func main() {
+    fmt.Println("counting")
+
+    for i := 0; i < 10; i++ {
+        defer fmt.Println(i)
+    }
+
+    fmt.Println("done")
+}
+```
 
 ## panic 使用
 

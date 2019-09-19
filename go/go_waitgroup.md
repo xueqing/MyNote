@@ -1,4 +1,10 @@
-# WaitGroup
+# WaitGroup 和 worker pool
+
+- [WaitGroup 和 worker pool](#waitgroup-%e5%92%8c-worker-pool)
+  - [WaitGroup](#waitgroup)
+  - [worker pool](#worker-pool)
+
+## WaitGroup
 
 - WaitGroup 用于等待一个集合的 goroutine 执行完毕。
 - WaitGroup 是一个结构体，内部使用了一个计数器，使用 Add 可以增加计数，使用 Done 可以减少计数。当计数为 0 的时候，Wait 返回
