@@ -10,6 +10,7 @@
   - `const vname [vtype] = value`
     - 显式类型定义`const vname vtype = value`
     - 隐式类型定义`const vname = value`
+- **不能使用 `:=` 声明**
 - 相同类型声明 `const vname1, vname2, vname3 = value1, value2, value3`
 - 用于枚举
 

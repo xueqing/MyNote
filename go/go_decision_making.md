@@ -12,7 +12,7 @@
 
 ### if 语句
 
-- 类似于 for 循环，但是不需要括号，需要大括号
+- 类似于 for 循环，但是不需要小括号，需要大括号
 
 ```go
 if x < 0 {
@@ -69,19 +69,6 @@ switch var1 { //case 的值必须是相同类型
     case var2:
         //...
     default:
-        //...
-}
-```
-
-- Type...switch 语句用于判断某个 interface 变量中实际存储的变量类型
-
-```go
-switch x.(type) {
-    case type1:
-        //...
-    case type2:
-        //...
-    default://可选
         //...
 }
 ```

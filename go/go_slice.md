@@ -4,8 +4,11 @@
   - [slice](#slice)
   - [slice 长度和容量](#slice-%e9%95%bf%e5%ba%a6%e5%92%8c%e5%ae%b9%e9%87%8f)
     - [append 追加到 slice](#append-%e8%bf%bd%e5%8a%a0%e5%88%b0-slice)
+  - [copy 对 slice 拷贝](#copy-%e5%af%b9-slice-%e6%8b%b7%e8%b4%9d)
   - [对 slice 切片](#%e5%af%b9-slice-%e5%88%87%e7%89%87)
   - [slice vs array](#slice-vs-array)
+    - [创建 array 和 slice](#%e5%88%9b%e5%bb%ba-array-%e5%92%8c-slice)
+    - [切片底层是数组](#%e5%88%87%e7%89%87%e5%ba%95%e5%b1%82%e6%98%af%e6%95%b0%e7%bb%84)
   - [使用 make 函数创建 slice](#%e4%bd%bf%e7%94%a8-make-%e5%87%bd%e6%95%b0%e5%88%9b%e5%bb%ba-slice)
   - [slice 内存储 slice](#slice-%e5%86%85%e5%ad%98%e5%82%a8-slice)
   - [内存优化](#%e5%86%85%e5%ad%98%e4%bc%98%e5%8c%96)
@@ -13,7 +16,7 @@
 ## slice
 
 - 切片是对数组的抽象，是一种“动态数组”，长度不固定，可以追加元素
-- 定义`var slice_name []type`
+- 定义 `var slice_name []type`
 - 初始化
   - 直接初始化`slice_name := [] int {var1, var2..., varn}`
   - 引用数组初始化`slice_name := arr_name[:]`
@@ -34,7 +37,7 @@
 - 增加切片容量：创建一个更大的数组并把原数组的内容拷贝到新数组，新切片的容量增加一倍
   - 使用 `append(slice_name, [param_list])` 函数往切片追加新元素
     - `[param_list]`也可以是一个切片，用`...`，如`newslice := append(slice1, slice2...)`
-  - 使用 `copy(dst_slice, ori_slice)` 函数拷贝切片
+  - 使用 `copy(dst_slice, ori_slice) int` 函数拷贝切片
 
 ### append 追加到 slice
 
@@ -63,12 +66,22 @@ func main() {
 
     s = append(s, 2, 3, 4)
     printSlice(s) //len=5 cap=6 [0 1 2 3 4]
+
+    a := []int{7, 8, 9}
+    s = append(s, a...) //使用 ... 语法将参数展开为参数列表
+    printSlice(s)       //len=8 cap=12 [0 1 2 3 4 7 8 9]
 }
 
 func printSlice(s []int) {
     fmt.Printf("len=%d cap=%d %v\n", len(s), cap(s), s)
 }
 ```
+
+## copy 对 slice 拷贝
+
+- 使用 `copy(dst_slice, ori_slice) int` 函数拷贝切片
+  - 将 ori_slice 的元素复制到 dst_slice
+  - 返回复制元素的数目
 
 ## 对 slice 切片
 
@@ -105,24 +118,13 @@ func printSlice(s []int) {
 
 ## slice vs array
 
-- slice 其实是对底层数组的引用，本身不存储数据，对 slice 的修改会修改底层的数组，其他共享底层数据的 slice 也会看到底层数组的修改
-- slice 作为函数变量，函数内对 slice 的修改也会影响调用者底层数组的元素
+- 参考 [Go 切片：用法和本质](https://blog.go-zh.org/go-slices-usage-and-internals)
 
-```go
-func sliceTest() {
-  arr := [...]int{1, 2, 3, 4, 5, 6, 7}
-  sli := arr[1:4]
-  fmt.Printf("slice len=%d, cap=%d", len(sli), cap(sli)) //1,2,3,4,5,6,7
-  fmt.Println("original array ", arr) //1,2,3,4,5,6,7
-  for i := range sli {
-    sli[i]++
-  }
-  fmt.Println("modifiled array ", arr) //1,3,4,5,5,6,7
-}
-```
+### 创建 array 和 slice
 
 - 创建一个数组 `[3] bool {true, true, false}`
 - 创建一个相同的数组，并且创建数组的一个 slice 引用 `[] bool {true, true, false}`
+- **切片没有指定元素的数目**
 
 ```go
 package main
@@ -151,12 +153,36 @@ func main() {
 }
 ```
 
+### 切片底层是数组
+
+- slice 是一个数组片段的描述。它包含了指向数组的指针、片段的长度和容量(片段的最大长度)
+  - 长度是 slice 引用的元素数目
+  - 容量是底层数组的元素数目(从切片指针开始计数)
+  - 切片增长不能超出其容量，否则会导致运行时异常。也不能使用小于零的索引访问切片之前的元素
+- slice 其实是对底层数组的引用，本身不存储数据，对 slice 的修改会修改底层的数组，其他共享底层数据的 slice 也会看到底层数组的修改
+  - slice 操作不会复制底层指向的元素。它创建一个新的 slice 并复用之前 slice 的底层数组
+  - slice 操作和数组索引一样高效
+- slice 作为函数变量，函数内对 slice 的修改也会影响调用者底层数组的元素
+
+```go
+func sliceTest() {
+  arr := [...]int{1, 2, 3, 4, 5, 6, 7}
+  sli := arr[1:4]
+  fmt.Printf("slice len=%d, cap=%d", len(sli), cap(sli)) //1,2,3,4,5,6,7
+  fmt.Println("original array ", arr) //1,2,3,4,5,6,7
+  for i := range sli {
+    sli[i]++
+  }
+  fmt.Println("modifiled array ", arr) //1,3,4,5,5,6,7
+}
+```
+
 ## 使用 make 函数创建 slice
 
-- 可使用内置 `make` 函数创建切片`var slice_name []type = make([]type, len)`或`slice_name := make([]type, len)`
-  - `make` 函数`make([]T, length, [capacity])`，创建一个数组，然后返回一个引用数组的切片
-  - `length` 是数组的长度也是切片的初始长度
-  - 容量参数可选
+- 可使用内置 `make` 函数创建切片`var slice_name []type = make([]type, len, cap)`或`slice_name := make([]type, len, cap)`
+  - `make` 函数创建一个数组，然后返回一个引用数组的切片
+  - `len` 是数组的长度也是切片的初始长度
+  - `cap` 容量参数可选，默认为指定的长度大小
   - 通过 `make` 函数初始化`slice_name := make([]type, len, cap)`
 
 ```go
@@ -216,4 +242,5 @@ func main() {
 
 ## 内存优化
 
-- slice 是对底层数组的引用，因此只要 slice 在内存中，数组就不能被回收。当切片只引用了一小部分数组的数据来处理，可以使用`func copy(dst, src []T) int`来赋值切片，然后使用新切片就可以回收原始的数组
+- slice 是对底层数组的引用，因此只要 slice 在内存中，数组就不能被回收
+- 当切片只引用了一小部分数组的数据来处理，可以使用`func copy(dst, src []T) int`来赋值切片，然后使用新切片就可以回收原始的较大的数组

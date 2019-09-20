@@ -38,6 +38,8 @@
   - **建议：**不要和 go 的安装目录相同
   - 修改 `~/.bash_profile`，添加 `export GOPATH=$HOME/go`
   - 执行 `source ~/.bash_profile` 使脚本生效
+  - 修改`/etc/profile`或`~/.profile`，将 `$HOME/go/bin` 加入系统环境变量 `PATH`
+  - 执行`source`命令更新配置文件立即生效
   
 ### 测试安装
 
@@ -76,6 +78,7 @@ func main() {
 - 测试安装
   - 创建 go 的工作目录，比如 `g:\gopro`
   - 设置工作目录路径：在用户变量中加入 `GOPATH`
+  - 将 `g:\gopro\bin` 加入系统环境变量 `PATH`
   - 创建 `g:\gopro\src\hello` 目录，创建 `hello.go` 文件
   - 打开 Windows 终端，切换到 `g:\gopro\src\hello` 目录
     - 编译：`go build`，生成可执行文件 `hello.exe`
@@ -160,3 +163,7 @@ func main() {
 
 - 执行 `go mod init` 生成默认 module 文件
 - 配置环境变量 `export GOPROXY=https://goproxy.io`
+- 重启 vscode，安装插件
+  - `Ctrl+Shift+P`，输入 `go`
+  - 选择 `Install/Update Tools`
+  - 全选，安装。重启 vscode 即可

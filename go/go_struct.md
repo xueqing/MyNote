@@ -27,6 +27,7 @@ func main() {
 - 声明结构体变量：结构体字面量代表使用列举的域给新分配的结构体赋值
   - `var_name := struct_name {var1, var2...,varn}`
   - `var_name := struct_name {key1 : var1, key2 : val2..., keyn : varn}`
+    - 使用 `key:` 可以仅列出部分字段，与字段名顺序无关
 
 ```go
 package main

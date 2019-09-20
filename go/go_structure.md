@@ -13,7 +13,7 @@
   - 以小写字母开头，则对外包不可见，只在包内部可见可用（类比面向对象的 protected）
 - 执行程序
   - 程序以`.go`结尾
-  - 执行`go run filename.go`可允许代码
+  - 执行`go run filename.go`可运行代码
 - 编译程序
   - 执行`go install filename`，会寻找`filename`文件夹下的包含 main 函数的文件，编译生成二进制文件`filename`放在对应的`bin`目录下
 - Note：go 语言不支持`{`放单独一行，和 C 和 C++ 不一样
