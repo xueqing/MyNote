@@ -10,12 +10,10 @@ package main
 import "fmt"
 
 func fibonacci() func() int {
-	before := 0
-	val := 1
+	before, val := 0, 1
 	return func() int {
 		ret := before
-		before = val
-		val = ret + val
+		before, val = val, before + val
 		return ret
 	}
 }
