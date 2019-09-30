@@ -1,18 +1,21 @@
-# channel
+# 信道
 
-- [channel](#channel)
-  - [单向 channel](#%E5%8D%95%E5%90%91-channel)
-  - [for 循环接受数据](#for-%E5%BE%AA%E7%8E%AF%E6%8E%A5%E5%8F%97%E6%95%B0%E6%8D%AE)
-  - [有缓冲的 channel](#%E6%9C%89%E7%BC%93%E5%86%B2%E7%9A%84-channel)
+- [信道](#%e4%bf%a1%e9%81%93)
+  - [channel](#channel)
+  - [单向 channel](#%e5%8d%95%e5%90%91-channel)
+  - [close 关闭信道](#close-%e5%85%b3%e9%97%ad%e4%bf%a1%e9%81%93)
+  - [有缓冲的 channel](#%e6%9c%89%e7%bc%93%e5%86%b2%e7%9a%84-channel)
 
-- channel 可认为是 pipe，goroutine 通过 channel 通信
+## channel
+
+- channel 可认为是带有类型的 pipe，goroutine 通过 channel 通信
 - 每个 channel 有一个关联的类型，这个类型是 channel 允许传输的数据类型
-  - `chan T`是一个 T 类型的通道
+  - `chan T` 是一个 T 类型的通道
 - channel 的初始化值是 nil，使用 make 定义`chan_name := make(chan chan_type)`
-- 从 channel 读写数据
+- 使用信道操作符 `<-` 发送或接收值，箭头是数据流的方向
   - `data := <- chan_name`从 chan_name 读数据，当不需要保存读的数据时是`<- chan_name`
   - `chan_name <- data`往 chan_name 写数据
-  - 发送和接收模式是阻塞的，通过 channel 发送数据的时候，控制会阻塞在发送语句知道其他的 goroutine 从 channel 读数据，读数据亦然
+  - 发送和接收模式是阻塞的，通过 channel 发送数据的时候，控制会阻塞在发送语句直到其他的 goroutine 从 channel 读数据，读数据亦然
   - 避免死锁：如果等待从 channel 读或写的 goroutine 没有对应的写或读，将会阻塞
 
 ```go
@@ -64,9 +67,11 @@ func unidirectionalChannelTest() {
 }
 ```
 
-## for 循环接受数据
+## close 关闭信道
 
-- 发送者可以通过`close chan_name`关闭 channel，通知接收者没有数据了，接收者通过`var, ok := <- chan_name`接受数据，如果是已经关闭的 channel，ok 会赋值 false，主要在用`for range`循环从 channel 不断接受数据时使用
+- 发送者可以通过`close chan_name`关闭 channel，通知接收者没有数据了，接收者通过`var, ok := <- chan_name`接受数据，如果是已经关闭的 channel，ok 会赋值 false，主要在用 `for range` 循环从 channel 不断接受数据时使用
+- **只有发送者才能关闭信道**。向一个已经关闭的信道发送数据会引发程序 panic
+- **信道与文件不同，通常情况下无需关闭**。只有在必须告诉接收者不再有需要发送的值时才有必要关系，例如终止一个 `for range` 循环
 
 ```go
 func chanSender(chanop chan int) {
@@ -139,4 +144,4 @@ func ChannelTest() {
 - channel 默认没有缓冲，发送和接收都会阻塞
 - `make(chan type, capacity)`可以创建 buffered channel，只有缓冲满的时候发送会阻塞，只有缓冲空的时候接收会阻塞
   - channel 容量默认为 0，即没有缓冲，会阻塞
-  - 长度是 channel 缓冲先有的元素数目，容量是 channel 缓冲最多可以容纳的数目
+  - 长度是 channel 缓冲现有的元素数目，容量是 channel 缓冲最多可以容纳的数目

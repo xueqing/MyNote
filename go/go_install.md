@@ -36,9 +36,9 @@
 - 默认工作目录是 `$HOME/go`
 - 如果需要自定义工作目录：
   - **建议：**不要和 go 的安装目录相同
-  - 修改 `~/.bash_profile`，添加 `export GOPATH=$HOME/go`
-  - 执行 `source ~/.bash_profile` 使脚本生效
-  - 修改`/etc/profile`或`~/.profile`，将 `$HOME/go/bin` 加入系统环境变量 `PATH`
+  - 修改 `~/.bashrc`，添加 `export GOPATH=$HOME/go`
+  - 执行 `source ~/.bashrc` 使脚本生效
+  - 修改`/etc/profile`或`~/.profile`，添加 `export GOROOT=$HOME/go`，将 `$HOME/go/bin` 加入系统环境变量 `PATH`
   - 执行`source`命令更新配置文件立即生效
   
 ### 测试安装

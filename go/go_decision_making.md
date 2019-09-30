@@ -121,15 +121,16 @@ func main() {
 
 ## select
 
-- 类似于 switch 语句，会随机执行一个可允许的 case，如果没有 case 可以允许则阻塞到有 case 可以运行
-  - case 必须是一个通信
-  - 所有 channel 表达式会被求值
+- `select` 语句使一个 goroutine 可以等待多个通信操作
+- 类似于 `switch` 语句，会随机执行一个可允许的 `case`，如果没有 `case` 可以允许则阻塞到有 `case` 可以运行
+  - `case` 必须是一个通信，所有 `channel` 表达式会被求值
   - 所有发送的表达式会被求值
-  - 任意某个 channel 可以进行，就会执行，其他的被忽略
-  - 如果多个 case 可以执行，会随机公平选择一个执行，忽略其他
-  - 没有可以执行的 case 语句
-    - 如果有 default，则执行 default
-    - 否则阻塞至某个通信可以运行，go 不会重新对 channel 或值进行求值
+  - 任意某个 `channel` 可以进行，就会执行，其他的被忽略
+  - 如果多个 `case` 可以执行，会随机公平选择一个执行，忽略其他
+  - 没有可以执行的 `case` 语句
+    - 如果有 `default`，则执行 `default`
+    - 否则阻塞至某个通信可以运行，go 不会重新对 `channel` 或值进行求值
+    - 为了在尝试发送或者接收时不发生阻塞，可使用 `default` 分支
 
 ```go
 select {
@@ -139,5 +140,36 @@ select {
         //...
     default:
         //...
+}
+```
+
+```go
+package main
+
+import "fmt"
+
+func fibonacci(c, quit chan int) {
+    x, y := 0, 1
+    for {
+        select {
+        case c <- x:
+            x, y = y, x+y
+        case <-quit:
+            fmt.Println("quit")
+            return
+        }
+    }
+}
+
+func main() {
+    c := make(chan int)
+    quit := make(chan int)
+    go func() {
+        for i := 0; i < 10; i++ {
+            fmt.Println(<-c)
+        }
+        quit <- 0
+    }()
+    fibonacci(c, quit)
 }
 ```
