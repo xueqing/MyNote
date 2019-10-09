@@ -8,6 +8,8 @@
     - [Go 编译速度快](#go-%e7%bc%96%e8%af%91%e9%80%9f%e5%ba%a6%e5%bf%ab)
   - [导入匿名包](#%e5%af%bc%e5%85%a5%e5%8c%bf%e5%90%8d%e5%8c%85)
   - [包的初始化入口 init](#%e5%8c%85%e7%9a%84%e5%88%9d%e5%a7%8b%e5%8c%96%e5%85%a5%e5%8f%a3-init)
+  - [内部包](#%e5%86%85%e9%83%a8%e5%8c%85)
+  - [包的文档化](#%e5%8c%85%e7%9a%84%e6%96%87%e6%a1%a3%e5%8c%96)
 
 ## package
 
@@ -133,3 +135,19 @@ func Diagonal(len, width float64) float64 {
   return diagonal
 }
 ```
+
+## 内部包
+
+- 内部包只能被另一个包导入。这个包位于以 internal 目录的父目录为根目录的树中
+- 内部包可以不需要导出标识符就可以被满足条件的包访问
+- 例如有下面的文件夹 `net/http` `net/http/internal/chunked` `net/http/httputil` `net/url`
+  - `net/http/httputil` 和 `net/http` 可以导入 `net/http/internal/chunked`
+  - `net/url` 不可以导入 `net/http/internal/chunked`
+  - `net/url` 可以导入 `net/http/httputil`
+
+## 包的文档化
+
+- 文档注释是完整的语句，使用声明的包名作为开头的第一句注释通常是总结
+  - 可以出现在任何文件，但是必须只有一个
+  - 文件名通常是 `doc.go`
+- 函数参数和其他的标识符不用括号或特别标注
