@@ -14,6 +14,7 @@
   - GitHub (Git)
   - Google Code Project Hosting (Git, Mercurial, Subversion)
   - Launchpad (Bazaar)
+  - 这些网站的项目包路径有一个共同标准：远程包路径格式是 `网站域名/作者或机构/项目名`
 - 如 `go get github.com/hyper-carrot/go_lib/logging`
 - `go get` 支持自定义域名的功能，具体参见 `go help remote`
 - 除非要求强行更新代码包，否则 `go get` 命令不会进行重复下载

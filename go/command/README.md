@@ -15,7 +15,7 @@
 | [generate](./go_generate.md) | 通过处理源生成 Go 文件 |
 | [get](./go_get.md) | 为当前 module 添加依赖并且安装依赖 |
 | [install](./go_install.md) | 编译和安装包和依赖 |
-| list | 列举当前全部安装的包或 module |
+| [list](./go_list.md) | 列举当前全部安装的包或 module |
 | mod | 维护 module |
 | [run](./go_run.md) | 编译和运行 Go 程序 |
 | test | 测试包 |
