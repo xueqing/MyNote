@@ -16,7 +16,7 @@
 | [get](./go_get.md) | 为当前 module 添加依赖并且安装依赖 |
 | [install](./go_install.md) | 编译和安装包和依赖 |
 | [list](./go_list.md) | 列举当前全部安装的包或 module |
-| mod | 维护 module |
+| [mod](./go_mod.md) | 维护 module |
 | [run](./go_run.md) | 编译和运行 Go 程序 |
 | test | 测试包 |
 | tool | 运行指定的 go 工具 |
