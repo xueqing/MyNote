@@ -765,3 +765,4 @@ cat go.mod
 - [Go module wiki](https://github.com/golang/go/wiki/Modules)
 - [Modules and vendoring](https://tip.golang.org/cmd/go/#hdr-Modules_and_vendoring)
 - [List of go module knobs for controlling CI, vendoring, and when go commands access the network](https://github.com/thepudds/go-module-knobs/blob/master/README.md)
+- [module 工具](https://golang.org/doc/go1.13#modules)
