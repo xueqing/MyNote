@@ -11,7 +11,7 @@
 
 原网页由 HunterQ 在 2019/4/12 编辑。[第 99 次修订](https://github.com/golang/go/wiki/Home/_history)。
 
-欢迎来到 Go 维基，集中了关于 [Go 编程语言](https://golang.org/)的信息。[Awesome Go]() 是另外一个给 Go 编程人员的丰富的资源，由 Go 社区管理。
+欢迎来到 Go 维基，集中了关于 [Go 编程语言](https://golang.org/)的信息。[Awesome Go](http://awesome-go.com/) 是另外一个给 Go 编程人员的丰富的资源，由 Go 社区管理。
 
 ## 贡献
 
