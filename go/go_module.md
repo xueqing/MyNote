@@ -92,7 +92,10 @@
     - [14.4 为什么 go mod init 报错 cannot determine module path for source directory](#144-%e4%b8%ba%e4%bb%80%e4%b9%88-go-mod-init-%e6%8a%a5%e9%94%99-cannot-determine-module-path-for-source-directory)
     - [14.5 有一个复杂的且没有加入模块的依赖出现问题。能否使用它目前的依赖管理器的信息](#145-%e6%9c%89%e4%b8%80%e4%b8%aa%e5%a4%8d%e6%9d%82%e7%9a%84%e4%b8%94%e6%b2%a1%e6%9c%89%e5%8a%a0%e5%85%a5%e6%a8%a1%e5%9d%97%e7%9a%84%e4%be%9d%e8%b5%96%e5%87%ba%e7%8e%b0%e9%97%ae%e9%a2%98%e8%83%bd%e5%90%a6%e4%bd%bf%e7%94%a8%e5%ae%83%e7%9b%ae%e5%89%8d%e7%9a%84%e4%be%9d%e8%b5%96%e7%ae%a1%e7%90%86%e5%99%a8%e7%9a%84%e4%bf%a1%e6%81%af)
     - [14.6 如何解决由于导入路径和声明模块身份不匹配导致的 parsing go.mod: unexpected module path 和 error loading module requirements 错误](#146-%e5%a6%82%e4%bd%95%e8%a7%a3%e5%86%b3%e7%94%b1%e4%ba%8e%e5%af%bc%e5%85%a5%e8%b7%af%e5%be%84%e5%92%8c%e5%a3%b0%e6%98%8e%e6%a8%a1%e5%9d%97%e8%ba%ab%e4%bb%bd%e4%b8%8d%e5%8c%b9%e9%85%8d%e5%af%bc%e8%87%b4%e7%9a%84-parsing-gomod-unexpected-module-path-%e5%92%8c-error-loading-module-requirements-%e9%94%99%e8%af%af)
-    - [14.7 为什么 go build 要求 gcc？为什么预编译包(如 net/http) 不用？](#147-%e4%b8%ba%e4%bb%80%e4%b9%88-go-build-%e8%a6%81%e6%b1%82-gcc%e4%b8%ba%e4%bb%80%e4%b9%88%e9%a2%84%e7%bc%96%e8%af%91%e5%8c%85%e5%a6%82-nethttp-%e4%b8%8d%e7%94%a8)
+      - [14.6.1 出现问题的原因](#1461-%e5%87%ba%e7%8e%b0%e9%97%ae%e9%a2%98%e7%9a%84%e5%8e%9f%e5%9b%a0)
+      - [14.6.2 场景示例](#1462-%e5%9c%ba%e6%99%af%e7%a4%ba%e4%be%8b)
+      - [14.6.3 解决方法](#1463-%e8%a7%a3%e5%86%b3%e6%96%b9%e6%b3%95)
+    - [14.7 为什么 go build 要求 gcc？为什么预编译包(如 net/http) 不用](#147-%e4%b8%ba%e4%bb%80%e4%b9%88-go-build-%e8%a6%81%e6%b1%82-gcc%e4%b8%ba%e4%bb%80%e4%b9%88%e9%a2%84%e7%bc%96%e8%af%91%e5%8c%85%e5%a6%82-nethttp-%e4%b8%8d%e7%94%a8)
     - [14.8 模块能否在相对导入路径(如 import "./subdir")正常工作](#148-%e6%a8%a1%e5%9d%97%e8%83%bd%e5%90%a6%e5%9c%a8%e7%9b%b8%e5%af%b9%e5%af%bc%e5%85%a5%e8%b7%af%e5%be%84%e5%a6%82-import-%22subdir%22%e6%ad%a3%e5%b8%b8%e5%b7%a5%e4%bd%9c)
     - [14.9 某些需要的文件可能不在定位的 vendor 目录](#149-%e6%9f%90%e4%ba%9b%e9%9c%80%e8%a6%81%e7%9a%84%e6%96%87%e4%bb%b6%e5%8f%af%e8%83%bd%e4%b8%8d%e5%9c%a8%e5%ae%9a%e4%bd%8d%e7%9a%84-vendor-%e7%9b%ae%e5%bd%95)
   - [15 相关链接](#15-%e7%9b%b8%e5%85%b3%e9%93%be%e6%8e%a5)
@@ -103,17 +106,17 @@
 
 ```sh
 # 1 在 GPOPATH 之外创建工程
-$ mkdir -p /tmp/mygopro/repo
+mkdir -p /tmp/mygopro/repo
 # 2 切换到工程目录
-$ cd /tmp/mygopro/repo
+cd /tmp/mygopro/repo
 # 3 初始化工程
-$ git init
+git init
 # 4 添加远程仓库路径
-$ git remote add origin https://github.com/my/repo
+git remote add origin https://github.com/my/repo
 # 5 初始化一个新模块, 会创建一个 go.mod 文件
-$ go mod init github.com/my/repo
+go mod init github.com/my/repo
 # 6 写 go 源码
-$ cat <<EOF > hello.go
+cat <<EOF > hello.go
 > package main
 >
 > import (
@@ -126,8 +129,8 @@ $ cat <<EOF > hello.go
 > }
 > EOF
 # 7 编译和运行
-$ go build -o hello
-$ ./hello
+go build -o hello
+./hello
 ```
 
 ### 1.2 每日工作流
@@ -200,20 +203,20 @@ $ ./hello
 
 ```sh
 # 1 切换到模块源码树的根路径($GOPATH 之外，可以不设置 GO111MODULE 来激活模块模式)
-$ cd <project path outside $GOPATH/src>
+cd <project path outside $GOPATH/src>
 ## 1.1 对于在 $GOPATH/src 目录之内的工程，需要手动激活
-$ export GO111MODULE=on
-$ cd $GOPATH/src/<project path>
+export GO111MODULE=on
+cd $GOPATH/src/<project path>
 # 2 创建初始模块定义，并从 dep 或其他依赖管理器转化依赖信息，增加 require 声明到 go.mod 以匹配现有配置
-$ go mod init
+go mod init
 ## 2.1 可以指定模块路径(命令不能自动确定模块路径，或需要覆盖该路径)
-$ go mod init github.com/my/repo
+go mod init github.com/my/repo
 # 3 编译模块。在模块根路径执行，互编译当前模块的所有包。go build 会自动添加缺失或未转化的依赖
-$ go build ./...
+go build ./...
 # 4 按照配置测试模块，确认对于选中的版本是正常的
-$ go test ./...
+go test ./...
 # 5 可选。运行模块和所有直接或间接依赖的测试，检查兼容性
-$ go test all
+go test all
 ```
 
 - **注意**：当依赖包含 v2+ 版本，或者正在初始化一个 v2+ 模块，需要在运行 `go mod init` 之后，编辑 `go.mod` 和 `.go` 代码，添加 `/vN` 到导入路径。参考 [Semantic Import Versioning](https://github.com/golang/go/wiki/Modules#semantic-import-versioning)
@@ -501,8 +504,8 @@ $ go test all
 - 模块系统在 `go.mod` 记录精确的依赖需求
 - `go mod tidy` 更新当前的 `go.mod` 以包含模块中测试所需的依赖——如果一个测试失败，必须知道使用的依赖以重复该失败
 - `go mod tidy` 同时确保当前的 `go.mod` 反映了对所有的操作系统、架构和编译标签的组合的依赖需求。相反的，其他的命令(如 `go build`/`go test`)只更新 `go.mod` 以提供当前的 `GOOS`，`GOARCH` 和编译标签被请求的包导入的包(这也是 `go mod tidy` 可能增加其他 go 命令没有增加的需求的原因之一)
-- 如果当前模块的依赖本身没有一个 `go.mod`(比如因为依赖还没有选择加入模块)，或依赖的 `go.mod` 缺少一些依赖(比如因为模块的作者没有运行 `go mod tidy`)，那么缺失的依赖会加入到当前模块的需求，并带有一个 `// indirect` 注释表明依赖不是从当前模块直接导入的
-- **注意：**这也意味着当前模块直接或间接依赖缺失的测试依赖也会被记录在当前的 `go.mod`。比如，`go test all` 运行当前模块所有的直接或间接依赖的测试，这是验证当前版本组合有效的一种方式。如果允许时某个依赖的一个测试失败，记录完整的测试依赖信息是很重要的，以便可以重复 `go test all` 行为
+- 如果你的模块的依赖本身没有一个 `go.mod`(比如因为依赖还没有选择加入模块)，或依赖的 `go.mod` 缺少一些依赖(比如因为模块的作者没有运行 `go mod tidy`)，那么缺失的依赖会加入到你的模块的需求，并带有一个 `// indirect` 注释表明依赖不是从你的模块直接导入的
+- **注意：**这也意味着你的模块的直接或间接依赖缺失的测试依赖也会被记录在当前的 `go.mod`。比如，`go test all` 运行你的模块所有的直接或间接依赖的测试，这是验证当前版本组合有效的一种方式。如果允许时某个依赖的一个测试失败，记录完整的测试依赖信息是很重要的，以便可以重复 `go test all` 行为
 - `go.mod` 有 `// indirect` 依赖的另外一个原因：当升级或降级一个间接依赖且超出直接依赖的需求时(比如运行 `go get -u`/`go get foo@1.2.3`)，go 工具需要在某个地方记录新版本信息，并且记录在 `go.mod` 文件(并且不会去更改依赖的 `go.mod` 文件)
 - 一般的，上述是模块通过记录精确的依赖信息提供 100% 可重复编译和测试的一部分行为
 - 相关命令
@@ -546,7 +549,7 @@ $ go test all
   - 根据 semver 规定，对于 v0 没有任何兼容性保证。因此要求显式的 v0 对于兼容性没有什么帮助；必须指明完全精确的类似 v0.1.2，而每次库更新时需要更新所有的导入路径。这是过犹不及的。相反的，我们希望开发人员会简单地查看依赖的模块列表，并适当地谨慎任何 v0.x.y 版本
 - 忽视 v0/v1 的影响：将没办法从区分路径区分它们，但是 v0 通常是通向 v1 的一系列破坏性变化，因此将 v1 视为破坏性变化的最后阶段是有意义的
   >>> 通过使用 v0.x，你正在接受 v0.(x+1) 可能迫使你修改代码。那么为什么 v0.(x+1) 叫做 v1.0 是一个问题呢？
-- 忽视 v0/v1 是强制性而非可选的，因此这是包的一个经典导入路径
+- 忽视 v0/v1 是强制性而非可选的，因此这是包的一个规范导入路径
 
 ### 11.3 使用主版本号 v0/v1 给项目打标签或使用 v2+ 标记破坏性的变化的影响是什么
 
@@ -661,17 +664,101 @@ $ go test all
 
 ### 14.3 为什么得到错误 cannot find module providing package foo
 
+1. 可能是路径不对。首先可以检查错误信息中列举的路径
+2. 尝试 `go get -v foo`/`go get -v -x foo`。通常，`go get` 比 `get build` 提供更多的错误信息
+3. 其他可能原因
+   1. 当前目录没有 go 源码文件，但是运行了 `go build`/`go build .`。可以尝试运行 `go build ./...`(`./...` 通配符匹配当前模块的所有包)
+   2. Go1.11 的模块缓存在遇到网络问题或者同时允许多个 go 命令时会导致这个错误。在 Go1.12 已经接近。参考[上面的问题](#141-%e5%a6%82%e6%9e%9c%e5%8f%91%e7%8e%b0%e9%97%ae%e9%a2%98%e6%9c%89%e5%93%aa%e4%ba%9b%e9%80%9a%e7%94%a8%e7%9a%84%e4%b8%9c%e8%a5%bf%e5%8f%af%e4%bb%a5%e5%ae%9a%e4%bd%8d%e6%a3%80%e6%9f%a5)
+
 ### 14.4 为什么 go mod init 报错 cannot determine module path for source directory
+
+- `go mod init` 不带参数是会基于不同的暗示(VCS 元数据等)尝试猜测合适的模块路。但是，命令不能总是猜测的预期的合适路径
+- 如果 `go mod init` 报这类错，必须自己提供模块路径(`go mod init module_path`)
 
 ### 14.5 有一个复杂的且没有加入模块的依赖出现问题。能否使用它目前的依赖管理器的信息
 
+- 可以。这需要一些手动步骤，但是在一些复杂场景是有用的
+- 当运行 `go mod init` 初始化模块时，命令会从先前的依赖管理器通过翻译配置文件(如 `Gopkg.lock/glide.lock/vendor.json`)自动转换到 `go.mod` 文件，该文件包含了对应的 `require` 指令。先前的一些文件信息通畅描述了所有直接或间接依赖的版本信息
+- 然而，当添加一个还没有加入模块的新依赖，新依赖不会有上述类似的自动转换过程。如果该新依赖本身有一些非模块依赖，且这些依赖有破坏性的变化，那么在某些场景下，会导致不兼容问题。换句话说，不会自动使用先前对于新依赖的依赖管理器，而这会在某些场景导致非间接依赖的问题
+- 一个方法是在有问题的非模块直接依赖运行 `go mod init` 转化当前依赖管理器，然后使用生成的临时 `go.mod` 的 `require` 指令定位或更新你的模块的 `go.mod`
+  - 临时 `go.mod` 生成的 `require` 信息可手动移动到你的模块实际的 `go.mod`，或考虑使用 [gomodmerge](https://github.com/rogpeppe/gomodmerge) 工具。除此之外，可能会增加 `require github.com/some/nonmodule v1.2.3` 到你的模块实际的 `go.mod` 以匹配手动克隆的版本
+
+```sh
+git clone -b v1.2.3 https://github.com/some/nonmodule /tmp/scratchpad/nonmodule
+cd /tmp/scratchpad/nonmodule
+go mod init
+cat go.mod
+```
+
 ### 14.6 如何解决由于导入路径和声明模块身份不匹配导致的 parsing go.mod: unexpected module path 和 error loading module requirements 错误
 
-### 14.7 为什么 go build 要求 gcc？为什么预编译包(如 net/http) 不用？
+#### 14.6.1 出现问题的原因
+
+- 一般的，一个模块在 `go.mod` 中通过 `module` 指令声明它的身份。这个该模块的“模块路径”，并且 go 工具强制声明的模块路径和使用者的导入路径的一致性。如果一个模块的 `go.mod` 文件读到 `module example.com/m`，那么使用者必须使用导入语句从该模块导入包，且必须以模块路径开头(如 `import "example.com/m"` 或`import "example.com/m/sub/pkg"`)
+- 如果使用者的导入路径和对应的声明模块路径出现不匹配，go 命令会报错 `parsing go.mod: unexpected module path`。此外，在某些场景下，go 命令会之后再报一个更一般的错误 `error loading module requirements`
+- 这个错误最常见的原因是如果有一个名字变化(如 `github.com/Sirupsen/logrus` 到 `github.com/sirupsen/logrus`)，或者如果一个模块有时通过两个不同于先前模块的名字(如 `github.com/golang/sync` 和建议的 `golang.org/x/sync`)
+- 如果有一个仍然使用旧的名字或不规范的名字导入的依赖，而该依赖之后采用模块并在 `go.mod` 声明规范的名字，就会出现问题。这个错误可以在一次升级时触发，当此模块的升级版本声明了一个规范的模块路径，但是该路径不匹配旧的导入路径
+
+#### 14.6.2 场景示例
+
+- 当前有一个间接依赖 `github.com/Quasilyte/go-consistent`
+- 此工程采用模块，然后将名字改成 `github.com/quasilyte/go-consistent`，这是一个破坏性的变化。GitHub 从旧名字导向新的名字
+- 运行 `go get -u`，尝试升级所有的直接或间接依赖
+- `github.com/Quasilyte/go-consistent` 尝试升级，但是最新的 `go.mod` 发现现在读到的是 `module github.com/quasilyte/go-consistent`
+- 整个升级操作会失败，错误是：
+  > go: github.com/Quasilyte/go-consistent@v0.0.0-20190521200055-c6f3937de18c: parsing go.mod: unexpected module path "github.com/quasilyte/go-consistent" go get: error loading module requirements
+
+#### 14.6.3 解决方法
+
+- 整个错误最常见的形式是
+  > go: example.com/some/OLD/name@vX.Y.Z: parsing go.mod: unexpected module path "example.com/some/NEW/name"
+- 如果浏览 `example.com/some/NEW/name` 仓库，可以检查最新发布版或 `master` 查看 `go.mod` 文件，是否在第一行声明 `module example.com/some/NEW/name`。如果是，示意看到的 `old module name` 和 `new module name` 问题
+- 解决步骤
+  - 1 检查自己的代码是否使用 `example.com/some/OLD/name`。如果是，更新代码使用 `module example.com/some/NEW/name`
+  - 2 如果再升级时遇到这个错误，应该尝试 Go 的 tip 版本。此版本有更多针对性的的升级逻辑，通常可以绕过这个问题，且经常对于这种情况有更好的错误信息。**注意：**tip/1.13 和 1.12 的 `go get` 参数不同。比如获取 tip 并使用 tip 更新依赖的命令如下。因为这个有问题的旧的导入经常是在间接依赖，使用 tip 升级然后运行 `go mod tidy` 经常会升级过去有问题的版本，并且从 `go.mod` 移除有问题的版本，然后可以使用 Go1.12/1.11 进入正常状态
+
+  ```sh
+  go get golang.org/dl/gotip && gotip download
+  gotip get -u all
+  gotip mod tidy
+  ```
+
+  - 3 如果在执行 `go get -u foo`/`go get -u foo@latest` 时遇到这个错误，尝试移除 `-u`。`go get -u foo` 不仅仅只更新 `foo` 到最新版本，也会更新 `foo` 的所有直接或间接依赖到最新版本。但是 `foo` 的一些直接或间接依赖可能没有使用 semver 或模块
+  - 4 如果上述步骤没有解决问题，下一个方法可能会比较复杂，但是大多数情况可以解决这类问题。这个方法只是有错误信息，以及简单浏览 VCS 历史
+    - 4.1 进入 `example.com/some/NEW/name` 仓库
+    - 4.2 确定何时引入 `go.mod` 文件(比如使用 [git blame](https://www.git-scm.com/docs/git-blame) 或 [git log](https://www.git-scm.com/docs/git-log) 命令查看 `go.mod` 的修改历史)
+    - 4.3 选中 `go.mod` 被引入的前一次提交或发布
+    - 4.4 在你的 `go.mod` 增加一个 `replace` 语句，`reolace` 两边都使用旧名字：`replace example.com/some/OLD/name => example.com/some/OLD/name <version-just-before-go.mod>`。
+      - 在前述的场景示例中，旧名字是 `github.com/Quasilyte/go-consistent`，新名字是 `github.com/quasilyte/go-consistent`，可以看到 `go.mod` 在 [00c5b0cf371a](https://github.com/quasilyte/go-consistent/tree/00c5b0cf371a96059852487731370694d75ffacf) 被引入
+      - 该仓库没有使用 semver 标签，因此我们必须选取前一次提交 [00dd7fb039e](https://github.com/quasilyte/go-consistent/tree/00dd7fb039e1eff09e7c0bfac209934254409360)，并且使用旧的大写 Quasilyte 到 `replace` 两侧：`replace github.com/Quasilyte/go-consistent => github.com/Quasilyte/go-consistent 00dd7fb039e`
+    - 这个 `replace` 语句使我们可以通过有效地阻止旧名字升级到 `go.mod` 出现的新名字而越过新旧名字不匹配的问题实现升级。通常，现在通过 `go get -u` 或类似命令升级可以避免这样的错误。如果完成升级，可以检查是否仍有代码使用旧名字导入(如 `go mod graph | grep github.com/Quasilyte/go-consistent`)，如果没有，可以移除 `repalce` 指令。
+      - 这样经常生效的原因是如果使用有问题的旧导入路径，升级本身会失败。即使升级完成最后也不会使用这个路径
+  - 5 如果上述路径没有解决问题，可能因为某些当前依赖的最新版本中仍在使用有问题的旧导入路径。这种情况下，需要识别出谁仍在使用旧的路径，并且找出或者打开一个 issue 请求这个有问题的导入者修改代码使用规范路径。使用前述的 `gotip` 可能识别出有问题的导入者，但是并不是所有场景有用，尤其是升级的情况。如果不确定谁在使用旧路径导入，通常可以通过创建一个干净的模块缓存找出来，执行出问题的操作，然后在模块缓存中 grep 有问题的导入路径。比如
+
+  ```sh
+  export GOPATH=$(mktemp -d)
+  go get -u foo               # peform operation that generates the error of interest
+  cd $GOPATH/pkg/mod
+  grep -R --include="*.go" github.com/Quasilyte/go-consistent
+    ```
+
+  - 6 如果这些步骤不足以解决问题，或者你是一个项目的维护者，且似乎因为循环引用不能移除旧路径的引用，可以[参考](https://github.com/golang/go/wiki/Resolving-Problems-From-Modified-Module-Path)
+- 最后，上述步骤致力于如果解决一个底层的新旧名字问题。然而，如果 `go.mod` 被放置在错误的位置或简单的是因为错误的模块路径，这会出现相同的问题。在这种情况下，导入该模块总会失败。如果你正在导入你刚刚新建的模块，且之前从未成功导入过，你应当检查 `go.mod` 被正确放置且有对应的合适的模块路径。
+  - 最常见的方法是一个仓库一个 `go.mod`，且是在仓库根目录放置单一的 `go.mod` 文件。并且使用仓库名字作为文件中声明的 `module` 指令的模块路径
+
+### 14.7 为什么 go build 要求 gcc？为什么预编译包(如 net/http) 不用
+
+- 因为预编译包是非模块的(对 GOPATH 有效)，因此不能被重复使用。即在模块模式时需要重新编译标准库的包
+- 这个问题只在加入模块时出现，对于 Go1.11 可以禁用 `cgo`(如 `GO111MODULE=on CGO_ENABLED=0 go build`) 或者安装 gcc
 
 ### 14.8 模块能否在相对导入路径(如 import "./subdir")正常工作
 
+- 不能。在模块中，子目录最终会有一个名字。如果当前目录是 `module m`，那么导入的子目录就是 `m/subdir`，不再是 `./subdir`
+
 ### 14.9 某些需要的文件可能不在定位的 vendor 目录
+
+- `go mod vendor` 不会拷贝没有 `.go` 文件的目录到 `vendor`。设计如此
+- 对于传统的 vendor：检查模块缓存
 
 ## 15 相关链接
 
