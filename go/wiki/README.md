@@ -17,7 +17,7 @@
     - [发布特定的信息](#%e5%8f%91%e5%b8%83%e7%89%b9%e5%ae%9a%e7%9a%84%e4%bf%a1%e6%81%af)
     - [问题](#%e9%97%ae%e9%a2%98)
 
-参考 [Go Wiki 官网](https://github.com/golang/go/wiki) 学习。
+参考 [Go 维基官网](https://github.com/golang/go/wiki) 学习。
 
 原网页由 HunterQ 在 2019/4/12 编辑。[第 99 次修订](https://github.com/golang/go/wiki/Home/_history)。
 

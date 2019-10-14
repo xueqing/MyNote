@@ -5,7 +5,7 @@
 
 参考 [Go Wiki 官网——学习测试](https://github.com/golang/go/wiki/LearnTesting) 学习。
 
-原网页由 Evgeny Vereshchagin 在 2019/1/29 编辑。[第 4 次修订](https://github.com/golang/go/wiki/Home/_history)。
+原网页由 Evgeny Vereshchagin 在 2019/1/29 编辑。[第 4 次修订](https://github.com/golang/go/wiki/LearnTesting/_history)。
 
 ## 内容
 
