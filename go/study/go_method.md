@@ -20,33 +20,33 @@
   - 所有给定类型的方法属于该类型的方法集
 - 语法格式
 
-```go
-func (v_name v_type) func_name() [return_type] {
-    //func body
-}
-```
+  ```go
+  func (v_name v_type) func_name() [return_type] {
+      //func body
+  }
+  ```
 
 - 示例
 
-```go
-package main
+  ```go
+  package main
 
-import "fmt"
+  import "fmt"
 
-type Circle struct {
-    radius float64
-}
+  type Circle struct {
+      radius float64
+  }
 
-func (c Circle) getArea() float64 {
-    return 3.14 * c.radius * c.radius
-}
+  func (c Circle) getArea() float64 {
+      return 3.14 * c.radius * c.radius
+  }
 
-func main() {
-    var c1 Circle
-    c1.radius = 10.00
-    fmt.Println(c1.getArea())
-}
-```
+  func main() {
+      var c1 Circle
+      c1.radius = 10.00
+      fmt.Println(c1.getArea())
+  }
+  ```
 
 ### 方法的接收者是非结构体
 
@@ -85,69 +85,69 @@ func main() {
   - 场景 1：希望方法内部修改影响调用者
   - 场景 2：拷贝数据结构的代价比较大
 
-```go
-package main
+  ```go
+  package main
 
-import (
-    "fmt"
-    "math"
-)
+  import (
+      "fmt"
+      "math"
+  )
 
-type Vertex struct {
-    X, Y float64
-}
+  type Vertex struct {
+      X, Y float64
+  }
 
-func (v Vertex) Abs() float64 {
-    return math.Sqrt(v.X*v.X + v.Y*v.Y)
-}
+  func (v Vertex) Abs() float64 {
+      return math.Sqrt(v.X*v.X + v.Y*v.Y)
+  }
 
-func (v *Vertex) Scale(f float64) {
-    v.X = v.X * f
-    v.Y = v.Y * f
-}
+  func (v *Vertex) Scale(f float64) {
+      v.X = v.X * f
+      v.Y = v.Y * f
+  }
 
-func main() {
-    v := Vertex{3, 4}
-    v.Scale(10)
-    fmt.Println(v.Abs())
-}
-```
+  func main() {
+      v := Vertex{3, 4}
+      v.Scale(10)
+      fmt.Println(v.Abs())
+  }
+  ```
 
 - 带指针参数的函数必须接受一个指针，而以指针为接收者的方法被调用时，接收者可以是值或者指针，go 会根据接收者类型自动调整
 
-```go
-package main
+  ```go
+  package main
 
-import (
-    "fmt"
-)
+  import (
+      "fmt"
+  )
 
-type vertex struct {
-    X, Y float64
-}
+  type vertex struct {
+      X, Y float64
+  }
 
-func (v *vertex) Scale(f float64) {
-    v.X = v.X * f
-    v.Y = v.Y * f
-}
+  func (v *vertex) Scale(f float64) {
+      v.X = v.X * f
+      v.Y = v.Y * f
+  }
 
-func scaleFunc(v *vertex, f float64) {
-    v.X = v.X * f
-    v.Y = v.Y * f
-}
+  func scaleFunc(v *vertex, f float64) {
+      v.X = v.X * f
+      v.Y = v.Y * f
+  }
 
-func main() {
-    v := vertex{3, 4}
-    v.Scale(2)
-    scaleFunc(&v, 10)
+  func main() {
+      v := vertex{3, 4}
+      v.Scale(2)
+      scaleFunc(&v, 10)
 
-    p := &vertex{4, 3}
-    p.Scale(3)
-    scaleFunc(p, 8)
+      p := &vertex{4, 3}
+      p.Scale(3)
+      scaleFunc(p, 8)
 
-    fmt.Println(v, p)
-}
-```
+      fmt.Println(v, p)
+  }
+  ```
 
 ### 使用值接收者
 

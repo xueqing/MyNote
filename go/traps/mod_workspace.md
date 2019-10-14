@@ -27,13 +27,13 @@
     - 此机制位于 `go.mod` 文件的 `module` 命令。比如当前目录是 `buggy`，且 `../go.mod` 包含 `module "rsc.io/quote"`，那么当前目录的导入路径就是 `rsc.io/quote/buggy`
 - `vgo` 原型支持在 GOPATH 之外工作。比如下面的例子，即使 Upspin 没有引入 `go.mod` 文件也可以工作
 
-```sh
-$ cd $HOME
-$ git clone https://github.com/upspin/upspin
-$ cd upspin
-# vgo 从 导入注释推测模块名字是 upsin.io，并且从 Gopkg.loc 推测需要的依赖版本
-$ vgo test -short ./...
-```
+  ```sh
+  cd $HOME
+  git clone https://github.com/upspin/upspin
+  cd upspin
+  # vgo 从 导入注释推测模块名字是 upsin.io，并且从 Gopkg.loc 推测需要的依赖版本
+  vgo test -short ./...
+  ```
 
 ## VSCode 对模块的支持
 

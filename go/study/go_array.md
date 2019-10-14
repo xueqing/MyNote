@@ -30,16 +30,16 @@
 - 长度已定义的数组只能传给限制了相同数组长度的函数
 - 形参设定数组大小
 
-```go
-func myFunc(arr [10] int) {
-    //...
-}
-```
+  ```go
+  func myFunc(arr [10] int) {
+      //...
+  }
+  ```
 
 - 形参未设定数组大小
 
-```go
-func myFunc(arr [] int) {
-    //...
-}
-```
+  ```go
+  func myFunc(arr [] int) {
+      //...
+  }
+  ```

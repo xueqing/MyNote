@@ -16,7 +16,7 @@
   - `f` `x` `y` `z` 的求值发生在当前的 goroutine
   - `f` 的执行发生在新的 goroutine- 启动一个 goroutine 时，`go` 立即返回，继续执行下一行代码，新启动的 goroutine 的返回值都会被忽略
 - main goroutine 应当启动其他 goroutine。因为 main goroutine 终止时，程序就会终止，不会再有 goroutine 运行
-- goroutine 在相同的地址空间运行，因此再访问共享的内存时必须同步
+- goroutine 在相同的地址空间运行，因此在访问共享的内存时必须同步
 
 ```go
 package main

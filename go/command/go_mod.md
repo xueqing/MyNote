@@ -34,20 +34,20 @@
 - 其他 go 命令会自动下载所需模块，`go mod download` 主要用于预先填充本地缓存或用户计算 Go 模块代理
 - 默认将错误发生给标准错误。`-json` 会打印 JSON 对象到标准输出，描述每个下载的模块(或失败)
 
-```go
-type Module struct {
-    Path     string // module path
-    Version  string // module version
-    Error    string // error loading module
-    Info     string // absolute path to cached .info file
-    GoMod    string // absolute path to cached .mod file
-    Zip      string // absolute path to cached .zip file
-    Dir      string // absolute path to cached source root directory
-    Sum      string // checksum for path, version (as in go.sum)
-    GoModSum string // checksum for go.mod (as in go.sum)
-    Latest   bool   // would @latest resolve to this version?
-}
-```
+  ```go
+  type Module struct {
+      Path     string // module path
+      Version  string // module version
+      Error    string // error loading module
+      Info     string // absolute path to cached .info file
+      GoMod    string // absolute path to cached .mod file
+      Zip      string // absolute path to cached .zip file
+      Dir      string // absolute path to cached source root directory
+      Sum      string // checksum for path, version (as in go.sum)
+      GoModSum string // checksum for go.mod (as in go.sum)
+      Latest   bool   // would @latest resolve to this version?
+  }
+  ```
 
 ## edit
 
@@ -56,7 +56,7 @@ type Module struct {
 - 编辑标识包括
   - `-fmt`: 只格式化文件。其他参数默认会格式化。只有在没有其他编辑参数时需要指定 `-fmt`
   - `-module`: 修改模块路径(`module` 行)
-  - `-require=path@version`/`-droprequire=path`: 
+  - `-require=path@version`/`-droprequire=path`:
   - `-exclude=path@version`/`-dropexclude=path@version`:
   - `-replace=old[@v]=new[@v]`/`-dropreplace=old[@v]`:
   - `-go=version`:
@@ -64,31 +64,31 @@ type Module struct {
   - `-json`: 以 JSON 格式打印最终的 `go.mod` 而不是写到 `go.mod`。JSON 输出符合下面的 Go 类型
     - 命令只会描述 `go.mod` 文件，间接引用的模块不会包含。需要查看编译所需的所有模块使用 `go list -m -json all`
 
-  ```go
-  type Module struct {
-    Path string
-    Version string
-  }
+    ```go
+    type Module struct {
+      Path string
+      Version string
+    }
 
-  type GoMod struct {
-    Module  Module
-    Go      string
-    Require []Require
-    Exclude []Module
-    Replace []Replace
-  }
+    type GoMod struct {
+      Module  Module
+      Go      string
+      Require []Require
+      Exclude []Module
+      Replace []Replace
+    }
 
-  type Require struct {
-    Path string
-    Version string
-    Indirect bool
-  }
+    type Require struct {
+      Path string
+      Version string
+      Indirect bool
+    }
 
-  type Replace struct {
-    Old Module
-    New Module
-  }
-  ```
+    type Replace struct {
+      Old Module
+      New Module
+    }
+    ```
 
 - 工具可以通过解析 `go mod edit -json` 的输出获取 `go.mod` 数据结构，然后通过 `go mod edit` 修改
 

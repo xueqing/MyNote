@@ -17,44 +17,44 @@
   - 等待并发结束
   - 打开一些资源的时候，遇到错误需要提前返回，在返回前需要关闭对应的资源
 
-  ```go
-  func readWritFile() bool {
-      file.open("file")
-      defer file.close()
+    ```go
+    func readWritFile() bool {
+        file.open("file")
+        defer file.close()
 
-      if faiure1 {
-          return false
-      }
+        if faiure1 {
+            return false
+        }
 
-      if failure2 {
-          return false
-      }
+        if failure2 {
+            return false
+        }
 
-      return true
-  }
-  ```
+        return true
+    }
+    ```
 
 ### defer 栈
 
 - 可以在函数中添加多个 defer 语句。当函数执行到最后，返回之前，会逆序执行这些语句，类似一个 defer 栈
 
-```go
-package main
+  ```go
+  package main
 
-import (
-    "fmt"
-)
+  import (
+      "fmt"
+  )
 
-func main() {
-    fmt.Println("counting")
+  func main() {
+      fmt.Println("counting")
 
-    for i := 0; i < 10; i++ {
-        defer fmt.Println(i)
-    }
+      for i := 0; i < 10; i++ {
+          defer fmt.Println(i)
+      }
 
-    fmt.Println("done")
-}
-```
+      fmt.Println("done")
+  }
+  ```
 
 ## panic 使用
 

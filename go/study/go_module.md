@@ -201,23 +201,23 @@ go build -o hello
 
 - 为已有工程创建一个 `go.mod`
 
-```sh
-# 1 切换到模块源码树的根路径($GOPATH 之外，可以不设置 GO111MODULE 来激活模块模式)
-cd <project path outside $GOPATH/src>
-## 1.1 对于在 $GOPATH/src 目录之内的工程，需要手动激活
-export GO111MODULE=on
-cd $GOPATH/src/<project path>
-# 2 创建初始模块定义，并从 dep 或其他依赖管理器转化依赖信息，增加 require 声明到 go.mod 以匹配现有配置
-go mod init
-## 2.1 可以指定模块路径(命令不能自动确定模块路径，或需要覆盖该路径)
-go mod init github.com/my/repo
-# 3 编译模块。在模块根路径执行，互编译当前模块的所有包。go build 会自动添加缺失或未转化的依赖
-go build ./...
-# 4 按照配置测试模块，确认对于选中的版本是正常的
-go test ./...
-# 5 可选。运行模块和所有直接或间接依赖的测试，检查兼容性
-go test all
-```
+  ```sh
+  # 1 切换到模块源码树的根路径($GOPATH 之外，可以不设置 GO111MODULE 来激活模块模式)
+  cd <project path outside $GOPATH/src>
+  ## 1.1 对于在 $GOPATH/src 目录之内的工程，需要手动激活
+  export GO111MODULE=on
+  cd $GOPATH/src/<project path>
+  # 2 创建初始模块定义，并从 dep 或其他依赖管理器转化依赖信息，增加 require 声明到 go.mod 以匹配现有配置
+  go mod init
+  ## 2.1 可以指定模块路径(命令不能自动确定模块路径，或需要覆盖该路径)
+  go mod init github.com/my/repo
+  # 3 编译模块。在模块根路径执行，互编译当前模块的所有包。go build 会自动添加缺失或未转化的依赖
+  go build ./...
+  # 4 按照配置测试模块，确认对于选中的版本是正常的
+  go test ./...
+  # 5 可选。运行模块和所有直接或间接依赖的测试，检查兼容性
+  go test all
+  ```
 
 - **注意**：当依赖包含 v2+ 版本，或者正在初始化一个 v2+ 模块，需要在运行 `go mod init` 之后，编辑 `go.mod` 和 `.go` 代码，添加 `/vN` 到导入路径。参考 [Semantic Import Versioning](https://github.com/golang/go/wiki/Modules#semantic-import-versioning)
 - **注意**：执行 `go build ./...` 或类似命令成功之后才可以允许 `go mod tidy`
@@ -683,12 +683,12 @@ go test all
 - 一个方法是在有问题的非模块直接依赖运行 `go mod init` 转化当前依赖管理器，然后使用生成的临时 `go.mod` 的 `require` 指令定位或更新你的模块的 `go.mod`
   - 临时 `go.mod` 生成的 `require` 信息可手动移动到你的模块实际的 `go.mod`，或考虑使用 [gomodmerge](https://github.com/rogpeppe/gomodmerge) 工具。除此之外，可能会增加 `require github.com/some/nonmodule v1.2.3` 到你的模块实际的 `go.mod` 以匹配手动克隆的版本
 
-```sh
-git clone -b v1.2.3 https://github.com/some/nonmodule /tmp/scratchpad/nonmodule
-cd /tmp/scratchpad/nonmodule
-go mod init
-cat go.mod
-```
+  ```sh
+  git clone -b v1.2.3 https://github.com/some/nonmodule /tmp/scratchpad/nonmodule
+  cd /tmp/scratchpad/nonmodule
+  go mod init
+  cat go.mod
+  ```
 
 ### 14.6 如何解决由于导入路径和声明模块身份不匹配导致的 parsing go.mod: unexpected module path 和 error loading module requirements 错误
 
@@ -717,11 +717,11 @@ cat go.mod
   - 1 检查自己的代码是否使用 `example.com/some/OLD/name`。如果是，更新代码使用 `module example.com/some/NEW/name`
   - 2 如果再升级时遇到这个错误，应该尝试 Go 的 tip 版本。此版本有更多针对性的的升级逻辑，通常可以绕过这个问题，且经常对于这种情况有更好的错误信息。**注意：**tip/1.13 和 1.12 的 `go get` 参数不同。比如获取 tip 并使用 tip 更新依赖的命令如下。因为这个有问题的旧的导入经常是在间接依赖，使用 tip 升级然后运行 `go mod tidy` 经常会升级过去有问题的版本，并且从 `go.mod` 移除有问题的版本，然后可以使用 Go1.12/1.11 进入正常状态
 
-  ```sh
-  go get golang.org/dl/gotip && gotip download
-  gotip get -u all
-  gotip mod tidy
-  ```
+    ```sh
+    go get golang.org/dl/gotip && gotip download
+    gotip get -u all
+    gotip mod tidy
+    ```
 
   - 3 如果在执行 `go get -u foo`/`go get -u foo@latest` 时遇到这个错误，尝试移除 `-u`。`go get -u foo` 不仅仅只更新 `foo` 到最新版本，也会更新 `foo` 的所有直接或间接依赖到最新版本。但是 `foo` 的一些直接或间接依赖可能没有使用 semver 或模块
   - 4 如果上述步骤没有解决问题，下一个方法可能会比较复杂，但是大多数情况可以解决这类问题。这个方法只是有错误信息，以及简单浏览 VCS 历史
@@ -735,11 +735,11 @@ cat go.mod
       - 这样经常生效的原因是如果使用有问题的旧导入路径，升级本身会失败。即使升级完成最后也不会使用这个路径
   - 5 如果上述路径没有解决问题，可能因为某些当前依赖的最新版本中仍在使用有问题的旧导入路径。这种情况下，需要识别出谁仍在使用旧的路径，并且找出或者打开一个 issue 请求这个有问题的导入者修改代码使用规范路径。使用前述的 `gotip` 可能识别出有问题的导入者，但是并不是所有场景有用，尤其是升级的情况。如果不确定谁在使用旧路径导入，通常可以通过创建一个干净的模块缓存找出来，执行出问题的操作，然后在模块缓存中 grep 有问题的导入路径。比如
 
-  ```sh
-  export GOPATH=$(mktemp -d)
-  go get -u foo               # peform operation that generates the error of interest
-  cd $GOPATH/pkg/mod
-  grep -R --include="*.go" github.com/Quasilyte/go-consistent
+    ```sh
+    export GOPATH=$(mktemp -d)
+    go get -u foo               # peform operation that generates the error of interest
+    cd $GOPATH/pkg/mod
+    grep -R --include="*.go" github.com/Quasilyte/go-consistent
     ```
 
   - 6 如果这些步骤不足以解决问题，或者你是一个项目的维护者，且似乎因为循环引用不能移除旧路径的引用，可以[参考](https://github.com/golang/go/wiki/Resolving-Problems-From-Modified-Module-Path)

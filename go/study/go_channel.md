@@ -55,17 +55,17 @@ func ChannelTest() {
 - 可以创建单向的 channel，只用来发送或接受数据，然而没有什么意义
   - `chan<- chan_type`创建只发送/写 channel
 
-```go
-func unidirectionalChannel(unich chan<- int) {
-    unich <- 1
-}
+    ```go
+    func unidirectionalChannel(unich chan<- int) {
+        unich <- 1
+    }
 
-func unidirectionalChannelTest() {
-    unich := make(chan<- int)
-    go unidirectionalChannel(unich)
-    // fmt.Println(<-unich) //invalid operation xx(received from send-only type)
-}
-```
+    func unidirectionalChannelTest() {
+        unich := make(chan<- int)
+        go unidirectionalChannel(unich)
+        // fmt.Println(<-unich) //invalid operation xx(received from send-only type)
+    }
+    ```
 
 ## close 关闭信道
 
@@ -73,71 +73,71 @@ func unidirectionalChannelTest() {
 - **只有发送者才能关闭信道**。向一个已经关闭的信道发送数据会引发程序 panic
 - **信道与文件不同，通常情况下无需关闭**。只有在必须告诉接收者不再有需要发送的值时才有必要关系，例如终止一个 `for range` 循环
 
-```go
-func chanSender(chanop chan int) {
-    for i := 0; i < 10; i++ {
-        chanop <- i
-    }
-    close(chanop)
-}
+  ```go
+  func chanSender(chanop chan int) {
+      for i := 0; i < 10; i++ {
+          chanop <- i
+      }
+      close(chanop)
+  }
 
-func chanReceiver() {
-    chanop := make(chan int)
-    go chanSender(chanop)
-    // for {
-    //     data, ok := <-chanop
-    //     if ok == false {
-    //         break
-    //     }
-    //     fmt.Println("Received ", data, ok)
-    // }
+  func chanReceiver() {
+      chanop := make(chan int)
+      go chanSender(chanop)
+      // for {
+      //     data, ok := <-chanop
+      //     if ok == false {
+      //         break
+      //     }
+      //     fmt.Println("Received ", data, ok)
+      // }
 
-    for data := range chanop {
-        fmt.Println("Received ", data)
-    }
-}
-```
+      for data := range chanop {
+          fmt.Println("Received ", data)
+      }
+  }
+  ```
 
-```go
-func getDigits(number int, digitch chan int) {
-    for number != 0 {
-        digit := number % 10
-        digitch <- digit
-        number /= 10
-    }
-    close(digitch)
-}
+  ```go
+  func getDigits(number int, digitch chan int) {
+      for number != 0 {
+          digit := number % 10
+          digitch <- digit
+          number /= 10
+      }
+      close(digitch)
+  }
 
-func calcSquares(number int, squareop chan int) {
-    sum := 0
-    digitch := make(chan int)
-    go getDigits(number, digitch)
-    for digit := range digitch {
-        sum += digit * digit
-    }
-    squareop <- sum
-}
+  func calcSquares(number int, squareop chan int) {
+      sum := 0
+      digitch := make(chan int)
+      go getDigits(number, digitch)
+      for digit := range digitch {
+          sum += digit * digit
+      }
+      squareop <- sum
+  }
 
-func calcCubes(number int, cubeop chan int) {
-    sum := 0
-    digitch := make(chan int)
-    go getDigits(number, digitch)
-    for digit := range digitch {
-        sum += digit * digit * digit
-    }
-    cubeop <- sum
-}
+  func calcCubes(number int, cubeop chan int) {
+      sum := 0
+      digitch := make(chan int)
+      go getDigits(number, digitch)
+      for digit := range digitch {
+          sum += digit * digit * digit
+      }
+      cubeop <- sum
+  }
 
-func ChannelTest() {
-    number := 54
-    squarech := make(chan int)
-    cubech := make(chan int)
-    go calcSquares(number, squarech)
-    go calcCubes(number, cubech)
-    squareop, cubeop := <-squarech, <-cubech
-    fmt.Printf("squares = %d, cubes = %d\n", squareop, cubeop)
-}
-```
+  func ChannelTest() {
+      number := 54
+      squarech := make(chan int)
+      cubech := make(chan int)
+      go calcSquares(number, squarech)
+      go calcCubes(number, cubech)
+      squareop, cubeop := <-squarech, <-cubech
+      fmt.Printf("squares = %d, cubes = %d\n", squareop, cubeop)
+  }
+  ```
 
 ## 有缓冲的 channel
 

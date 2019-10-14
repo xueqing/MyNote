@@ -20,45 +20,45 @@
 
 - 下面的代码中无法解析 gender 域。且编码成 json 时，gender 域不会包含
 
-```go
-package main
+  ```go
+  package main
 
-import (
-  "encoding/json"
-  "fmt"
-)
+  import (
+    "encoding/json"
+    "fmt"
+  )
 
-// JSONStruct a struct to be used in json decode
-type myJSONStruct struct {
-  Name   string
-  Age    float64
-  gender string
-}
-
-var rawJSON = []byte(`{
-    "name": "kiki",
-    "age": 18,
-    "gender": "female"
-}`)
-
-func main() {
-  var s myJSONStruct
-  err := json.Unmarshal(rawJSON, &s)
-  if err != nil {
-    panic(err)
+  // JSONStruct a struct to be used in json decode
+  type myJSONStruct struct {
+    Name   string
+    Age    float64
+    gender string
   }
 
-  // [Name=kiki] [Age=18.000000] [gender=]
-  fmt.Printf("[Name=%s] [Age=%f] [gender=%s]\n", s.Name, s.Age, s.gender)
+  var rawJSON = []byte(`{
+      "name": "kiki",
+      "age": 18,
+      "gender": "female"
+  }`)
 
-  buf, err := json.Marshal(s)
-  if err != nil {
-    panic(err)
+  func main() {
+    var s myJSONStruct
+    err := json.Unmarshal(rawJSON, &s)
+    if err != nil {
+      panic(err)
+    }
+
+    // [Name=kiki] [Age=18.000000] [gender=]
+    fmt.Printf("[Name=%s] [Age=%f] [gender=%s]\n", s.Name, s.Age, s.gender)
+
+    buf, err := json.Marshal(s)
+    if err != nil {
+      panic(err)
+    }
+    // [buf={"Name":"kiki","Age":18}]
+    fmt.Printf("[buf=%s]\n", buf)
   }
-  // [buf={"Name":"kiki","Age":18}]
-  fmt.Printf("[buf=%s]\n", buf)
-}
-```
+  ```
 
 ## 2 结构体必须解析的字段(required 标签)
 
@@ -74,45 +74,45 @@ func main() {
   - `omitempty` 值为空时不要包含到 JSON 中。当丢弃空属性不想包含在输出时很方便
   - `-` 跳过一些域。当查找到值时会被解析，但是不会被输出
 
-```go
-package main
+    ```go
+    package main
 
-import (
-  "encoding/json"
-  "fmt"
-)
+    import (
+      "encoding/json"
+      "fmt"
+    )
 
-// JSONStruct a struct to be used in json decode
-type myJSONStruct struct {
-  Name   string  `json:"nickname"`
-  Age    float64 `json:"-"`
-  Gender string  `json:",omitempty"`
-}
+    // JSONStruct a struct to be used in json decode
+    type myJSONStruct struct {
+      Name   string  `json:"nickname"`
+      Age    float64 `json:"-"`
+      Gender string  `json:",omitempty"`
+    }
 
-var rawJSON = []byte(`{
-    "nickname": "kiki",
-    "age": 18,
-    "gender": ""
-}`)
+    var rawJSON = []byte(`{
+        "nickname": "kiki",
+        "age": 18,
+        "gender": ""
+    }`)
 
-func main() {
-  var s myJSONStruct
-  err := json.Unmarshal(rawJSON, &s)
-  if err != nil {
-    panic(err)
-  }
+    func main() {
+      var s myJSONStruct
+      err := json.Unmarshal(rawJSON, &s)
+      if err != nil {
+        panic(err)
+      }
 
-  // [NickName=kiki] [Age=0.000000] [gender=]
-  fmt.Printf("[NickName=%s] [Age=%f] [gender=%s]\n", s.Name, s.Age, s.Gender)
+      // [NickName=kiki] [Age=0.000000] [gender=]
+      fmt.Printf("[NickName=%s] [Age=%f] [gender=%s]\n", s.Name, s.Age, s.Gender)
 
-  buf, err := json.Marshal(s)
-  if err != nil {
-    panic(err)
-  }
-  // [buf={"nickname":"kiki"}]
-  fmt.Printf("[buf=%s]\n", buf)
-}
-```
+      buf, err := json.Marshal(s)
+      if err != nil {
+        panic(err)
+      }
+      // [buf={"nickname":"kiki"}]
+      fmt.Printf("[buf=%s]\n", buf)
+    }
+    ```
 
 ### 2.2 json 解析嵌套域
 
@@ -176,172 +176,172 @@ func main() {
 
 - JSON 模块包含两个接口 `Marshaler` 和 `Unmarshaler`。两个接口都需要一个方法
 
-```go
-// Marshaler 接口定义了怎么把某个类型 encode 成 JSON 数据
-type Marshaler interface {
-    MarshalJSON() ([]byte, error)
-}
+  ```go
+  // Marshaler 接口定义了怎么把某个类型 encode 成 JSON 数据
+  type Marshaler interface {
+      MarshalJSON() ([]byte, error)
+  }
 
-// Unmarshaler 接口定义了怎么把 JSON 数据 decode 成特定的类型数据。如果后续还要使用 JSON 数据，必须把数据拷贝一份
-type Unmarshaler interface {
-    UnmarshalJSON([]byte) error
-}
-```
+  // Unmarshaler 接口定义了怎么把 JSON 数据 decode 成特定的类型数据。如果后续还要使用 JSON 数据，必须把数据拷贝一份
+  type Unmarshaler interface {
+      UnmarshalJSON([]byte) error
+  }
+  ```
 
-- 如果将这两个接口增加到自定义类型，就可以被编码成 JSON 或者把 JSON 解析成自定义类型
-- 一个很好的例子就是 `time.Time` 类型
+  - 如果将这两个接口增加到自定义类型，就可以被编码成 JSON 或者把 JSON 解析成自定义类型
+  - 一个很好的例子就是 `time.Time` 类型
 
-```go
-type Month struct {
-    MonthNumber int
-    YearNumber int
-}
+    ```go
+    type Month struct {
+        MonthNumber int
+        YearNumber int
+    }
 
-func (m Month) MarshalJSON() ([]byte, error){
-    return []byte(fmt.Sprintf("%d/%d", m.MonthNumber, m.YearNumber)), nil
-}
+    func (m Month) MarshalJSON() ([]byte, error){
+        return []byte(fmt.Sprintf("%d/%d", m.MonthNumber, m.YearNumber)), nil
+    }
 
-func (m *Month) UnmarshalJSON(value []byte) error {
-    parts := strings.Split(string(value), "/")
-    m.MonthNumber = strconv.ParseInt(parts[0], 10, 32)
-    m.YearNumber = strconv.ParseInt(parts[1], 10, 32)
+    func (m *Month) UnmarshalJSON(value []byte) error {
+        parts := strings.Split(string(value), "/")
+        m.MonthNumber = strconv.ParseInt(parts[0], 10, 32)
+        m.YearNumber = strconv.ParseInt(parts[1], 10, 32)
 
-    return nil
-}
-```
+        return nil
+    }
+    ```
 
 #### 2.7.2 将 json 解析成 interface
 
 - `interface{}` 在 Go 中意味着可以是任何东西，Go 在运行时会分配的合适的内存来存储
 
-```go
-package main
+  ```go
+  package main
 
-import (
-  "encoding/json"
-  "fmt"
-)
+  import (
+    "encoding/json"
+    "fmt"
+  )
 
-type myName struct {
-  FirstName string `json:"fname"`
-  LastName  string `json:"lname"`
-}
-
-// JSONStruct a struct to be used in json decode
-type myJSONStruct struct {
-  myName
-  Age    float64 `json:"-"`
-  Gender string  `json:",omitempty"`
-}
-
-var rawJSON = []byte(`{
-    "fname": "kiki",
-    "lname": "kity",
-    "age": 18
-}`)
-
-func main() {
-  var s map[string]interface{}
-  err := json.Unmarshal(rawJSON, &s)
-  if err != nil {
-    panic(err)
+  type myName struct {
+    FirstName string `json:"fname"`
+    LastName  string `json:"lname"`
   }
 
-  fmt.Printf("[map=%v]", s)
-  if s["gender"] == nil {
-    panic("Gender is nil")
+  // JSONStruct a struct to be used in json decode
+  type myJSONStruct struct {
+    myName
+    Age    float64 `json:"-"`
+    Gender string  `json:",omitempty"`
   }
-}
-```
+
+  var rawJSON = []byte(`{
+      "fname": "kiki",
+      "lname": "kity",
+      "age": 18
+  }`)
+
+  func main() {
+    var s map[string]interface{}
+    err := json.Unmarshal(rawJSON, &s)
+    if err != nil {
+      panic(err)
+    }
+
+    fmt.Printf("[map=%v]", s)
+    if s["gender"] == nil {
+      panic("Gender is nil")
+    }
+  }
+  ```
 
 #### 2.7.3 使用指针增加代码检查
 
 - 结构体字段使用指针，解析之后判断是否为 nil
 
-```go
-package main
+  ```go
+  package main
 
-import (
-  "encoding/json"
-  "fmt"
-)
+  import (
+    "encoding/json"
+    "fmt"
+  )
 
-// JSONStruct a struct to be used in json decode
-type JSONStruct struct {
-  Name *string
-  Age  *float64
-}
-
-var rawJSON = []byte(`{
-    "name": "We do not provide a Age"
-}`)
-
-func main() {
-  var s *JSONStruct
-  err := json.Unmarshal(rawJSON, &s)
-  if err != nil {
-    panic(err)
+  // JSONStruct a struct to be used in json decode
+  type JSONStruct struct {
+    Name *string
+    Age  *float64
   }
 
-  if s.Name == nil {
-    panic("Name is missing or null!")
-  }
+  var rawJSON = []byte(`{
+      "name": "We do not provide a Age"
+  }`)
 
-  if s.Age == nil {
-    panic("Age is missing or null!")
-  }
+  func main() {
+    var s *JSONStruct
+    err := json.Unmarshal(rawJSON, &s)
+    if err != nil {
+      panic(err)
+    }
 
-  fmt.Printf("Name: %s  Age: %f\n", *s.Name, *s.Age)
-}
-```
+    if s.Name == nil {
+      panic("Name is missing or null!")
+    }
+
+    if s.Age == nil {
+      panic("Age is missing or null!")
+    }
+
+    fmt.Printf("Name: %s  Age: %f\n", *s.Name, *s.Age)
+  }
+  ```
 
 ### 3 gin/binding.Bind
 
 - 使用 `binding:"required"` 指定某个域是必须的。当 binding 时该字段为空会返回错误
 
-```go
-package main
+  ```go
+  package main
 
-import (
-  "fmt"
-  "time"
+  import (
+    "fmt"
+    "time"
 
-  "net/http"
+    "net/http"
 
-  "github.com/gin-gonic/gin"
-)
+    "github.com/gin-gonic/gin"
+  )
 
-type myJSONStruct struct {
-  Name string
-  Age  int `binding:"required"`
-}
-
-func addUser(c *gin.Context) {
-  var response interface{}
-  data := new(myJSONStruct)
-  if err := c.Bind(data); err != nil {
-    // [err=Key: 'myJSONStruct.Age' Error:Field validation for 'Age' failed on the 'required' tag]
-    fmt.Printf("addUser error [Bind error] [err=%s]\n", err)
-    c.JSON(http.StatusBadRequest, response)
-    return
+  type myJSONStruct struct {
+    Name string
+    Age  int `binding:"required"`
   }
-  fmt.Printf("addUser success [data=%v]\n", data)
-  c.JSON(http.StatusOK, response)
-}
 
-func main() {
-  router := gin.New()
-  api := router.Group("/api/adduser")
-  api.POST("", addUser)
-
-  httpServer := &http.Server{
-    Addr:              "0.0.0.0:10300",
-    Handler:           router,
-    ReadHeaderTimeout: 5 * time.Second,
+  func addUser(c *gin.Context) {
+    var response interface{}
+    data := new(myJSONStruct)
+    if err := c.Bind(data); err != nil {
+      // [err=Key: 'myJSONStruct.Age' Error:Field validation for 'Age' failed on the 'required' tag]
+      fmt.Printf("addUser error [Bind error] [err=%s]\n", err)
+      c.JSON(http.StatusBadRequest, response)
+      return
+    }
+    fmt.Printf("addUser success [data=%v]\n", data)
+    c.JSON(http.StatusOK, response)
   }
-  httpServer.ListenAndServe()
-}
-```
+
+  func main() {
+    router := gin.New()
+    api := router.Group("/api/adduser")
+    api.POST("", addUser)
+
+    httpServer := &http.Server{
+      Addr:              "0.0.0.0:10300",
+      Handler:           router,
+      ReadHeaderTimeout: 5 * time.Second,
+    }
+    httpServer.ListenAndServe()
+  }
+  ```
 
 ## 4 相关链接
 

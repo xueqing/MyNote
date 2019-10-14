@@ -7,20 +7,20 @@
   - 因为 cwd 和 err 在函数块内部都尚未声明，所以 `:=` 语句将它们视为局部变量。内存 cwd 声明使得外部声明不可见
   - 解决方法是不使用 `:=`，而是使用 `var` 声明变量
 
-```go
-package main
+    ```go
+    package main
 
-import (
-  "fmt"
-  "os"
-)
+    import (
+      "fmt"
+      "os"
+    )
 
-var cwd string
+    var cwd string
 
-func main() {
-  cwd, err := os.Getwd() //compile error: cwd declared and not used
-  if err != nil {
-    fmt.Printf("err=%s\n", err)
-  }
-}
-```
+    func main() {
+      cwd, err := os.Getwd() //compile error: cwd declared and not used
+      if err != nil {
+        fmt.Printf("err=%s\n", err)
+      }
+    }
+    ```

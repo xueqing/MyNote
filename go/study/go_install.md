@@ -47,15 +47,15 @@
 - 创建并进入目录 `src/hello`
 - 创建文件 `hello.go`
 
-```go
-package main
+  ```go
+  package main
 
-import "fmt"
+  import "fmt"
 
-func main() {
-  fmt.Printf("Hello, world\n")
-}
-```
+  func main() {
+    fmt.Printf("Hello, world\n")
+  }
+  ```
 
 - 编译：`go build`，生成可执行文件 `hello`
 - 运行：`./hello`
@@ -98,15 +98,15 @@ func main() {
 - 写测试程序
   - 写 `hello.go`
 
-  ```go
-  package main
+    ```go
+    package main
 
-  import "fmt"
+    import "fmt"
 
-  func main() {
-    fmt.println("Hello World!")
-  }
-  ```
+    func main() {
+      fmt.println("Hello World!")
+    }
+    ```
 
   - 执行 `go run hello.go`
 

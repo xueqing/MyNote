@@ -37,12 +37,12 @@
 - 导入包后可以自定义引用的包名
 - 导入包的重命名：如果同时导入两个名字相同的包，那么导入声明必须至少为一个同名包指定一个新的包名避免冲突
 
-```go
-import (
-  "crypto/rand"
-  mrand "math/rand"
-)
-```
+  ```go
+  import (
+    "crypto/rand"
+    mrand "math/rand"
+  )
+  ```
 
 - 导入包的重命名只影响当前源文件。其它的源文件如果导入了相同的包，可以用导入包原本默认的名字或重命名为另一个完全不同的名字
 - 导入包重命名不仅仅只是为了解决名字冲突。如果导入的一个包名很笨重，特别是在一些自动生成的代码中，这时候用一个简短名称会更方便
@@ -82,59 +82,59 @@ import (
 
 - geometry.go
 
-```go
-package main
+  ```go
+  package main
 
-import (
-  "fmt"
-  "geometry/rectangle"
-  "log"
-)
+  import (
+    "fmt"
+    "geometry/rectangle"
+    "log"
+  )
 
-var recLen, recWidth float64 = 3, -4
+  var recLen, recWidth float64 = 3, -4
 
-func init() {
-  fmt.Println("Geometry init func")
-  if recLen < 0 {
-    log.Fatal("length is less than zero")
+  func init() {
+    fmt.Println("Geometry init func")
+    if recLen < 0 {
+      log.Fatal("length is less than zero")
+    }
+
+    if recWidth < 0 {
+      log.Fatal("width is less than zero")
+    }
   }
 
-  if recWidth < 0 {
-    log.Fatal("width is less than zero")
+  func main() {
+    fmt.Println("Geometry main func")
+    fmt.Println("rectangle area: %.2f", rectangle.Area(recLen, recWidth))
+    fmt.Println("rectangle diagonal: %.2f", rectangle.Diagonal(recLen, recWidth))
   }
-}
-
-func main() {
-  fmt.Println("Geometry main func")
-  fmt.Println("rectangle area: %.2f", rectangle.Area(recLen, recWidth))
-  fmt.Println("rectangle diagonal: %.2f", rectangle.Diagonal(recLen, recWidth))
-}
-```
+  ```
 
 - rectangle.go
 
-```go
-package rectangle
+  ```go
+  package rectangle
 
-import (
-  "fmt"
-  "math"
-)
+  import (
+    "fmt"
+    "math"
+  )
 
-func init() {
-  fmt.Println("Rectangle init func")
-}
+  func init() {
+    fmt.Println("Rectangle init func")
+  }
 
-func Area(len, width float64) float64 {
-  area := len * width
-  return area
-}
+  func Area(len, width float64) float64 {
+    area := len * width
+    return area
+  }
 
-func Diagonal(len, width float64) float64 {
-  diagonal := math.Sqrt(len*len + width*width)
-  return diagonal
-}
-```
+  func Diagonal(len, width float64) float64 {
+    diagonal := math.Sqrt(len*len + width*width)
+    return diagonal
+  }
+  ```
 
 ## 内部包
 

@@ -25,19 +25,20 @@
 - 接口是双方约定的一种合作协议。接口实现者不需要关心接口会被怎样使用，调用者也不需要关心接口的实现细节。接口是一种类型，也是一种抽象结构，不会暴露所含数据的格式、类型及结构
 - 在面向对象中，接口定义了一个对象的行为
 - 使用 type 和 interface 关键字定义接口
+
+  ```go
+  type interface_name interface {
+    method_name1([param_list]) [return_type]
+    method_name2([param_list]) [return_type]
+    method_name3([param_list]) [return_type]
+    ...
+    method_namen([param_list]) [return_type]
+  }
+  ```
+
   - `interface_name`：接口类型名。使用 type 将接口定义为自定义的类型名。Go 语言的接口在命名时，一般会在单词后面添加 er，如有写操作的接口叫 Writer，有字符串功能的接口叫 Stringer，有关闭功能的接口叫 Closer 等
   - `method_name`：方法名。当方法名首字母是大写时，且这个接口类型名首字母也是大写时，这个方法可以被接口所在的包之外的代码访问
   - `param_list` `return_type`：参数列表和返回值列表中的参数变量名可以被忽略
-
-```go
-type interface_name interface {
-   method_name1([param_list]) [return_type]
-   method_name2([param_list]) [return_type]
-   method_name3([param_list]) [return_type]
-   ...
-   method_namen([param_list]) [return_type]
-}
-```
 
 ## 接口实现
 
@@ -305,64 +306,65 @@ func main() {
 ### 一个类型可以实现多个接口
 
 - 接口间彼此独立，不知道对方的实现
-  - Socket 结构的 Write() 方法实现了 io.Writer 以及 io.Closer 接口
+- Socket 结构的 Write() 方法实现了 io.Writer 以及 io.Closer 接口
 
-```go
-type Socket struct {
-}
+  ```go
+  type Socket struct {
+  }
 
-func (s *Socket) Write(p []byte) (n int, err error) {
-    return 0, nil
-}
+  func (s *Socket) Write(p []byte) (n int, err error) {
+      return 0, nil
+  }
 
-func (s *Socket) Close() error {
-    return nil
-}
+  func (s *Socket) Close() error {
+      return nil
+  }
 
-func usingWriter( writer io.Writer){
-    writer.Write( nil ) // 使用io.Writer的代码, 并不知道Socket和io.Closer的存在
-}
+  func usingWriter( writer io.Writer){
+      writer.Write( nil ) // 使用io.Writer的代码, 并不知道Socket和io.Closer的存在
+  }
 
-func usingCloser( closer io.Closer) {
-    closer.Close() // 使用io.Closer, 并不知道Socket和io.Writer的存在
-}
+  func usingCloser( closer io.Closer) {
+      closer.Close() // 使用io.Closer, 并不知道Socket和io.Writer的存在
+  }
 
-func main() {
-    s := new(Socket) // 实例化Socket
-    usingWriter(s)
-    usingCloser(s)
-}
-```
+  func main() {
+      s := new(Socket) // 实例化Socket
+      usingWriter(s)
+      usingCloser(s)
+  }
+  ```
 
 ### 多个类型可以实现相同的接口
 
 - 接口的方法可以通过在类型中嵌入其他类型或者结构体来实现
+- 示例：
   - Service 接口定义了两个方法：一个是开启服务的方法（Start()），一个是输出日志的方法（Log()）
   - 使用 GameService 结构体来实现 Service，GameService 自己的结构只能实现 Start() 方法，而 Service 接口中的 Log() 方法已经被一个能输出日志的日志器（Logger）实现了，无须再进行 GameService 封装，或者重新实现一遍
   - 选择将 Logger 嵌入到 GameService 能最大程度地避免代码冗余，简化代码结构
 
-```go
-type Service interface {
-    Start()  // 开启服务
-    Log(string)  // 日志输出
-}
+  ```go
+  type Service interface {
+      Start()  // 开启服务
+      Log(string)  // 日志输出
+  }
 
-type Logger struct {
-}
+  type Logger struct {
+  }
 
-func (g *Logger) Log(l string) {
-}
+  func (g *Logger) Log(l string) {
+  }
 
-type GameService struct {
-    Logger  // 嵌入日志器
-}
+  type GameService struct {
+      Logger  // 嵌入日志器
+  }
 
-func (g *GameService) Start() {
-}
+  func (g *GameService) Start() {
+  }
 
-func main() {
-    var s Service = new(GameService)
-    s.Start()
-    s.Log("hello")
-}
-```
+  func main() {
+      var s Service = new(GameService)
+      s.Start()
+      s.Log("hello")
+  }
+  ```
