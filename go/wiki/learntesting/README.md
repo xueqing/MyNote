@@ -17,4 +17,4 @@
 - [ ] 阅读[我最喜欢的关于测试帮助函数在哪里](http://golang.org/doc/faq#testing_framework)
 - [ ] 观看[测试技巧](https://talks.golang.org/2014/testing.slide#1)
 - [ ] 阅读[表驱动测试](https://github.com/golang/go/wiki/TableDrivenTests)
-- [ ] 阅读[使用子测试和子测试集](https://blog.golang.org/subtests)
+- [ ] 阅读[使用子测试项目和子性能测试](https://blog.golang.org/subtests)
