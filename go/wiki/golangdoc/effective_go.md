@@ -38,6 +38,15 @@ Go 中的名字和其他语言中的一样重要。它们甚至有语义影响�
 
 ### getter
 
+Go 不提供对 getter 和 setter 的自动支持。自己提供 getter 和 setter 是没有问题的，且通常这样做事合适的。但是将 Get 放在 getter 名字中既不是惯例也非必要的。如果你有一个域叫 owner(小写的，不导出)，它的 getter 方法应叫做 Owner(大写，导出的)，而不是 GetOwner。使用大写名字导出可以区分域名和方法名。如果有必要，一个 setter 方法可能叫做 SetOwner。两个名字实际上也是易读的：
+
+```go
+owner := obj.Owner()
+if owner != user {
+  obj.SetOwner(user)
+}
+```
+
 ### 接口名
 
 按照惯例，一个方法的接口用方法名和一个 -er 后缀或类似的修改器命名，用以构造一个代理名词：Reader，Writer，Formatter，CloseNotifier 等。
