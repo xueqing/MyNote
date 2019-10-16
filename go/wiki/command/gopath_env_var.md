@@ -6,7 +6,7 @@ GOPATH 环境变量列举了寻找 Go 代码的位置。在 Unix 上，其值是
 
 如果环境变量未被设置，GOPATH 默认是用户主目录下的一个 “go” 子目录(Unix 下是 `$HOME/go`，Windows 下是 `%USERPROFILE%\go`)，除非那个目录存在一个 Go 发行版本。运行 `go env GOPATH` 查看当前的 GOPATH。
 
-查看 [SettingGOPATH](https://golang.org/wiki/SettingGOPATH) 设置一个自定义的 GOPATH。
+查看 [SettingGOPATH](../setgopath.md) 设置一个自定义的 GOPATH。
 
 GOPATH 下的每个目录必须有一个规定的结构：
 
@@ -37,4 +37,4 @@ GOPATH=/home/user/go
 
 Go 搜索 GOPATH 列举的每个目录来查找源码，但是新包总是下载到列表中的第一个目录。
 
-查看 [How to Write Go Code](https://golang.org/doc/code.html)的例子。
+查看 [How to Write Go Code](../golangdoc/code.md)的例子。
