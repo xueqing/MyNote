@@ -25,7 +25,7 @@ Go 是一个用于管理 Go 源码的工具。
 | [list](list.md) | 列举包或模块 |
 | [mod](mod.md) | 模块维护 |
 | [run](run.md) | 编译和运行 Go 程序 |
-| [test](test.md) | 测试包 |
+| [test](test_package.md) | 测试包 |
 | tool | 运行指定的 go 工具 |
 | version | 打印 Go 版本 |
 | vet | 打印包中可能的错误 |
