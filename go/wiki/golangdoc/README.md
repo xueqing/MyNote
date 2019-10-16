@@ -21,11 +21,11 @@
   - [ ] [Go 的一级函数](https://golang.org/doc/codewalk/functions)
   - [ ] [生成任意文本：一个 Markov 链算法](https://golang.org/doc/codewalk/markov)
   - [ ] [通过共享内存](https://golang.org/doc/codewalk/sharemem)
-  - [ ] [编写 Web 应用](https://golang.org/doc/articles/wiki/)——构建一个简单的 web 应用。
+  - [ ] [编写 Web 应用](articles/wiki.md)——构建一个简单的 web 应用。
 - 工具
-  - [ ] [关于 go 命令](go_command.md)——为什么我们编写它？它是什么？它不是什么？如何使用它？
+  - [ ] [关于 Go 命令](articles/go_command.md)——为什么我们编写它？它是什么？它不是什么？如何使用它？
   - [ ] [使用 GDB 调试 Go 代码](gdb.md)
-  - [ ] [数据竞争检测器](race_detector.md)——关于数据竞争检测器的手册
+  - [ ] [数据竞争检测器](articles/race_detector.md)——关于数据竞争检测器的手册
   - [ ] [快速入门 Go 的汇编器](asm.md)——介绍了 Go 使用的汇编器
 - 更多
   - [ ] 查看[维基](../README.md)的[文章](../articles.md)页面获取更多 Go 的文章
