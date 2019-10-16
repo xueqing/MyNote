@@ -3,7 +3,7 @@
 - [学习测试](#%e5%ad%a6%e4%b9%a0%e6%b5%8b%e8%af%95)
   - [内容](#%e5%86%85%e5%ae%b9)
 
-参考 [Go Wiki 官网——学习测试](https://github.com/golang/go/wiki/LearnTesting) 学习。
+参考 [Go 维基官网——学习测试](https://github.com/golang/go/wiki/LearnTesting) 学习。
 
 原网页由 Evgeny Vereshchagin 在 2019/1/29 编辑。[第 4 次修订](https://github.com/golang/go/wiki/LearnTesting/_history)。
 
