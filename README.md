@@ -7,7 +7,7 @@
   - [算法](algorithm/)
   - [C++](cplusplus/)
   - [数据库](database/)
-  - [go](go/README.md)
+  - [go](go-doc/README.md)
   - [Python](https://github.com/xueqing/Python.git)
 - Linux 命令
   - [linux](linux/README.md)

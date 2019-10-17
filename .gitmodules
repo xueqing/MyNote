@@ -7,3 +7,6 @@
 [submodule "Python"]
 	path = Python
 	url = ../Python.git
+[submodule "go-doc"]
+	path = go-doc
+	url = https://github.com/xueqing/go-doc.git
