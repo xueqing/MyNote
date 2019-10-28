@@ -5,3 +5,6 @@
   - 解决方法：执行下面两个命令行
     - `sudo rm /var/cache/apt/archives/lock`
     - `sudo rm /var/lib/dpkg/lock`
+- 错误 2：Unable to fetch some archives, maybe run apt-get update or try with --fix-missing?
+  - 可能原因：未更新源
+  - 在 `System Settings` -> `Software & Updates` -> `Download from`: 选择 China 中，比如 `mirrors.aliyun.com`
