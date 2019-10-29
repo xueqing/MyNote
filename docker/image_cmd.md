@@ -2,9 +2,10 @@
 
 - [本地镜像管理命令](#%e6%9c%ac%e5%9c%b0%e9%95%9c%e5%83%8f%e7%ae%a1%e7%90%86%e5%91%bd%e4%bb%a4)
   - [列出本地镜像](#%e5%88%97%e5%87%ba%e6%9c%ac%e5%9c%b0%e9%95%9c%e5%83%8f)
-  - [删除本地一个或多少镜像](#%e5%88%a0%e9%99%a4%e6%9c%ac%e5%9c%b0%e4%b8%80%e4%b8%aa%e6%88%96%e5%a4%9a%e5%b0%91%e9%95%9c%e5%83%8f)
+  - [删除镜像](#%e5%88%a0%e9%99%a4%e9%95%9c%e5%83%8f)
   - [标记本地镜像](#%e6%a0%87%e8%ae%b0%e6%9c%ac%e5%9c%b0%e9%95%9c%e5%83%8f)
   - [创建镜像](#%e5%88%9b%e5%bb%ba%e9%95%9c%e5%83%8f)
+  - [保存镜像](#%e4%bf%9d%e5%ad%98%e9%95%9c%e5%83%8f)
   - [导入镜像](#%e5%af%bc%e5%85%a5%e9%95%9c%e5%83%8f)
 
 ## 列出本地镜像
@@ -28,7 +29,9 @@ OPTIONS 说明：
 docker images ubuntu
 ```
 
-## 删除本地一个或多少镜像
+## 删除镜像
+
+删除本地一个或多少镜像。
 
 ```sh
 docker rmi [OPTIONS] IMAGE [IMAGE...]
@@ -47,6 +50,8 @@ docker rmi -f runoob/ubuntu:v4
 
 ## 标记本地镜像
 
+标记本地镜像，将其归入某一仓库。
+
 ```sh
 docker tag [OPTIONS] IMAGE[:TAG] [REGISTRYHOST/][USERNAME/]NAME[:TAG]
 ```
@@ -58,6 +63,8 @@ docker tag ubuntu:15.10 runoob/ubuntu:v3
 ```
 
 ## 创建镜像
+
+使用 Dockerfile 创建镜像。
 
 ```sh
 docker build [OPTIONS] PATH | URL | -
@@ -107,7 +114,27 @@ docker build -f /path/to/a/Dockerfile .
 
 在 Docker 守护进程执行 Dockerfile 中的指令前，首先会对 Dockerfile 进行语法检查，有语法错误时会返回。
 
+## 保存镜像
+
+将指定镜像保存成 tar 归档文件。
+
+```sh
+docker save [OPTIONS] IMAGE [IMAGE...]
+```
+
+OPTIONS 说明：
+
+- -o: 输出到的文件
+
+将镜像 runoob/ubuntu:v3 生成 my_ubuntu_v3.tar 文档。
+
+```sh
+docker save -o my_ubuntu_v3.tar runoob/ubuntu:v3
+```
+
 ## 导入镜像
+
+导入使用 docker save 命令导出的镜像。
 
 ```sh
 docker load [OPTIONS]

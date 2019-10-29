@@ -8,6 +8,8 @@
 
 ## 创建容器
 
+创建一个新的容器并运行一个命令。
+
 ```sh
 docker run [OPTIONS] IMAGE [COMMAND] [ARG...]
 ```
@@ -48,7 +50,7 @@ docker run -P -d nginx:latest
 使用镜像 nginx:latest，以后台模式启动一个容器,将容器的 80 端口映射到主机的 80 端口,主机的目录 /data 映射到容器的 /data。
 
 ```sh
-docker run -p 80:80 /data:/data -d nginx:latest
+docker run -p 80:80 -v /data:/data -d nginx:latest
 ```
 
 绑定容器的 8080 端口，并将其映射到本地主机 127.0.0.1 的 80 端口上。
@@ -94,6 +96,8 @@ docker restart myrunoob
 
 ## 杀掉容器
 
+杀掉一个运行中的容器。
+
 ```sh
 docker kill [OPTIONS] CONTAINER [CONTAINER...]
 ```
@@ -109,6 +113,8 @@ docker kill -s KILL mynginx
 ```
 
 ## 删除容器
+
+删除一个或多少容器。
 
 ```sh
 docker rm [OPTIONS] CONTAINER [CONTAINER...]

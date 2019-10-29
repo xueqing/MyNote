@@ -59,6 +59,8 @@ docker ps -a
 
 ## 连接容器
 
+连接到正在运行中的容器。
+
 ```sh
 docker attach [OPTIONS] CONTAINER
 ```
