@@ -23,3 +23,9 @@ expect {
 expect 100%                         ## 出现 100% 表明上传成功
 expect eof                          ## 等待结束标记，由 spawn 启动的命令在结束时回产生一个 eof 标记
 ```
+
+**注意：** expect 不能正确解释 shell 的 glob 模式，所以执行类似 `spawn scp -r /home/user/dir1/ cluster_server:` 的命令会出错。解决方法：
+
+```sh
+spawn bash -c "scp -r /home/user/dir1/* cluster_server:"
+```
