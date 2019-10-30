@@ -19,3 +19,14 @@ git reset --soft
 # 仅重设暂存区, 不改变工作区
 git reset --mixed
 ```
+
+## git reset --soft 合并提交
+
+```sh
+# 合并最近 3 次提交
+git reset --soft HEAD~3
+# 使用这 3 次提交的信息
+git commit --edit -m"$(git log --format=%B --reverse HEAD..HEAD@{1})"
+# 重新编写提交信息
+git add . && git commit -m "new commit message"
+```
