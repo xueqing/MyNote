@@ -85,7 +85,7 @@ Signaling
 ORTC
   Object-RTC，是谷歌、微软和一些其他公司参与的致力于定义一个用于 RTC 的以对象为中心的 API。
   ORTC 的核心在于替换 WebRTC 当前使用的 SDP 接口，作为开发者使用的 API。
-  SDP 的问题是它难于使用 JS 代码解析和工作。
+  SDP 的问题是它难于使用 js 代码解析和工作。
 ```
 
 ## APIS
@@ -253,7 +253,7 @@ document.querySelector("button#send").onlick = function() {
   - 会话控制消息：初始化或关闭通信，报告错误
   - 网络配置：告诉外部世界我的电脑的 IP 地址和端口
   - 媒体能力：我的浏览器可以处理的编解码和分辨率，以及浏览器想要通讯的媒体格式
-  ![信号图解](jsep.png)
+  ![信令图解](jsep.png)
 
 ## NAT和防火墙穿越
 
