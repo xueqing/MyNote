@@ -40,13 +40,13 @@ Windows DirectShow
 ### ffmpeg 源码框架
 
 ```txt
-libavcodec    提供了一系列编码器的实现
+libavcodec    提供了一系列编解码器的实现
 libavdevice   提供了访问捕获设备和回放设备的接口
 libavfilter   提供了各种音视频过滤器
-libavformat   实现在流协议，容器格式及其本 IO 访问
-libavutil     包括了 hash 器，解码器和各利工具函数
+libavformat   实现了流协议、容器格式及基本 IO 访问
+libavutil     包括工具类函数、内存操作
 libswresample 实现了混音和重采样
-libswscale    实现了色彩转换和缩放工能
+libswscale    实现了色彩转换和缩放功能
 ```
 
 libavcodec 存放 ffmpeg 支持的各种编解码器的实现、ffmpeg 编解码功能相关的数据结构定义、函数定义和声明。
