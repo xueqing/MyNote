@@ -88,7 +88,7 @@ ffplay.c `static int read_thread(void *arg)`
 avformat_alloc_context
   初始化 AVFormatContext
 avformat_open_input
-  打开一个输入流并读头信息，未打开 codec。
+  打开一个输入流并读头信息，保存文件格式信息，未打开 codec。
   init_input
     打开输入文件并探测格式(格式未知的话) AVFormatContext。
     av_probe_input_buffer2
@@ -98,7 +98,7 @@ avformat_open_input
 setup_find_stream_info_opts
   设置 AVStream.info，即 avformat_find_stream_info 内部使用的流信息
 avformat_find_stream_info
-  读媒体文件的包获得流信息。这对于没有头的文件格式(如 mpeg)有用。
+  读媒体文件的包获得流信息。读取一小段视频文件数据并尝试解码，保存取到的流信息。这对于没有头的文件格式(如 mpeg)有用。
   find_probe_decoder/avcodec_open2(libavforamt/utils.c)
     找到对应的编解码器和参数
 stream_component_open
@@ -116,6 +116,7 @@ stream_component_open
 for 循环
   av_read_frame(libavforamt/utils.c)
     返回流的下一帧。对于视频，包包含一帧数据；对于音频，如果帧是固定大小则包含整数帧，大小不固定则包含一帧。
+    用于解复用过程。将存储在输入文件中的数据分割为多个包，每次调用得到一个包。包可能是视频帧、音频帧或其他数据。解码器只会解码视频帧或音频帧，不会丢掉非音视频数据，从而提供尽可能多信息给解码器。
     read_frame_internal >> ff_read_packet >> AVFormatContext.iformat.read_packet
   packet_queue_put
     将读到的帧放到音频或视频的 PacketQueue(VideoState.audioq/videoq/subtitleq)
