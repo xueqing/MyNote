@@ -4,7 +4,7 @@
 
 master playlist 描述了对于你的内容所有可访问的 variant(变体)。每个 variant 是一个特定比特率的流版本且被包含在一个单独的 playlist。客户端基于测量的网络比特率切换到最合适的 variant。调节客户端的播放器最小化回放的停顿，以便给用户进坑好的流体验。
 
-![hls master playlist](../hls/hls_master_playlist.pnghls_master_playlist.png)
+![hls master playlist](../hls/hls_master_playlist.png)
 
 master playlist 不能重复读。一旦客户端读到 master playlist，它假定 variant 集合不会改变。当客户端在其中一个单一的 variant playlist 中看到 EXT-X-ENDLIST 标记时流结束。
 

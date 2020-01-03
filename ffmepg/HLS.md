@@ -43,7 +43,7 @@
 
 一个 variant stream 包含一个 media playlist，指定了以特定比特率、特定格式编码的媒体，包含视频的媒体包含特定的分辨率。
 
-一个 variant stream 也可以指定一个 rendition 的集合。rendition 是内容的可选版本，必须不同语言的音频或不同摄像角度录制的视频。
+一个 variant stream 也可以指定一个 rendition 的集合。rendition 是内容的可选版本，比如不同语言的音频或不同摄像角度录制的视频。
 
 客户端应该根据网络条件切换不同的 variant stream。客户端也应该根据用户偏好选择 rendition。
 
