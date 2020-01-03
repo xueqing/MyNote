@@ -55,6 +55,10 @@ janus 可以与内网设备和浏览器同时建立连接，并将浏览器发�
 
 ### licode 加 RTMP 协议
 
+在 licode 服务器上添加 RTMP 推流。基本思路：修改 ExternalOutput 实现。这是 licode 的录制模块，使用 ExternalOutput 保存视频文件，格式是 mkv。将录制模块改为 RTMP 推流。可以修改 Room.js 的 startRecording 模块解决。
+
+WebRTC 的音频格式是 Opus，如果服务器不支持，需要改成 AAC 编码。可以修改 licode/erizo/src/media/erizo/media 下的 ExternalOutput，修改 oformat，对原来的视音频重新编码，输出 flv。
+
 ### janus 转换 RTMP 和 WebRTC
 
 前端使用 WebRTC 采集和传输音视频到网关服务，网关服务将 WebRTC 协议转为 RTMP，合流之后转化为 WebRTC 分发给其他客户端。
