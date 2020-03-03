@@ -77,6 +77,10 @@ ffmpeg -ss 1:27:54 -t 00:05:00 -i winter.mp4 -c copy juanxincai.mp4
 ffmpeg -i winter.mp4 -qscale 0 tmpw.mp4
 # 把视频前 30 帧转成一个 gif
 ffmpeg -i winter.mp4 -vframes 30 -y -f gif a.gif
+# 只提取音频
+ffmpeg -i summer.mp4 -vn -acodec copy audio.flv
+# 只提取视频
+ffmpeg -i summer.mp4 -an -vcodec copy video.flv
 ```
 
 `test.sdp` 用于将 ffmpeg 的输出信息存储成一个 sdp 文件。该文件用于 RTP 的接收。不加 `>test.sdp` 时，ffmpeg 会直接把 sdp 信息输出到控制台。将该信息复制出来保存成一个后缀是 `.sdp` 文本文件，也是可以用来接收该 RTP 流的。加上 `>test.sdp` 后，可以直接把这些 sdp 信息保存成文本。
