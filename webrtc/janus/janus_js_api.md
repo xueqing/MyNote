@@ -24,9 +24,9 @@ DTLS
 
 ## JavaScript API
 
-假设已经编译了 HTTP 传输，janus 暴露一个伪 RESTful 接口，以及可选的 WebSocket/RabbitMQ/MQTT/Nanomsg/UnixSockets 接口，所有这些都基于 JSON 消息。这些接口都支持客户端利用 janus 提供的特性和插件提供的功能。考虑到大部分客户端会是 web 浏览器，一个常见的选择是依靠 REST 或 WebSocket。为了方便 web 开发者使用，JavaScript 库 (`janus,.s`) 使用了相同的 API，可以通过该库使用 REST 或 WebSocket 接口。
+假设已经编译了 HTTP 传输，janus 暴露一个伪 RESTful 接口，以及可选的 WebSocket/RabbitMQ/MQTT/Nanomsg/UnixSockets 接口，所有这些都基于 JSON 消息。这些接口都支持客户端利用 janus 提供的特性和插件提供的功能。考虑到大部分客户端会是 web 浏览器，一个常见的选择是依靠 REST 或 WebSocket。为了方便 web 开发者使用，JavaScript 库 (`janus.js`) 使用了相同的 API，可以通过该库使用 REST 或 WebSocket 接口。
 
-这个库已经实现了与 janus core 建立会话、将 WebRTC 用户绑定到插件、发送和接收请求和时间到插件等等。注意 `janus.js` 库使用了 `webrtc-adapter` 的特性，所以你的 web 应用应该总包含它作为依赖。
+这个库已经实现了与 janus core 建立会话、将 WebRTC 用户绑定到插件、发送和接收请求和事件到插件等等。注意 `janus.js` 库使用了 `webrtc-adapter` 的特性，所以你的 web 应用应该总包含它作为依赖。
 
 ### 使用 JavaScript API 注意
 
@@ -111,7 +111,7 @@ Janus.init({
   - `error`: 会话没有成功创建
   - `destroyed`: 会话被销毁，且不能再使用
 
-这些属性和回调函数作为一个参数对象的属性传递给方法：也就是说，`Jansu` 构造函数接收一个单一的参数，但是作为所有可用选项的容器。`success` 回调函数是开始应用的逻辑，比如绑定 peer 到一个插件并开始一个媒体会话。示例：
+这些属性和回调函数作为一个参数对象的属性传递给方法：也就是说，`Janus` 构造函数接收一个单一的参数，但是作为所有可用选项的容器。`success` 回调函数是开始应用的逻辑，比如绑定 peer 到一个插件并开始一个媒体会话。示例：
 
 ```js
 var janus = new Janus(
