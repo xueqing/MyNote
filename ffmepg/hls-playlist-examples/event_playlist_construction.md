@@ -41,7 +41,7 @@ event playlist 示例中使用的标记有：
 
 ### EXTM3U
 
-表明这个 playlist 是 一个扩展的 M3U 文件。这种文件类型通过修改第一行标记为 EXTM3U 以区别于基本的 M3U 文件。所有的 HLS playlist 必须以这个标记开始。
+表明这个 playlist 是一个扩展的 M3U 文件。这种文件类型通过修改第一行标记为 EXTM3U 以区别于基本的 M3U 文件。所有的 HLS playlist 必须以这个标记开始。
 
 ### EXT-X-PLAYLIST-TYPE
 
@@ -67,7 +67,7 @@ event playlist 示例中使用的标记有：
 
 ## 更新 playlist 文件
 
-当使用 EVENT 标记时，你不能从 playlist 中删除任何东西；你只可能追加新的片段到文件直到这个事件终止，那是会追加一个 EXT-X-ENDLIST 标签。下面的示例展示了使用新的媒体 URL 更新且该事件已经终止的同一 playlist：
+当使用 EVENT 标记时，你不能从 playlist 中删除任何东西；你只可能追加新的片段到文件直到这个事件终止，那时会追加一个 EXT-X-ENDLIST 标签。下面的示例展示了使用新的媒体 URL 更新且该事件已经终止的同一 playlist：
 
 ```m3u8
 #EXTM3U

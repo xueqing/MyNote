@@ -2,7 +2,7 @@
 
 ## 概述
 
-master playlist 描述了对于你的内容所有可访问的 variant(变体)。每个 variant 是一个特定比特率的流版本且被包含在一个单独的 playlist。客户端基于测量的网络比特率切换到最合适的 variant。调节客户端的播放器最小化回放的停顿，以便给用户进坑好的流体验。
+master playlist 描述了对于你的内容所有可访问的 variant(变体)。每个 variant 是一个特定比特率的流版本且被包含在一个单独的 playlist。客户端基于测量的网络比特率切换到最合适的 variant。调节客户端的播放器最小化回放的停顿，以便给用户尽量好的流体验。
 
 ![hls master playlist](../hls/hls_master_playlist.png)
 
@@ -30,7 +30,7 @@ master playlist 示例中使用的标记有：
 
 ### EXTM3U
 
-表明这个 playlist 是 一个扩展的 M3U 文件。这种文件类型通过修改第一行标记为 EXTM3U 以区别于基本的 M3U 文件。所有的 HLS playlist 必须以这个标记开始。
+表明这个 playlist 是一个扩展的 M3U 文件。这种文件类型通过修改第一行标记为 EXTM3U 以区别于基本的 M3U 文件。所有的 HLS playlist 必须以这个标记开始。
 
 ### EXT-X-STREAM-INF
 
@@ -42,7 +42,7 @@ master playlist 示例中使用的标记有：
 
 #### BANDWIDTH
 
-(必选)一个证书，表示对于每个媒体文件所有比特率的上限，单位是 比特/秒。上限值的计算包含了所有出现或将会出现在 playlist 中的容器负载。
+(必选)一个整数，表示对于每个媒体文件所有比特率的上限，单位是 比特/秒。上限值的计算包含了所有出现或将会出现在 playlist 中的容器负载。
 
 #### FRAME-RATE
 

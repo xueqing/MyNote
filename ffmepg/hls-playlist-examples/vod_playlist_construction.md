@@ -36,11 +36,11 @@ http://example.com/movie1/fileSequenceD.ts
 #EXT-X-ENDLIST
 ```
 
-直播 playlist 示例中使用的标记有：
+VOD playlist 示例中使用的标记有：
 
 ### EXTM3U
 
-表明这个 playlist 是 一个扩展的 M3U 文件。这种文件类型通过修改第一行标记为 EXTM3U 以区别于基本的 M3U 文件。所有的 HLS playlist 必须以这个标记开始。
+表明这个 playlist 是一个扩展的 M3U 文件。这种文件类型通过修改第一行标记为 EXTM3U 以区别于基本的 M3U 文件。所有的 HLS playlist 必须以这个标记开始。
 
 ### EXT-X-TARGETDURATION
 
