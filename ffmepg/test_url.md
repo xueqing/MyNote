@@ -1,5 +1,6 @@
 # 播放测试链接
 
+```txt
 CCTV1高清: http://ivi.bupt.edu.cn/hls/cctv1hd.m3u8
 CCTV3高清: http://ivi.bupt.edu.cn/hls/cctv3hd.m3u8
 CCTV6高清: http://ivi.bupt.edu.cn/hls/cctv6hd.m3u8
@@ -1720,3 +1721,4 @@ CCTV熊猫-7: http://fms.cntv.lxdns.com/live/flv/channel99.flv
 新华社中文台: http://218.244.147.118:5383/wtvlive/cditv/xhxc
 新华社英文台: http://mobile.xinhuashixun.com/Live/cncworldHD.m3u8
 书画频道: mmst://media.shtv.net.cn/shtv
+```
