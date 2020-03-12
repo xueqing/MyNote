@@ -25,4 +25,6 @@ git push origin --tags
 git push origin [tagname]
 # 在标签 v2.0.0 上创建分支 v2
 git checkout -b v2 v2.0.0
+# 远程同步 tag
+git tag -l | xargs git tag -d; git fetch origin --tags
 ```
