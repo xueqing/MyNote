@@ -49,6 +49,12 @@ CMD ["python3"]
 RUN apt-get update && apt-get install -y --no-install-recommends apt-utils
 ```
 
+安装出现错误信息 `E: Unable to fetch some archives, maybe run apt-get update or try with --fix-missing?`。解决方法：
+
+```sh
+sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list
+```
+
 ## 制作镜像
 
 ```sh
