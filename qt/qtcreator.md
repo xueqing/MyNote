@@ -1,9 +1,9 @@
 # QtCreator 一些基本的配置参数说明
 
-- [QtCreator 一些基本的配置参数说明](#qtcreator-%E4%B8%80%E4%BA%9B%E5%9F%BA%E6%9C%AC%E7%9A%84%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E)
-  - [QtCreator pro 文件参数](#qtcreator-pro-%E6%96%87%E4%BB%B6%E5%8F%82%E6%95%B0)
-  - [QtCreator 帮助文档](#qtcreator-%E5%B8%AE%E5%8A%A9%E6%96%87%E6%A1%A3)
-  - [QtCreator 使用](#qtcreator-%E4%BD%BF%E7%94%A8)
+- [QtCreator 一些基本的配置参数说明](#qtcreator-%e4%b8%80%e4%ba%9b%e5%9f%ba%e6%9c%ac%e7%9a%84%e9%85%8d%e7%bd%ae%e5%8f%82%e6%95%b0%e8%af%b4%e6%98%8e)
+  - [QtCreator pro 文件参数](#qtcreator-pro-%e6%96%87%e4%bb%b6%e5%8f%82%e6%95%b0)
+  - [QtCreator 帮助文档](#qtcreator-%e5%b8%ae%e5%8a%a9%e6%96%87%e6%a1%a3)
+  - [QtCreator 使用](#qtcreator-%e4%bd%bf%e7%94%a8)
 
 ## QtCreator pro 文件参数
 
@@ -24,6 +24,7 @@
 | QMAKE_CFLAGS  | 设置 c 编译器 flag 参数 |
 | QMAKE_CXXFLAGS | 设置 c++ 编译器 flag 参数 |
 | QMAKE_LFLAGS | 设置链接器 flag 参数 |
+| VERSION       | 在 pro 文件添加 `VERSION=x.x.x` 可指定生成版本的名称，不会自动删除旧版本 |
 
 备注
 
