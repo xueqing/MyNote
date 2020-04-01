@@ -1,8 +1,8 @@
 # ldconfig
 
 - [ldconfig](#ldconfig)
-  - [ldconfig 与 /etc/ld.so.conf](#ldconfig-%E4%B8%8E-etcldsoconf)
-    - [添加动态库路径](#%E6%B7%BB%E5%8A%A0%E5%8A%A8%E6%80%81%E5%BA%93%E8%B7%AF%E5%BE%84)
+  - [ldconfig 与 /etc/ld.so.conf](#ldconfig-%e4%b8%8e-etcldsoconf)
+    - [添加动态库路径](#%e6%b7%bb%e5%8a%a0%e5%8a%a8%e6%80%81%e5%ba%93%e8%b7%af%e5%be%84)
   - [ldd](#ldd)
 
 ## ldconfig 与 /etc/ld.so.conf
@@ -14,6 +14,8 @@
   - 同时将数据记录一份在 `/etc/ld.so.cache` 文件
 
 ### 添加动态库路径
+
+库文件在链接(静态库和共享库)和运行(仅限于使用共享库的程序)时被使用，其搜索路径是在系统中进行设置的。一般 Linux 系统把 `/lib` 和 `/usr/lib` 两个目录作为默认的库搜索路径，所以使用这两个目录中的库是不需要进行设置搜索路径即可直接使用。
 
 - 查找库路径 `sudo find / -iname *library_name*.so*`
 - 方法 1
