@@ -191,7 +191,9 @@ navigator.webkitGetUserMedia({audio:true}, gotStream);
     - 信令传输
     - NAT/防火墙穿越
     - 点对点通信建立失败时作为中转服务器
-  ![WebRTC 架构](./webrtcArchitecture.png)
+
+  ![WebRTC 架构](webrtcArchitecture.png)
+
 - `RTCPeerConnection`例子
 
 ```js
@@ -253,6 +255,7 @@ document.querySelector("button#send").onlick = function() {
   - 会话控制消息：初始化或关闭通信，报告错误
   - 网络配置：告诉外部世界我的电脑的 IP 地址和端口
   - 媒体能力：我的浏览器可以处理的编解码和分辨率，以及浏览器想要通讯的媒体格式
+
   ![信令图解](jsep.png)
 
 ## NAT和防火墙穿越
