@@ -103,26 +103,26 @@ git checkout -- f1
 
 - 第一次在 dev 分支开发
 
-```sh
-# 1 克隆仓库源码，切换到仓库目录
-git clone xxx
-# 2 切换到 dev 分支，会自动跟踪远程最新的 dev
-git checkout dev
-# 3 本地修改
-git add xxx
-# 4 提交
-git commit -m "xxxxx"
-```
+  ```sh
+  # 1 克隆仓库源码，切换到仓库目录
+  git clone xxx
+  # 2 切换到 dev 分支，会自动跟踪远程最新的 dev
+  git checkout dev
+  # 3 本地修改
+  git add xxx
+  # 4 提交
+  git commit -m "xxxxx"
+  ```
 
 - 提交本地 dev 分支的修改到远程仓库
 
-```sh
-# 1 拉取最新的代码
-# 1.1 merge 合并分支代码
-git pull origin dev
-# 1.2 rebase 合并代码将提交历史直线化
-git pull --rebase origin dev
-# 3 可能需要合并冲突，合并之后使用 git add 和 git commit 进行提交
-# 4 推送代码到远程仓库
-git push origin dev
-```
+  ```sh
+  # 1 拉取最新的代码
+  # 1.1 merge 合并分支代码
+  git pull origin dev
+  # 1.2 rebase 合并代码将提交历史直线化
+  git pull --rebase origin dev
+  # 3 可能需要合并冲突，合并之后使用 git add 和 git commit 进行提交
+  # 4 推送代码到远程仓库
+  git push origin dev
+  ```
