@@ -1,12 +1,12 @@
 # 常见场景
 
-- [常见场景](#%E5%B8%B8%E8%A7%81%E5%9C%BA%E6%99%AF)
-  - [1 恢复之前删除的文件](#1-%E6%81%A2%E5%A4%8D%E4%B9%8B%E5%89%8D%E5%88%A0%E9%99%A4%E7%9A%84%E6%96%87%E4%BB%B6)
-  - [2 将 dev 分支快速合并到 master 分支](#2-%E5%B0%86-dev-%E5%88%86%E6%94%AF%E5%BF%AB%E9%80%9F%E5%90%88%E5%B9%B6%E5%88%B0-master-%E5%88%86%E6%94%AF)
-  - [3 将基于 server 分支的 client 分支的提交和 server 的提交快速合并到 master 分支](#3-%E5%B0%86%E5%9F%BA%E4%BA%8E-server-%E5%88%86%E6%94%AF%E7%9A%84-client-%E5%88%86%E6%94%AF%E7%9A%84%E6%8F%90%E4%BA%A4%E5%92%8C-server-%E7%9A%84%E6%8F%90%E4%BA%A4%E5%BF%AB%E9%80%9F%E5%90%88%E5%B9%B6%E5%88%B0-master-%E5%88%86%E6%94%AF)
-  - [4 从所有提交中删除某文件](#4-%E4%BB%8E%E6%89%80%E6%9C%89%E6%8F%90%E4%BA%A4%E4%B8%AD%E5%88%A0%E9%99%A4%E6%9F%90%E6%96%87%E4%BB%B6)
-  - [5 将 dev 新提交的代码合并到 master 分支](#5-%E5%B0%86-dev-%E6%96%B0%E6%8F%90%E4%BA%A4%E7%9A%84%E4%BB%A3%E7%A0%81%E5%90%88%E5%B9%B6%E5%88%B0-master-%E5%88%86%E6%94%AF)
-    - [6 撤消操作](#6-%E6%92%A4%E6%B6%88%E6%93%8D%E4%BD%9C)
+- [常见场景](#%e5%b8%b8%e8%a7%81%e5%9c%ba%e6%99%af)
+  - [1 恢复之前删除的文件](#1-%e6%81%a2%e5%a4%8d%e4%b9%8b%e5%89%8d%e5%88%a0%e9%99%a4%e7%9a%84%e6%96%87%e4%bb%b6)
+  - [2 将 dev 分支快速合并到 master 分支](#2-%e5%b0%86-dev-%e5%88%86%e6%94%af%e5%bf%ab%e9%80%9f%e5%90%88%e5%b9%b6%e5%88%b0-master-%e5%88%86%e6%94%af)
+  - [3 将基于 server 分支的 client 分支的提交和 server 的提交快速合并到 master 分支](#3-%e5%b0%86%e5%9f%ba%e4%ba%8e-server-%e5%88%86%e6%94%af%e7%9a%84-client-%e5%88%86%e6%94%af%e7%9a%84%e6%8f%90%e4%ba%a4%e5%92%8c-server-%e7%9a%84%e6%8f%90%e4%ba%a4%e5%bf%ab%e9%80%9f%e5%90%88%e5%b9%b6%e5%88%b0-master-%e5%88%86%e6%94%af)
+  - [4 从所有提交中删除某文件](#4-%e4%bb%8e%e6%89%80%e6%9c%89%e6%8f%90%e4%ba%a4%e4%b8%ad%e5%88%a0%e9%99%a4%e6%9f%90%e6%96%87%e4%bb%b6)
+  - [5 将 dev 新提交的代码合并到 master 分支](#5-%e5%b0%86-dev-%e6%96%b0%e6%8f%90%e4%ba%a4%e7%9a%84%e4%bb%a3%e7%a0%81%e5%90%88%e5%b9%b6%e5%88%b0-master-%e5%88%86%e6%94%af)
+  - [6 撤消操作](#6-%e6%92%a4%e6%b6%88%e6%93%8d%e4%bd%9c)
 
 ## 1 恢复之前删除的文件
 
@@ -50,8 +50,7 @@ git branch -d client server
 
 ## 4 从所有提交中删除某文件
 
-```sh
-```
+参考 [git filter branch](git_filter_branch.md) 命令
 
 ## 5 将 dev 新提交的代码合并到 master 分支
 
@@ -85,7 +84,7 @@ git merge dev
 git push origin master
 ```
 
-### 6 撤消操作
+## 6 撤消操作
 
 ```sh
 # 尝试重新提交
