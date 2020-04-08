@@ -7,6 +7,7 @@
   - [4 从所有提交中删除某文件](#4-%e4%bb%8e%e6%89%80%e6%9c%89%e6%8f%90%e4%ba%a4%e4%b8%ad%e5%88%a0%e9%99%a4%e6%9f%90%e6%96%87%e4%bb%b6)
   - [5 将 dev 新提交的代码合并到 master 分支](#5-%e5%b0%86-dev-%e6%96%b0%e6%8f%90%e4%ba%a4%e7%9a%84%e4%bb%a3%e7%a0%81%e5%90%88%e5%b9%b6%e5%88%b0-master-%e5%88%86%e6%94%af)
   - [6 撤消操作](#6-%e6%92%a4%e6%b6%88%e6%93%8d%e4%bd%9c)
+  - [7 单分支合作开发](#7-%e5%8d%95%e5%88%86%e6%94%af%e5%90%88%e4%bd%9c%e5%bc%80%e5%8f%91)
 
 ## 1 恢复之前删除的文件
 
@@ -94,4 +95,34 @@ git reset HEAD f1
 # 撤消之前对文件 f1 所做的修改
 git checkout -- f1
 # git reset [--hard | soft | mixed | merge | keep] [HEAD | <commit>]
+```
+
+## 7 单分支合作开发
+
+假定都在 dev 分支开发：
+
+- 第一次在 dev 分支开发
+
+```sh
+# 1 克隆仓库源码，切换到仓库目录
+git clone xxx
+# 2 切换到 dev 分支，会自动跟踪远程最新的 dev
+git checkout dev
+# 3 本地修改
+git add xxx
+# 4 提交
+git commit -m "xxxxx"
+```
+
+- 提交本地 dev 分支的修改到远程仓库
+
+```sh
+# 1 拉取最新的代码
+# 1.1 merge 合并分支代码
+git pull origin dev
+# 1.2 rebase 合并代码将提交历史直线化
+git pull --rebase origin dev
+# 3 可能需要合并冲突，合并之后使用 git add 和 git commit 进行提交
+# 4 推送代码到远程仓库
+git push origin dev
 ```
