@@ -35,8 +35,10 @@
       - [D.2.1 基本的回放](#d21-%e5%9f%ba%e6%9c%ac%e7%9a%84%e5%9b%9e%e6%94%be)
       - [D.2.2 支持认证](#d22-%e6%94%af%e6%8c%81%e8%ae%a4%e8%af%81)
   - [抓包](#%e6%8a%93%e5%8c%85)
-    - [udp](#udp)
-    - [tcp](#tcp)
+    - [udp 拉流](#udp-%e6%8b%89%e6%b5%81)
+    - [tcp 拉流](#tcp-%e6%8b%89%e6%b5%81)
+    - [udp 推流](#udp-%e6%8e%a8%e6%b5%81)
+    - [tcp 推流](#tcp-%e6%8e%a8%e6%b5%81)
   - [参考](#%e5%8f%82%e8%80%83)
 
 ## RTSP 连接
@@ -371,7 +373,7 @@ a=control:trackID=2
 
 ## 抓包
 
-### udp
+### udp 拉流
 
 ```txt
 OPTIONS rtsp://192.168.12.15:554 RTSP/1.0
@@ -449,7 +451,7 @@ RTP-Info: url=rtsp://192.168.12.15:554/trackID=1;seq=61356;rtptime=868609344
 Date:  Wed, Apr 08 2020 15:48:39 GMT
 ```
 
-### tcp
+### tcp 拉流
 
 ```txt
 OPTIONS rtsp://192.168.12.15:554 RTSP/1.0
@@ -524,6 +526,136 @@ CSeq: 5
 Session:       2056953518
 RTP-Info: url=rtsp://192.168.12.15:554/trackID=1;seq=40504;rtptime=952611744
 Date:  Wed, Apr 08 2020 16:04:12 GMT
+```
+
+### udp 推流
+
+```txt
+OPTIONS rtsp://localhost:8554/movie RTSP/1.0
+CSeq: 1
+User-Agent: Lavf57.83.100
+
+RTSP/1.0 200 OK
+Session: 3Nczr3CZg
+Public: DESCRIBE, SETUP, TEARDOWN, PLAY, PAUSE, OPTIONS, ANNOUNCE, RECORD
+CSeq: 1
+
+ANNOUNCE rtsp://localhost:8554/movie RTSP/1.0
+Content-Type: application/sdp
+CSeq: 2
+User-Agent: Lavf57.83.100
+Session: 3Nczr3CZg
+Content-Length: 315
+
+v=0
+o=- 0 0 IN IP4 127.0.0.1
+s=No Name
+c=IN IP4 127.0.0.1
+t=0 0
+a=tool:libavformat 57.83.100
+m=video 0 RTP/AVP 96
+b=AS:200
+a=rtpmap:96 MP4V-ES/90000
+a=fmtp:96 profile-level-id=1; config=000001B001000001B58913000001000000012000C48D8800CD3C04871443000001B24C61766335372E3130372E313030
+a=control:streamid=0
+RTSP/1.0 200 OK
+Session: 3Nczr3CZg
+CSeq: 2
+
+SETUP rtsp://localhost:8554/movie/streamid=0 RTSP/1.0
+Transport: RTP/AVP/UDP;unicast;client_port=19154-19155;mode=record
+CSeq: 3
+User-Agent: Lavf57.83.100
+Session: 3Nczr3CZg
+
+RTSP/1.0 200 OK
+CSeq: 3
+Session: 3Nczr3CZg
+Transport: RTP/AVP/UDP;unicast;client_port=19154-19155;server_port=53548-50392;mode=record
+
+RECORD rtsp://localhost:8554/movie RTSP/1.0
+Range: npt=0.000-
+CSeq: 4
+User-Agent: Lavf57.83.100
+Session: 3Nczr3CZg
+
+RTSP/1.0 200 OK
+Session: 3Nczr3CZg
+CSeq: 4
+
+TEARDOWN rtsp://localhost:8554/movie RTSP/1.0
+CSeq: 5
+User-Agent: Lavf57.83.100
+Session: 3Nczr3CZg
+
+RTSP/1.0 200 OK
+CSeq: 5
+Session: 3Nczr3CZg
+```
+
+### tcp 推流
+
+```txt
+OPTIONS rtsp://localhost:8554/movie RTSP/1.0
+CSeq: 1
+User-Agent: Lavf57.83.100
+
+RTSP/1.0 200 OK
+CSeq: 1
+Session: oBdGr3jWR
+Public: DESCRIBE, SETUP, TEARDOWN, PLAY, PAUSE, OPTIONS, ANNOUNCE, RECORD
+
+ANNOUNCE rtsp://localhost:8554/movie RTSP/1.0
+Content-Type: application/sdp
+CSeq: 2
+User-Agent: Lavf57.83.100
+Session: oBdGr3jWR
+Content-Length: 315
+
+v=0
+o=- 0 0 IN IP4 127.0.0.1
+s=No Name
+c=IN IP4 127.0.0.1
+t=0 0
+a=tool:libavformat 57.83.100
+m=video 0 RTP/AVP 96
+b=AS:200
+a=rtpmap:96 MP4V-ES/90000
+a=fmtp:96 profile-level-id=1; config=000001B001000001B58913000001000000012000C48D8800CD3C04871443000001B24C61766335372E3130372E313030
+a=control:streamid=0
+RTSP/1.0 200 OK
+CSeq: 2
+Session: oBdGr3jWR
+
+SETUP rtsp://localhost:8554/movie/streamid=0 RTSP/1.0
+Transport: RTP/AVP/TCP;unicast;interleaved=0-1;mode=record
+CSeq: 3
+User-Agent: Lavf57.83.100
+Session: oBdGr3jWR
+
+RTSP/1.0 200 OK
+Transport: RTP/AVP/TCP;unicast;interleaved=0-1;mode=record
+CSeq: 3
+Session: oBdGr3jWR
+
+RECORD rtsp://localhost:8554/movie RTSP/1.0
+Range: npt=0.000-
+CSeq: 4
+User-Agent: Lavf57.83.100
+Session: oBdGr3jWR
+
+RTSP/1.0 200 OK
+CSeq: 4
+Session: oBdGr3jWR
+
+TEARDOWN rtsp://localhost:8554/movie RTSP/1.0
+CSeq: 5
+User-Agent: Lavf57.83.100
+Session: oBdGr3jWR
+
+RTSP/1.0 200 OK
+Session: oBdGr3jWR
+CSeq: 5
 ```
 
 ## 参考
