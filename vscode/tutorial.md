@@ -1,11 +1,12 @@
 # 教程
 
-- [教程](#%E6%95%99%E7%A8%8B)
-  - [命令行](#%E5%91%BD%E4%BB%A4%E8%A1%8C)
-  - [.vscode 文件夹](#vscode-%E6%96%87%E4%BB%B6%E5%A4%B9)
-  - [个性化设置](#%E4%B8%AA%E6%80%A7%E5%8C%96%E8%AE%BE%E7%BD%AE)
-  - [调试](#%E8%B0%83%E8%AF%95)
-  - [参考](#%E5%8F%82%E8%80%83)
+- [教程](#%e6%95%99%e7%a8%8b)
+  - [命令行](#%e5%91%bd%e4%bb%a4%e8%a1%8c)
+  - [.vscode 文件夹](#vscode-%e6%96%87%e4%bb%b6%e5%a4%b9)
+  - [个性化设置](#%e4%b8%aa%e6%80%a7%e5%8c%96%e8%ae%be%e7%bd%ae)
+  - [调试](#%e8%b0%83%e8%af%95)
+  - [正则表达式](#%e6%ad%a3%e5%88%99%e8%a1%a8%e8%be%be%e5%bc%8f)
+  - [参考](#%e5%8f%82%e8%80%83)
 
 ## 命令行
 
@@ -46,6 +47,10 @@ code --disable-extensions .
   - <https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-chrome>
 - C++ 调试
   - <https://github.com/xueqing/vscode-debug/tree/master/cppdebug/helloworld>
+
+## 正则表达式
+
+- 分组使用 `$` + 分组编号
 
 ## 参考
 
