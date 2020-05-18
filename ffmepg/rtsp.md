@@ -83,7 +83,7 @@ RTSP 协议支持下面的操作：
 
 实现 RTSP 服务的系统必须支持 TCP/RTSP，可以支持 UDP/RTSP。RTSP 服务器对于 UDP 和 TCP 的默认端口都是 554。
 
-无论是否携带载荷，RTSP 消息必须包含一个 `Content-Length` 头域。
+无论是否携带载荷，RTSP 消息必须包含一个 `Content-Length` 头域。如果不存在，默认值是 0.
 
 ## Method
 
@@ -136,6 +136,19 @@ NPT 表示流相对演示的开始位置的绝对位置。时间戳包含一个�
 比如 `utc-range = clock=19961108T143720.25Z`
 
 ## RTP-Info
+
+`RTP-Info` 用于在 `PLAY` 回复中设置 RTP 相关的参数：
+
+- `url`: 标识接下来的 RTP 参数作用的流的 URL
+- `seq`: 标识流的第一个包的序列号。这个参数用于客户端的 seek 操作。客户端使用这个参数区分 seek 之前开始的包和 seek 之后开始的包
+- `rtptime`:和 `Range` 回复的时间相对应的 RTP 时间戳
+
+示例：
+
+```txt
+RTP-Info: url=rtsp://foo.com/bar.avi/streamid=0;seq=45102,
+          url=rtsp://foo.com/bar.avi/streamid=1;seq=30211
+```
 
 ## Scale
 
@@ -331,7 +344,7 @@ a=control:trackID=2
 - 请求中包含下面的头域：CSeq、Connection、Session、Transport。如果实现了 ANNOUNCE，也需要包含头域 Content-Language、Content-Encoding、Content-Length、Content-Type
 - 解析和理解回复中的头域：CSeq、Connection、Session、Transport、Content-Language、Content-Encoding、Content-Length、Content-Type。如果实现 RECORD，也要理解 Location。RTP 兼容的实现也要实现 RTP-Info
 - 理解收到的每个错误码类，并且出现错误码的时候通知终端用户 4xx 或 5xx。如果终端用户显式地不想要错误码可以放松通知要求
-- 预期和回复服务端的异步请求，比如 ANNOUNCE。这不意味着应该事先 ANNOUNCE 方法，只是客户端必须正面或负面响应服务器的任何请求
+- 预期和回复服务端的异步请求，比如 ANNOUNCE。这不意味着应该实现 ANNOUNCE 方法，只是客户端必须正面或负面响应服务器的任何请求
 
 #### D.1.1 基本的回放
 
