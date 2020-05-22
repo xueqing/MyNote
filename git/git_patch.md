@@ -1,12 +1,12 @@
 # 补丁
 
-- [补丁](#%E8%A1%A5%E4%B8%81)
-  - [普通补丁](#%E6%99%AE%E9%80%9A%E8%A1%A5%E4%B8%81)
-  - [正式补丁 git format-patch](#%E6%AD%A3%E5%BC%8F%E8%A1%A5%E4%B8%81-git-format-patch)
-    - [参数](#%E5%8F%82%E6%95%B0)
-    - [用于邮件发送](#%E7%94%A8%E4%BA%8E%E9%82%AE%E4%BB%B6%E5%8F%91%E9%80%81)
-    - [直接用于 git am](#%E7%9B%B4%E6%8E%A5%E7%94%A8%E4%BA%8E-git-am)
-  - [参考](#%E5%8F%82%E8%80%83)
+- [补丁](#%e8%a1%a5%e4%b8%81)
+  - [普通补丁](#%e6%99%ae%e9%80%9a%e8%a1%a5%e4%b8%81)
+  - [正式补丁 git format-patch](#%e6%ad%a3%e5%bc%8f%e8%a1%a5%e4%b8%81-git-format-patch)
+    - [参数](#%e5%8f%82%e6%95%b0)
+    - [用于邮件发送](#%e7%94%a8%e4%ba%8e%e9%82%ae%e4%bb%b6%e5%8f%91%e9%80%81)
+    - [应用 patch](#%e5%ba%94%e7%94%a8-patch)
+  - [参考](#%e5%8f%82%e8%80%83)
 
 ## 普通补丁
 
@@ -35,8 +35,10 @@ git apply < my.patch
 ```sh
 # 为某一时刻生成补丁
 git format-patch xxxx
+# 从 commit (包含该提交)开始往前的 n 个提交生成补丁
+git format-patch commit -n
 # 为某一个提交范围生成补丁
-git format-patch xxxx..HEAD^^
+git format-patch commit1..commit2
 # 提取在当前分支但是不在 origin 分支的提交
 git format-patch origin
 # 提取工程开始到 <commit> 的所有的提交
@@ -55,7 +57,17 @@ git format-patch -3
 git am < email.txt
 ```
 
-### 直接用于 git am
+### 应用 patch
+
+```sh
+# 检查 patch 是否能正常应用
+git apply --check path_to_patch_file.patch
+# 应用 patch，不提交
+git apply path_to_patch_file.patch
+# git 和需要打 patch 的文件不在一个目录
+git apply --check --directory=patch_dest_dir/ path_to_patch_file.patch
+git apply --directory=patch_dest_dir/ path_to_patch_file.patch
+```
 
 - `git am` 将 mailbox 的邮件信息分割成提交日志信息、作者信息和补丁，应用它们至当前分支
 
