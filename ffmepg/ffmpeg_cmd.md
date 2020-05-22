@@ -1,5 +1,14 @@
 # ffmpeg 相关命令
 
+- [ffmpeg 相关命令](#ffmpeg-%e7%9b%b8%e5%85%b3%e5%91%bd%e4%bb%a4)
+  - [ffplay 命令](#ffplay-%e5%91%bd%e4%bb%a4)
+    - [ffplay 常用选项](#ffplay-%e5%b8%b8%e7%94%a8%e9%80%89%e9%a1%b9)
+    - [ffplay 示例](#ffplay-%e7%a4%ba%e4%be%8b)
+    - [ffplay 快捷键](#ffplay-%e5%bf%ab%e6%8d%b7%e9%94%ae)
+  - [ffmpeg 命令](#ffmpeg-%e5%91%bd%e4%bb%a4)
+    - [ffmpeg 常用选项](#ffmpeg-%e5%b8%b8%e7%94%a8%e9%80%89%e9%a1%b9)
+    - [ffmpeg 示例](#ffmpeg-%e7%a4%ba%e4%be%8b)
+
 ## ffplay 命令
 
 ### ffplay 常用选项
@@ -45,6 +54,22 @@ ffplay rtsp://admin:xxxxxx@192.168.10.100:554
 
 - `1` 表示标准输出，`1>log.txt` 表示把标准输出定向到 log.txt 文件
 - `2` 表示标准错误，`2>&1` 表示把标准错误定向到和标准输出相同的地方
+
+### ffplay 快捷键
+
+播放视音频文件的时候，可以通过下列按键控制视音频的播放
+
+| 按键 | 作用 |
+| --- | --- |
+| q/ESC | 退出 |
+| f | 全屏 |
+| p/空格 | 暂停 |
+| w | 显示音频波形 |
+| s | 逐帧显示 |
+| 左/右 | 向后10s/向前10s |
+| 上/下 | 向后1min/向前1min |
+| page down/page up | 向后10min/向前10min |
+| 鼠标点击屏幕 | 跳转到指定位置(根据鼠标位置相对屏幕的宽度计算) |
 
 ## ffmpeg 命令
 
