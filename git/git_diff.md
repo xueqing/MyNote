@@ -1,8 +1,9 @@
 # 版本比较
 
-- [版本比较](#%E7%89%88%E6%9C%AC%E6%AF%94%E8%BE%83)
-  - [diff 插件](#diff-%E6%8F%92%E4%BB%B6)
+- [版本比较](#%e7%89%88%e6%9c%ac%e6%af%94%e8%be%83)
+  - [diff 插件](#diff-%e6%8f%92%e4%bb%b6)
   - [git diff](#git-diff)
+  - [git diff 打补丁](#git-diff-%e6%89%93%e8%a1%a5%e4%b8%81)
 
 ## diff 插件
 
@@ -22,4 +23,15 @@ git diff HEAD
 git diff HEAD HEAD^
 # HEAD 父父版本和 HEAD 的父版本比较
 git diff HEAD~2 HEAD^
+```
+
+## git diff 打补丁
+
+```sh
+# 旧的提交在前，包含 commit1(不包含此次修改) 到 commit2(包含) 的修改
+git diff commit1 commit2 --binary -- path_to_diff_file > diff_file.diff
+# 检查 diff 是否能正常应用
+git apply --check path_to_diff_file.diff
+# 应用 diff，不提交
+git apply path_to_diff_file.diff
 ```
