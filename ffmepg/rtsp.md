@@ -1,45 +1,45 @@
 # RTSP 学习
 
-- [RTSP 学习](#rtsp-%e5%ad%a6%e4%b9%a0)
-  - [RTSP 连接](#rtsp-%e8%bf%9e%e6%8e%a5)
-  - [RTSP 流](#rtsp-%e6%b5%81)
+- [RTSP 学习](#rtsp-学习)
+  - [RTSP 连接](#rtsp-连接)
+  - [RTSP 流](#rtsp-流)
   - [RTSP vs HTTP](#rtsp-vs-http)
-  - [RTSP 操作](#rtsp-%e6%93%8d%e4%bd%9c)
-  - [一般流程](#%e4%b8%80%e8%88%ac%e6%b5%81%e7%a8%8b)
+  - [RTSP 操作](#rtsp-操作)
+  - [一般流程](#一般流程)
   - [Connection](#connection)
   - [Method](#method)
   - [Range](#range)
-    - [SMPTE 相对时间戳](#smpte-%e7%9b%b8%e5%af%b9%e6%97%b6%e9%97%b4%e6%88%b3)
+    - [SMPTE 相对时间戳](#smpte-相对时间戳)
     - [Normal Plat Time, NPT](#normal-plat-time-npt)
-    - [绝对时间](#%e7%bb%9d%e5%af%b9%e6%97%b6%e9%97%b4)
+    - [绝对时间](#绝对时间)
   - [RTP-Info](#rtp-info)
   - [Scale](#scale)
   - [Speed](#speed)
   - [Scale vs Speed](#scale-vs-speed)
   - [Session](#session)
   - [Transport](#transport)
-  - [A RTSP 协议状态机](#a-rtsp-%e5%8d%8f%e8%ae%ae%e7%8a%b6%e6%80%81%e6%9c%ba)
-    - [A.1 客户端状态机](#a1-%e5%ae%a2%e6%88%b7%e7%ab%af%e7%8a%b6%e6%80%81%e6%9c%ba)
-    - [A.2 服务器状态机](#a2-%e6%9c%8d%e5%8a%a1%e5%99%a8%e7%8a%b6%e6%80%81%e6%9c%ba)
-  - [B RTP 交互](#b-rtp-%e4%ba%a4%e4%ba%92)
-  - [C RTSP 会话描述使用 SDP](#c-rtsp-%e4%bc%9a%e8%af%9d%e6%8f%8f%e8%bf%b0%e4%bd%bf%e7%94%a8-sdp)
+  - [A RTSP 协议状态机](#a-rtsp-协议状态机)
+    - [A.1 客户端状态机](#a1-客户端状态机)
+    - [A.2 服务器状态机](#a2-服务器状态机)
+  - [B RTP 交互](#b-rtp-交互)
+  - [C RTSP 会话描述使用 SDP](#c-rtsp-会话描述使用-sdp)
     - [C.1 Control URL](#c1-control-url)
     - [C.2 Media streams](#c2-media-streams)
-    - [C.3 不支持集合控制](#c3-%e4%b8%8d%e6%94%af%e6%8c%81%e9%9b%86%e5%90%88%e6%8e%a7%e5%88%b6)
-    - [C.4 支持集合控制](#c4-%e6%94%af%e6%8c%81%e9%9b%86%e5%90%88%e6%8e%a7%e5%88%b6)
-  - [D 最小的 RTSP 实现](#d-%e6%9c%80%e5%b0%8f%e7%9a%84-rtsp-%e5%ae%9e%e7%8e%b0)
-    - [D.1 客户端](#d1-%e5%ae%a2%e6%88%b7%e7%ab%af)
-      - [D.1.1 基本的回放](#d11-%e5%9f%ba%e6%9c%ac%e7%9a%84%e5%9b%9e%e6%94%be)
-      - [D.1.2 支持认证](#d12-%e6%94%af%e6%8c%81%e8%ae%a4%e8%af%81)
-    - [D.2 服务器](#d2-%e6%9c%8d%e5%8a%a1%e5%99%a8)
-      - [D.2.1 基本的回放](#d21-%e5%9f%ba%e6%9c%ac%e7%9a%84%e5%9b%9e%e6%94%be)
-      - [D.2.2 支持认证](#d22-%e6%94%af%e6%8c%81%e8%ae%a4%e8%af%81)
-  - [抓包](#%e6%8a%93%e5%8c%85)
-    - [udp 拉流](#udp-%e6%8b%89%e6%b5%81)
-    - [tcp 拉流](#tcp-%e6%8b%89%e6%b5%81)
-    - [udp 推流](#udp-%e6%8e%a8%e6%b5%81)
-    - [tcp 推流](#tcp-%e6%8e%a8%e6%b5%81)
-  - [参考](#%e5%8f%82%e8%80%83)
+    - [C.3 不支持集合控制](#c3-不支持集合控制)
+    - [C.4 支持集合控制](#c4-支持集合控制)
+  - [D 最小的 RTSP 实现](#d-最小的-rtsp-实现)
+    - [D.1 客户端](#d1-客户端)
+      - [D.1.1 基本的回放](#d11-基本的回放)
+      - [D.1.2 支持认证](#d12-支持认证)
+    - [D.2 服务器](#d2-服务器)
+      - [D.2.1 基本的回放](#d21-基本的回放)
+      - [D.2.2 支持认证](#d22-支持认证)
+  - [抓包](#抓包)
+    - [udp 拉流](#udp-拉流)
+    - [tcp 拉流](#tcp-拉流)
+    - [udp 推流](#udp-推流)
+    - [tcp 推流](#tcp-推流)
+  - [参考](#参考)
 
 ## RTSP 连接
 
@@ -196,7 +196,7 @@ RTSP 客户端和服务器状态机描述了一个 RTSP 会话从初始化到终
 
 请求 OPTIONS/ANNOUNCE/DESCRIBE/GET_PARAMETER/SET_PARAMETER 不会对客户端和服务器的状态产生影响。
 
-![RTSP 状态机](ref/rtsp_state_machine.png)
+![RTSP 状态机](ffmpeg/ref/rtsp_state_machine.png)
 
 ### A.1 客户端状态机
 
@@ -207,7 +207,7 @@ RTSP 客户端和服务器状态机描述了一个 RTSP 会话从初始化到终
 
 总的说来，客户端在收到请求的回复时改变状态。
 
-**注意：**一些请求(如 `PAUSE`)在未来某个时间或地点是有效的，且状态会随之改变。
+**注意**：一些请求(如 `PAUSE`)在未来某个时间或地点是有效的，且状态会随之改变。
 
 如果对某个对象不要求有显式的 `SETUP`，状态从 `Ready` 开始。在这种情况下，只有两个状态，即 `Ready` 和 `Playing`。
 
@@ -245,7 +245,7 @@ RTSP 客户端和服务器状态机描述了一个 RTSP 会话从初始化到终
 
 如果服务器在 Ready 状态，如果在多余一分钟的时间间隔没有收到一个 RTSP 请求，服务器可以回到 `Init` 状态。
 
-**注意：**一些请求(比如 PAUSE)在未来某个时间或地点是有效的，且服务器状态在合适的时间改变。
+**注意**：一些请求(比如 PAUSE)在未来某个时间或地点是有效的，且服务器状态在合适的时间改变。
 
 在客户端请求的 range 到达时，服务器会从 `Playing` 或 `Recording` 状态回到 `Ready`。
 
@@ -306,9 +306,9 @@ m=audio 8004 RTP/AVP 3
 a=control:rtsp://video.com/movie.vid
 ```
 
-**注意：**控制 URL 在描述中的位置表示客户端要和服务器 `audio.com` 和 `video.com` 分别建立 RTSP 控制会话。
+**注意**：控制 URL 在描述中的位置表示客户端要和服务器 `audio.com` 和 `video.com` 分别建立 RTSP 控制会话。
 
-**建议：**一个 SDP 文件包含完整的媒体初始化信息，即使通过非 RTSP 方式发送给媒体客户端。
+**建议**：一个 SDP 文件包含完整的媒体初始化信息，即使通过非 RTSP 方式发送给媒体客户端。
 
 ### C.4 支持集合控制
 
