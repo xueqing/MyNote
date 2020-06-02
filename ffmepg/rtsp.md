@@ -196,7 +196,7 @@ RTSP 客户端和服务器状态机描述了一个 RTSP 会话从初始化到终
 
 请求 OPTIONS/ANNOUNCE/DESCRIBE/GET_PARAMETER/SET_PARAMETER 不会对客户端和服务器的状态产生影响。
 
-![RTSP 状态机](ffmpeg/ref/rtsp_state_machine.png)
+![RTSP 状态机](./ref/rtsp_state_machine.png)
 
 ### A.1 客户端状态机
 
