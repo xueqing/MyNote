@@ -74,4 +74,18 @@
 
 ## gdb 调试 Golang 的可执行程序
 
-执行 `sudo gdb golang_binary_file`
+执行 `sudo gdb golang_binary_file`。比如有一个 Golang 的可执行程序 rtspserver，依赖 ffmpeg 库。调试的流程：
+
+```sh
+# 开始调试
+gdb
+# 进入 gdb 之后先设置 ffmpeg 库路径
+set environment LD_LIBRARY_PATH=/home/kiki/Documents/ffmpeg/ffmpeg-4.1/lib
+# 开始调试
+file rtspserver
+# 运行程序
+r
+# 程序崩溃，查看堆栈
+where
+# ... ...
+```
