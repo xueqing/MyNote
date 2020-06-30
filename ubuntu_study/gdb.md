@@ -71,3 +71,7 @@
   - 指定了命令名称参数，则显示该命令的详细说明`help display`
   - 没有指定参数，则分类显示所有 GDB 命令
 - 直接回车，表示重复上一次命令
+
+## gdb 调试 Golang 的可执行程序
+
+执行 `sudo gdb golang_binary_file`
