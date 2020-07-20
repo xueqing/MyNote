@@ -30,7 +30,7 @@
 ## 设置断点
 
 - b + 行号`b 8`
-- b + 函数名称`b main`
+- b + 函数名称`b main` `b file_path/func_name`
 - b + \*函数名称，将断点设置在由编译器生成的 prolg 代码处`b *main`
 - b + \*代码地址`b *004835c`
 - 删除断点，不指定编号则删除所有断点`d(delete breakpoints) N`
