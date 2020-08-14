@@ -130,6 +130,7 @@ OPTIONS 说明：
 
 ```sh
 docker save -o my_ubuntu_v3.tar runoob/ubuntu:v3
+docker save runoob/ubuntu:v3 > my_ubuntu_v3.tar
 ```
 
 ## 导入镜像
