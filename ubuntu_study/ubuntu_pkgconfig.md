@@ -2,13 +2,15 @@
 
 - [pkgconfig](#pkgconfig)
   - [configure](#configure)
-  - [pkg-config 命令](#pkg-config-%e5%91%bd%e4%bb%a4)
-    - [链接界面不统一问题](#%e9%93%be%e6%8e%a5%e7%95%8c%e9%9d%a2%e4%b8%8d%e7%bb%9f%e4%b8%80%e9%97%ae%e9%a2%98)
-    - [pkg-config 功能](#pkg-config-%e5%8a%9f%e8%83%bd)
-    - [pkg-config 路径](#pkg-config-%e8%b7%af%e5%be%84)
-    - [pkg-config 使用](#pkg-config-%e4%bd%bf%e7%94%a8)
+  - [pkg-config 命令](#pkg-config-命令)
+    - [链接界面不统一问题](#链接界面不统一问题)
+    - [pkg-config 功能](#pkg-config-功能)
+    - [pkg-config 路径](#pkg-config-路径)
+    - [pkg-config 使用](#pkg-config-使用)
     - [/usr/local/lib/pkgconfig](#usrlocallibpkgconfig)
-  - [环境变量 PKG_CONFIG_PATH](#%e7%8e%af%e5%a2%83%e5%8f%98%e9%87%8f-pkgconfigpath)
+  - [环境变量 PKG_CONFIG_PATH](#环境变量-pkg_config_path)
+  - [实战遇到的坑](#实战遇到的坑)
+    - [移动时更新 pc 文件](#移动时更新-pc-文件)
 
 ## configure
 
@@ -92,3 +94,9 @@ g++ -o demo $(pkg-config --cflags --libs opencv) demo.cpp
 # 查询 PKG_CONFIG_PATH 变量信息
 echo $PKG_CONFIG_PATH
 ```
+
+## 实战遇到的坑
+
+### 移动时更新 pc 文件
+
+在一台宿主机上编译好的库，在移动到另一个位置或者另一台宿主机上，要更新对应 `.pc` 文件的路径。
