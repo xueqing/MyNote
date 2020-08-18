@@ -5,6 +5,7 @@
 - 在一个文件中替换字符串
   - `sed -i "s/original_str/replace_str/g" filename`可查找`filename`中的`original_str`替换成`replace_str`
     - `filename`可用通配符
+    - 示例：`sed -i "s/\/usr\/local/\/home\/ubuntu\/nfs\/10.116\/ffmpeg\/lib/g" *.pc` `sed -i "s/local/ffmpeg/g" t.pc`
 - 在一个文件夹中替换字符串
   - 批量查找文件夹中的文件`grep "original_str" -rl dirname`
   - 批量替换文件```sed -i s/original_str/replace_str/g `grep "original_str" -rl dirname` ```
