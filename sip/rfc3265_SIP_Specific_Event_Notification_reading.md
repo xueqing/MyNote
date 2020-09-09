@@ -1,13 +1,13 @@
 # SIP Specific Event Notification
 
 - [SIP Specific Event Notification](#sip-specific-event-notification)
-  - [介绍](#%E4%BB%8B%E7%BB%8D)
-  - [节点行为](#%E8%8A%82%E7%82%B9%E8%A1%8C%E4%B8%BA)
-    - [订阅者](#%E8%AE%A2%E9%98%85%E8%80%85)
-    - [通知者](#%E9%80%9A%E7%9F%A5%E8%80%85)
-    - [通知者 NOTIFY 行为](#%E9%80%9A%E7%9F%A5%E8%80%85-notify-%E8%A1%8C%E4%B8%BA)
-    - [订阅者 NOTIFY 行为](#%E8%AE%A2%E9%98%85%E8%80%85-notify-%E8%A1%8C%E4%B8%BA)
-  - [事件包](#%E4%BA%8B%E4%BB%B6%E5%8C%85)
+  - [介绍](#介绍)
+  - [节点行为](#节点行为)
+    - [订阅者](#订阅者)
+    - [通知者](#通知者)
+    - [通知者 NOTIFY 行为](#通知者-notify-行为)
+    - [订阅者 NOTIFY 行为](#订阅者-notify-行为)
+  - [事件包](#事件包)
 
 ## 介绍
 
@@ -46,7 +46,7 @@
   - 如果通知者通过交互的方式决定是否允许一个订阅，应立即给出一个 “202 Accept” 应答
   - 如果通知者延迟认证，且认证失败，应构造一个 NOTIFY 消息，包含 “Subscription-State” 头域，且该头域包含一个 “terminated” 值及一个原因短语 “rejected”
   - 如果通知者过期未收到更新订阅消息，应该移除订阅，发送一个 NOTIFY 消息，包含 “Subscription-State” 头域，且该头域包含一个 “terminated” 值及一个原因短语 “reason=timeout”
-- 如果不支持 PINT，且 SUBSCRIBE 请求不包含 “Accept-Event” 头域，通知者返回 “489 Vad Event”
+- 如果不支持 PINT，且 SUBSCRIBE 请求不包含 “Accept-Event” 头域，通知者返回 “489 Bad Event”
 
 ### 通知者 NOTIFY 行为
 
