@@ -28,8 +28,11 @@
   - [svn 命令](svn/)
 - 网站和协议
   - [Chrome 小技巧](chrome/)
+  - [node.js](js/)
   - [O2O](o2o/)
   - [p2p](p2p/)
+  - [reStructuredText](rest/)
+  - [rtmp](rtmp/)
   - [sip](sip/)
   - [webrtc](webrtc/)
 - 学习网站
@@ -40,5 +43,7 @@
   - [kindle 小技巧](kindle/)
   - [阅读笔记整理](quote_collection/)
 - 能力提升
+  - [django cms 学习](django_cms/README.md)
   - [ffmpeg](ffmepg/)
   - [其他学习文档](others/)
+  - [Windows 系统](windows/)
