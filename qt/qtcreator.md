@@ -1,9 +1,9 @@
 # QtCreator 一些基本的配置参数说明
 
-- [QtCreator 一些基本的配置参数说明](#qtcreator-%e4%b8%80%e4%ba%9b%e5%9f%ba%e6%9c%ac%e7%9a%84%e9%85%8d%e7%bd%ae%e5%8f%82%e6%95%b0%e8%af%b4%e6%98%8e)
-  - [QtCreator pro 文件参数](#qtcreator-pro-%e6%96%87%e4%bb%b6%e5%8f%82%e6%95%b0)
-  - [QtCreator 帮助文档](#qtcreator-%e5%b8%ae%e5%8a%a9%e6%96%87%e6%a1%a3)
-  - [QtCreator 使用](#qtcreator-%e4%bd%bf%e7%94%a8)
+- [QtCreator 一些基本的配置参数说明](#qtcreator-一些基本的配置参数说明)
+  - [QtCreator pro 文件参数](#qtcreator-pro-文件参数)
+  - [QtCreator 帮助文档](#qtcreator-帮助文档)
+  - [QtCreator 使用](#qtcreator-使用)
 
 ## QtCreator pro 文件参数
 
