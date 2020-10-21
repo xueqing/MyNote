@@ -1,12 +1,12 @@
 # mysql
 
 - [mysql](#mysql)
-  - [1 ubuntu 安装和配置 mysql](#1-ubuntu-%E5%AE%89%E8%A3%85%E5%92%8C%E9%85%8D%E7%BD%AE-mysql)
-  - [2 mysql命令](#2-mysql%E5%91%BD%E4%BB%A4)
+  - [1 ubuntu 安装和配置 mysql](#1-ubuntu-安装和配置-mysql)
+  - [2 mysql命令](#2-mysql命令)
 
 ## 1 ubuntu 安装和配置 mysql
 
-- 执行`sudo apt-get insall mysql-server mysql-client`
+- 执行`sudo apt-get install mysql-server mysql-client`
 - 修改配置运行远程连接
   - `sudo vim /etc/mysql/mysql.conf.d/mysqld.cnf`
   - 注释或删除`bind-address           = 127.0.0.1`
