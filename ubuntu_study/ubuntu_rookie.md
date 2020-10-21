@@ -1,23 +1,22 @@
 # Ubuntu 新手配置
 
-- [Ubuntu 新手配置](#ubuntu-%E6%96%B0%E6%89%8B%E9%85%8D%E7%BD%AE)
-  - [1 环境](#1-%E7%8E%AF%E5%A2%83)
-  - [2 配置静态 ip](#2-%E9%85%8D%E7%BD%AE%E9%9D%99%E6%80%81-ip)
-  - [3 配置输入法和字体](#3-%E9%85%8D%E7%BD%AE%E8%BE%93%E5%85%A5%E6%B3%95%E5%92%8C%E5%AD%97%E4%BD%93)
-    - [中文界面](#%E4%B8%AD%E6%96%87%E7%95%8C%E9%9D%A2)
-    - [配置搜狗输入法](#%E9%85%8D%E7%BD%AE%E6%90%9C%E7%8B%97%E8%BE%93%E5%85%A5%E6%B3%95)
-    - [配置 Consolas 雅黑字体](#%E9%85%8D%E7%BD%AE-consolas-%E9%9B%85%E9%BB%91%E5%AD%97%E4%BD%93)
-  - [4 安装与配置 Git](#4-%E5%AE%89%E8%A3%85%E4%B8%8E%E9%85%8D%E7%BD%AE-git)
-  - [5 安装 Qt](#5-%E5%AE%89%E8%A3%85-qt)
+- [Ubuntu 新手配置](#ubuntu-新手配置)
+  - [1 环境](#1-环境)
+  - [2 配置静态 ip](#2-配置静态-ip)
+  - [3 配置输入法和字体](#3-配置输入法和字体)
+    - [中文界面](#中文界面)
+    - [配置搜狗输入法](#配置搜狗输入法)
+    - [配置 Consolas 雅黑字体](#配置-consolas-雅黑字体)
+  - [4 安装与配置 Git](#4-安装与配置-git)
+  - [5 安装 Qt](#5-安装-qt)
     - [Qt5.7.1](#qt571)
     - [Qt5.4.1](#qt541)
-  - [6 命令行安装工具包](#6-%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%AE%89%E8%A3%85%E5%B7%A5%E5%85%B7%E5%8C%85)
-    - [supervisor](#supervisor)
+  - [6 命令行安装工具包](#6-命令行安装工具包)
     - [VSCode](#vscode)
-    - [Chrome 浏览器](#chrome-%E6%B5%8F%E8%A7%88%E5%99%A8)
+    - [Chrome 浏览器](#chrome-浏览器)
     - [TeamViewer](#teamviewer)
-    - [有道词典](#%E6%9C%89%E9%81%93%E8%AF%8D%E5%85%B8)
-    - [截图工具 Shutter](#%E6%88%AA%E5%9B%BE%E5%B7%A5%E5%85%B7-shutter)
+    - [有道词典](#有道词典)
+    - [截图工具 Shutter](#截图工具-shutter)
 
 ## 1 环境
 
@@ -140,17 +139,6 @@ MimeType=text/x-c++src;text/x-c++hdr;text/x-xsrc;application/x-designer;applicat
 ```
 
 ## 6 命令行安装工具包
-
-### supervisor
-
-```sh
-cd ~/temp/
-git clone git@192.168.1.36:ylrc/Supervisor.git
-cd Supervisor
-sudo dpkg -i python-meld3_1.0.2-2_all.deb supervisor_3.2.0-2_all.deb
-supervisorctl -v
-sudo service supervisor start
-```
 
 ### VSCode
 
