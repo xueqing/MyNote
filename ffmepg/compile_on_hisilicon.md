@@ -15,7 +15,7 @@
       - [3 执行 CMake](#3-执行-cmake)
       - [4 修改 CMake 配置](#4-修改-cmake-配置)
       - [5 完成配置](#5-完成配置)
-      - [6 编译和安装 libx264](#6-编译和安装-libx264)
+      - [6 编译和安装 libx265](#6-编译和安装-libx265)
   - [三. 配置 PKG-Config](#三-配置-pkg-config)
     - [1. 导出环境变量](#1-导出环境变量)
     - [2. 验证配置结果](#2-验证配置结果)
@@ -27,7 +27,7 @@
 
 ### 1. 克隆 FFmpeg 源码
 
-`git clone git@gitlab.bmi:ylrc/bmi-av/ffmpeg-4.1.git`
+`git clone https://github.com/FFmpeg/FFmpeg.git`
 
 ### 2. 克隆 libx264 源码
 
@@ -118,7 +118,7 @@ LIBDL: LIBDL-NOTFOUND - /opt/hisi-linux/x86-arm/arm-hisiv600-linux/target/usr/li
 [q] Quit without generating
 ```
 
-#### 6 编译和安装 libx264
+#### 6 编译和安装 libx265
 
 `make -j4 && make install`
 
