@@ -48,3 +48,22 @@ git config -l
 # 查看用户名
 git config user.name
 ```
+
+## 修改远程仓库的 url 的拉取协议
+
+默认配置 ssh 公钥访问私有仓库，需要配置 git 拉取私有仓库时使用 ssh 而不是 https。
+
+```sh
+# 方法 1：使用 git 命令配置
+git config --global url."git@gitlab.bmi".insteadOf https://gitlab.bmi
+## 或者
+git config --global url."ssh://git@gitlab.bmi".insteadOf https://gitlab.bmi
+# 方法 2：修改 git 配置文件
+vim ~/.gitconfig
+## 加入下面的内容
+[url "git@gitlab.bmi:"]
+  insteadOf = https://gitlab.bmi
+## 或
+[url "ssh://git@gitlab.bmi/"]
+  insteadOf = https://gitlab.bmi/
+```
