@@ -106,6 +106,9 @@ pkg-config --modversion x265
 ```sh
 sudo apt-get install -y yasm
 
+# 编译生成 ffplay 需要安装 sdl 依赖库
+sudo apt-get install -y libsdl2-dev
+
 ./configure \
 --prefix=/home/kiki/ffmpeg/ffmpeg-4.1 \
 --enable-shared \
