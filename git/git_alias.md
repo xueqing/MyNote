@@ -10,6 +10,7 @@ git config --global alias.br branch
 git config --global alias.ci commit
 git config --global alias.st status
 git config --global alias.ss 'stash save'
+git config --global alias.sl 'stash list'
 git config --global alias.sp 'stash pop'
 ```
 
