@@ -1,26 +1,26 @@
 # MPEG2-TS
 
 - [MPEG2-TS](#mpeg2-ts)
-  - [缩略词](#%e7%bc%a9%e7%95%a5%e8%af%8d)
+  - [缩略词](#缩略词)
     - [TS packet](#ts-packet)
-  - [前言](#%e5%89%8d%e8%a8%80)
-  - [概述](#%e6%a6%82%e8%bf%b0)
-  - [元素](#%e5%85%83%e7%b4%a0)
-    - [包 packet](#%e5%8c%85-packet)
-      - [部分 TS 包格式](#%e9%83%a8%e5%88%86-ts-%e5%8c%85%e6%a0%bc%e5%bc%8f)
-      - [适配域格式](#%e9%80%82%e9%85%8d%e5%9f%9f%e6%a0%bc%e5%bc%8f)
-      - [适配域扩展格式](#%e9%80%82%e9%85%8d%e5%9f%9f%e6%89%a9%e5%b1%95%e6%a0%bc%e5%bc%8f)
-    - [包标识符 PID](#%e5%8c%85%e6%a0%87%e8%af%86%e7%ac%a6-pid)
-    - [节目 program](#%e8%8a%82%e7%9b%ae-program)
-    - [节目专用信息 PSI](#%e8%8a%82%e7%9b%ae%e4%b8%93%e7%94%a8%e4%bf%a1%e6%81%af-psi)
-      - [表的分节 table section](#%e8%a1%a8%e7%9a%84%e5%88%86%e8%8a%82-table-section)
+  - [前言](#前言)
+  - [概述](#概述)
+  - [元素](#元素)
+    - [包 packet](#包-packet)
+      - [部分 TS 包格式](#部分-ts-包格式)
+      - [适配域格式](#适配域格式)
+      - [适配域扩展格式](#适配域扩展格式)
+    - [包标识符 PID](#包标识符-pid)
+    - [节目 program](#节目-program)
+    - [节目专用信息 PSI](#节目专用信息-psi)
+      - [表的分节 table section](#表的分节-table-section)
         - [pointer](#pointer)
-      - [描述子 descriptor](#%e6%8f%8f%e8%bf%b0%e5%ad%90-descriptor)
-      - [节目关联表 PAT](#%e8%8a%82%e7%9b%ae%e5%85%b3%e8%81%94%e8%a1%a8-pat)
-      - [节目映射表 PMT](#%e8%8a%82%e7%9b%ae%e6%98%a0%e5%b0%84%e8%a1%a8-pmt)
+      - [描述子 descriptor](#描述子-descriptor)
+      - [节目关联表 PAT](#节目关联表-pat)
+      - [节目映射表 PMT](#节目映射表-pmt)
     - [PCR](#pcr)
-    - [空包 null packet](#%e7%a9%ba%e5%8c%85-null-packet)
-  - [参考](#%e5%8f%82%e8%80%83)
+    - [空包 null packet](#空包-null-packet)
+  - [参考](#参考)
 
 ## 缩略词
 
@@ -289,7 +289,7 @@ PAT 相关数据会一直重复直到 section 末尾。
 | 预留位 | 3 | 设置为 0x07 (打开所有位) |
 | 节目映射 PID (program map PID) | 13 | 包含关联 PMT 的 PID |
 
-PAT 使用固定值的 PID 0x0000，表 ID 0x00。TS 包含至少一个 PID 为 0x0000 的 TS packet。一些连续的 TS packet 构成 PAT。在解码器端，PSI 节过滤器(section filter) 监听到达的 TS packet。当解码器识别出 PAT 表，会重组包并解码。一个 PAT 包含 TS 中包含的所有节目信息。PAT 包含的信息显示了 PMT PID 和节目编号。PAT 应以一个 32 位的 CRC结束。
+PAT 使用固定值的 PID 0x0000，表 ID 0x00。TS 包含至少一个 PID 为 0x0000 的 TS packet。一些连续的 TS packet 构成 PAT。在解码器端，PSI 节过滤器(section filter) 监听到达的 TS packet。当解码器识别出 PAT 表，会重组包并解码。一个 PAT 包含 TS 中包含的所有节目信息。PAT 包含的信息显示了 PMT PID 和节目编号。PAT 应以一个 32 位的 CRC 结束。
 
 PAT 列举 TS 中所有可用的节目。每个列举的节目使用一个 16 比特值 program_number 标识。PAT 中列举的每个程序在 PMT 中有一个关联的 PID 值。
 
