@@ -1,11 +1,11 @@
 # 分组化基本流 PES
 
-- [分组化基本流 PES](#%e5%88%86%e7%bb%84%e5%8c%96%e5%9f%ba%e6%9c%ac%e6%b5%81-pes)
-  - [缩略词](#%e7%bc%a9%e7%95%a5%e8%af%8d)
-  - [概述](#%e6%a6%82%e8%bf%b0)
-  - [PES 包头](#pes-%e5%8c%85%e5%a4%b4)
-  - [可选的 PES 头](#%e5%8f%af%e9%80%89%e7%9a%84-pes-%e5%a4%b4)
-  - [参考](#%e5%8f%82%e8%80%83)
+- [分组化基本流 PES](#分组化基本流-pes)
+  - [缩略词](#缩略词)
+  - [概述](#概述)
+  - [PES 包头](#pes-包头)
+  - [可选的 PES 头](#可选的-pes-头)
+  - [参考](#参考)
 
 原文 [Packetized elementary stream](https://en.wikipedia.org/wiki/Packetized_elementary_stream)
 
