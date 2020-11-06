@@ -23,6 +23,8 @@ git config --global alias.ss 'stash save'
 git config --global alias.sl 'stash list'
 git config --global alias.sp 'stash pop'
 git config --global alias.unstage 'reset HEAD --'
+git config --global alias.pullo 'pull origin'
+git config --global alias.pusho 'push origin'
 
 # install ssh-server for remote access
 sudo apt-get install -y openssh-server
