@@ -1,11 +1,11 @@
 # 1 Redis 简介
 
-- [1 Redis 简介](#1-redis-%E7%AE%80%E4%BB%8B)
-  - [1.1 key-value 缓存产品特点](#11-key-value-%E7%BC%93%E5%AD%98%E4%BA%A7%E5%93%81%E7%89%B9%E7%82%B9)
-  - [1.2 Redis 优点](#12-redis-%E4%BC%98%E7%82%B9)
-  - [1.3 Redis 配置](#13-redis-%E9%85%8D%E7%BD%AE)
-  - [1.4 Redis 数据类型](#14-redis-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B)
-  - [1.5 Redis 数据库](#15-redis-%E6%95%B0%E6%8D%AE%E5%BA%93)
+- [1 Redis 简介](#1-redis-简介)
+  - [1.1 key-value 缓存产品特点](#11-key-value-缓存产品特点)
+  - [1.2 Redis 优点](#12-redis-优点)
+  - [1.3 Redis 配置](#13-redis-配置)
+  - [1.4 Redis 数据类型](#14-redis-数据类型)
+  - [1.5 Redis 数据库](#15-redis-数据库)
 
 ## 1.1 key-value 缓存产品特点
 
@@ -25,7 +25,7 @@
 - 配置文件位于安装目录，文件名 `redis.conf`(Windows 下是 `redis.windows.conf`)
 - 查看配置项 `CONFIG GET CONFIG_STRING_NAME`
   - `CONFIG_STRING_NAME` 为 `*` 表示获取所有配置项
-- 设置配置项 `CONFIG GET CONFIG_STRING_NAME NEW_CONFIG_VALUE`
+- 设置配置项 `CONFIG SET CONFIG_STRING_NAME NEW_CONFIG_VALUE`
 
 ## 1.4 Redis 数据类型
 
@@ -45,4 +45,4 @@
 - 局限性
   - 开发者需要自己记录每个数据库存储的数据
   - 不支持为每个数据库单独设置密码。所以所有数据库的权限是绑定的
-  - 多个数据库不是完全隔离，如 `FLUSHALL` 可清除一个 Redis 示例所有数据库的数据。所以不建议多个应用程序使用一个 Redis 实例的不同数据库存储数据。且 Redis 是轻量级的，一个空的实例占用内存很小
+  - 多个数据库不是完全隔离，如 `FLUSHALL` 可清除一个 Redis 实例所有数据库的数据。所以不建议多个应用程序使用一个 Redis 实例的不同数据库存储数据。且 Redis 是轻量级的，一个空的实例占用内存很小
