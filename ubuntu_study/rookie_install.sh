@@ -76,3 +76,14 @@ sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 40
 sudo update-alternatives --config gcc
 # delete version options
 # sudo update-alternatives --remove gcc /usr/bin/gcc-4.5
+
+# install docker
+sudo apt-get install -y docker.io
+# create docker user-group
+sudo groupadd docker
+# add kiki to docker user-group
+sudo gpasswd -a kiki docker
+# update docker user-group
+newgrp docker
+# test
+docker version
