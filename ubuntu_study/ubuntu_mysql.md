@@ -14,7 +14,9 @@
     - `mysql -uroot -p`输入密码
     - `use mysql`
     - `GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'password' WITH GRANT OPTION;`
+      - 替换 `password` 为需要设置的密码
     - `flush privileges;`
+    - `exit` 退出终端
     - 重启数据库服务`sudo service mysql restart`
 
 ## 2 mysql命令
