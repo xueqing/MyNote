@@ -1,5 +1,8 @@
 # ffmpeg 的编解码
 
+- [ffmpeg 的编解码](#ffmpeg-的编解码)
+  - [libavcodec 库](#libavcodec-库)
+
 ## libavcodec 库
 
 `avcodec_send_packet()`/`avcodec_receive_frame()`/`avcodec_send_frame()`/`avcodec_receive_packet()` 函数提供编码/解码 API，将输入和输出解耦。
@@ -10,7 +13,7 @@
 - 发送有效的输入：
   - 对于解码，调用 `avcodec_send_packet()` 给解码器一个包含原始压缩数据的 `AVPacket`
   - 对于编码，调用 `avcodec_send_frame()` 给编码器一个包含未压缩音频或视频的 `AVFrame`
-  - 两种情形中，建议 `AVPacket` 和 `AVFrame` 都是引用计数的，苟泽 libavcodec 可能需要拷贝输入数据。(libavformat 总是返回引用计数的 `AVPacket`，且 `av_frame_get_buffer()` 分配引用计数的 `AVFrame`)
+  - 两种情形中，建议 `AVPacket` 和 `AVFrame` 都是引用计数的，否则 libavcodec 可能需要拷贝输入数据。(libavformat 总是返回引用计数的 `AVPacket`，且 `av_frame_get_buffer()` 分配引用计数的 `AVFrame`)
 - 在一个循环中接收输出。定期调用其中一个 `avcodec_receive_*()` 函数并处理它们的输出：
   - 对于解码，调用 `avcodec_receive_frame()`。如果成功，返回一个包含未压缩的音频或视频数据的 `AVFrame`
   - 对于解码，调用 `avcodec_receive_packet()`。如果成功，返回一个包含一个压缩帧的 `AVPacket`
