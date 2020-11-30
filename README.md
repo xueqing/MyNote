@@ -9,6 +9,7 @@
   - [数据库](database/)
   - [go](go-doc/README.md)
   - [Python](https://github.com/xueqing/Python.git)
+  - [正则表达式](regex/)
 - Linux 命令
   - [linux](linux/README.md)
   - [shell 脚本](shell/)
