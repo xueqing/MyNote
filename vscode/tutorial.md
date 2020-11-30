@@ -52,6 +52,13 @@ code --disable-extensions .
 
 - 分组使用 `$` + 分组编号
 
+| 要求 | 查找 | 替换 |
+| --- | --- | --- |
+| 将 test this sentence 转为大写 | `^(.*)$` | `\U$1` |
+| 将 TEST THIS SENTENCE 转为小写 | `^(.*)$` | `\L$1` |
+| 将 test this sentence 首字母 t 转为大写 | `^(.)` | `\U$1` |
+| 将 test this sentence 每个单词首字母转为大写 | `\b(\w)(\w*)\b` | `\U$1\E$2` |
+
 ## 参考
 
 - [Getting Started](https://code.visualstudio.com/docs)
