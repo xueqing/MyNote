@@ -1,12 +1,12 @@
 [submodule "cplusplus/cplusplus11"]
 	path = cplusplus/cplusplus11
-	url = ../cplusplus11.git
+	url = https://github.com/xueqing/cplusplus11.git
 [submodule "cplusplus/cpputility"]
 	path = cplusplus/cpputility
-	url = ../cpputility.git
+	url = https://github.com/xueqing/cpputility.git
 [submodule "Python"]
 	path = Python
-	url = ../Python.git
+	url = https://github.com/xueqing/Python.git
 [submodule "go"]
 	path = go
 	url = https://github.com/xueqing/go-notes.git
