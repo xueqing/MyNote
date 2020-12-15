@@ -1,13 +1,33 @@
 # ffmpeg 相关命令
 
-- [ffmpeg 相关命令](#ffmpeg-%e7%9b%b8%e5%85%b3%e5%91%bd%e4%bb%a4)
-  - [ffplay 命令](#ffplay-%e5%91%bd%e4%bb%a4)
-    - [ffplay 常用选项](#ffplay-%e5%b8%b8%e7%94%a8%e9%80%89%e9%a1%b9)
-    - [ffplay 示例](#ffplay-%e7%a4%ba%e4%be%8b)
-    - [ffplay 快捷键](#ffplay-%e5%bf%ab%e6%8d%b7%e9%94%ae)
-  - [ffmpeg 命令](#ffmpeg-%e5%91%bd%e4%bb%a4)
-    - [ffmpeg 常用选项](#ffmpeg-%e5%b8%b8%e7%94%a8%e9%80%89%e9%a1%b9)
-    - [ffmpeg 示例](#ffmpeg-%e7%a4%ba%e4%be%8b)
+- [ffmpeg 相关命令](#ffmpeg-相关命令)
+  - [常用帮助类和参数说明](#常用帮助类和参数说明)
+  - [ffplay 命令](#ffplay-命令)
+    - [ffplay 常用选项](#ffplay-常用选项)
+    - [ffplay 示例](#ffplay-示例)
+    - [ffplay 快捷键](#ffplay-快捷键)
+  - [ffmpeg 命令](#ffmpeg-命令)
+    - [ffmpeg 常用选项](#ffmpeg-常用选项)
+    - [ffmpeg 示例](#ffmpeg-示例)
+
+## 常用帮助类和参数说明
+
+| 命令参数 | 功能 |
+| --- | --- |
+| -version | 显示版本 |
+| -buildconf | 显示编译配置 |
+| -protocols | 显示可用的协议 |
+| -formats | 显示可用的格式 muxers+demuxers |
+| -filters | 显示可用的过滤器 |
+| -muxers | 显示可用的复用器 |
+| -demuxers | 显示可用的解复用器 |
+| -codecs | 显示可用的编解码器 decoders+encoders |
+| -decoders | 显示可用的解码器 |
+| -encoders | 显示可用的编码器 |
+| -pix_fmts | 显示可用的像素格式 |
+| -layouts | 显示标准声道名称 |
+| -sample_fmts | 显示可用的音频采样格式 |
+| -colors | 显示可用的颜色名称 |
 
 ## ffplay 命令
 
