@@ -33,9 +33,11 @@
 | -decoders | 显示可用的解码器 |
 | -encoders | 显示可用的编码器 |
 | -pix_fmts | 显示可用的像素格式 |
-| -layouts | 显示标准声道名称 |
+| -layouts | 显示标准声道名称和布局 |
 | -sample_fmts | 显示可用的音频采样格式 |
 | -colors | 显示可用的颜色名称 |
+| -devices | 显示可用的设备 |
+| -bsfs  | 显示可用的比特流 filter |
 
 ## ffplay 命令
 
@@ -106,15 +108,16 @@ ffplay rtsp://admin:xxxxxx@192.168.10.100:554
 关于选项和参数的顺序。除了 `-i xxx` 必须在最前面且输出文件必须在最后面，其他选项的顺序没有关系。但是选项与其参数不可分割。
 
 - `-c copy`: 或 `-codec copy`，拷贝所有编解码器
-- `-vcodec copy`: 或 `-c:v`，拷贝视频编解码器
-- `-acodec copy`: 或 `-c:a`，拷贝音频编解码器
+- `-c:v`: 或 `-vcodec copy`，拷贝视频编解码器
+- `-c:a`: 或 `-acodec copy`，拷贝音频编解码器
 - `-f fmt (input/output)`: 强制输入或输出文件的使用指定格式
 - `-i url (input)`: 指定输入文件的 URL。**在文件名包含空格或其他特殊字符的时候，必须用半角双引号包起来**
 - `-re (input)`: 按照原始帧率读输入。主要用于模拟一个摄像头或直播输入流。ffmpeg 默认尝试尽可能快地读取输入
-- `-ss time`: 指定输出文件相对输入文件的开始时间，单位秒，也支持 `hh:mm:ss.xxx` 格式
-- `-t duration`: 指定输出文件的时长，单位秒，也支持 `hh:mm:ss.xxx` 格式
+- `-ss pos`: 指定位置。单位秒，也支持 `hh:mm:ss.xxx` 格式
+- `-t duration`: 限制输入/输出文件的时长，单位秒，也支持 `hh:mm:ss.xxx` 格式
 - `-vframes number`: 指定输出的视频帧数量
 - `-y`: 覆盖输出文件而不询问
+- `-n`: 不要覆盖输出文件。如果已经存在立即退出
 - `-help muxer=xxx`: 查看指定 muxer 的基本信息
 - `-metadata`: 更改输出文件的元数据(标题、艺术家、专辑等)
 - `-map input_index:stream_index`: 指定媒体流映射关系。[参考](#使用--map-实现高级合并)
