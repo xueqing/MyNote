@@ -122,7 +122,7 @@ URLProtocol/URLContext/File(Socket)：读取文件相关的数据结构，相当
 
 URLProtocol 表示广义的输入文件。一种广义的输入文件对应一个 URLProtocol 结构，比如 file/pipe/tcp 等。
 
-URLProtocol 初始化为链表，保存所有支持的输入文件协议。新添加的协议对象添加至链表末尾。
+`libavformat/protocol_list.c` 中有一个全局的 `url_protocols` 链表，保存所有支持的输入文件协议。新添加的协议对象添加至链表末尾。
 
 ```c
 typedef struct URLProtocol {
@@ -236,7 +236,7 @@ typedef struct AVInputFormat {
 } AVInputFormat;
 ```
 
-AVFormatContext 是格式 IO 上下文，表示程序运行的当前文件容器格式使用的上下文。着重于所有文件容器共有的属性(且在程序运行时才能确定其值)和关联其他结构的字段。
+AVFormatContext 是格式 IO 上下文，表示程序运行的当前文件容器格式使用的上下文。着重于所有文件容器共有的属性(且在程序运行时才能确定其值)和关联其他结构的字段。**同一个 AVFormatContext 只能使 AVInputFormat/AVOutputFormat 中的一个有效。**
 
 ```c
 typedef struct AVFormatContext {
