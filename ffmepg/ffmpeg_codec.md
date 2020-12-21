@@ -188,9 +188,12 @@ graph TD
     B --> C(avcodec_open2)
     C --> |set enc codec context| D(avcodec_send_frame)
     D --> E(avcodec_receive_packet)
-    E --> |process packet| F{"EAGAIN/EOF/ERROR?"}
-    F --> |no| E
-    F --> |yes| G(avcodec_free_context)
+    E --> |process packet| F{"ERROR?"}
+    F --> |no| G(process packet)
+    G --> E
+    F --> |yes| H{"EAGAIN/EOF?"}
+    H --> |no| I(avcodec_free_context)
+    H --> |yes| D
 ```
 
 - `avcodec_send_frame` 使用时，需要按照 pts 递增的顺序传递原始帧 `AVFrame` 给编码器，编码器按照 dts 递增的顺序输出编码帧 `AVPacket`。编码器不关注原始帧的 dts，只是按照顺序缓存和编码收到的原始帧
