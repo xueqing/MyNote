@@ -8,17 +8,18 @@
   - [转封装流程](#转封装流程)
   - [解复用](#解复用)
     - [解复用流程](#解复用流程)
-    - [打开媒体文件](#打开媒体文件)
+    - [打开媒体文件 avformat_open_input](#打开媒体文件-avformat_open_input)
       - [手动分配 AVFormatContext](#手动分配-avformatcontext)
       - [指定解复用的私有选项](#指定解复用的私有选项)
-    - [读取打开的文件](#读取打开的文件)
-    - [关闭打开的文件](#关闭打开的文件)
+    - [获取媒体流信息 avformat_find_stream_info](#获取媒体流信息-avformat_find_stream_info)
+    - [读取打开的文件 av_read_frame](#读取打开的文件-av_read_frame)
+    - [关闭打开的文件 av_close_input](#关闭打开的文件-av_close_input)
   - [复用](#复用)
     - [复用流程](#复用流程)
-    - [设置复用上下文](#设置复用上下文)
-    - [写入文件头](#写入文件头)
-    - [写入数据包](#写入数据包)
-    - [完成文件](#完成文件)
+    - [设置复用上下文 avformat_alloc_output_context2](#设置复用上下文-avformat_alloc_output_context2)
+    - [写入文件头 avformat_write_header](#写入文件头-avformat_write_header)
+    - [写入数据包 av_write_frame](#写入数据包-av_write_frame)
+    - [完成文件 av_write_trailer](#完成文件-av_write_trailer)
   - [参考](#参考)
 
 ## 封装格式
@@ -153,7 +154,7 @@ while (av_read_frame(pIFmtCtx, pPkt) >= 0) {
 avformat_close_input(&pIFmtCtx);
 ```
 
-### 打开媒体文件
+### 打开媒体文件 avformat_open_input
 
 打开文件所需的最小信息是它的 URL，参数会传递给 `avformat_open_input()`。
 
@@ -223,7 +224,11 @@ if (e = av_dict_get(options, "", NULL, AV_DICT_IGNORE_SUFFIX)) {
 }
 ```
 
-### 读取打开的文件
+### 获取媒体流信息 avformat_find_stream_info
+
+`avformat_find_stream_info()` 读取一段视频文件数据并尝试解码，保存音视频流信息
+
+### 读取打开的文件 av_read_frame
 
 从打开的 `AVFormatContext` 读取数据是通过对其反复调用 `av_read_frame()` 实现的。每次调用如果成功，会返回一个包含一个流的编码数据的 `AVPacket`，流可通过 `AVPacket.stream_index` 识别。如果想要解码这些数据，可直接传递这个包给 libavcodec 解码函数 `avcodec_send_packet()` 或 `avcodec_decode_subtitle2()`。
 
@@ -231,7 +236,7 @@ if (e = av_dict_get(options, "", NULL, AV_DICT_IGNORE_SUFFIX)) {
 
 如果在返回的包上设置了 `AVPacket.buf`，那么会动态分配该数据包，用户可以一直保留。否则，`AVPacket.buf` 是 `NULL`，该包的数据在解复用的某处静态存储，且仅在下一个 `av_read_frame()` 调用或关闭文件之前有效。如果调用者需要更长的生命周期，`av_dup_packet()` 会对其进行 `av_malloc` 拷贝。这两种情形，都必须在不再使用的时候使用 `av_packet_unref()` 释放包。
 
-### 关闭打开的文件
+### 关闭打开的文件 av_close_input
 
 在完成读取文件之后，必须使用 `av_close_input()` 关闭它。这个函数会释放和该文件相关的所有资源。
 
@@ -317,7 +322,7 @@ if (pOFmtCtx && !(pOFmtCtx->flags & AVFMT_NOFILE))
 avformat_free_context(pOFmtCtx);
 ```
 
-### 设置复用上下文
+### 设置复用上下文 avformat_alloc_output_context2
 
 复用过程开始的时候，调用者首先必须调用 `avformat_alloc_output_context2()` 创建一个复用上下文。然后，调用者通过填充上下文的不同域设置复用器：
 
@@ -327,15 +332,15 @@ avformat_free_context(pOFmtCtx);
 - 在 remux 期间，建议仅手动初始化 `AVCodecParameters` 的相关字段，而不是使用 `avcodec_parameters_copy()`: 不能保证编码上下文的值对于输入和输出格式上下文都保持有效。
 - 调用者可根据 `AVFormatContext` 文档填充额外的信息，比如“全局的” `AVFormatContext.metadata` 或“单个流的” `AVStream.metadata`，`AVFormatContext.chapters`、`AVFormatContext.programs` 等。这些信息是否存储在输出取决于容器格式和复用器是否支持。
 
-### 写入文件头
+### 写入文件头 avformat_write_header
 
 当完全设置了复用上下文之后，调用者必须调用 `avformat_write_header()` 来初始化复用器内部并写入文件头。此阶段是否写入任何东西到 IO 上下文取决于复用器，但是必须总调用这个函数。所有的复用器私有选项必须传递给这个函数的 `options` 参数。
 
-### 写入数据包
+### 写入数据包 av_write_frame
 
 通过重复调用 `av_write_frame()` 或 `av_interleaved_write_fram()` 将数据发送给复用器。(参阅这些函数的文档查看两个函数的区别；每个复用上下文只使用一个，不能混合使用)注意发送给复用器的包的时间信息应当是对应 `AVStream` 的时基。该时基由复用器(在 `avformat_write_header()` 阶段)设置，且可不同于调用者的时基。
 
-### 完成文件
+### 完成文件 av_write_trailer
 
 一旦写入所有数据，调用者必须调用 `av_write_trailer()` 来清空所有缓存的包，并完成输出文件，然后关闭 IO 上下文(如果有的话)，并最终使用 `avformat_free_context()` 释放复用上下文。
 
