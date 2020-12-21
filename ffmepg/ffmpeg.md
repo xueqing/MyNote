@@ -555,7 +555,7 @@ typedef struct AVPacket {
 
   int64_t duration;// 时长，以 AVStream->timebase 为单位，未知时为 0，等于 next_pts - this_pts
 
-  int64_t pos;// 流中的字节未知。未知时为 -1
+  int64_t pos;// 流中的字节位置。未知时为 -1
 } AVPacket;
 ```
 
