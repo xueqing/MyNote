@@ -91,7 +91,7 @@
 
 - 函数原型 `int avcodec_send_packet(AVCodecContext *avctx, const AVPacket *avpkt);`
 - 功能：提供原始的包数据作为编码器的输入。
-  - 在内部，调用函数会复制相关的 `AVCodecContext` 字段，这些字段会影响对每包的解码，并在实际解码时应用它们。(比如，`AVCodecContext.skip_frame` 可能指导解码器丢弃此函数发送的包包含的帧。) 
+  - 在内部，调用函数会复制相关的 `AVCodecContext` 字段，这些字段会影响对每包的解码，并在实际解码时应用它们。(比如，`AVCodecContext.skip_frame` 可能指导解码器丢弃此函数发送的包包含的帧。
   - **警告**：输入缓冲区 `avpkt->data` 必须是 `AV_INPUT_BUFFER_PADDING_SIZE`，比实际读取的字节数大，因为一些优化的比特流读取器一次读取 32 或 64 比特，并且可能读完所有内容。
   - **警告**：不要在相同的 `AVCodecContext` 将此 API 和传统的 API (像 `avcodec_decode_video2()`) 混用。当前或者将来的 libavcodec 版本会返回未预期的结果。
   - **注意**：在反馈包给解码器之前，必须已经使用 `avcodec_open2()` 打开 `AVCodecContext`。
