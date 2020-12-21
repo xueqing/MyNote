@@ -89,19 +89,20 @@ int av_write_trailer(AVFormatContext *s);
 ```mermaid
 graph TD
     A(main) --> A1(avformat_open_input)
-    A(main) --> A2(avformat_alloc_output_context2)
-
     A1 --> B1(avformat_find_stream_info)
+
+    A(main) --> A2(avformat_alloc_output_context2)
     B1 --> B2(avformat_new_stream)
     B2 --> C2(avio_open)
     C2 --> D2(avformat_write_header)
     A2 --> B2
-    
+
+subgraph "remux packets"  
     D2 --> C1(av_read_frame)
     C1 --> E2(av_write_frame/av_interleaved_write_frame)
     E2 -->C1
-
     E2 --> F2(av_write_trailer)
+end
 
     F2 --> D1(avformat_close_input)
     F2 --> G2(avio_closep)
