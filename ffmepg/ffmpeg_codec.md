@@ -1,23 +1,58 @@
 # ffmpeg 的编解码
 
 - [ffmpeg 的编解码](#ffmpeg-的编解码)
+  - [编解码流程](#编解码流程)
   - [libavcodec 库](#libavcodec-库)
-    - [编解码流程](#编解码流程)
     - [数据结构](#数据结构)
       - [AVPacket](#avpacket)
       - [AVFrame](#avframe)
-    - [解码 API](#解码-api)
-      - [avcodec_send_packet](#avcodec_send_packet)
-      - [avcodec_receive_frame](#avcodec_receive_frame)
-    - [编码 API](#编码-api)
-      - [avcodec_send_frame](#avcodec_send_frame)
-      - [avcodec_receive_packet](#avcodec_receive_packet)
+  - [解码](#解码)
+    - [解码流程](#解码流程)
+    - [发送数据包 avcodec_send_packet](#发送数据包-avcodec_send_packet)
+    - [读取解码帧 avcodec_receive_frame](#读取解码帧-avcodec_receive_frame)
+  - [编码](#编码)
+    - [编码流程](#编码流程)
+    - [发送解码帧 avcodec_send_frame](#发送解码帧-avcodec_send_frame)
+    - [读取数据包 avcodec_receive_packet](#读取数据包-avcodec_receive_packet)
 
 内容主要来自整理翻译源码。
 
-## libavcodec 库
+## 编解码流程
 
-### 编解码流程
+参考 `doc/examples/decode_video.c`
+
+```mermaid
+graph TD
+    main --> A1(av_find_best_stream/avcodec_find_decoder)
+subgraph "open decoder"
+    A1 --> B1(avcodec_alloc_context3)
+    B1 --> |set dec codec context| C1(avcodec_open2)
+end
+    C1 --> D(avcodec_send_packet)
+
+    main --> A2(avcodec_find_encoder)
+subgraph "open encoder"
+    A2 --> B2(avcodec_alloc_context3)
+    B2 --> C2(avcodec_open2)
+end
+    C2 --> |set enc codec context| D
+
+subgraph "transcode packets"
+    D --> E(avcodec_receive_frame)
+    E --> F{"EAGAIN/EOF/ERROR?"}
+    F --> |yes| G("avcodec_free_context(dec/enc)")
+    F --> |no| H(avcodec_send_frame)
+  subgraph "encode packet"
+    H --> I(avcodec_receive_packet)
+    I --> J{"ERROR"}
+    J --> |no| K(process packet)
+  end
+    K --> I
+    J --> |yes| L{"EAGAIN/EOF?"}
+    L --> |yes| E
+    L --> |no| G
+end
+```
 
 `avcodec_send_packet()`/`avcodec_receive_frame()`/`avcodec_send_frame()`/`avcodec_receive_packet()` 函数提供编码/解码 API，将输入和输出解耦。
 
@@ -46,6 +81,8 @@
 强烈建议使用上述 API。但是也可以在这些严格的模式之外调用函数。比如，可以重复调用 `avcodec_send_packet()` 而不调用 `avcodec_receive_frame()`。在这种情况下，`avcodec_send_packet()` 会一直成功之道编解码器内部的缓存填充满(一般在初始输入后，每个输出帧大小是 1)，然后使用 `AVERROR(EAGAIN)` 拒绝输入。一旦开始拒绝输入，只能读取一些输出。
 
 并非所有编解码器会遵循严格且可预测的数据流；唯一的保证是，在一端调用发送/接收调用上的 `AVERROR(EAGAIN)` 返回值意味着另一端的接收/发送调用会成功，或者至少不会因为 `AVERROR(EAGAIN)` 失败。一般来说，没有编解码器允许无限缓存输入或输出。
+
+## libavcodec 库
 
 ### 数据结构
 
@@ -79,7 +116,23 @@
 
 可以通过使用 `AVOptions` 访问字段，使用的名称字符串和通过 `AVOptions` 访问的 C 结构字段名称匹配。`AVFrame` 的 `AVClass` 可通过 `avcodec_get_frame_class()` 获取。
 
-### 解码 API
+## 解码
+
+### 解码流程
+
+参考 `doc/examples/decode_video.c`
+
+```mermaid
+graph TD
+    main --> A(av_find_best_stream/avcodec_find_decoder)
+    A --> B(avcodec_alloc_context3)
+    B --> |set dec codec context| C(avcodec_open2)
+    C --> D(avcodec_send_packet)
+    D --> E(avcodec_receive_frame)
+    E --> |process frame| F{"EAGAIN/EOF/ERROR?"}
+    F --> |no| E
+    F --> |yes| G(avcodec_free_context)
+```
 
 - `avcodec_send_packet` 使用时，需要按照 dts 递增的顺序传递编码的数据包 `AVPacket` 给解码器，解码器按照 pts 递增的顺序输出原始帧 `AVFrame`。解码器并不需要数据包的 dts，只是按照顺序缓存和解码收到的包
 - `avcodec_receive_frame` 输出原始帧之前，会设置好 `AVFrame.best_effort_timestamp`，通常也会设置 `AVFrame.pts`(通常直接拷贝自对应数据包的 pts)，因此用户需要保证发送给解码器的数据包的有正确的 pts。数据包和原始帧之间通过 pts 对应
@@ -87,7 +140,7 @@
 - `avcodec_send_packet` 多次发送 `NULL` 数据包并不会丢弃解码器中缓存的帧，使用 `avcodec_flush_buffers()` 可立即丢掉解码器中缓存的帧。因此播放结束时应调用 `avcodec_send_packet(NULL)` 取出解码器缓存的帧，而 seek 或切换流时应调用 `avcodec_flush_buffers()` 丢弃缓存的帧
 - 刷新解码器的一般操作：调用一次 `avcodec_send_packet(NULL)`(返回成功)，之后循环调用 `avcodec_receive_frame` 直至其返回 `AVERROR_EOF`。最后一次只获取到结束标志，并没有返回有效帧
 
-#### avcodec_send_packet
+### 发送数据包 avcodec_send_packet
 
 - 函数原型 `int avcodec_send_packet(AVCodecContext *avctx, const AVPacket *avpkt);`
 - 功能：提供原始的包数据作为编码器的输入。
@@ -108,7 +161,7 @@
   - `AVERROR(ENOMEM)`: 无法将数据包添加到内部队列，或类似的
   - 其他错误：合理的解码错误
 
-#### avcodec_receive_frame
+### 读取解码帧 avcodec_receive_frame
 
 - 函数原型 `int avcodec_receive_frame(AVCodecContext *avctx, AVFrame *frame);`
 - 功能：返回来自解码器的解码的输出数据。
@@ -121,7 +174,23 @@
   - `AVERROR(EINVAL)`: 未打开编解码器，或这是一个编码器
   - 其他负值：合理的解码错误
 
-### 编码 API
+## 编码
+
+### 编码流程
+
+参考 `doc/examples/encode_video.c`
+
+```mermaid
+graph TD
+    main --> A(avcodec_find_encoder)
+    A --> B(avcodec_alloc_context3)
+    B --> C(avcodec_open2)
+    C --> |set enc codec context| D(avcodec_send_frame)
+    D --> E(avcodec_receive_packet)
+    E --> |process packet| F{"EAGAIN/EOF/ERROR?"}
+    F --> |no| E
+    F --> |yes| G(avcodec_free_context)
+```
 
 - `avcodec_send_frame` 使用时，需要按照 pts 递增的顺序传递原始帧 `AVFrame` 给编码器，编码器按照 dts 递增的顺序输出编码帧 `AVPacket`。编码器不关注原始帧的 dts，只是按照顺序缓存和编码收到的原始帧
 - `avcodec_receive_packet` 输出编码帧前，会设置好 `AVPacket.dts`，通常从 0 开始，每次输出一包其 dts 加 1.用户复用之前应将其转为容器层的 dts
@@ -129,7 +198,7 @@
 - `avcodec_send_frame` 多次发送 `NULL` 数据包并不会丢弃编码器中缓存的帧，使用 `avcodec_flush_buffers()` 可立即丢掉编码器中缓存的帧。因此编码结束时应调用 `avcodec_send_frame(NULL)` 取出编码器缓存的帧，而 seek 或切换流时应调用 `avcodec_flush_buffers()` 丢弃缓存的帧
 - 刷新编码器的一般操作：调用一次 `avcodec_send_frame(NULL)`(返回成功)，之后循环调用 `avcodec_receive_packet` 直至其返回 `AVERROR_EOF`。最后一次只获取到结束标志，并没有返回有效数据包
 
-#### avcodec_send_frame
+### 发送解码帧 avcodec_send_frame
 
 - 函数原型 `int avcodec_send_frame(AVCodecContext *avctx, const AVFrame *frame);`
 - 功能：提供原始的视频或音频帧给编码器。使用 `avcodec_receive_packet()` 检索缓存的输出包。
@@ -145,7 +214,7 @@
   - `AVERROR(ENOMEM)`: 无法将帧添加到内部队列，或类似的
   - 其他错误：合理的编码错误
 
-#### avcodec_receive_packet
+### 读取数据包 avcodec_receive_packet
 
 - 函数原型 `int avcodec_receive_packet(AVCodecContext *avctx, AVPacket *avpkt);`
 - 功能：读取解码器的编码数据。
