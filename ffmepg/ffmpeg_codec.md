@@ -129,9 +129,10 @@ graph TD
     B --> |set dec codec context| C(avcodec_open2)
     C --> D(avcodec_send_packet)
     D --> E(avcodec_receive_frame)
-    E --> |process frame| F{"EAGAIN/EOF/ERROR?"}
-    F --> |no| E
+    E --> F{"EAGAIN/EOF/ERROR?"}
     F --> |yes| G(avcodec_free_context)
+    F --> |no| H(process frame)
+    H --> E
 ```
 
 - `avcodec_send_packet` 使用时，需要按照 dts 递增的顺序传递编码的数据包 `AVPacket` 给解码器，解码器按照 pts 递增的顺序输出原始帧 `AVFrame`。解码器并不需要数据包的 dts，只是按照顺序缓存和解码收到的包
