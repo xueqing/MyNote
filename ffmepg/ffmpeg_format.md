@@ -62,7 +62,7 @@ int avformat_open_input(AVFormatContext **ps, const char *url, AVInputFormat *fm
 // 读取一段视频文件数据并尝试解码，将取到的流信息填入 AVFormatContext.streams 中。AVFormatContext.streams 是一个指针数组，数组大小是 AVFormatContext.nb_streams
 int avformat_find_stream_info(AVFormatContext *ic, AVDictionary **options);
 
-// 用于解复用过程: 将存储在输入文件中的数据分割为多个 packet，每次调用将得到一个 packet
+// 用于解复用过程: 将存储在输入文件中的数据分割为多个包，每次调用得到一个包。包可能是视频帧、音频帧或其他数据。解码器只会解码视频帧或音频帧，不会丢掉非音视频数据，从而提供尽可能多信息给解码器。
 // 对于视频来说，一个数据包只包含一个视频帧；对于音频来说，若是帧长固定的格式则一个数据包可包含整数个音频帧，若是帧长可变的格式则一个数据包只包含一个音频帧
 int av_read_frame(AVFormatContext *s, AVPacket *pkt);
 
@@ -108,6 +108,8 @@ end
     F2 --> G2(avio_closep)
     G2 --> H2(avformat_free_context)
 ```
+
+![转封装流程](ref/remuxing_flowchart.svg)
 
 ## 解复用
 
