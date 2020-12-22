@@ -2,6 +2,7 @@
 
 - [ffmpeg 的编解码](#ffmpeg-的编解码)
   - [编解码流程](#编解码流程)
+    - [重要 API 说明](#重要-api-说明)
   - [libavcodec 库](#libavcodec-库)
     - [数据结构](#数据结构)
       - [AVPacket](#avpacket)
@@ -53,6 +54,10 @@ subgraph "transcode packets"
     L --> |no| G
 end
 ```
+
+![转码流程](ref/transcode_flowchart.svg)
+
+### 重要 API 说明
 
 `avcodec_send_packet()`/`avcodec_receive_frame()`/`avcodec_send_frame()`/`avcodec_receive_packet()` 函数提供编码/解码 API，将输入和输出解耦。
 
