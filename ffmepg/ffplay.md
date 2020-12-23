@@ -88,16 +88,14 @@ end
 
 ```mermaid
 graph TD
-subgraph "subtitle_thread 字幕解码线程"
-    subtitle_thread --> |"等待可以放入一帧"| A10(frame_queue_peek_writable)
-    A10 --> |"取出队列中的一个包"| B10(packet_queue_get)
-    B10 --> |"得到一个字幕帧"| C10(decoder_decode_frame)
-    C10 --> |"将帧放在字幕队列将帧放在字幕队列(VideoState.subq)"| D10(frame_queue_push)
+subgraph "avformat_open_input 函数"
+    avformat_open_input --> |"打开输入文件并探测格式(格式未知的话)"| A4(init_input)
+    A4 --> |"读格式头并初始化 AVFormatContext"| B4(AVFormatContext.iformat.read_header)
 end
 
-subgraph "event_loop 函数"
-    event_loop --> |"调用 video_refresh 渲染一帧"| A11(refresh_loop_wait_event)
-    A11 --> B11("switch-case 处理 SDL_XXX 事件")
+subgraph "avformat_find_stream_info 函数"
+    avformat_find_stream_info --> |"找到对应的编解码器和参数"| A5(find_probe_decoder)
+    A5 --> |"读取一小段视频文件数据并尝试解码，保存取到的流信息"| B5(try_decode_frame)
 end
 ```
 
