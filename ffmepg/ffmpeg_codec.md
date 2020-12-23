@@ -211,17 +211,17 @@ graph TD
 
 - 函数原型 `int avcodec_send_frame(AVCodecContext *avctx, const AVFrame *frame);`
 - 功能：提供原始的视频或音频帧给编码器。使用 `avcodec_receive_packet()` 检索缓存的输出包。
-  - 参数 `avctx`: 编解码上下文
-  - 参数(输入) `frame`: `AVFrame` 包含要编码的原始音频或视频帧。该帧的所有权由调用者保留，且编码器不会写入此帧。编码器可能创建对帧数据的引用(或复制该帧，如果该帧不是引用计数的)
-    - 该参数可以是 `NULL`，在这种情况下，将其视为刷新数据包。它标识流的结束。如果编码器还有缓存的包，此调用之后会将其返回。一旦进入刷新模式，多余的刷新包被忽略，且发送帧会返回 `AVERROR_EOF`。
-    - **对于音频**：如果设置了 `AV_CODEC_CAP_VARIABLE_FRAME_SIZE`，那么每个帧可以包含任意数目的采样点。如果没有设置，除了最后一帧，所有帧的采样点数据 `frame->nb_samples` 必须等于编码器设定的音频帧尺寸 `avctx->frame_size`。最后一帧采样点可以比 `avctx->frame_size` 小。
-  - 返回值：0 表示成功，否则是负的错误码
-    - `AVERROR(EAGAIN)`: 输入在当前状态是不可接受的——用户必须使用 `avcodec_receive_packet()` 读取输出(一旦读取所有输出，应该重发此帧，且这个调用不会返回 `EAGAIN` 错误)
-    - 当 `avcodec_send_packet` 和 `avcodec_receive_frame` 在两个单独的循环中调用时，可能出现此情况
-  - `AVERROR_EOF`: 编码器已经刷新。且不能发送新帧到编码器
-  - `AVERROR(EINVAL)`: 未打开编解码器，未设置引用计数帧(refcounted_frames)，这是一个解码器，或要求刷新
-  - `AVERROR(ENOMEM)`: 无法将帧添加到内部队列，或类似的
-  - 其他错误：合理的编码错误
+- 参数 `avctx`: 编解码上下文
+- 参数(输入) `frame`: `AVFrame` 包含要编码的原始音频或视频帧。该帧的所有权由调用者保留，且编码器不会写入此帧。编码器可能创建对帧数据的引用(或复制该帧，如果该帧不是引用计数的)
+  - 该参数可以是 `NULL`，在这种情况下，将其视为刷新数据包。它标识流的结束。如果编码器还有缓存的包，此调用之后会将其返回。一旦进入刷新模式，多余的刷新包被忽略，且发送帧会返回 `AVERROR_EOF`。
+  - **对于音频**：如果设置了 `AV_CODEC_CAP_VARIABLE_FRAME_SIZE`，那么每个帧可以包含任意数目的采样点。如果没有设置，除了最后一帧，所有帧的采样点数据 `frame->nb_samples` 必须等于编码器设定的音频帧尺寸 `avctx->frame_size`。最后一帧采样点可以比 `avctx->frame_size` 小。
+- 返回值：0 表示成功，否则是负的错误码
+  - `AVERROR(EAGAIN)`: 输入在当前状态是不可接受的——用户必须使用 `avcodec_receive_packet()` 读取输出(一旦读取所有输出，应该重发此帧，且这个调用不会返回 `EAGAIN` 错误)
+  - 当 `avcodec_send_packet` 和 `avcodec_receive_frame` 在两个单独的循环中调用时，可能出现此情况
+- `AVERROR_EOF`: 编码器已经刷新。且不能发送新帧到编码器
+- `AVERROR(EINVAL)`: 未打开编解码器，未设置引用计数帧(refcounted_frames)，这是一个解码器，或要求刷新
+- `AVERROR(ENOMEM)`: 无法将帧添加到内部队列，或类似的
+- 其他错误：合理的编码错误
 
 ### 读取数据包 avcodec_receive_packet
 
