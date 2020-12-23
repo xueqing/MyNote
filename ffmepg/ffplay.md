@@ -4,7 +4,6 @@
   - [概述](#概述)
   - [流程](#流程)
   - [重要函数](#重要函数)
-  - [音视频数据流程](#音视频数据流程)
 
 ## 概述
 
@@ -142,21 +141,3 @@ static int audio_decode_frame(VideoState *is)
   解码一个音频帧并返回解压的数据大小。  
 ```
 
-## 音视频数据流程
-
-ffplay.c `static int read_thread(void *arg)`
-
-```text
-avformat_open_input
-  打开一个输入流并读头信息，保存文件格式信息，未打开 codec。
-  init_input
-    打开输入文件并探测格式(格式未知的话) AVFormatContext。
-    av_probe_input_buffer2
-      探测字节流确定输入格式 AVInputFormat
-  AVFormatContext.iformat.read_header
-    读格式头并初始化 AVFormatContext 结构
-avformat_find_stream_info
-  读媒体文件的包获得流信息。读取一小段视频文件数据并尝试解码，保存取到的流信息。这对于没有头的文件格式(如 mpeg)有用。
-  find_probe_decoder/avcodec_open2(libavforamt/utils.c)
-    找到对应的编解码器和参数
-```
