@@ -13,14 +13,14 @@
       - [指定解复用的私有选项](#指定解复用的私有选项)
     - [获取媒体流信息 avformat_find_stream_info](#获取媒体流信息-avformat_find_stream_info)
     - [读取打开的文件 av_read_frame](#读取打开的文件-av_read_frame)
-    - [关闭打开的文件 av_close_input](#关闭打开的文件-av_close_input)
+    - [关闭打开的文件 avformat_close_input](#关闭打开的文件-avformat_close_input)
   - [复用](#复用)
     - [复用流程](#复用流程)
     - [设置复用上下文 avformat_alloc_output_context2](#设置复用上下文-avformat_alloc_output_context2)
     - [写入文件头 avformat_write_header](#写入文件头-avformat_write_header)
+      - [avformat_init_output](#avformat_init_output)
     - [写入数据包 av_write_frame](#写入数据包-av_write_frame)
     - [完成文件 av_write_trailer](#完成文件-av_write_trailer)
-  - [参考](#参考)
 
 ## 封装格式
 
@@ -159,7 +159,19 @@ avformat_close_input(&pIFmtCtx);
 
 ### 打开媒体文件 avformat_open_input
 
-打开文件所需的最小信息是它的 URL，参数会传递给 `avformat_open_input()`。
+- 函数原型 `int avformat_open_input(AVFormatContext **ps, const char *url, AVInputFormat *fmt, AVDictionary **options);`
+- 功能：打开一个输入流并读头。编解码器未打开。必须使用 `avformat_close_input()` 流。
+- 参数 `ps`: 指向用户提供的 `AVFormatContext`(使用 `avformat_alloc_context` 分配)的指针。指针可能指向 NULL，在这种情况下，通过此函数分配 `AVFormatContext` 并写入 `ps`。
+  - **注意**：用户提供的 `AVFormatContext` 释放会出错。
+- 参数 `url`: 要打开的流的 URL
+- 参数 `fmt`: 如果不是 NULL，这个参数强制一个指定的输入格式。否则格式是自动探测的。
+- 参数 `options`: 字典包含 `AVFormatContext` 和解复用器私有的选项。
+  - 返回时这个参数会被销毁，并替换成一个包含未找到选项的字段
+  - 可以是 NULL
+- 返回值：0 表示成功，失败返回一个负的 `AVERROR`
+- **注意**：如果想要使用自定义的 IO，预先分配格式上下文，并设置该上细纹的 `pb` 字段
+
+打开文件所需的最小信息是它的 URL。
 
 `avformat_open_input()` 尝试分配 `AVFormatContext`，打开指定的文件(自动探测格式)，读头部，导出这些信息存储到 `pIFmtCtx`。一些格式没有头或者没有在头部存储足够的信息，因此建议调用 `avformat_find_stream_info()`，它会尝试读和解码一些帧来查找缺少的信息。
 
@@ -229,9 +241,24 @@ if (e = av_dict_get(options, "", NULL, AV_DICT_IGNORE_SUFFIX)) {
 
 ### 获取媒体流信息 avformat_find_stream_info
 
-`avformat_find_stream_info()` 读取一段视频文件数据并尝试解码，保存音视频流信息
+- 函数原型 `int avformat_find_stream_info(AVFormatContext *ic, AVDictionary **options);`
+- 功能：读取一个媒体文件的数据包以获取流信息。这对于没有头信息(比如 MPEG)是有用的。如果是 MPEG-2 重复帧模式，函数也会计算真实的帧率。
+  - 函数不会改变文件的逻辑位置；测试的数据包可被缓存用于后续处理。
+- 参数 `ic`: 媒体文件句柄
+- 参数 `options`: 如果非 NULL，是一个长度为 `ic.nb_streams` 的字典指针的数组，第 i 个成员包含对应第 i 个流的编解码选项。
+  - 函数返回时每个字典包含未找到的选项
+- 返回值：大于等于 0 成功，出错返回 `AVERROR_xxx`
+- **注意**：函数不确保打开所有编解码器，因此返回非空的 `options` 是完全正常的现象。
+- **todo**：让用户决定需要什么样的信息，以便我们不会花费时间填充用户不需要的东西。
 
 ### 读取打开的文件 av_read_frame
+
+- 函数原型 `int av_read_frame(AVFormatContext *s, AVPacket *pkt);`
+- 功能：返回一个流的下一帧。
+  - 此函数返回文件存储的内容，且不会检验是否是解码器的有效帧。函数将文件分成帧，且每次调用返回一帧。它不会忽视有效帧帧间的无效数据，由此提供尽可能多的信息给编码器编码使用。
+  - 如果 `pkt->buf` 是 `NULL`，该包在下次调用 `av_read_frame` 或者 `avformat_close_input` 之前都是有效的。否则此包的有效性不确定。在两种情况下，不在使用时都必须使用 `av_packet_unref` 释放包。对于视频，返回的包只包含一帧。对于音频。如果每个帧是固定大小(比如 PCM 或 ADPCM 数据)则返回包包含整数帧。如果音频帧不固定大小(比如 MPEG 音频)，那么返回包只有一帧。
+  - `pkt->pts`、`pkt->dts` 和 `pkt->duration` 都设置为基于 `AVStream.time_base` 单位的正确值(如果格式未提供则猜测值)。如果视频格式包含 B 帧，`pkt->pts` 可以是 `AV_NOPTS_VALUE`，因此如果不解压缩负载的话，最好使用 `pkt->dts`。
+- 返回值：0 表示成功，负值表示出错或者文件末尾
 
 从打开的 `AVFormatContext` 读取数据是通过对其反复调用 `av_read_frame()` 实现的。每次调用如果成功，会返回一个包含一个流的编码数据的 `AVPacket`，流可通过 `AVPacket.stream_index` 识别。如果想要解码这些数据，可直接传递这个包给 libavcodec 解码函数 `avcodec_send_packet()` 或 `avcodec_decode_subtitle2()`。
 
@@ -239,9 +266,12 @@ if (e = av_dict_get(options, "", NULL, AV_DICT_IGNORE_SUFFIX)) {
 
 如果在返回的包上设置了 `AVPacket.buf`，那么会动态分配该数据包，用户可以一直保留。否则，`AVPacket.buf` 是 `NULL`，该包的数据在解复用的某处静态存储，且仅在下一个 `av_read_frame()` 调用或关闭文件之前有效。如果调用者需要更长的生命周期，`av_dup_packet()` 会对其进行 `av_malloc` 拷贝。这两种情形，都必须在不再使用的时候使用 `av_packet_unref()` 释放包。
 
-### 关闭打开的文件 av_close_input
+### 关闭打开的文件 avformat_close_input
 
-在完成读取文件之后，必须使用 `av_close_input()` 关闭它。这个函数会释放和该文件相关的所有资源。
+- 函数原型 `void avformat_close_input(AVFormatContext **s);`
+- 功能：关闭一个打开的输入 `AVFormatContext`。释放它机器内容，并将 `*s` 设置为 `NULL`
+
+在完成读取文件之后，必须使用 `avformat_close_input()` 关闭它。这个函数会释放和该文件相关的所有资源。
 
 ## 复用
 
@@ -327,6 +357,14 @@ avformat_free_context(pOFmtCtx);
 
 ### 设置复用上下文 avformat_alloc_output_context2
 
+- 函数原型 `int avformat_alloc_output_context2(AVFormatContext **ctx, AVOutputFormat *oformat, const char *format_name, const char *filename);`
+- 功能：为输入格式分配一个 `AVFormatContext`。可使用 `avformat_free_context` 释放上下文以及此内部框架申请的所有内容。
+- 参数 `ctx`: `*ctx` 设置为创建的格式上下文，失败的话设置为 `NULL`
+- 参数 `oformat`: 分配上下文使用的格式。如果是 `NULL` 则使用 `format_name` 和 `filename`
+- 参数 `format_name`: 输入格式的名字，用于分配上下文，如果为 `NULL` 则使用 `filename`
+- 参数 `filename`: 文件名，用于分配上下文，可以是 `NULL`
+- 返回值：成功返回值大于等于 0，失败返回一个负的 `AVERROR`
+
 复用过程开始的时候，调用者首先必须调用 `avformat_alloc_output_context2()` 创建一个复用上下文。然后，调用者通过填充上下文的不同域设置复用器：
 
 - `AVFormatContext.oformat` 域必须设置用于选择要使用的复用器
@@ -337,16 +375,57 @@ avformat_free_context(pOFmtCtx);
 
 ### 写入文件头 avformat_write_header
 
+- 函数原型 `int avformat_write_header(AVFormatContext *s, AVDictionary **options);`
+- 功能：分配流的私有数据，并将流的头部写到输出媒体文件
+- 参数 `s`: 媒体文件句柄，必须使用 `avformat_alloc_context()` 分配。`s->oformat` 域必须设置用于选择要使用的输出格式；`s->pb` 必须设置为已经打开的 `AVIOContext`
+- 参数 `options`: 一个字典，包含 `AVFormatContext` 和复用器私有的选项。返回时这个参数会小会，并替换为包含未查找到的选项的字典。可以是 `NULL`
+- 返回值：
+  - `AVSTREAM_INIT_IN_WRITE_HEADER` 表示成功，但是编解码没有在 `avformat_init` 完全初始化
+    - `AVSTREAM_INIT_IN_WRITE_HEADER` 表示流参数在 `avformat_write_header` 初始化
+  - `AVSTREAM_INIT_IN_INIT_OUTPUT` 表示成功，且编解码在 `avformat_init` 完全初始化
+    - `AVSTREAM_INIT_IN_INIT_OUTPUT` 表示流参数在 `avformat_init_output` 初始化
+  - 出错返回负的 `AVERROR`
+
 当完全设置了复用上下文之后，调用者必须调用 `avformat_write_header()` 来初始化复用器内部并写入文件头。此阶段是否写入任何东西到 IO 上下文取决于复用器，但是必须总调用这个函数。所有的复用器私有选项必须传递给这个函数的 `options` 参数。
 
+#### avformat_init_output
+
+- 函数原型：`int avformat_init_output(AVFormatContext *s, AVDictionary **options);`
+- 功能：分配流的私有数据并初始化编解码器，但是不写头部。可在 `avformat_write_header` 之前用于在真正写头部之前初始化流参数。
+  - 如果使用这个函数，不要传递相同的 `options` 给 `avformat_write_header`
+- 参数 `s`: 媒体文件句柄，必须使用 `avformat_alloc_context()` 分配。`s->oformat` 域必须设置用于选择要使用的输出格式；`s->pb` 必须设置为已经打开的 `AVIOContext`
+- 参数 `options`: 一个字典，包含 `AVFormatContext` 和复用器私有的选项。返回时这个参数会小会，并替换为包含未查找到的选项的字典。可以是 `NULL`
+- 返回值：
+  - `AVSTREAM_INIT_IN_WRITE_HEADER` 表示成功，但是编解码没有在 `avformat_init` 完全初始化
+    - `AVSTREAM_INIT_IN_WRITE_HEADER` 表示流参数在 `avformat_write_header` 初始化
+  - `AVSTREAM_INIT_IN_INIT_OUTPUT` 表示成功，且编解码在 `avformat_init` 完全初始化
+    - `AVSTREAM_INIT_IN_INIT_OUTPUT` 表示流参数在 `avformat_init_output` 初始化
+  - 出错返回负的 `AVERROR`
+
 ### 写入数据包 av_write_frame
+
+- 函数原型 `int av_write_frame(AVFormatContext *s, AVPacket *pkt);`
+- 功能：向输出媒体文件写入一包数据。
+  - 此函数将包直接传递给复用器，不会缓存或重排序。如果格式需要，调用者负责正确交织包。
+  - 想要 `libavformat` 处理交织的调用者应该调用 `av_interleaved_write_frame` 而不是此函数
+- `s`: 媒体文件句柄
+- `pkt`: 包含要写的数据的包。
+  - **注意**：跟 `av_interleaved_write_frame` 不同，这个函数不持有传递给它的包的所有权(虽然一些复用器可能对这个输入包创建内部引用)
+  - 这个参数可以是 `NULL`(任何时候都可以，不仅仅是结束时)，用于立即刷新复用器内部缓存的数据，适用于那些在写到输出之前会在内部缓存数据的复用器
+  - `AVPacket.stream_index` 必须设置为 `AVFormatContext.streams` (即 `s->streams`) 的对应流
+  - 时间戳(包的 pts/dts)必须设置为基于流的时间基的正确值(除非输出格式的标记包含 `AVFMT_NOTIMESTAMPS`，那么可以将其设置为 `AV_NOPTS_VALUE`)
+  - 当比较包的相对时间基时，之后传递给这个函数的包的 dts 必须是严格增长的(除非输出格式的标记包含 `AVFMT_TS_NONSTRICT`，那么 dts 只需要是非减小的)
+  - 如果已知，包的 durantion 也必须设置
+- 返回值：出错返回负值，0 表示成功，1 表示复用器被刷新且没有数据可以刷新
 
 通过重复调用 `av_write_frame()` 或 `av_interleaved_write_fram()` 将数据发送给复用器。(参阅这些函数的文档查看两个函数的区别；每个复用上下文只使用一个，不能混合使用)注意发送给复用器的包的时间信息应当是对应 `AVStream` 的时基。该时基由复用器(在 `avformat_write_header()` 阶段)设置，且可不同于调用者的时基。
 
 ### 完成文件 av_write_trailer
 
+- 函数原型 `int av_write_trailer(AVFormatContext *s);`
+- 功能：将流尾部写入输出媒体文件，并释放文件的私有数据
+  - 只能在 `avformat_write_header` 调用成功后调用此函数
+- 参数 `s`: 媒体文件句柄
+- 返回值：成功返回 0，错误返回 `AVERROR_xxx`
+
 一旦写入所有数据，调用者必须调用 `av_write_trailer()` 来清空所有缓存的包，并完成输出文件，然后关闭 IO 上下文(如果有的话)，并最终使用 `avformat_free_context()` 释放复用上下文。
-
-## 参考
-
-- [FFmpeg 封装格式处理](https://www.cnblogs.com/leisure_chn/p/10506636.html)
