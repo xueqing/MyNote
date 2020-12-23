@@ -32,7 +32,7 @@
   - [node.js](js/)
   - [O2O](o2o/)
   - [p2p](p2p/)
-  - [reStructuredText](rest/)
+  - [reStructuredText](rst/)
   - [rtmp](rtmp/)
   - [sip](sip/)
   - [webrtc](webrtc/)
@@ -44,6 +44,7 @@
   - [kindle 小技巧](kindle/)
   - [阅读笔记整理](quote_collection/)
 - 能力提升
+  - [darwin 框架学习](darwin/)
   - [django cms 学习](django_cms/README.md)
   - [ffmpeg](ffmepg/)
   - [其他学习文档](others/)
