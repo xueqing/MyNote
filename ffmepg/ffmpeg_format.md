@@ -109,8 +109,6 @@ end
     G2 --> H2(avformat_free_context)
 ```
 
-![转封装流程](ref/remuxing_flowchart.svg)
-
 ## 解复用
 
 ### 解复用流程

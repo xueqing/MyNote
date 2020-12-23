@@ -55,8 +55,6 @@ subgraph "transcode packets"
 end
 ```
 
-![转码流程](ref/transcode_flowchart.svg)
-
 ### 重要 API 说明
 
 `avcodec_send_packet()`/`avcodec_receive_frame()`/`avcodec_send_frame()`/`avcodec_receive_packet()` 函数提供编码/解码 API，将输入和输出解耦。
