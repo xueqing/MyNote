@@ -1,13 +1,105 @@
 # ffplay 解读
 
-- [ffplay 解读](#ffplay-%e8%a7%a3%e8%af%bb)
-  - [概述](#%e6%a6%82%e8%bf%b0)
-  - [重要函数](#%e9%87%8d%e8%a6%81%e5%87%bd%e6%95%b0)
-  - [音视频数据流程](#%e9%9f%b3%e8%a7%86%e9%a2%91%e6%95%b0%e6%8d%ae%e6%b5%81%e7%a8%8b)
+- [ffplay 解读](#ffplay-解读)
+  - [概述](#概述)
+  - [流程](#流程)
+  - [重要函数](#重要函数)
+  - [音视频数据流程](#音视频数据流程)
 
 ## 概述
 
 `ffplay.c` 是基于 ffmpeg 库的一个简单的媒体播放器。它初始化运行环境，把各个数据结构和功能函数组织起来，协调数据流和功能函数，响应用户操作，启动并控制程序运行。
+
+## 流程
+
+```mermaid
+graph TD
+subgraph "main 函数"
+    main --> |"注册编解码器/解复用器/协议"| A1(avdevice_register_all)
+    A1 --> |"初始化 flush_pkt"| B1("av_init_packet(&flush_pkt)")
+    B1 --> |"打开并处理指定 URL"| C1(stream_open)
+    C1 --> |"处理事件循环"| D1(event_loop)
+end
+
+C1 --> stream_open
+subgraph "stream_open 函数"
+    stream_open --> |"初始化帧队列"| A2(frame_queue_init)
+    A2 --> |"初始化包队列"| B2(packet_queue_init)
+    B2 --> |"初始化时钟"| C2(init_clock)
+    C2 --> |"创建读线程 read_thread 从磁盘或网络得到流"| D2("SDL_CreateThread")
+end
+
+D2 --> read_thread
+subgraph "read_thread 函数"
+    read_thread --> |"初始化 AVFormatContext"| A3(avformat_alloc_context)
+    A3 --> |"打开输入流读头信息，保存文件格式"| B3(avformat_open_input)
+    B3 --> |"设置 avformat_find_stream_info 内部使用的流信息"| C3("setup_find_stream_info_opts")
+    C3 --> |"读媒体文件的包获得流信息"| D3(avformat_find_stream_info)
+    D3 --> |"打开指定流，查找并打开编解码器，并启动音视频解码线程"| E3(stream_component_open)
+    E3 --> F3("for loop")
+end
+
+E3 --> stream_component_open
+subgraph "stream_component_open 函数"
+    stream_component_open --> |"将流的编解码器参数 AVCodecParameters 转为 AVCodecContext"| A6(avcodec_parameters_to_context)
+    A6 --> |"根据匹配的 codec_id 找到注册的解码器"| B6(avcodec_find_decoder)
+    B6 --> |"准备音频播放，设置播放的回调函数 sdl_audio_callback"| C6(audio_open)
+    C6 --> |"初始化解码器"| D6(decoder_init)
+    D6 --> |"开始解码，创建和开启 audio_thread/video_thread/subtitle_thread 线程处理不同媒体类型"| E6(decoder_start)
+end
+
+F3 --> for_loop
+subgraph "for loop 函数"
+    for_loop --> |"暂停/继续读流"| A7(av_read_pause/av_read_play)
+    A7 --> |"返回流的下一帧"| B7(av_read_frame)
+    B7 --> |"将读到的帧放到音频或视频的 PacketQueue"| C7(packet_queue_put)
+end
+
+E6 --> audio_thread
+subgraph "audio_thread 音频解码线程"
+    audio_thread --> |"初始化一个帧，分配解码帧缓存"| A8(av_frame_alloc)
+    A8 --> |"得到一个音频帧 AVFrame"| B8(decoder_decode_frame)
+    B8 --> |"将帧放在采样队列(VideoState.sampq)"| C8(frame_queue_push)
+    C8 --> |"释放音频帧内存"| D8(av_frame_unref)
+end
+
+E6 --> video_thread
+subgraph "video_thread 视频解码线程"
+    video_thread --> |"初始化一个帧，分配解码帧缓存"| A9(av_frame_alloc)
+    A9 --> |"得到一个视频帧 AVFrame"| B9(decoder_decode_frame)
+    B9 --> |"将帧放在图像队列(VideoState.pictq)"| C9(queue_picture)
+    C9 --> |"释放视频帧内存"| D9(av_frame_unref)
+end
+
+E6 --> subtitle_thread
+subgraph "subtitle_thread 字幕解码线程"
+    subtitle_thread --> |"等待可以放入一帧"| A10(frame_queue_peek_writable)
+    A10 --> |"取出队列中的一个包"| B10(packet_queue_get)
+    B10 --> |"得到一个字幕帧"| C10(decoder_decode_frame)
+    C10 --> |"将帧放在字幕队列将帧放在字幕队列(VideoState.subq)"| D10(frame_queue_push)
+end
+
+D1 --> event_loop
+subgraph "event_loop 函数"
+    event_loop --> |"调用 video_refresh 渲染一帧"| A11(refresh_loop_wait_event)
+    A11 --> B11("switch-case 处理 SDL_XXX 事件")
+end
+```
+
+```mermaid
+graph TD
+subgraph "subtitle_thread 字幕解码线程"
+    subtitle_thread --> |"等待可以放入一帧"| A10(frame_queue_peek_writable)
+    A10 --> |"取出队列中的一个包"| B10(packet_queue_get)
+    B10 --> |"得到一个字幕帧"| C10(decoder_decode_frame)
+    C10 --> |"将帧放在字幕队列将帧放在字幕队列(VideoState.subq)"| D10(frame_queue_push)
+end
+
+subgraph "event_loop 函数"
+    event_loop --> |"调用 video_refresh 渲染一帧"| A11(refresh_loop_wait_event)
+    A11 --> B11("switch-case 处理 SDL_XXX 事件")
+end
+```
 
 ## 重要函数
 
@@ -54,39 +146,9 @@ static int audio_decode_frame(VideoState *is)
 
 ## 音视频数据流程
 
-ffplay.c `int main(int argc, char **argv)`
-
-```text
-avdevice_register_all
-  生成实例，注册所有编解码器、解复用器和协议
-av_init_packet(&flush_pkt)
-  初始化 flush_pkt
-stream_open
-  打开并处理指定 URL
-event_loop
-  处理 GUI 发送的事件。
-  for 循环
-    refresh_loop_wait_event 调用 video_refresh 渲染一帧
-```
-
-ffplay.c `static VideoState *stream_open(const char *filename, AVInputFormat *iformat)`
-
-```text
-frame_queue_init
-  初始化帧队列
-packet_queue_init
-  初始化包队列
-init_clock
-  初始化时钟
-SDL_CreateThread(read_thread, "read_thread", is)
-  创建读线程调用 read_thread 从磁盘或网络得到流
-```
-
 ffplay.c `static int read_thread(void *arg)`
 
 ```text
-avformat_alloc_context
-  初始化 AVFormatContext
 avformat_open_input
   打开一个输入流并读头信息，保存文件格式信息，未打开 codec。
   init_input
@@ -95,71 +157,8 @@ avformat_open_input
       探测字节流确定输入格式 AVInputFormat
   AVFormatContext.iformat.read_header
     读格式头并初始化 AVFormatContext 结构
-setup_find_stream_info_opts
-  设置 AVStream.info，即 avformat_find_stream_info 内部使用的流信息
 avformat_find_stream_info
   读媒体文件的包获得流信息。读取一小段视频文件数据并尝试解码，保存取到的流信息。这对于没有头的文件格式(如 mpeg)有用。
   find_probe_decoder/avcodec_open2(libavforamt/utils.c)
     找到对应的编解码器和参数
-stream_component_open
-  打开一个指定流，查找并打开编解码器 codec 并启动音视频解码线程
-  avcodec_parameters_to_context
-    将流的编解码器参数 AVCodecParameters(VideoState.ic.streams.codecpar) 转为 AVCodecContext
-  avcodec_find_decoder
-    根据匹配的 codec_id 找到注册的解码器 AVCodec
-  audio_open
-    如果是音频，准备音频播放，设置播放的回调函数 sdl_audio_callback
-  decoder_init
-    初始化解码器
-  decoder_start
-    开始解码，在 PacketQueue 放一个 flush_pkt，并创建和开启 audio_thread/video_thread/subtitle_thread 线程处理不同媒体类型
-for 循环
-  av_read_frame(libavforamt/utils.c)
-    返回流的下一帧。对于视频，包包含一帧数据；对于音频，如果帧是固定大小则包含整数帧，大小不固定则包含一帧。
-    用于解复用过程。将存储在输入文件中的数据分割为多个包，每次调用得到一个包。包可能是视频帧、音频帧或其他数据。解码器只会解码视频帧或音频帧，不会丢掉非音视频数据，从而提供尽可能多信息给解码器。
-    read_frame_internal >> ff_read_packet >> AVFormatContext.iformat.read_packet
-  packet_queue_put
-    将读到的帧放到音频或视频的 PacketQueue(VideoState.audioq/videoq/subtitleq)
-```
-
-audio_thread 音频解码线程
-
-```text
-av_frame_alloc
-  初始化一个帧，分配解码帧缓存
-get_video_frame
-  调用 decoder_decode_frame 得到一个音频帧 AVFrame
-  avcodec_receive_frame >> decode_receive_frame_internal >> ... >> Decoder.avctx.codec.decode 解一个包得到音频帧
-frame_queue_push
-  将帧放在采样队列(VideoState.sampq)
-av_frame_unref
-  释放视频帧内存
-```
-
-video_thread 视频解码线程
-
-```text
-av_frame_alloc
-  初始化一个帧
-get_video_frame
-  调用 decoder_decode_frame 得到一个视频帧 AVFrame。内部
-  avcodec_receive_frame >> decode_receive_frame_internal >> ... >> Decoder.avctx.codec.decode 解一个包得到视频帧
-queue_picture
-  将帧放在图像队列(VideoState.pictq)
-av_frame_unref
-  释放视频帧内存
-```
-
-subtitle_thread 字幕解码线程
-
-```text
-frame_queue_peek_writable
-  等待可以放入一帧
-packet_queue_get
-  取出队列中的一个包
-decoder_decode_frame
-  得到一个字幕帧 AVFrame
-  avcodec_decode_subtitle2 >> Decoder.avctx.codec.decode 解一个包得到帧
-frame_queue_push
-  将帧放在字幕队列(VideoState.subq)
 ```
