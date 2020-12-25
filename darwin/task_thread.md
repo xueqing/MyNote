@@ -442,7 +442,8 @@ void TCPListenerSocket::ProcessEvent(int /*eventBits*/)
 
     if (fSleepBetweenAccepts)
     {
-        this->SetIdleTimer(kTimeBetweenAcceptsInMsec); //sleep 1 second
+        // 达到最大连接数时，更新 fSleepBetweenAccepts 为 true，由此设定 TCPListenerSocket 的空闲时间，暂时不再监听事件，直到触发定时器
+        this->SetIdleTimer(kTimeBetweenAcceptsInMsec);
     }
     else
     {
@@ -453,8 +454,8 @@ void TCPListenerSocket::ProcessEvent(int /*eventBits*/)
 
 EasyDarwin 包含两个 `TCPListenerSocket` 的衍生类：`HTTPListenerSocket` 和 `RTSPListenerSocket`，分别用于提供 HTTP 服务 和 RTSP 服务。
 
-- 如果事件来自 HTTP 服务监听端口，`EventThread::Entry` 处理事件，调用 `TCPListenerSocket::ProcessEvent`，然后执行 `HTTPListenerSocket::GetSessionTask`，返回一个 `HTTPSession` 及其相关的 `Socket`，设置 `Socket` 的属性，注册一个读事件，等待更多数据，之后通知新建的 `HTTPSession` 任务处理读到的数据，由此实现了单个 `Task` 处理一个 HTTP 连接
-- 如果事件来自 RTSP 服务监听端口，`EventThread::Entry` 处理事件，调用 `TCPListenerSocket::ProcessEvent`，然后执行 `RTSPListenerSocket::GetSessionTask`，返回一个 `RTSPSession` 及其相关的 `Socket`，设置 `Socket` 的属性，注册一个读事件，等待更多数据，之后通知新建的 `RTSPSession` 任务处理读到的数据，由此实现了单个 `Task` 处理一个 RTSP 连接
+- 如果事件来自 HTTP 服务监听端口，`EventThread::Entry` 处理事件，调用 `TCPListenerSocket::ProcessEvent`，然后执行 `HTTPListenerSocket::GetSessionTask`，返回一个 `HTTPSession` 及其相关的 `Socket`，设置 `Socket` 的属性，注册新建的 `Socket` 读事件，等待更多数据，之后通知新建的 `HTTPSession` 任务处理读到的数据，由此实现了单个 `Task` 处理一个 HTTP 连接
+- 如果事件来自 RTSP 服务监听端口，`EventThread::Entry` 处理事件，调用 `TCPListenerSocket::ProcessEvent`，然后执行 `RTSPListenerSocket::GetSessionTask`，返回一个 `RTSPSession` 及其相关的 `Socket`，设置 `Socket` 的属性，注册新建的 `Socket` 读事件，等待更多数据，之后通知新建的 `RTSPSession` 任务处理读到的数据，由此实现了单个 `Task` 处理一个 RTSP 连接
 
 ##### HTTPListenerSocket::GetSessionTask
 
@@ -466,6 +467,7 @@ Task*   HTTPListenerSocket::GetSessionTask(TCPSocket** outSocket)
     HTTPSession* theTask = NEW HTTPSession();
     *outSocket = theTask->GetSocket();// 将 HTTPSession 保存的 socket 和 Unix 文件描述关联
 
+    // 达到最大连接数时，设定 TCPListenerSocket 的空闲时间，将 HTTPListenerSocket 加入空闲任务队列，暂时不再监听 HTTP 连接，直到触发定时器
     if (this->OverMaxConnections(0))
         this->SlowDown();
     else
@@ -489,6 +491,7 @@ Task*   RTSPListenerSocket::GetSessionTask(TCPSocket** outSocket)
     RTSPSession* theTask = NEW RTSPSession(doReportHTTPConnectionAddress);
     *outSocket = theTask->GetSocket();// 将 RTSPSession 保存的 socket 和 Unix 文件描述关联
 
+    // 达到最大连接数时，设定 TCPListenerSocket 的空闲时间，将 RTSPListenerSocket 加入空闲任务队列，暂时不再监听 RTSP 连接，直到触发定时器
     if (this->OverMaxConnections(0))
         this->SlowDown();
     else
