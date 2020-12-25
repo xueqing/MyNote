@@ -356,7 +356,8 @@ public:
     // Cleanup 时关闭文件描述符。因此不能在外部关闭这个文件描述符。
     void InitNonBlocking(int inFileDesc);
 
-    void RequestEvent(int theMask = EV_RE);// 内部调用 addEpollEvent 注册想要接收的事件
+    // 注册当前 EventThread 到 EventThread，并调用 addEpollEvent 注册想要接收的事件
+    void RequestEvent(int theMask = EV_RE);
     void SetTask(Task* inTask) // 保存想要通知的任务
 
     // 当文件描述符有事件时，调用此函数。
@@ -451,6 +452,9 @@ void TCPListenerSocket::ProcessEvent(int /*eventBits*/)
 ```
 
 EasyDarwin 包含两个 `TCPListenerSocket` 的衍生类：`HTTPListenerSocket` 和 `RTSPListenerSocket`，分别用于提供 HTTP 服务 和 RTSP 服务。
+
+- 如果事件来自 HTTP 服务监听端口，`EventThread::Entry` 处理事件，调用 `TCPListenerSocket::ProcessEvent`，然后执行 `HTTPListenerSocket::GetSessionTask`，返回一个 `HTTPSession` 及其相关的 `Socket`，设置 `Socket` 的属性，注册一个读事件，等待更多数据，之后通知新建的 `HTTPSession` 任务处理读到的数据，由此实现了单个 `Task` 处理一个 HTTP 连接
+- 如果事件来自 RTSP 服务监听端口，`EventThread::Entry` 处理事件，调用 `TCPListenerSocket::ProcessEvent`，然后执行 `RTSPListenerSocket::GetSessionTask`，返回一个 `RTSPSession` 及其相关的 `Socket`，设置 `Socket` 的属性，注册一个读事件，等待更多数据，之后通知新建的 `RTSPSession` 任务处理读到的数据，由此实现了单个 `Task` 处理一个 RTSP 连接
 
 ##### HTTPListenerSocket::GetSessionTask
 
