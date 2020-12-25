@@ -27,12 +27,12 @@
 
 ### 任务分类
 
-EasyDarwin 有三种任务：基类 `Task` 及其衍生类 `IdleTask`、`TimeoutTask`：
+EasyDarwin 采用异步模式工作，基于事件通信机制。由此定义三种任务：基类 `Task` 及其衍生类 `IdleTask`、`TimeoutTask`：
 
-- `Task` 是一个抽象类，所有的衍生类必须实现 `virtual SInt64 Run() = 0` 方法。由 `TaskThread` 执行 `Task` 的 `Run` 函数完成一个任务
+- `Task` 是一个抽象类，所有的衍生类必须重载 `virtual SInt64 Run() = 0` 方法。由 `TaskThread` 执行 `Task` 的 `Run` 函数完成一个任务。服务大部分工作是运行不同 `Task` 对象的 `Run` 函数，每个 `Task` 应该利用很小且不会阻塞的时间片完成服务器的某项工作，以免阻塞线程池中其他任务的执行
 - `IdleTask` 是一个抽象类，可以设置空闲时间，由一个全局的 `IdleTaskThread` 线程管理运行，在指定空闲时间到达之后给对应的 `IdleTask` 发送一个 `Task::kIdleEvent`
 - `TimeoutTask` 设置一个超时时间，由一个全局的 `TimeoutTaskThread` 线程管理运行，在达到超时时间之后给对应的 `TimeoutTask` 发送一个 `Task::kTimeoutEvent`
-  - `TimeoutTask` 没有继承 `Task`，`TimeoutTaskThread` 继承 `IdleTask`，实现了 `Run` 函数，函数内部遍历处理所有的 `TimeoutTask`
+  - `TimeoutTask` 没有继承 `Task`，`TimeoutTaskThread` 继承 `IdleTask`，重载了 `Run` 函数，函数内部遍历处理所有的 `TimeoutTask`
   - `TimeoutTaskThread` 目前没有用到 `IdleTask` 的相关接口，**感觉**可以直接继承 `Task`
 
 ### 基类 Task
@@ -55,8 +55,8 @@ class Task
     void ForceSameThread();// 下次调用 Run 时使用当前所用的任务线程。适用于两次调用 Run 期间任务持有互斥锁的情况
 
     TaskThread* fUseThisThread;// 保存下次执行时使用的任务线程
-    OSHeapElem  fTimerHeapElem;// 保存任务 Run 函数的返回值，放进任务线程的调度时间堆的元素
-    OSQueueElem fTaskQueueElem;// 放进任务线程的任务队列的元素
+    OSHeapElem  fTimerHeapElem;// 保存任务 Run 函数的返回值，对应任务线程的调度时间堆的对象
+    OSQueueElem fTaskQueueElem;// 对应任务线程的任务队列的对象
 };
 ```
 
@@ -81,7 +81,7 @@ void Task::Signal(EventFlags events)
         }
         else
         {
-            // 找一个任务线程来执行此任务：每次加一，循环使用线程池的不同任务线程
+            // 没有指定，则选择一个任务线程来执行此任务：每次加一，循环使用线程池的不同任务线程
             unsigned int theThreadIndex = atomic_add((unsigned int *)pickerToUse, 1);
             if (&Task::sShortTaskThreadPicker == pickerToUse)
             {
@@ -160,8 +160,8 @@ public:
 
 EasyDarwin 有多种线程，并有自己的线程池；来执行上述 `Task` 及其衍生类的对象：
 
-- `OSThread` 是一个抽象类，在 `Start` 中创建底层线程，并设置线程的回调函数 `Entry`。因此衍生类可以实现自己的 `Entry` 函数供底层线程执行
-- `TaskThread` 是 `OSThread` 的衍生类，主要用于处理 `Task`。实现 `Entry` 函数：调用 `WaitForTask` 获得下一个需要处理的 `Task`，执行 `Task` 的 `Run` 函数
+- `OSThread` 封装了线程的基本功能。一个 `OSTread` 对应一个底层线程。是一个抽象类，在 `Start` 中创建底层线程，并设置线程的回调函数 `Entry`。因此可以通过重载 `Entry` 函数，将任务交给底层线程运行
+- `TaskThread` 是 `OSThread` 的衍生类，主要用于处理 `Task`。重载 `Entry` 函数：调用 `WaitForTask` 获得下一个需要处理的 `Task`，执行 `Task` 的 `Run` 函数
   - `Run` 返回负数：删除任务
   - `Run` 返回 0：不再处理
   - `Run` 返回正数：设置任务的等待调度时间，插入任务线程的 `fHeap` 等待下一次调度
@@ -172,7 +172,7 @@ EasyDarwin 有多种线程，并有自己的线程池；来执行上述 `Task` �
   - `IdleTask` 提供接口创建和启动全局的 `IdleTaskThread` 处理所有的 `IdleTask`，通知超时的 `IdleTask` (发送 `Task::kIdleEvent`)
 - `TimeoutTaskThread` 是 `IdleTask` 的衍生类，用于处理 `TimeoutTask`
   - `TimeoutTask` 提供接口创建并启动全局的 `TimeoutTaskThread` 处理所有的 `TimeoutTask，TimeoutTaskThread` 没有创建新的线程，而是使用线程池已经创建好的线程运行
-  - `TimeoutTaskThread` 实现 `Run` 函数：遍历超时任务队列，超时之后通知超时任务(发送 `Task::kTimeoutEvent`)
+  - `TimeoutTaskThread` 重载 `Run` 函数：遍历超时任务队列，超时之后通知超时任务(发送 `Task::kTimeoutEvent`)
 
 ### 基类 OSThread
 
@@ -182,8 +182,9 @@ class OSThread
 {
     static void Initialize();// 在使用 OSThread 类之前先调用此函数
 
-    virtual void Entry() = 0;// 衍生类必须实现自己的 Entry 函数
+    virtual void Entry() = 0;// 衍生类必须重载 Entry 函数
     void Start();// 创建一个底层线程，执行 Entry 函数
+    void Join();// 等待线程运行完成后删除
 };
 ```
 
@@ -197,8 +198,8 @@ class TaskThread : public OSThread
     Task* WaitForTask();// 获得下一个需要处理的 Task
 
     OSQueueElem         fTaskThreadPoolElem;
-    OSHeap              fHeap;// 根据任务调度时间(Task->fTimerHeapElem)排序
-    OSQueue_Blocking    fTaskQueue;// 保存等待执行的任务
+    OSHeap              fHeap;// 根据任务调度时间(Task->fTimerHeapElem)排序，用于WaitForTask
+    OSQueue_Blocking    fTaskQueue;// 保存等待执行的任务，Task->Signal 中调用 fTaskQueue->EnQueue 而将其放入此任务队列
 };
 ```
 
@@ -214,39 +215,39 @@ void TaskThread::Entry()
         if (theTask == NULL || false == theTask->Valid())
             return;// 没有任务处理时退出线程
 
-        Bool16 doneProcessingEvent = false;
+        Bool16 doneProcessingEvent = false;// 事件尚未处理
         while (!doneProcessingEvent)
         {
             theTask->fUseThisThread = NULL;// 每次调用 Run 必须独立请求一个指定线程
-            SInt64 theTimeout = 0;
+            SInt64 theTimeout = 0;// 保存 Task->Run 的返回值
 
-            if (theTask->fWriteLock) // 任务持有写锁
+            if (theTask->fWriteLock) // 任务有写锁
             {
                 OSMutexWriteLocker mutexLocker(&TaskThreadPool::sMutexRW);
                 theTimeout = theTask->Run();
                 theTask->fWriteLock = false;
             }
-            else // 任务持有读锁
+            else // 任务有读锁
             {
                 OSMutexReadLocker mutexLocker(&TaskThreadPool::sMutexRW);
                 theTimeout = theTask->Run();
             }
             
-            if (theTimeout < 0) // Run 返回负数，删除任务
+            if (theTimeout < 0) // Run 返回负数，表示任务完全结束，删除任务
             {
                 theTask->fTaskName[0] = 'D';// 标记任务为 dead
-                delete theTask;// 删除
+                delete theTask;// 删除 Task 对象
                 theTask = NULL;
                 doneProcessingEvent = true;
             }
-            else if (theTimeout == 0) //  Run 返回 0
+            else if (theTimeout == 0) //  Run 返回 0，表示希望等待通知再调度
             {
                 // 确保当另外一个线程调用 Signal 时此任务的 Run 函数会被执行。并且如果任务从 Run (通过 Signal) 返回时有一个事件到来，Run 也会被再次调用
                 doneProcessingEvent = compare_and_store(Task::kAlive, 0, &theTask->fEvents);
                 if (doneProcessingEvent)
                     theTask = NULL;
             }
-            else // Run 返回正数
+            else // Run 返回正数，表示等待 theTimeout 之后再次执行
             {
                 // 更新任务的等待时间，插入任务堆 fHeap
                 theTask->fTimerHeapElem.SetValue(OS::Milliseconds() + theTimeout);
@@ -264,15 +265,15 @@ Task* TaskThread::WaitForTask()
 {
     while (true) // 循环查找可以执行的任务
     {
-        SInt64 theCurrentTime = OS::Milliseconds();
+        SInt64 theCurrentTime = OS::Milliseconds();// 当前时间
 
         // 先从 fHeap 中查找
         if ((fHeap.PeekMin() != NULL) && (fHeap.PeekMin()->GetValue() <= theCurrentTime))
         {
-            return (Task*)fHeap.ExtractMin()->GetEnclosingObject();// 找到可以立即执行的任务
+            return (Task*)fHeap.ExtractMin()->GetEnclosingObject();// 取出第一个任务返回
         }
 
-        // 没有任务可以立即执行，计算最近一个需要调度的任务的超时时间
+        // 没有任务可以立即执行，计算最近一个需要等待的时间
         SInt64 theTimeout = 0;
         if (fHeap.PeekMin() != NULL)
             theTimeout = fHeap.PeekMin()->GetValue() - theCurrentTime;
@@ -308,7 +309,7 @@ class EventThread : public OSThread
 // EventContext.cpp
 void EventThread::Entry()
 {
-    struct eventreq theCurrentEvent;
+    struct eventreq theCurrentEvent;// 记录文件描述符及其发生的事件
     ::memset(&theCurrentEvent, '\0', sizeof(theCurrentEvent));
 
     while (true) // 循环处理 EventContext 中注册的事件
@@ -316,7 +317,7 @@ void EventThread::Entry()
         int theErrno = EINTR;
         while (theErrno == EINTR) // Interrupted system call
         {
-            int theReturnValue = epoll_waitevent(&theCurrentEvent, NULL);// 监听 socket 事件
+            int theReturnValue = epoll_waitevent(&theCurrentEvent, NULL);// 监听所有的 socket 端口，直到有事件发生
             if (theReturnValue >= 0)
                 theErrno = theReturnValue;
             else
@@ -324,16 +325,15 @@ void EventThread::Entry()
         }
         AssertV(theErrno == 0, theErrno);
 
-        if (theCurrentEvent.er_data != NULL) // 处理 socket 的数据
+        if (theCurrentEvent.er_data != NULL) // 有事件发生，唤醒响应的 Socket
         {
             StrPtrLen idStr((char*)&theCurrentEvent.er_data, sizeof(theCurrentEvent.er_data));
             OSRef* ref = fRefTable.Resolve(&idStr);
             if (ref != NULL)
             {
-                // 找到对应的 EventContext，调用 ProcessEvent 处理 socket 事件
-                EventContext* theContext = (EventContext*)ref->GetObject();
-                theContext->ProcessEvent(theCurrentEvent.er_eventbits);
-                fRefTable.Release(ref);
+                EventContext* theContext = (EventContext*)ref->GetObject();// 根据标识找到对应的 EventContext
+                theContext->ProcessEvent(theCurrentEvent.er_eventbits);// 调用 ProcessEvent 处理 socket 事件，通知对应的 task
+                fRefTable.Release(ref);// 减少引用计数
             }
         }
 
@@ -348,11 +348,10 @@ void EventThread::Entry()
 // EventContext.h
 class EventContext // 用于处理 UNIX 文件描述符事件(EV_RE/EV_WR)，并通知一个任务
 {
-public:
     // EventThread 用于接收和处理此 EventContext 的事件，
     EventContext(int inFileDesc, EventThread* inThread);
 
-    // 设置文件描述符是非阻塞的。一旦调用此函数，文件描述符被此 EventContext 对象拥有，并在调用
+    // 设置文件描述符是异步(非阻塞)的。一旦调用此函数，文件描述符被此 EventContext 对象拥有，并在调用
     // Cleanup 时关闭文件描述符。因此不能在外部关闭这个文件描述符。
     void InitNonBlocking(int inFileDesc);
 
@@ -384,6 +383,8 @@ class Socket : public EventContext
 };
 ```
 
+EasyDarwin 的 `Socket` 一般采用异步模式(即非阻塞的)，接收到事件给对应的 `Task` 发送信号。
+
 #### 衍生类 TCPListenerSocket
 
 ```c
@@ -391,9 +392,9 @@ class Socket : public EventContext
 class TCPListenerSocket : public TCPSocket, public IdleTask
 {
     OS_Error Initialize(UInt32 addr, UInt16 port);// 开始监听
-    virtual Task* GetSessionTask(TCPSocket** outSocket) = 0;// 衍生类必须实现此方法返回任务和套接字
-    virtual SInt64 Run();
-    virtual void ProcessEvent(int eventBits);// EventContext 定义。有事件时调用此函数
+    virtual Task* GetSessionTask(TCPSocket** outSocket) = 0;// 衍生类必须重载此方法返回任务和套接字，用于建立连接时生成 Task 对象
+    virtual SInt64 Run();// 重载 Task 的 Run 函数
+    virtual void ProcessEvent(int eventBits);// EventContext 定义。有事件时调用此函数，关联对应的 Task 和 Socket
 };
 ```
 
@@ -405,13 +406,13 @@ void TCPListenerSocket::ProcessEvent(int /*eventBits*/)
 
     struct sockaddr_in addr;
     socklen_t size = sizeof(addr);
-    Task* theTask = NULL;
-    TCPSocket* theSocket = NULL;
+    Task* theTask = NULL;// Task 对象
+    TCPSocket* theSocket = NULL;// Socket 对象
 
     // 接收一个 TCP 连接
     int osSocket = accept(fFileDesc, (struct sockaddr*)&addr, &size);
 
-    if (osSocket == -1)
+    if (osSocket == -1) // 监听端口出错
     {
         int acceptError = OSThread::GetErrno();// 检查错误
         if (acceptError == EAGAIN)
@@ -423,20 +424,19 @@ void TCPListenerSocket::ProcessEvent(int /*eventBits*/)
         }
     }
 
-    theTask = this->GetSessionTask(&theSocket);// 返回一个任务和套接字
-    if (theTask == NULL)
+    theTask = this->GetSessionTask(&theSocket);// 创建一个任务，获取关联的 Socket
+    if (theTask == NULL) // 创建任务失败
         close(osSocket);
         if (theSocket)
             theSocket->fState &= ~kConnected; // 关闭连接
     }
-    else
+    else // 创建任务成功，继续创建 Socket 对象
     {
         // 设置套接字选项
-
         theSocket->Set(osSocket, &addr);
-        theSocket->InitNonBlocking(osSocket);
+        theSocket->InitNonBlocking(osSocket);// 初始化
         theSocket->SetTask(theTask);// 设置套接字收到事件时要通知(kReadEvent)的任务
-        theSocket->RequestEvent(EV_RE);// 注册一个读事件
+        theSocket->RequestEvent(EV_RE);// 注册新 Socket 的读事件
         theTask->SetThreadPicker(Task::GetBlockingTaskThreadPicker()); //使用阻塞线程处理任务
     }
 
@@ -447,12 +447,12 @@ void TCPListenerSocket::ProcessEvent(int /*eventBits*/)
     }
     else
     {
-        this->RequestEvent(EV_RE);// 等待其他客户端连入
+        this->RequestEvent(EV_RE);// 继续监听，等待其他连接请求
     }
 }
 ```
 
-EasyDarwin 包含两个 `TCPListenerSocket` 的衍生类：`HTTPListenerSocket` 和 `RTSPListenerSocket`，分别用于提供 HTTP 服务 和 RTSP 服务。
+EasyDarwin 将 `Task` 和 `Socket` 对象关联，当 `Socket` 对象收到事件，给对应的 `Task` 对象发送通知，由此执行 `Task` 对象的 `Run` 函数。EasyDarwin 包含两个 `TCPListenerSocket` 的衍生类：`HTTPListenerSocket` 和 `RTSPListenerSocket`，分别用于提供 HTTP 服务 和 RTSP 服务。
 
 - 如果事件来自 HTTP 服务监听端口，`EventThread::Entry` 处理事件，调用 `TCPListenerSocket::ProcessEvent`，然后执行 `HTTPListenerSocket::GetSessionTask`，返回一个 `HTTPSession` 及其相关的 `Socket`，设置 `Socket` 的属性，注册新建的 `Socket` 读事件，等待更多数据，之后通知新建的 `HTTPSession` 任务处理读到的数据，由此实现了单个 `Task` 处理一个 HTTP 连接
 - 如果事件来自 RTSP 服务监听端口，`EventThread::Entry` 处理事件，调用 `TCPListenerSocket::ProcessEvent`，然后执行 `RTSPListenerSocket::GetSessionTask`，返回一个 `RTSPSession` 及其相关的 `Socket`，设置 `Socket` 的属性，注册新建的 `Socket` 读事件，等待更多数据，之后通知新建的 `RTSPSession` 任务处理读到的数据，由此实现了单个 `Task` 处理一个 RTSP 连接
@@ -596,7 +596,6 @@ SInt64 TimeoutTaskThread::Run()
 ```cpp
 // Task.h
 class TaskThreadPool {
-public:
     //Adds some threads to the pool
     static Bool16   AddThreads(UInt32 numToAdd);// 创建线程池的线程(短线程+阻塞线程)
     static void     SwitchPersonality(char *user = NULL, char *group = NULL);
