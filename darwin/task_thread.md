@@ -15,6 +15,8 @@
       - [EventContext 处理文件描述符事件](#eventcontext-处理文件描述符事件)
       - [衍生类 Socket](#衍生类-socket)
       - [衍生类 TCPListenerSocket](#衍生类-tcplistenersocket)
+        - [HTTPListenerSocket::GetSessionTask](#httplistenersocketgetsessiontask)
+        - [RTSPListenerSocket::GetSessionTask](#rtsplistenersocketgetsessiontask)
     - [衍生类 IdleTaskThread](#衍生类-idletaskthread)
     - [TimeoutTaskThread](#timeouttaskthread)
   - [线程池](#线程池)
@@ -445,6 +447,50 @@ void TCPListenerSocket::ProcessEvent(int /*eventBits*/)
     {
         this->RequestEvent(EV_RE);// 等待其他客户端连入
     }
+}
+```
+
+EasyDarwin 包含两个 `TCPListenerSocket` 的衍生类：`HTTPListenerSocket` 和 `RTSPListenerSocket`，分别用于提供 HTTP 服务 和 RTSP 服务。
+
+##### HTTPListenerSocket::GetSessionTask
+
+```c
+Task*   HTTPListenerSocket::GetSessionTask(TCPSocket** outSocket)
+{
+    Assert(outSocket != NULL);
+
+    HTTPSession* theTask = NEW HTTPSession();
+    *outSocket = theTask->GetSocket();// 将 HTTPSession 保存的 socket 和 Unix 文件描述关联
+
+    if (this->OverMaxConnections(0))
+        this->SlowDown();
+    else
+        this->RunNormal();
+
+    return theTask;
+}
+```
+
+##### RTSPListenerSocket::GetSessionTask
+
+```c
+Task*   RTSPListenerSocket::GetSessionTask(TCPSocket** outSocket)
+{
+    Assert(outSocket != NULL);
+
+    // when the server is behing a round robin DNS, the client needs to knwo the IP address ot the server
+    // so that it can direct the "POST" half of the connection to the same machine when tunnelling RTSP thru HTTP
+    Bool16  doReportHTTPConnectionAddress = QTSServerInterface::GetServer()->GetPrefs()->GetDoReportHTTPConnectionAddress();
+
+    RTSPSession* theTask = NEW RTSPSession(doReportHTTPConnectionAddress);
+    *outSocket = theTask->GetSocket();// 将 RTSPSession 保存的 socket 和 Unix 文件描述关联
+
+    if (this->OverMaxConnections(0))
+        this->SlowDown();
+    else
+        this->RunNormal();
+
+    return theTask;
 }
 ```
 
