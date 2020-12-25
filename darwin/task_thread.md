@@ -1,22 +1,39 @@
 # EasyDarwin 的任务和线程
 
 - [EasyDarwin 的任务和线程](#easydarwin-的任务和线程)
-  - [任务 Task](#任务-task)
-    - [空闲任务 IdleTask](#空闲任务-idletask)
-    - [超时任务 TimeoutTask](#超时任务-timeouttask)
+  - [任务](#任务)
+    - [任务分类](#任务分类)
+    - [基类 Task](#基类-task)
+    - [衍生类 IdleTask](#衍生类-idletask)
+    - [TimeoutTask](#timeouttask)
+    - [自定义任务](#自定义任务)
   - [线程](#线程)
-    - [OSThread](#osthread)
-    - [任务线程 TaskThread](#任务线程-taskthread)
-    - [事件线程 EventThread](#事件线程-eventthread)
-      - [EventContext](#eventcontext)
-      - [Socket](#socket)
-      - [TCPListenerSocket](#tcplistenersocket)
-    - [空闲任务线程 IdleTaskThread](#空闲任务线程-idletaskthread)
-    - [超时任务线程 TimeoutTaskThread](#超时任务线程-timeouttaskthread)
-  - [线程池 TaskThreadPool](#线程池-taskthreadpool)
-    - [线程池初始化](#线程池初始化)
+    - [线程分类](#线程分类)
+    - [基类 OSThread](#基类-osthread)
+    - [衍生类 TaskThread](#衍生类-taskthread)
+    - [衍生类 EventThread](#衍生类-eventthread)
+      - [EventContext 处理文件描述符事件](#eventcontext-处理文件描述符事件)
+      - [衍生类 Socket](#衍生类-socket)
+      - [衍生类 TCPListenerSocket](#衍生类-tcplistenersocket)
+    - [衍生类 IdleTaskThread](#衍生类-idletaskthread)
+    - [TimeoutTaskThread](#timeouttaskthread)
+  - [线程池](#线程池)
+    - [TaskThreadPool 类](#taskthreadpool-类)
+  - [线程池及其他全局线程初始化](#线程池及其他全局线程初始化)
 
-## 任务 Task
+## 任务
+
+### 任务分类
+
+EasyDarwin 有三种任务：基类 `Task` 及其衍生类 `IdleTask`、`TimeoutTask`：
+
+- `Task` 是一个抽象类，所有的衍生类必须实现 `virtual SInt64 Run() = 0` 方法。由 `TaskThread` 执行 `Task` 的 `Run` 函数完成一个任务
+- `IdleTask` 是一个抽象类，可以设置空闲时间，由一个全局的 `IdleTaskThread` 线程管理运行，在指定空闲时间到达之后给对应的 `IdleTask` 发送一个 `Task::kIdleEvent`
+- `TimeoutTask` 设置一个超时时间，由一个全局的 `TimeoutTaskThread` 线程管理运行，在达到超时时间之后给对应的 `TimeoutTask` 发送一个 `Task::kTimeoutEvent`
+  - `TimeoutTask` 没有继承 `Task`，`TimeoutTaskThread` 继承 `IdleTask`，实现了 `Run` 函数，函数内部遍历处理所有的 `TimeoutTask`
+  - `TimeoutTaskThread` 目前没有用到 `IdleTask` 的相关接口，**感觉**可以直接继承 `Task`
+
+### 基类 Task
 
 ```cpp
 // Task.h
@@ -27,7 +44,7 @@ class Task
     // 返回值大于 0：返回值对应的微秒之后发送 kIdleEvent 给本任务
     // 返回 0 ：不要再调用本任务
     // 返回 -1：删除本任务
-    virtual SInt64  Run() = 0;// 完成一个任务的句柄
+    virtual SInt64 Run() = 0;// 完成一个任务的句柄
     void Signal(EventFlags eventFlags);// 给任务发送一个事件，把任务加入任务线程的队列，等待完成
     void SetTaskName(char* name);// 设置任务的名称，主要用于日志输出
     void SetThreadPicker(unsigned int* picker);// 设置处理任务的线程类型(短线程/阻塞线程)
@@ -88,21 +105,21 @@ void Task::Signal(EventFlags events)
 }
 ```
 
-### 空闲任务 IdleTask
+### 衍生类 IdleTask
 
 ```c
 // IdleTask.h
 class IdleTask : public Task
 {
-    // msec 毫秒后发送 OS_IDLE 给此空闲任务。不能覆盖上一个超时。
+    // msec 毫秒后发送 Task::kIdleEvent 给此空闲任务。不能覆盖上一个超时。
     // 函数内部将此空闲任务插入全局空闲任务线程的堆,由全局的空闲任务线程处理
     void SetIdleTimer(SInt64 msec); 
     
-    static IdleTaskThread*  sIdleThread;// 所有空闲任务由一个全局的空闲任务线程处理
+    static IdleTaskThread* sIdleThread;// 所有空闲任务由一个全局的空闲任务线程处理
 }
 ```
 
-### 超时任务 TimeoutTask
+### TimeoutTask
 
 ```c
 // TimeoutTask.h
@@ -122,9 +139,40 @@ class TimeoutTask // TimeoutTask 不是 Task 的衍生类
 };
 ```
 
+### 自定义任务
+
+```c
+class MyTask : public Task
+{
+public:
+    MyTask() : Task() { this->SetTaskName("MyTask"); }
+    virtual ~MyTask();
+
+    virtual SInt64 Run();// 其他线程给 MyTask 发送 Task::kXXXEvent， 会将 MyTask 放到任务队列等待运行，可以在 Run 中处理希望接收的 Task::kXXXEvent。并根据是否需要继续执行或者周期运行决定 Run 返回值
+};
+```
+
 ## 线程
 
-### OSThread
+### 线程分类
+
+EasyDarwin 有多种线程，并有自己的线程池；来执行上述 `Task` 及其衍生类的对象：
+
+- `OSThread` 是一个抽象类，在 `Start` 中创建底层线程，并设置线程的回调函数 `Entry`。因此衍生类可以实现自己的 `Entry` 函数供底层线程执行
+- `TaskThread` 是 `OSThread` 的衍生类，主要用于处理 `Task`。实现 `Entry` 函数：调用 `WaitForTask` 获得下一个需要处理的 `Task`，执行 `Task` 的 `Run` 函数
+  - `Run` 返回负数：删除任务
+  - `Run` 返回 0：不再处理
+  - `Run` 返回正数：设置任务的等待调度时间，插入任务线程的 `fHeap` 等待下一次调度
+- `EventThread` 是 `OSThread` 的衍生类，主要用于处理 `EventContext` 中注册的 socket 事件
+  - `EventContext` 用于处理 UNIX 文件描述符事件(`EV_RE/EV_WR`)，并在事件发生时通知相关的任务
+  - `Socket` 是 `EventContext` 的衍生类，提供接口创建和启动全局的 `EventThread` 处理所有的套接字事件
+- `IdleTaskThread` 是 `OSThread` 的衍生类，用于处理 `IdleTask`
+  - `IdleTask` 提供接口创建和启动全局的 `IdleTaskThread` 处理所有的 `IdleTask`，通知超时的 `IdleTask` (发送 `Task::kIdleEvent`)
+- `TimeoutTaskThread` 是 `IdleTask` 的衍生类，用于处理 `TimeoutTask`
+  - `TimeoutTask` 提供接口创建并启动全局的 `TimeoutTaskThread` 处理所有的 `TimeoutTask，TimeoutTaskThread` 没有创建新的线程，而是使用线程池已经创建好的线程运行
+  - `TimeoutTaskThread` 实现 `Run` 函数：遍历超时任务队列，超时之后通知超时任务(发送 `Task::kTimeoutEvent`)
+
+### 基类 OSThread
 
 ```c
 // OSThread.h
@@ -137,7 +185,7 @@ class OSThread
 };
 ```
 
-### 任务线程 TaskThread
+### 衍生类 TaskThread
 
 ```cpp
 // Task.h
@@ -243,9 +291,7 @@ Task* TaskThread::WaitForTask()
 }
 ```
 
-TaskThread 的数目通过下面的线程池 TaskThreadPool 的接口设置。默认等同于处理器的数目。
-
-### 事件线程 EventThread
+### 衍生类 EventThread
 
 ```c
 // EventContext.h
@@ -294,7 +340,7 @@ void EventThread::Entry()
 }
 ```
 
-#### EventContext
+#### EventContext 处理文件描述符事件
 
 ```c
 // EventContext.h
@@ -323,7 +369,7 @@ public:
 };
 ```
 
-#### Socket
+#### 衍生类 Socket
 
 ```c
 // Socket.h
@@ -335,7 +381,7 @@ class Socket : public EventContext
 };
 ```
 
-#### TCPListenerSocket
+#### 衍生类 TCPListenerSocket
 
 ```c
 // TCPListenerSocket.h
@@ -402,7 +448,7 @@ void TCPListenerSocket::ProcessEvent(int /*eventBits*/)
 }
 ```
 
-### 空闲任务线程 IdleTaskThread
+### 衍生类 IdleTaskThread
 
 ```c
 // IdleTask.h
@@ -448,7 +494,7 @@ void IdleTaskThread::Entry()
 }
 ```
 
-### 超时任务线程 TimeoutTaskThread
+### TimeoutTaskThread
 
 ```c
 // TimeoutTask.h
@@ -490,7 +536,9 @@ SInt64 TimeoutTaskThread::Run()
 }
 ```
 
-## 线程池 TaskThreadPool
+## 线程池
+
+### TaskThreadPool 类
 
 ```cpp
 // Task.h
@@ -506,7 +554,11 @@ public:
 TaskThread** TaskThreadPool::sTaskThreadArray = NULL;// 数组保存线程池的任务线程
 ```
 
-### 线程池初始化
+`TaskThreadPool` 提供接口设置任务线程的数目。默认等同于处理器的数目。
+
+## 线程池及其他全局线程初始化
+
+EasyDarwin 在 `RunServer.cpp` 的 `StartServer` 初始化线程池及其他上述提到的全局线程：
 
 ```cpp
 // RunServer.cpp: StartServer
@@ -519,10 +571,10 @@ sServer->Initialize(inPrefsSource, inMessagesSource, inPortOverride, createListe
 numThreads = numShortTaskThreads + numBlockingThreads;
 TaskThreadPool::SetNumShortTaskThreads(numShortTaskThreads);// 设置短线超数目
 TaskThreadPool::SetNumBlockingTaskThreads(numBlockingThreads);// 设置阻塞线程数目
-TaskThreadPool::AddThreads(numThreads);// 设置线程池的线程，开启所有线程
+TaskThreadPool::AddThreads(numThreads);// 设置线程池的任务线程，开启所有任务线程
 
-TimeoutTask::Initialize();// 创建并启动一个全局的超时任务线程
-IdleTask::Initialize();// 创建并启动一个全局的空闲任务线程
-Socket::StartThread();// 启动上面创建的全局 EventThread 类所对应的线程
+TimeoutTask::Initialize();// 创建并启动一个全局的超时任务线程(在线程池中运行)，处理所有的超时任务
+IdleTask::Initialize();// 创建并启动一个全局的空闲任务线程，处理所有的空闲线程
+Socket::StartThread();// 启动上面创建的全局 EventThread，用于处理所有的文件描述符事件
 sServer->StartTasks();// 开启一些全局任务(处理 RTCP 数据任务、RTP 负载统计任务)，开始监听上面创建的端口
 ```
