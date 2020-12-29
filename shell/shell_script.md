@@ -1,33 +1,34 @@
 # shell 脚本
 
-- [shell 脚本](#shell-%E8%84%9A%E6%9C%AC)
-  - [在 shell 脚本中调用另一个脚本](#%E5%9C%A8-shell-%E8%84%9A%E6%9C%AC%E4%B8%AD%E8%B0%83%E7%94%A8%E5%8F%A6%E4%B8%80%E4%B8%AA%E8%84%9A%E6%9C%AC)
-  - [shell 命令行选项解析](#shell-%E5%91%BD%E4%BB%A4%E8%A1%8C%E9%80%89%E9%A1%B9%E8%A7%A3%E6%9E%90)
+- [shell 脚本](#shell-脚本)
+  - [在 shell 脚本中调用另一个脚本](#在-shell-脚本中调用另一个脚本)
+  - [shell 命令行选项解析](#shell-命令行选项解析)
     - [getopts](#getopts)
     - [getopt](#getopt)
-  - [shell 获取脚本的进程 ID](#shell-%E8%8E%B7%E5%8F%96%E8%84%9A%E6%9C%AC%E7%9A%84%E8%BF%9B%E7%A8%8B-id)
-  - [shell 脚本获取当前时间](#shell-%E8%84%9A%E6%9C%AC%E8%8E%B7%E5%8F%96%E5%BD%93%E5%89%8D%E6%97%B6%E9%97%B4)
-  - [shell 执行多个命令的方法](#shell-%E6%89%A7%E8%A1%8C%E5%A4%9A%E4%B8%AA%E5%91%BD%E4%BB%A4%E7%9A%84%E6%96%B9%E6%B3%95)
-  - [shell test 命令](#shell-test-%E5%91%BD%E4%BB%A4)
-    - [数值测试](#%E6%95%B0%E5%80%BC%E6%B5%8B%E8%AF%95)
-    - [字符串测试](#%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%B5%8B%E8%AF%95)
-    - [文件测试](#%E6%96%87%E4%BB%B6%E6%B5%8B%E8%AF%95)
-    - [连接测试条件](#%E8%BF%9E%E6%8E%A5%E6%B5%8B%E8%AF%95%E6%9D%A1%E4%BB%B6)
-  - [shell 变量](#shell-%E5%8F%98%E9%87%8F)
-  - [shell 脚本上传 ftp](#shell-%E8%84%9A%E6%9C%AC%E4%B8%8A%E4%BC%A0-ftp)
-    - [上传单个文件脚本](#%E4%B8%8A%E4%BC%A0%E5%8D%95%E4%B8%AA%E6%96%87%E4%BB%B6%E8%84%9A%E6%9C%AC)
+  - [shell 获取脚本的进程 ID](#shell-获取脚本的进程-id)
+  - [shell 脚本获取当前时间](#shell-脚本获取当前时间)
+  - [shell 执行多个命令的方法](#shell-执行多个命令的方法)
+  - [shell test 命令](#shell-test-命令)
+    - [数值测试](#数值测试)
+    - [字符串测试](#字符串测试)
+    - [文件测试](#文件测试)
+    - [连接测试条件](#连接测试条件)
+  - [shell 变量](#shell-变量)
+  - [shell 脚本上传 ftp](#shell-脚本上传-ftp)
+    - [上传单个文件脚本](#上传单个文件脚本)
   - [shell if](#shell-if)
-  - [shell 操作符](#shell-%E6%93%8D%E4%BD%9C%E7%AC%A6)
-    - [算术操作符](#%E7%AE%97%E6%9C%AF%E6%93%8D%E4%BD%9C%E7%AC%A6)
-    - [关系操作符](#%E5%85%B3%E7%B3%BB%E6%93%8D%E4%BD%9C%E7%AC%A6)
-    - [布尔操作符](#%E5%B8%83%E5%B0%94%E6%93%8D%E4%BD%9C%E7%AC%A6)
-    - [string 操作符](#string-%E6%93%8D%E4%BD%9C%E7%AC%A6)
-    - [文件测试运算符](#%E6%96%87%E4%BB%B6%E6%B5%8B%E8%AF%95%E8%BF%90%E7%AE%97%E7%AC%A6)
-    - [C Shell 操作符](#c-shell-%E6%93%8D%E4%BD%9C%E7%AC%A6)
-    - [Korn Shell 操作符](#korn-shell-%E6%93%8D%E4%BD%9C%E7%AC%A6)
-  - [字符串截取](#%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%88%AA%E5%8F%96)
+  - [shell 操作符](#shell-操作符)
+    - [算术操作符](#算术操作符)
+    - [关系操作符](#关系操作符)
+    - [布尔操作符](#布尔操作符)
+    - [string 操作符](#string-操作符)
+    - [文件测试运算符](#文件测试运算符)
+    - [C Shell 操作符](#c-shell-操作符)
+    - [Korn Shell 操作符](#korn-shell-操作符)
+  - [字符串截取](#字符串截取)
   - [here document](#here-document)
-  - [参考网站](#%E5%8F%82%E8%80%83%E7%BD%91%E7%AB%99)
+  - [shell shift 左移命令](#shell-shift-左移命令)
+  - [参考网站](#参考网站)
 
 ## 在 shell 脚本中调用另一个脚本
 
@@ -468,6 +469,39 @@ EOF
 ```
 
 - 使用`<<-`而不是`<<`，可以将 here document 的内容每行前面的制表符删掉，便于编写的时候将内容部分缩进
+
+## shell shift 左移命令
+
+`shift [n]` 将位置参数左移 `n` 位。从 `n+1` 到 `$#` 的位置参数重命名为 `$1` 到 `$#-n`。`$#-n+1` 到 `$#` 的参数未设置。
+
+`n` 必须是非负数，且不大于 `$#`。如果 `n` 是 0 或者大于 `$#`，位置参数不会变动。如果为指定 `n`，认为是 1。如果 `n` 是负数或者大于 `$#` 返回状态是非零，正常返回零。
+
+下面的示例选自 FFmpeg 的 `configure` 脚本：
+
+```sh
+# 第一个参数是值，后面的参数是变量
+set_all(){
+    value=$1
+    shift
+    for var in $*; do
+        eval $var=$value
+    done
+}
+
+# 把所有输入参数的值设为 "yes"
+enable(){
+    set_all yes $*
+}
+
+PROGRAM_LIST="
+    ffplay
+    ffprobe
+    ffmpeg
+"
+
+# ffplay="yes";ffprobe="yes";ffmpeg="yes"
+enable $PROGRAM_LIST
+```
 
 ## 参考网站
 
