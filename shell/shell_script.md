@@ -16,6 +16,7 @@
   - [shell 变量](#shell-变量)
   - [shell 脚本上传 ftp](#shell-脚本上传-ftp)
     - [上传单个文件脚本](#上传单个文件脚本)
+  - [shell for](#shell-for)
   - [shell if](#shell-if)
   - [shell 操作符](#shell-操作符)
     - [算术操作符](#算术操作符)
@@ -314,6 +315,20 @@ bye
   - local M：本地类型。M 参数定义每个计算机字位的十进制数
   - tenex：
 - 交互式提示：使用 mget 或 mput 时，`prompt`命令让 ftp 在文件传输前进行提示，防止覆盖已有的文件。若发出 prompt 命令时已经启动了提示，ftp 将关掉提示，此时再传输所有的文件则不会有任何提示
+
+## shell for
+
+`for` 命令语法：`for name [ [in [words …] ] ; ] do commands; done`
+
+展开 `words`，并为结果列表的每个成员执行一次 `commands`，当前成员命名为 `name`。如果没有出现 `in words`，`for` 命令为每个设置的位置参数执行一次 `commands`，效果等同于指定了 `in "$#"`。
+
+返回的状态是执行的最后一个命令的退出状态。如果 `words` 的展开没有元素，不会执行命令，且返回状态是零。
+
+`for` 命令支持的另一种格式是：`for (( expr1 ; expr2 ; expr3 )) ; do commands ; done`
+
+首先。根据下面描述的规则计算算术表达式 `expr1`。重复计算算术表达式 `expr2` 直到其结果为零。每次计算 `expr2` 得到一个非零值。执行一次命令，并计算算术表达式 `expr3`。如果遗漏了任一表达式，行为等同于其值为 1。返回值是执行的 `commands` 最后一个命令的退出状态，或者当任何表达式无效时返回 `false`。
+
+内置的 `break` 和 `continue` 可用于控制循环执行。
 
 ## shell if
 
