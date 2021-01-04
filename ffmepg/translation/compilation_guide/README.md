@@ -21,7 +21,7 @@
 
 ## Linux
 
-- [在 Ubuntu/Debian/Mint 编译 FFmpeg](Ubuntu.md)
+- [在 Ubuntu/Debian/Mint 编译 FFmpeg](ubuntu.md)
 - [在 CentOS/RHEL/Fedora 编译 FFmpeg](https://trac.ffmpeg.org/wiki/CompilationGuide/Centos)
 
 在 Linux 下其他获取和编译 FFmpeg 的方法：
