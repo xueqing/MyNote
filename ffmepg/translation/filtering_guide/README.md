@@ -376,7 +376,7 @@ exit
 
 ## 开发自己的过滤器
 
-- 查看 [FFmpeg 过滤器机制](http://wiki.multimedia.cx/index.php?title=FFmpeg_filter_howto)
+- 查看 [FFmpeg 过滤器机制](../ffmpeg_filter_howto.md)
 
 ## 可视化过滤器
 
