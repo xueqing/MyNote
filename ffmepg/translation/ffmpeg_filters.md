@@ -8,6 +8,21 @@
     - [4.1 filtergraph 语法](#41-filtergraph-语法)
     - [4.2 关于 filtergraph 转移的注意事项](#42-关于-filtergraph-转移的注意事项)
   - [5 时间轴编译](#5-时间轴编译)
+  - [8 音频过滤器](#8-音频过滤器)
+    - [8.82 loudnorm](#882-loudnorm)
+  - [11 视频过滤器](#11-视频过滤器)
+    - [11.62 drawtext](#1162-drawtext)
+    - [11.63 edgedetect](#1163-edgedetect)
+    - [11.95 hflip](#1195-hflip)
+    - [11.137 negate](#11137-negate)
+    - [11.147 overlay](#11147-overlay)
+    - [11.150 pad](#11150-pad)
+    - [11.178 scale](#11178-scale)
+  - [14 视频 source](#14-视频-source)
+    - [14.9 allrgb, allyuv, color, haldclutsrc, nullsrc, pal75bars, pal100bars, rgbtestsrc, smptebars, smptehdbars, testsrc, testsrc2, yuvtestsrc](#149-allrgb-allyuv-color-haldclutsrc-nullsrc-pal75bars-pal100bars-rgbtestsrc-smptebars-smptehdbars-testsrc-testsrc2-yuvtestsrc)
+  - [16 多媒体过滤器](#16-多媒体过滤器)
+    - [16.11 metadata, ametadata](#1611-metadata-ametadata)
+    - [16.15 sendcmd, asendcmd](#1615-sendcmd-asendcmd)
 
 翻译[原文](http://ffmpeg.org/ffmpeg-filters.html)。
 
@@ -200,3 +215,33 @@ curves    = enable='gte(t,3)' : preset=cross_process
 ```
 
 参阅 `ffmpeg -filters` 查看哪些过滤器支持时间轴。
+
+## 8 音频过滤器
+
+### 8.82 loudnorm
+
+## 11 视频过滤器
+
+### 11.62 drawtext
+
+### 11.63 edgedetect
+
+### 11.95 hflip
+
+### 11.137 negate
+
+### 11.147 overlay
+
+### 11.150 pad
+
+### 11.178 scale
+
+## 14 视频 source
+
+### 14.9 allrgb, allyuv, color, haldclutsrc, nullsrc, pal75bars, pal100bars, rgbtestsrc, smptebars, smptehdbars, testsrc, testsrc2, yuvtestsrc
+
+## 16 多媒体过滤器
+
+### 16.11 metadata, ametadata
+
+### 16.15 sendcmd, asendcmd
