@@ -26,13 +26,13 @@ FFmpeg 可以访问很多过滤器，并且会定期添加更多过滤器。使�
 
 ## 文档
 
-参考 [FFmpeg 过滤器文档](http://ffmpeg.org/ffmpeg-filters.html)获取每个过滤器的更多信息和示例。此维基页面用于用户提供示例和技巧，并且鼓励所有人优化此页面。
+参考 [FFmpeg 过滤器文档](../ffmpeg_filters.md)获取每个过滤器的更多信息和示例。此维基页面用于用户提供示例和技巧，并且鼓励所有人优化此页面。
 
 ## 过滤器语法
 
-当文档提及`过滤器选项`，或者说`过滤器接受下面的选项`，这些选项的用法正如 “FFmpeg 过滤器: 4.1 [Filtergraph](http://ffmpeg.org/ffmpeg-filters.html#Filtergraph-syntax-1) 语法”章节中描述的。简而言之，在过滤器名称之后，添加一个 `=`，然后是第一个过滤器选项的名字，一个 `=`，接着是该选项对应的值。如果想要指定更多选项，使用 `:` 分隔符，然后追加下一个选项的名称，一个 `=`，然后是这个新选项的值。
+当文档提及`过滤器选项`，或者说`过滤器接受下面的选项`，这些选项的用法正如 “FFmpeg 过滤器: 4.1 [Filtergraph](../ffmpeg_filters.md#41-filtergraph-语法) 语法”章节中描述的。简而言之，在过滤器名称之后，添加一个 `=`，然后是第一个过滤器选项的名字，一个 `=`，接着是该选项对应的值。如果想要指定更多选项，使用 `:` 分隔符，然后追加下一个选项的名称，一个 `=`，然后是这个新选项的值。
 
-比如，将 [loudnorm 过滤器](http://ffmpeg.org/ffmpeg-filters.html#loudnorm)应用到一个音频流，基本语法是：
+比如，将 [loudnorm 过滤器](../ffmpeg_filters.md#882-loudnorm)应用到一个音频流，基本语法是：
 
 ```sh
 ffmpeg -i input -filter:a loudnorm output
@@ -44,17 +44,17 @@ ffmpeg -i input -filter:a loudnorm output
 ffmpeg -i inout -filter:a loudnorm=print_format=summary:linear=true output
 ```
 
-正如 “FFmpeg 过滤器: 4.1 [Filtergraph](http://ffmpeg.org/ffmpeg-filters.html#Filtergraph-syntax-1) 语法”章节中描述的，你可以省略选项名称和 `=`，只提供选项值，国歌选项值用`:` 分隔。比如，下面的命令：
+正如 “FFmpeg 过滤器: 4.1 [Filtergraph](../ffmpeg_filters.md#41-filtergraph-语法) 语法”章节中描述的，你可以省略选项名称和 `=`，只提供选项值，国歌选项值用`:` 分隔。比如，下面的命令：
 
 ```sh
 ffmpeg -i input -vf scale=iw/2:-1 output
 ```
 
-FFmpeg 按照源代码中声明的选项顺序匹配选项名。比如，在上述 [scale 过滤器](http://ffmpeg.org/ffmpeg-filters.html#scale)的使用示例中，FFmpeg 认为 `width` 选项的值是 `iw/2`，`height` 选项的值是 `-1`。
+FFmpeg 按照源代码中声明的选项顺序匹配选项名。比如，在上述 [scale 过滤器](../ffmpeg_filters.md#11178-scale)的使用示例中，FFmpeg 认为 `width` 选项的值是 `iw/2`，`height` 选项的值是 `-1`。
 
 ### Filtergraph、Chain、Filter 的关系
 
-ffmpeg 命令行中跟在 `-vf` 之后的是 [filtergraph](http://ffmpeg.org/ffmpeg-filters.html#Filtergraph-description) 描述。这个 filtergraph 可以包含多个 chain，每个 chain 可以包含多个 filter。
+ffmpeg 命令行中跟在 `-vf` 之后的是 [filtergraph](../ffmpeg_filters.md#4-filtergraph-描述) 描述。这个 filtergraph 可以包含多个 chain，每个 chain 可以包含多个 filter。
 
 虽然的完整的 filtergraph 描述可能很复杂，但是如果可以避免混淆，可以将比较简单的 filtergraph 描述简单化。
 
@@ -95,7 +95,7 @@ ffmpeg -i input -vf "select='eq(pict_type,I)'" output
 ffmpeg -i input -vf "yadif=0:-1:0, scale=iw/2:-1" output
 ```
 
-请注意，文档中给出的示例混合匹配使用了“全引号”和“\”转义，并且在特殊的 shell 使用转义可能比较复杂。有关更多信息，参考 [filtergraph 转移的注意事项](http://ffmpeg.org/ffmpeg-filters.html#Notes-on-filtergraph-escaping)。
+请注意，文档中给出的示例混合匹配使用了“全引号”和“\”转义，并且在特殊的 shell 使用转义可能比较复杂。有关更多信息，参考 [filtergraph 转移的注意事项](../ffmpeg_filters.md#42-关于-filtergraph-转移的注意事项)。
 
 ## 示例
 
@@ -107,7 +107,7 @@ ffmpeg -i input -vf "yadif=0:-1:0, scale=iw/2:-1" output
 ffmpeg -i input -vf scale=iw/2:-1 output
 ```
 
-`iw` 是输入的宽度。在这个示例中输入宽度是 640，且 640/2=320。`-1` 告诉 scale 过滤器保留输出的原长宽比，因此这个示例中 scale 过滤器选择 240.有关更多信息查看 [FFmpeg 文档](http://ffmpeg.org/ffmpeg-filters.html#scale)。
+`iw` 是输入的宽度。在这个示例中输入宽度是 640，且 640/2=320。`-1` 告诉 scale 过滤器保留输出的原长宽比，因此这个示例中 scale 过滤器选择 240.有关更多信息查看 [FFmpeg 文档](../ffmpeg_filters.md#11178-scale)。
 
 ### 加速视频
 
@@ -117,9 +117,9 @@ ffmpeg -i input -vf scale=iw/2:-1 output
 
 ![multiple_input_overlay](multiple_input_overlay.jpg)
 
-这里使用 `-filter_complex` 选项将 4 个输入一起过滤。在这个示例中，所有输入都是 `-f lavfi -i testsrc`(查看 [testsrc 源过滤器](https://ffmpeg.org/ffmpeg-filters.html#color_002c-haldclutsrc_002c-nullsrc_002c-rgbtestsrc_002c-smptebars_002c-smptehdbars_002c-testsrc))，但也可以是其他输入。
+这里使用 `-filter_complex` 选项将 4 个输入一起过滤。在这个示例中，所有输入都是 `-f lavfi -i testsrc`(查看 [testsrc source 过滤器](../ffmpeg_filters.md#149-allrgb-allyuv-color-haldclutsrc-nullsrc-pal75bars-pal100bars-rgbtestsrc-smptebars-smptehdbars-testsrc-testsrc2-yuvtestsrc))，但也可以是其他输入。
 
-在 filtergraph 内部，第一个输入没有更改，其他三个输入分别使用 [hflip](https://ffmpeg.org/ffmpeg-filters.html#hflip)、[negate](https://ffmpeg.org/ffmpeg-filters.html#negate) 和 [edgedetect](https://ffmpeg.org/ffmpeg-filters.html#edgedetect) 过滤。然后使用 hstack 和 vstack 过滤器将每个视频入栈到所需的位置。
+在 filtergraph 内部，第一个输入没有更改，其他三个输入分别使用 [hflip](../ffmpeg_filters.md#1195-hflip)、[negate](../ffmpeg_filters.md#11137-negate) 和 [edgedetect](../ffmpeg_filters.md#1163-edgedetect) 过滤。然后使用 hstack 和 vstack 过滤器将每个视频入栈到所需的位置。
 
 ```sh
 ffmpeg -f lavfi -i testsrc -f lavfi -i testsrc -f lavfi -i testsrc -f lavfi -i testsrc -filter_complex \
@@ -131,7 +131,7 @@ ffmpeg -f lavfi -i testsrc -f lavfi -i testsrc -f lavfi -i testsrc -f lavfi -i t
  [top][bottom]vstack=inputs=2[out]" -map "[out]" -c:v ffv1 -t 5 multiple_input_grid.avi
 ```
 
-下一个示例等同于上述示例，但是使用了 [pad](https://ffmpeg.org/ffmpeg-filters.html#pad) 和 [overlay](https://ffmpeg.org/ffmpeg-filters.html#overlay-1) 过滤器。pad 过滤器用于生成合适大小的背景，而 overlay 过滤器用于将每个视频放在正确的位置。这个方法比上述使用 `hstack+vstack` 慢：
+下一个示例等同于上述示例，但是使用了 [pad](../ffmpeg_filters.md#11150-pad) 和 [overlay](../ffmpeg_filters.md#11147-overlay) 过滤器。pad 过滤器用于生成合适大小的背景，而 overlay 过滤器用于将每个视频放在正确的位置。这个方法比上述使用 `hstack+vstack` 慢：
 
 ```sh
 ffmpeg -f lavfi -i testsrc -f lavfi -i testsrc -f lavfi -i testsrc -f lavfi -i testsrc -filter_complex \
@@ -148,7 +148,7 @@ ffmpeg -f lavfi -i testsrc -f lavfi -i testsrc -f lavfi -i testsrc -f lavfi -i t
 
 ### 写入时间码
 
-使用 [drawtext](http://ffmpeg.org/ffmpeg-filters.html#drawtext-1) 视频过滤器。
+使用 [drawtext](../ffmpeg_filters.md#1162-drawtext) 视频过滤器。
 
 PAL 25 fps 非丢帧：
 
@@ -167,7 +167,7 @@ x=(w-tw)/2: y=h-(2*lh): fontcolor=white: box=1: boxcolor=0x00000000@1" -an -y ou
 
 ### 合成输入
 
-[testsrc 源过滤器](http://ffmpeg.org/ffmpeg-filters.html#color_002c-haldclutsrc_002c-nullsrc_002c-rgbtestsrc_002c-smptebars_002c-smptehdbars_002c-testsrc)生成一个测试视频模式，该模式显示一个颜色模式，一个滚动渐变和一个时间戳。它在测试时非常有用。
+[testsrc 源过滤器](../ffmpeg_filters.md#149-allrgb-allyuv-color-haldclutsrc-nullsrc-pal75bars-pal100bars-rgbtestsrc-smptebars-smptehdbars-testsrc-testsrc2-yuvtestsrc)生成一个测试视频模式，该模式显示一个颜色模式，一个滚动渐变和一个时间戳。它在测试时非常有用。
 
 这个示例会创建一个 10 秒的输出，30 fps(一共 300 帧)，且帧大小为 1280x720：
 
@@ -187,7 +187,7 @@ ffplay -f lavfi -i "testsrc=duration=10:size=1280x720:rate=30"
 ffmpeg -filter_complex testsrc OUTPUT
 ```
 
-testsrc 的另一种类型是使用 [smptebars 源过滤器](http://ffmpeg.org/ffmpeg-filters.html#color_002c-haldclutsrc_002c-nullsrc_002c-rgbtestsrc_002c-smptebars_002c-smptehdbars_002c-testsrc)：
+testsrc 的另一种类型是使用 [smptebars 源过滤器](../ffmpeg_filters.md#149-allrgb-allyuv-color-haldclutsrc-nullsrc-pal75bars-pal100bars-rgbtestsrc-smptebars-smptehdbars-testsrc-testsrc2-yuvtestsrc)：
 
 ```sh
 ffmpeg -f lavfi -i "smptebars=duration=5:size=1280x720:rate=30" output.mp4
@@ -208,7 +208,7 @@ ffmpeg -f lavfi -i "smptebars=duration=5:size=1280x720:rate=30" output.mp4
 
 ## 过滤器元数据
 
-过滤器可以写入元数据条目，这些条目可用于调试过滤器的功能，或者从输入文件中提取额外的信息。通用描述可查看[元数据过滤器文档](http://ffmpeg.org/ffmpeg-filters.html#metadata_002c-ametadata)。
+过滤器可以写入元数据条目，这些条目可用于调试过滤器的功能，或者从输入文件中提取额外的信息。通用描述可查看[元数据过滤器文档](../ffmpeg_filters.md#1611-metadata-ametadata)。
 
 元数据的键由相应的过滤器定义，并且没有全局可访问的列表。过滤器文档本身提到一些键：
 
@@ -324,7 +324,7 @@ ffmpeg -f lavfi -i "smptebars=duration=5:size=1280x720:rate=30" output.mp4
 
 ### 使用文件
 
-假定你想要基于一个输入文件修改一些过滤器参数。一些过滤器支持使用 [sencmd](https://ffmpeg.org/ffmpeg-filters.html#sendcmd_002c-asendcmd) 选项接受命令。运行 `ffmpeg -filters` 并检查 `C` 列——如果存在 `C`，该过滤器支持这种方式输入。
+假定你想要基于一个输入文件修改一些过滤器参数。一些过滤器支持使用 [sencmd](../ffmpeg_filters.md#1615-sendcmd-asendcmd) 选项接受命令。运行 `ffmpeg -filters` 并检查 `C` 列——如果存在 `C`，该过滤器支持这种方式输入。
 
 比如，如果你想对输入文件的 0、1、2 秒进行旋转。创建 `cmd.txt` 文件，包含下面的内容：
 
