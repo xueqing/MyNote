@@ -6,7 +6,7 @@
   - [3 graph2dot](#3-graph2dot)
   - [4 filtergraph 描述](#4-filtergraph-描述)
     - [4.1 filtergraph 语法](#41-filtergraph-语法)
-    - [4.2 关于 filtergraph 转移的注意事项](#42-关于-filtergraph-转移的注意事项)
+    - [4.2 关于 filtergraph 转义的注意事项](#42-关于-filtergraph-转义的注意事项)
   - [5 时间轴编译](#5-时间轴编译)
   - [8 音频过滤器](#8-音频过滤器)
     - [8.82 loudnorm](#882-loudnorm)
@@ -14,10 +14,12 @@
     - [11.62 drawtext](#1162-drawtext)
     - [11.63 edgedetect](#1163-edgedetect)
     - [11.95 hflip](#1195-hflip)
+    - [11.104 hstack](#11104-hstack)
     - [11.137 negate](#11137-negate)
     - [11.147 overlay](#11147-overlay)
     - [11.150 pad](#11150-pad)
     - [11.178 scale](#11178-scale)
+    - [11.235 vstack](#11235-vstack)
   - [14 视频 source](#14-视频-source)
     - [14.9 allrgb, allyuv, color, haldclutsrc, nullsrc, pal75bars, pal100bars, rgbtestsrc, smptebars, smptehdbars, testsrc, testsrc2, yuvtestsrc](#149-allrgb-allyuv-color-haldclutsrc-nullsrc-pal75bars-pal100bars-rgbtestsrc-smptebars-smptehdbars-testsrc-testsrc2-yuvtestsrc)
   - [16 多媒体过滤器](#16-多媒体过滤器)
@@ -156,9 +158,9 @@ FILTERCHAIN      ::= FILTER [,FILTERCHAIN]
 FILTERGRAPH      ::= [sws_flags=flags;] FILTERCHAIN [;FILTERGRAPH]
 ```
 
-### 4.2 关于 filtergraph 转移的注意事项
+### 4.2 关于 filtergraph 转义的注意事项
 
-filtergraph 描述组成包含几个级别的转义。参阅 [(ffmpeg-utils) ffmpeg-utils 手册中的“引用和转移”章节](http://ffmpeg.org/ffmpeg-utils.html#quoting_005fand_005fescaping) 获取更多关于使用的转义程序的信息。
+filtergraph 描述组成包含几个级别的转义。参阅 [(ffmpeg-utils) ffmpeg-utils 手册中的“引用和转义”章节](http://ffmpeg.org/ffmpeg-utils.html#quoting_005fand_005fescaping) 获取更多关于使用的转义程序的信息。
 
 第一个级别的转义影响每个过滤器选项值的内容，其中可能包含用于分隔值的特殊字符 `:`，或转义字符之一 `\'`。
 
@@ -228,6 +230,8 @@ curves    = enable='gte(t,3)' : preset=cross_process
 
 ### 11.95 hflip
 
+### 11.104 hstack
+
 ### 11.137 negate
 
 ### 11.147 overlay
@@ -235,6 +239,8 @@ curves    = enable='gte(t,3)' : preset=cross_process
 ### 11.150 pad
 
 ### 11.178 scale
+
+### 11.235 vstack
 
 ## 14 视频 source
 
