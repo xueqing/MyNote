@@ -26,7 +26,7 @@ FFmpeg 可以访问很多过滤器，并且会定期添加更多过滤器。使�
 
 ## 文档
 
-参考 [FFmpeg 过滤器文档](../ffmpeg_filters.md)获取每个过滤器的更多信息和示例。此维基页面用于用户提供示例和技巧，并且鼓励所有人优化此页面。
+参考 [FFmpeg 过滤器文档](../ffmpeg_filters.md)获取每个过滤器的更多信息和示例。此维基页面为用户提供示例和技巧，并且鼓励所有人优化此页面。
 
 ## 过滤器语法
 
@@ -54,7 +54,7 @@ FFmpeg 按照源代码中声明的选项顺序匹配选项名。比如，在上�
 
 ### filtergraph、chain、filter 的关系
 
-ffmpeg 命令行中跟在 `-vf` 之后的是 [filtergraph](../ffmpeg_filters.md#4-filtergraph-描述) 描述。这个 filtergraph 可以包含多个 chain，每个 chain 可以包含多个 filter。
+ffmpeg 命令行中跟在 `-vf` 之后的是 [filtergraph](../ffmpeg_filters.md#4-filtergraph-描述) 描述。filtergraph 可以包含多个 chain，每个 chain 可以包含多个 filter。
 
 虽然完整的 filtergraph 描述可能很复杂，但是如果能避免混淆，可以将比较简单的 filtergraph 描述简单化。
 
@@ -74,12 +74,12 @@ ffmpeg -i input -vf [in]yadif=0:0:0[middle];[middle]scale=iw/2:-1[out] output
 # 1 个 chain：chain 包含 2 个 filter, 隐式连接 filter
 ffmpeg -i input -vf [in]yadif=0:0:0,scale=iw/2:-1[out] output
 # 隐含输入和输出不会有歧义
-ffmpeg -i input -vf yadif=0:0:0,scale=iw/2:-1  output
+ffmpeg -i input -vf yadif=0:0:0,scale=iw/2:-1 output
 ```
 
 ### 转义字符
 
-正如文档所述，有时候需要转义出现在参数中的 `,`，比如下面的 select 过滤器：
+正如文档所述，有时需要转义参数中出现的 `,`，比如下面的 select 过滤器：
 
 ```sh
 # 只选择 I 帧
@@ -363,7 +363,9 @@ filter="yadif=0:-1:0, scale=400:226, drawtext=fontfile=/usr/share/fonts/truetype
 text='tod- %X':x=(w-text_w)/2:y=H-60 :fontcolor=white :box=1:boxcolor=0x00000000@1"
 codec="-vcodec libx264  -pix_fmt yuv420p -b:v 700k -r 25 -maxrate 700k -bufsize 5097k"
 
-command_line=(ffmpeg -i "$in_file" -vf "$filter" "$codec" -an $out_file")
+# 译者注：原文是 "$codec"，会报错 “Unrecognized option 'vcodec libx264  -pix_fmt yuv420p -b:v 700k -r 25 -maxrate 700k -bufsize 5097k'.”
+# 译者注：原文是 $out_file"，少了左边的引号
+command_line=(ffmpeg -i "$in_file" -vf "$filter" $codec -an "$out_file")
 
 echo "${command_line[@]}"
 "${command_line[@]}"
