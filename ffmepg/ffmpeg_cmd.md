@@ -17,6 +17,9 @@
       - [修改媒体信息](#修改媒体信息)
       - [合并视频](#合并视频)
         - [使用 -map 实现高级合并](#使用--map-实现高级合并)
+  - [使用 libavfilter](#使用-libavfilter)
+    - [graph2dot](#graph2dot)
+    - [testsrc](#testsrc)
 
 ## 常用帮助类和参数说明
 
@@ -215,4 +218,43 @@ ffmpeg -i "no subtitle.mp4" -vf subtitles=sub.srt "within subtitle.mkv"
 # 将 file1.mp4 的视频流(编号是 0)和 file2.mp4 的音频流(编号是 1)合并成一个文件
 ## 需要先用 ffprobe 之类的命令查看文件的视频和音频流对应的编号
 ffmpeg -i file1.mp4 -i file2.mp4 -map 0:0 -map 1:1 -c copy merge.mp4
+```
+
+## 使用 libavfilter
+
+### graph2dot
+
+```sh
+# 编译 tools/graph2dot: 先切换到 ffmpeg 源码主目录
+make tools/graph2dot
+# 安装 graphviz 使用 dot
+sudo apt install -y graphviz
+# 测试 graph2dot
+echo "nullsrc,scale=640:360,nullsink" | tools/graph2dot -o graph.tmp
+dot -Tpng graph.tmp -o graph.png
+display graph.png
+```
+
+- `graph.tmp` 内容：
+
+```txt
+digraph G {
+node [shape=box]
+rankdir=LR
+"Parsed_nullsrc_0\n(nullsrc)" -> "Parsed_scale_1\n(scale)" [ label= "inpad:default -> outpad:default\nfmt:yuv420p w:320 h:240 tb:1/25" ];
+"Parsed_scale_1\n(scale)" -> "Parsed_nullsink_2\n(nullsink)" [ label= "inpad:default -> outpad:default\nfmt:yuv420p w:640 h:360 tb:1/25" ];
+}
+```
+
+- `graph.png` 如图：
+
+![graph.png](ref/graph.png)
+
+### testsrc
+
+```sh
+# 将视频的上半部分镜像复制到输出视频的下半部分
+ffplay -f lavfi testsrc -vf "split [main], [main] overlay=0:H/2"
+# 将视频的上半部分镜像映射到输出视频的下半部分
+ffplay -f lavfi testsrc -vf "split [main][tmp]; [tmp] crop=iw:ih/2:0:0, vflip [flip]; [main][flip] overlay=0:H/2"
 ```
