@@ -30,7 +30,7 @@
 
 ## 1 描述
 
-此文档描述 `libavfilter` 库提供的 过滤器、`source` 和 `sink`。
+此文档描述 `libavfilter` 库提供的过滤器、`source` 和 `sink`。
 
 ## 2 过滤介绍
 
@@ -46,7 +46,7 @@ input --> split ---------------------> overlay --> output
             +-----> crop --> vflip -------+
 ```
 
-这个 filtergraph 将输入流分成两个流，然后发送一个流到 *crop* 过滤器和 *vflip* 过滤器，然后将其覆盖在顶部，从而与另外一个流合并。你可以使用下面的命令实现：
+这个 filtergraph 将输入流分成两个流，然后发送其中一个流到 *crop* 过滤器和 *vflip* 过滤器，然后将其覆盖在顶部，从而与另外一个流合并。你可以使用下面的命令实现：
 
 ```sh
 ffmpeg -i INPUT -vf "split [main][tmp]; [tmp] crop=iw:ih/2:0:0, vflip [flip]; [main][flip] overlay=0:H/2" OUTPUT
@@ -85,7 +85,7 @@ dot -Tpng graph.tmp -o graph.png && \
 display graph.png
 ```
 
-可用于创建和显示一个图像，该图标表示 *GRAPH_DESCRIPTION* 字符串描述的图。注意这个字符串必须是一个完整的自包含图，且它的输入和输出是显式定义的。比如，如果你的命令行是这样的形式：
+可用于创建和显示一个图像，该图表示 *GRAPH_DESCRIPTION* 字符串描述的图。注意这个字符串必须是一个完整的自包含图，且它的输入和输出是显式定义的。比如，如果你的命令行是这样的形式：
 
 ```sh
 ffmpeg -i infile -vf scale=640:360 outfile
@@ -101,15 +101,15 @@ nullsrc,scale=640:360,nullsink
 
 ## 4 filtergraph 描述
 
-一个 filtergraph 是一个连接的过滤器的有向图。它可以包含循环，并且一对过滤器之间可以有多个 link。每个 link 的一端都有一个输入 pad，将其连接到从中获取输入的过滤器，且另一端有一个输出 pad，将其连接到接受其输出的过滤器。
+filtergraph 是一个连接过滤器的有向图。它可以包含循环，并且一对过滤器之间可以有多个 link。每个 link 的一端都有一个输入 pad，连接到获取输入的过滤器，且另一端有一个输出 pad，连接到接受输出的过滤器。
 
-filtergraph 中的每个过滤器是一个过滤器类的实例，这些过滤器类注册到应用程序中，定义了过滤器的功能和输入输出 pad 的数目。
+filtergraph 中的每个过滤器是一个过滤器类的实例，这些过滤器类注册到应用程序中，定义了过滤器的功能以及输入输出 pad 的数目。
 
 没有输入 pad 的过滤器叫做 *source*，没有输出 pad 的过滤器叫做 *sink*。
 
 ### 4.1 filtergraph 语法
 
-filtergraph 具有文本表示形式，可通过 `ffmpeg` 的 `-filter/-vf/-af` 和 `-filter_complex` 选项和 `ffplay` 的 `vf/-af` 选项以及在 `libavfilter/avfilter.h` 定义的 `avfilter_graph_parse_ptr()` 函数识别。
+filtergraph 具有文本表示形式，可通过 `ffmpeg` 的 `-filter/-vf/-af`、`-filter_complex` 选项和 `ffplay` 的 `vf/-af` 选项以及在 `libavfilter/avfilter.h` 定义的 `avfilter_graph_parse_ptr()` 函数识别。
 
 filterchain 由一系列连接的过滤器组成，每个过滤器连接到该序列中的前一个过滤器。filterchain 由 “,” 分隔的过滤器描述列表表示。
 
@@ -121,7 +121,7 @@ filtergraph 由一系列 filterchain 组成。filterchain 的序列由 “;” �
 - *arguments* 是一个字符串，包含用于初始化过滤器示例的参数。可以有两种形式：
   - *key=value* 对的列表，使用 “:” 分隔
   - *value* 的列表，使用 “:” 分隔。这种情况下，*key* 认为是按照声明顺序对应选项名称。比如，`fade` 过滤器依次声明三个选项——type、start_frame 和 nb_frame。那么参数列表 *in:0:30* 表示 *in* 值赋给选项 type，*0* 赋给 start_frame，且 *30* 赋给 nb_frame。
-  - 混合直接的 *value* 和长的 *key=value* 对的列表，使用 “:” 分隔。直接的 *value* 必须在 *key=value* 对之前，并且遵循上一点所述的相同限制。之后的 *key=value* 对可设置为任何希望的顺序。
+  - 混合 *value* 和 *key=value* 对的列表，使用 “:” 分隔。*value* 必须在 *key=value* 对之前，并且遵循上一点所述的相同限制。之后的 *key=value* 对顺序可任意设置。
 
 如果选项值本身是一个元素列表(比如过滤器 `format` 接受一个像素格式列表)，列表中的元素通常使用 “|” 分隔。
 
@@ -137,7 +137,9 @@ filtergraph 由一系列 filterchain 组成。filterchain 的序列由 “;” �
 nullsrc, split[L1], [L2]overlay, nullsink
 ```
 
-split 过滤器实例有两个输出 pad，且 overlay 过滤器实例有两个输入 pad。split 第一个输出 pad 标签是 “L1”，overlay 第一个输入 pad 的标签是 “L2”，split 第二个输出 pad 链接到 overlay 第二个输入 pad，这两个 pad 都没有标签。
+split 过滤器实例有两个输出 pad，且 overlay 过滤器实例有两个输入 pad。split 第一个输出 pad 的标签是 “L1”，overlay 第一个输入 pad 的标签是 “L2”，split 第二个输出 pad 链接到 overlay 第二个输入 pad，这两个 pad 都没有标签。
+
+**译者注**：使用上述描述报错 `Output pad "output0" with type video of the filter instance "Parsed_split_1" of split not connected to any destination`，改成 `nullsrc, split[L1], [L1]overlay, nullsink`
 
 在一个过滤器描述中，如果未指定第一个过滤器的输入标签，则认为是 “in”；如果未指定最后一个过滤器的输出标签，则认为是 “out”。
 
