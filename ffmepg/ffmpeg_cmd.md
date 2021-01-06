@@ -20,6 +20,8 @@
   - [使用 libavfilter](#使用-libavfilter)
     - [graph2dot](#graph2dot)
     - [testsrc](#testsrc)
+    - [drawtext](#drawtext)
+    - [filter_complex](#filter_complex)
 
 ## 常用帮助类和参数说明
 
@@ -257,4 +259,31 @@ rankdir=LR
 ffplay -f lavfi testsrc -vf "split [main], [main] overlay=0:H/2"
 # 将视频的上半部分镜像映射到输出视频的下半部分
 ffplay -f lavfi testsrc -vf "split [main][tmp]; [tmp] crop=iw:ih/2:0:0, vflip [flip]; [main][flip] overlay=0:H/2"
+# 视频按照宽度缩放一半
+ffplay movie.flv -vf scale=iw/2:-1
+```
+
+### drawtext
+
+```sh
+# 报错 `No such filter: 'drawtext'` 需要添加配置参数 --enable-libfreetype
+./configure --enable-libfreetype
+# PAL 25 fps 非丢帧添加时间轴
+ffmpeg -i movie.flv -vf "drawtext=fontfile=/usr/share/fonts/truetype/freefont/FreeSans.ttf: timecode='09\:57\:00\:00': r=25: \
+x=(w-tw)/2: y=h-(2*lh): fontcolor=white: box=1: boxcolor=0x00000000@1" -an -y out.flv
+ffmpeg -i movie.flv -vf "drawtext=fontfile=/usr/share/fonts/truetype/freefont/FreeSans.ttf: timecode='09\:57\:00\;00': r=30: \
+x=(w-tw)/2: y=h-(2*lh): fontcolor=white: box=1: boxcolor=0x00000000@1" -an -y out.mp4
+```
+
+### filter_complex
+
+```sh
+ffmpeg -f lavfi -i testsrc -f lavfi -i testsrc -f lavfi -i testsrc -f lavfi -i testsrc -filter_complex \
+"[0:v]pad=iw*2:ih*2[a]; \
+ [1:v]negate[b]; \
+ [2:v]hflip[c]; \
+ [3:v]edgedetect[d]; \
+ [a][b]overlay=w[x]; \
+ [x][c]overlay=0:h[y]; \
+ [y][d]overlay=w:h[out]" -map "[out]" -c:v ffv1 -t 5 multiple_input_grid.avi
 ```
