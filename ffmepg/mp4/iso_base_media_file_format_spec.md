@@ -36,6 +36,28 @@
     - [Media Data Box](#media-data-box)
     - [Movie Header Box](#movie-header-box)
     - [Track Box](#track-box)
+    - [Track Header Box](#track-header-box)
+    - [Track Reference Box](#track-reference-box)
+    - [Media Box](#media-box)
+    - [Media Header Box](#media-header-box)
+    - [Handler Reference Box](#handler-reference-box)
+    - [Media Information Box](#media-information-box)
+    - [Media Information Header Box](#media-information-header-box)
+      - [Video Media Header Box](#video-media-header-box)
+      - [Sound Media Header Box](#sound-media-header-box)
+      - [Hint Media Header Box](#hint-media-header-box)
+      - [NULL Media Header Box](#null-media-header-box)
+    - [Data Information Box](#data-information-box)
+    - [Data Reference Box](#data-reference-box)
+    - [Sample Table Box](#sample-table-box)
+    - [Time to Sample Box](#time-to-sample-box)
+      - [Decoding Time to Sample Box](#decoding-time-to-sample-box)
+      - [Composition Time to Sample Box](#composition-time-to-sample-box)
+    - [Sample Description Box](#sample-description-box)
+    - [Sample Size Box](#sample-size-box)
+    - [Sample To Chunk Box](#sample-to-chunk-box)
+    - [Chunk Offset Box](#chunk-offset-box)
+    - [Sync Sample Box](#sync-sample-box)
   - [参考](#参考)
 
 ## 介绍
@@ -488,12 +510,660 @@ aligned(8) class MovieHeaderBox extends FullBox(‘mvhd’, version, 0) {
 | duration | 整数 | 声明演示的长度(在指定的时间范围内)。此属性源自演示的轨道：此字段的值对应演示最长轨道的持续时间 |
 | rate | 定点数 16.16 | 指示播放演示的首选速率；1.0(0x00010000) 是正常的正向回放 |
 | volume | 定点数 8.8 | 指示首选的回放音量。1.0(0x00010000) 是全音量 |
-| matrix | - | 为视频提供转化矩阵；(u,v,w) 在这里限制为 (0,0,1)，16 进制值为 (0,0,0x40000000) |
-| next_track_ID | 非 0 整数 | 指示要添加到演示的下一个轨道的轨道 ID 值。零不是有效的轨道 ID 值。next_track_ID 值应大于在用的最大轨道 ID。如果此值大于等于全 1(32 位 maxint)，且要增加新的媒体轨道，必须在文件中搜索未使用的轨道标识符 |
+| matrix | - | 为视频提供转化矩阵；(u,v,w) 在这里限制为 (0,0,1)，16 进制值(0,0,0x40000000) |
+| next_track_ID | 非 0 整数 | 指示要添加到演示的下一个轨道的轨道 ID 值。零不是有效的轨道 ID 值。next_track_ID 值应大于在用的最大轨道 ID。如果此值大于等于全 1(32 位 maxint)，且要增加新的媒体轨道，必须在文件中搜索未使用的轨道 ID |
 
 ### Track Box
 
-page 16(24/94)
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| trak | Movie Box (moov) | Y | >=1 |
+
+这是用于演示单个轨道的容器 box。每个演示包含一个或多个轨道。每个轨道都独立于演示中的其他轨道，并携带自己的时间和空间信息。每个轨道将包含其关联的 Media Box。
+
+轨道用于两个目的：
+
+- 包含媒体数据(媒体轨道)
+- 包含流协议的打包信息(hint 轨道)
+
+ISO 文件中至少应包含一个媒体轨道，且即使 hint 轨道未引用媒体轨道中的媒体数据，所有帮助组成 hint 轨道的媒体轨道应保留在文件中；删除所有 hint 轨道之后，将保留整个不带 hint 的演示。
+
+```code
+aligned(8) class TrackBox extends Box(‘trak’) {
+}
+```
+
+### Track Header Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| tkhd | Track Box (trak) | Y | 1 |
+
+此 box 指定单个轨道的特征。每个轨道中仅包含一个 Track Header Box。
+
+在没有编辑列表的情况下，轨道的显示从整个演示的开头开始。空编辑用于抵消轨道的开始时间。
+
+媒体轨道的轨道头部 flags 的默认值为 7(track_enabled、track_in_movie、track_in_preview)。如果演示中所有轨道均未设置 track_in_movie 或 track_in_preview，则应将所有轨道视为在其上设置了中两个标记。hint 轨道应将轨道头部 flags 设为 0，以便在本地回放和预览时将其忽略。
+
+```code
+aligned(8) class TrackHeaderBox
+  extends FullBox(‘tkhd’, version, flags){
+  if (version==1) {
+    unsigned int(64) creation_time;
+    unsigned int(64) modification_time;
+    unsigned int(32) track_ID;
+    const unsigned int(32) reserved = 0;
+    unsigned int(64) duration;
+  } else { // version==0
+    unsigned int(32) creation_time;
+    unsigned int(32) modification_time;
+    unsigned int(32) track_ID;
+    const unsigned int(32) reserved = 0;
+    unsigned int(32) duration;
+  }
+  const unsigned int(32)[2] reserved = 0;
+  template int(16) layer = 0;
+  template int(16) alternate_group = 0;
+  template int(16) volume = {if track_is_audio 0x0100 else 0};
+  const unsigned int(16) reserved = 0;
+  template int(32)[9] matrix=
+    { 0x00010000,0,0,0,0x00010000,0,0,0,0x40000000 };
+    // unity matrix
+  unsigned int(32) width;
+  unsigned int(32) height;
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| version | 整数 | 指定此 box 的版本(此规范是 0 或 1) |
+| flags | 24 位带标记的整数 | 定义了下面的值：track_enabled(指示轨道是否启用。flags 值是 0x000001。禁用的轨道将其视为不存在，低位为 0)、track_in_movie(指示演示使用此轨道。flags 值为 0x000002)、track_in_preview(指示预览演示时使用此轨道。flags 值是 0x000004) |
+| creation_time | 整数 | 声明此轨道的创建时间(从 1904-1-1 午夜起的秒数，UTC 时间) |
+| modification_time | 整数 | 声明此轨道最近一次修改时间(从 1904-1-1 午夜起的秒数，UTC 时间) |
+| track_ID | 整数 | 在演示整个生命周期唯一地标识此轨道。轨道 ID 永远不会重复使用，且不能为 0 |
+| duration | 整数 | 指示此轨道的持续时间(以 Movie Header Box 的时间刻度为单位)。此字段值等于所有轨道的编辑总和。如果没有编辑列表，那么等于采样持续时间(转换为 Movie Header Box 的时间刻度)的总和。如果此轨道的持续时间不能确定，则将其设置为全 1(32 位 maxint) |
+| layer | 整数 | 指定视频轨道从前到后的顺序；编号较小的轨道更靠近观看者。0 是正常值，且 -1 将位于轨道 0 的前面，以此类推 |
+| alternate_group | 整数 | 指定轨道组或集合。如果此字段为 0，则没有和其他轨道可能关系的信息。如果不为 0，则对于包含备用数据的轨道应该相同，对于属于不同组的轨道不同。在任何时候备用组中只应有一个轨道播放或流式传输，且必须通过属性(比如比特率、编解码器、语言、包大小等)与该组中其他轨道区分。一个组可能只有一个成员 |
+| volume | 定点数 8.8 | 指定轨道的相对音频音量。全音量是 1.0(0x0100)，是正常值。该值与纯视觉轨道无关。可根据轨道音量组合轨道，然后使用整体的 Movie Header Box 的音量设置；或可以使用更复杂的音频组合(比如 MPEG-4 BIFS)  |
+| matrix | - | 为视频提供转化矩阵；(u,v,w) 在这里限制为 (0,0,1)，16 进制值(0,0,0x40000000) |
+| width/height | 定点数 16.16 | 指定轨道的视觉显示尺寸。它们不必等同于采样描述记录的图像的像素尺寸；在对矩阵表示的轨道进行任何整体转换之前，将序列中的所有图像缩放到指定的尺寸。图像的像素尺寸是默认值 |
+
+### Track Reference Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| tref | Track Box (trak) | N | 0/1 |
+
+此 box 提供了从包含的轨道到演示中另一个轨道的引用。这些引用是带类型的。“hint” 引用将包含的 hint 轨道链接到其提示的媒体数据。内容描述引用 “cdsc” 将描述性或元数据轨道链接到期描述的内容。
+
+Track Box 内中可包含一个 Track Reference Box。
+
+如果不存在此 box，则改轨道不会以任何方式引用任何其他轨道。调整引用数组以填充引用类型 box。
+
+```code
+aligned(8) class TrackReferenceBox extends Box(‘tref’) {
+}
+aligned(8) class TrackReferenceTypeBox (unsigned int(32) reference_type) extends
+Box(reference_type) {
+  unsigned int(32) track_IDs[];
+} 
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| track_ID | 整数 | 提供了从包含的轨道到演示中另一个轨道的引用。track_IDs 永远不能重用且不能等于 0 |
+| reference_type | 整数 | 应设为下面某个值：“hint”(引用的轨道包含此 hint 轨道的原始媒体)；“cdsc”(此轨道描述了引用的轨道) |
+
+### Media Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| mdia | Track Box (trak) | Y | 1 |
+
+媒体声明容器包含所有声明轨道内媒体数据信息的对象。
+
+```code
+aligned(8) class MediaBox extends Box(‘mdia’) {
+}
+```
+
+### Media Header Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| mdhd | Media Box (mdia) | Y | 1 |
+
+媒体头部声明了与媒体无关，且与轨道中的媒体特征相关的整体信息。
+
+```code
+aligned(8) class MediaHeaderBox extends FullBox(‘mdhd’, version, 0) {
+  if (version==1) {
+    unsigned int(64) creation_time;
+    unsigned int(64) modification_time;
+    unsigned int(32) timescale;
+    unsigned int(64) duration;
+  } else { // version==0
+    unsigned int(32) creation_time;
+    unsigned int(32) modification_time;
+    unsigned int(32) timescale;
+    unsigned int(32) duration;
+  }
+  bit(1) pad = 0;
+  unsigned int(5)[3] language; // ISO-639-2/T language code
+  unsigned int(16) pre_defined = 0;
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| version | 整数 | 指定此 box 的版本(0 或 1) |
+| creation_time | 整数 | 声明此轨道中媒体的创建时间(从 1904-1-1 午夜起的秒数，UTC 时间) |
+| modification_time | 整数 | 声明此轨道中媒体最近一次修改时间(从 1904-1-1 午夜起的秒数，UTC 时间) |
+| timescale | 整数 | 指定此媒体的时间刻度；是经过一秒的时间单位数。比如，以 1/60 秒为单位测量时间的时间坐标系的时间刻度是 60 |
+| duration | 整数 | 声明此媒体的持续时间(以时间刻度为单位) |
+| language | - | 声明此媒体的语言代码。参阅 ISO 639-2/T 的三个字符的代码集合。每个字符打包为其 ASCII 值和 0x60 的差值。由于代码仅限于三个小写字母，因此这些值严格为正。 |
+
+### Handler Reference Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| hdlr | Media Box (mdia) 或 Meta Box (meta) | Y | 1 |
+
+此 box 在 Media Box 内，声明展示轨道中媒体数据的过程，从而声明轨道中媒体的性质。例如，视频轨道将由视频句柄处理。
+
+此 box 存在 Meta Box 内时，声明“元” box 内容的结构或格式。
+
+```code
+aligned(8) class HandlerBox extends FullBox(‘hdlr’, version = 0, 0) {
+  unsigned int(32) pre_defined = 0;
+  unsigned int(32) handler_type;
+  const unsigned int(32)[3] reserved = 0;
+  string name;
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| version | 整数 | 指定此 box 的版本 |
+| handler_type | 整数 | 在 Media Box 内时包含下面的某个值(vide-视频轨道；soun-音频轨道；hint-hint 轨道)或来自派生规范。在 Meta Box 内时包含一个合适的值，以支持元 box 内容的格式 |
+| name | null 结尾的字符串 | UTF-8 字符表示，为轨道类型提供易于理解的名称(便于调试和检查) |
+
+### Media Information Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| minf | Media Box (mdia) | Y | 1 |
+
+此 box 包含所有声明轨道中媒体特征信息的对象。
+
+```code
+aligned(8) class MediaInformationBox extends Box(‘minf’) {
+} 
+```
+
+### Media Information Header Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| vmhd/smhd/hmhd/nmhd | Media Information Box (minf) | Y | 1 |
+
+每个轨道类型(对应媒体的句柄类型)有一个不同的媒体信息头；匹配的头部应该存在，可以是此处定义的头部之一，也可以是派生规范中定义。
+
+#### Video Media Header Box
+
+视频媒体头部包含视频媒体的常规演示信息，与编码无关。请注意 flags 字段值为 1.
+
+```code
+aligned(8) class VideoMediaHeaderBox
+  extends FullBox(‘vmhd’, version = 0, 1) {
+  template unsigned int(16) graphicsmode = 0; // copy, see below
+  template unsigned int(16)[3] opcolor = {0, 0, 0};
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| version | 整数 | 指定此 box 的版本 |
+| graphicsmode | - | 从以下枚举集合为该视频轨道指定组合模式，可通过派生规范对齐扩展：copy=0 复制现有图像 |
+| opcolor | - | 3 色值(红绿蓝)集合，可供 graphicsmode 使用 |
+
+#### Sound Media Header Box
+
+音频媒体头部包含音频媒体的常规演示信息，与编码无关。此头部用于所有包含音频的轨道。
+
+```code
+aligned(8) class SoundMediaHeaderBox
+  extends FullBox(‘smhd’, version = 0, 0) {
+  template int(16) balance = 0;
+  const unsigned int(16) reserved = 0;
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| version | 整数 | 指定此 box 的版本 |
+| balance | 定点数 8.8 | 将单声道音频放在立体空间中；0 为中心(正常值)；全左为 -1.0，全右 为 1.0 |
+
+#### Hint Media Header Box
+
+hint 媒体头部包含 hint 轨道的常规演示信息，与编码无关。
+
+```code
+aligned(8) class HintMediaHeaderBox
+  extends FullBox(‘hmhd’, version = 0, 0) {
+  unsigned int(16) maxPDUsize;
+  unsigned int(16) avgPDUsize;
+  unsigned int(32) maxbitrate;
+  unsigned int(32) avgbitrate;
+  unsigned int(32) reserved = 0;
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| version | 整数 | 指定此 box 的版本 |
+| maxPDUsize | 整数 | 给出此 (hint) 流内最大 PDU 的字节数 |
+| avgPDUsize | 整数 | 给出整个演示内 PDU 的平均大小 |
+| maxbitrate | 整数 | 给出在任何一秒窗口的最大速率(比特/秒) |
+| avgbitrate | 整数 | 整个演示的平均速率(比特/秒) |
+
+#### NULL Media Header Box
+
+除了视频和音频的流可能在此处定义的 NULL Media Header Box。
+
+```code
+aligned(8) class NullMediaHeaderBox
+  extends FullBox(’nmhd’, version = 0, flags) {
+} 
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| version | 整数 | 指定此 box 的版本 |
+| flags | 24 位整数 | 标记位(目前都是 0) |
+
+### Data Information Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| dinf | Media Information Box (minf) 或 Meta Box (meta) | Y(minf)/N(meta) | 1 |
+
+box 包含声明轨道内媒体信息位置的对象。
+
+```code
+aligned(8) class DataInformationBox extends Box(‘dinf’) {
+}
+```
+
+### Data Reference Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| url/urn/dref | Data Information Box (dinf) | Y | 1 |
+
+数据引用对象包含一个数据引用表(通常是 URL)，这些表声明了演示中使用的媒体数据的位置。采样描述内的数据引用索引将此表中的条目和轨道中的采样关联。可通过此方式将轨道分为多个源。
+
+如果设置了标记以指示数据与此 box 在同一文件，则在条目字段中不应提供任何字符串(空字符串也不行)。
+
+DataReferenceBox 内的 DataEntryBox 应该是 DataEntryUrnBox 或 DataEntryUrlBox。
+
+```code
+aligned(8) class DataEntryUrlBox (bit(24) flags)
+  extends FullBox(‘url ’, version = 0, flags) {
+  string location;
+}
+aligned(8) class DataEntryUrnBox (bit(24) flags)
+  extends FullBox(‘urn ’, version = 0, flags) {
+  string name;
+  string location;
+}
+aligned(8) class DataReferenceBox
+  extends FullBox(‘dref’, version = 0, 0) {
+  unsigned int(32) entry_count;
+  for (i=1; i • entry_count; i++) { entry_count; i++) {
+    DataEntryBox(entry_version, entry_flags) data_entry;
+  }
+} 
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| version | 整数 | 指定此 box 的版本 |
+| entry_count | 整数 | 对实际条目计数 |
+| entry_version | 整数 | 指定条目格式的版本 |
+| entry_flags | 24 位整数 | 定义 0x000001 标记，表示媒体数据与包含此数据引用的 Movie Box 在同一文件 |
+| data_entry | - | URL 或 URN 条目。name 是 URN， 且在 URN 条目是必须的。location 是 URL (URL 条目必须，URN 条目可选)，提供位置以使用给定名称查找资源。每个都是使用 UTF-8 字符以空字符结尾的字符串。如果设置了 selfcontained 标记，使用 URL 形式且不存在任何字符串；box 以 entry_flags 字段结尾。URL 类型(如类型为文件、http、ftp 等)应该是提供文件的服务，且该服务理想情况下支持还支持随机访问。允许相对 URL，且是相对于包含 Movie Box 的文件，该 Movie Box 包含此数据引用 |
+
+### Sample Table Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| stbl | Media Information Box (minf) | Y | 1 |
+
+采样表包含轨道内媒体采样的所有时间和数据索引。使用这里的表格，可以及时定位采样、确定采样类型(例如是否是 I 帧)，并确定采样的大小、容器以及到该容器的偏移。
+
+如果包含 Sample Table Box 的轨道没有引用数据，那么 Sample Table Box 不需要包含任何子 box (这不是非常有用的媒体轨道)。
+
+如果包含 Sample Table Box 的轨道确实引用了数据，则需要以下子 box：Sample Description、Sample Size、Sample To Chunk 和 Chunk Offset。此外，Sample Description Box 应包含至少一个条目。需要 Sample Description Box 是因为其中包含数据引用索引字段，用来指示检索媒体采样时使用的 Data Reference Box。没有 Sample Description，就无法确定媒体采样存储的位置。Sync Sample Box 是可选的。如果它不存在，则所有采样都是同步采样。
+
+附录 A 使用 Sample Table Box 中定义的结构，对随机访问做了叙述性描述。
+
+```code
+aligned(8) class SampleTableBox extends Box(‘stbl’) {
+}
+```
+
+### Time to Sample Box
+
+采样的合成时间(CT)和解码时间(DT)来自 Time to Sample Box，其中有两种类型。解码时间再 Decoding Time to Sample Box 中定义，给出连续解码时间之间的时间增量。合成时间在 Composition Time to Sample Box 中，由合成时间与解码时间的时间偏移量得到。如果轨道中每个采样的合成时间和解码时间都相同，则仅需要 Decoding Time to Sample Box；一定不能出现 Composition Time to Sample Box。
+
+Time to Sample Box 必须为所有采样提供非零的持续时间，最后一个采样可能除外。“stts” box 中的持续时间是严格的正数(非零)，除了最后一条条目可能为零。此规则源于流中没有两个时间戳可以相同的规则。将采样添加到流中时必须格外小心，为了遵守该规则，可能需要将先前最后一个采样的持续时间设为非零。如果最后一个采样的持续时间不确定，使用任意小的值和 “dwell” 编辑。
+
+在以下示例中，有一个 I、P 和 B 帧序列，每帧的解码时间增量为 10。按以下方式存储采样，包含标明的解码时间增量和合成时间偏移量(实际的 CT 和 DT 仅供参考)。因为必须在双向预测的 B 帧之前对预测的 P 帧进行解码，因此需要重新排序。采样的 DT 值始终是之前采样的差值之和。注意，解码增量的综合是该轨道中媒体的持续时间。
+
+表 2——闭合的 GOP 示例
+
+![闭合的 GOP 示例](closed_gop_example.png)
+
+表 3——开放的 GOP 示例
+
+![开放的 GOP 示例](open_gop_example.png)
+
+#### Decoding Time to Sample Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| stts | Sample Table Box (stbl) | Y | 1 |
+
+此 box 包含表格的紧凑版本，该表允许从解码时间到采样版本的索引。其他表格则根据采样编号给出采样大小和指针。表中的每个条目给出具有相同时间增量的连续采样的数目，以及这些采样的增量。通过添加增量可以构建完整的采样时间图。
+
+Decoding Time to Sample Box 包含解码时间增量：DT(n+1)=DT(n)+STTS(n)，其中 STTS(n) 是采样 n 的(未压缩)表条目。
+
+采样条目通过解码时间戳排序；因此增量都是非负的。
+
+DT 轴的原点为零；DT(i)=SUM(for j=0 to i-1 of delta(j))，所有 delta 的总和给出轨道中媒体的长度(未映射到整体时间范围，且未考虑任何编辑清单)。
+
+如果 Edit List Box 非空(非零)，则其提供初始的 CT 值。
+
+```code
+aligned(8) class TimeToSampleBox
+  extends FullBox(’stts’, version = 0, 0) {
+  unsigned int(32) entry_count;
+  int i;
+  for (i=0; i < entry_count; i++) {
+    unsigned int(32) sample_count;
+    unsigned int(32) sample_delta;
+  }
+}
+```
+
+比如对于表 2，条目会是：
+
+| sample_count | sample_delta |
+| --- | --- |
+| 14 | 10 |
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| version | 整数 | 指定此 box 的版本 |
+| entry_count | 整数 | 对下表的条目计数 |
+| sample_count | 整数 | 给定持续时间的连续采样的数目 |
+| sample_delta | 整数 | 在媒体的时间范围内给出这些采样的增量 |
+
+#### Composition Time to Sample Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| ctts | Sample Table Box (stbl) | N | 0/1 |
+
+此 box 提供解码时间和合成时间的偏移量。因为解码时间必须小于合成时间，偏移表示为无符号数，以使 CT(n)=DT(n)+CTTS(n)，其中 CTTS(n) 是采样 n 的(未压缩)表条目。Composition Time to Sample Box 是可选的，且只有所有采样的 DT 与 CT 不同时才必须存在。
+
+hint 轨道不使用此 box。
+
+```code
+aligned(8) class CompositionOffsetBox
+  extends FullBox(‘ctts’, version = 0, 0) {
+  unsigned int(32) entry_count;
+  int i;
+  for (i=0; i < entry_count; i++) {
+    unsigned int(32) sample_count;
+    unsigned int(32) sample_offset;
+  }
+}
+```
+
+比如对于表 2，条目会是：
+
+| sample_count | sample_offset |
+| --- | --- |
+| 1 | 10 |
+| 1 | 30 |
+| 2 | 0 |
+| 1 | 30 |
+| 2 | 0 |
+| 1 | 10 |
+| 1 | 30 |
+| 2 | 0 |
+| 1 | 30 |
+| 2 | 10 |
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| version | 整数 | 指定此 box 的版本 |
+| entry_count | 整数 | 对下表的条目计数 |
+| sample_count | 整数 | 给定偏移量的连续采样的数目 |
+| sample_offset | 非负整数 | 给出 CT 和 DT 的偏移量，以使 CT(n)=DT(n)+CTTS(n) |
+
+### Sample Description Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| stsd | Sample Table Box (stbl) | Y | 1 |
+
+Sample Description Box 提供了有关使用的编码类型的详细信息，以及该编码所需的任何初始化信息。
+
+存储在 Sample Description Box 内 entry_count 之后的信息是特定轨道类型的，且在轨道类型内也可以有变体(例如，即使在视频轨道中，不同的编码可能在某些公共字段之后使用不同的特定信息)。
+
+视频轨道使用 VisualSampleEntry；音频轨道使用 AudioSampleEntry。hint 轨道使用特定协议的条目格式，且具有合适的名称。
+
+对于 hint 轨道，Sample Description 包含使用于所用流协议的声明性数据，以及 hint 轨道的格式。Sample Description 的描述定义特定于协议。
+
+轨道内可能使用多个描述。
+
+“protocol” 和 “codingname” 字段是已注册的标识符，用于唯一标识要使用的流协议和压缩格式解码器。给定的协议或编码名称对 Sample Description 可能有可选或必需的扩展名(例如编解码器初始化参数)。所有这些扩展名应在 box 诶；这些 box 出现在必选字段之后。无法识别的 box 应被忽略。
+
+如果 SampleEntry  的 “format” 字段无法识别，则不应对 Sample Description 本身或相关的媒体采样进行解码。
+
+在音频轨道中，音频采样率应作为媒体的时间刻度，并记录在这里的 samplerate 字段。
+
+在视频轨道中，除非媒体格式的规范明确记录了此模板字段允许更大值，frame_count 字段必须是 1。改规范必须记录如何找到视频各个帧(其大小信息)，以及如何确定他们的时间。时间可能非常简单，跟用采样持续时间除以帧计数以构建帧的持续时间一样。
+
+```code
+aligned(8) abstract class SampleEntry (unsigned int(32) format)
+  extends Box(format){
+  const unsigned int(8)[6] reserved = 0;
+  unsigned int(16) data_reference_index;
+}
+class HintSampleEntry() extends SampleEntry (protocol) {
+  unsigned int(8) data [];
+}
+// Visual Sequences
+class VisualSampleEntry(codingname) extends SampleEntry (codingname){
+  unsigned int(16) pre_defined = 0;
+  const unsigned int(16) reserved = 0;
+  unsigned int(32)[3] pre_defined = 0;
+  unsigned int(16) width;
+  unsigned int(16) height;
+  template unsigned int(32) horizresolution = 0x00480000; // 72 dpi
+  template unsigned int(32) vertresolution = 0x00480000; // 72 dpi
+  const unsigned int(32) reserved = 0;
+  template unsigned int(16) frame_count = 1;
+  string[32] compressorname;
+  template unsigned int(16) depth = 0x0018;
+  int(16) pre_defined = -1;
+}
+// Audio Sequences
+class AudioSampleEntry(codingname) extends SampleEntry (codingname){
+  const unsigned int(32)[2] reserved = 0;
+  template unsigned int(16) channelcount = 2;
+  template unsigned int(16) samplesize = 16;
+  unsigned int(16) pre_defined = 0;
+  const unsigned int(16) reserved = 0 ;
+  template unsigned int(32) samplerate = {timescale of media}<<16;
+}
+aligned(8) class SampleDescriptionBox (unsigned int(32) handler_type)
+  extends FullBox('stsd', 0, 0){
+  int i ;
+  unsigned int(32) entry_count;
+  for (i = 1 ; i <= entry_count ; i++){
+    switch (handler_type){
+      case ‘soun’: // for audio tracks
+        AudioSampleEntry();
+        break;
+      case ‘vide’: // for video tracks
+        VisualSampleEntry();
+        break;
+      case ‘hint’: // Hint track
+        HintSampleEntry();
+        break;
+    }
+  }
+} 
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| version | 整数 | 指定此 box 的版本 |
+| entry_count | 整数 | 给出下表的条目计数 |
+| SampleEntry | - | 适合的采样条目 |
+| data_reference_index | 整数 | 包含数据引用的索引，用于检索使用此采样描述的关联采样的数据。数据引用存储在 Data Reference Box。索引范围是 1 到数据引用计数 |
+| channelcount | 整数 | 1(单声道)/2(立体声) |
+| samplesize | 整数 | 比特数，默认值是 16 |
+| samplerate | 定点数 16.16 | 采样率(hi.lo) |
+| horizresolution/vertresolution | 定点数 16.16 | 给出图像的分辨率(像素/英寸) |
+| frame_count | 整数 | 指示每个采样中存储的压缩视频帧数。默认值是 1，即每个采样一帧；对于每个采样多帧的情况值可能大于 1 |
+| compressorname | 字符串 | 名称，用于参考。以固定的 32 字节字段设置，第一个字节设置为要显示的字节数，其后是对应字节数的显示数据，然后填充到完整的 32 字节(包含大小占用的字节)。此字段可设为 0 |
+| depth | 整数 | 取自下值之一：0x0018(图像带颜色，没有透明度) |
+| width/height | 整数 | 此采样描述描述的流的最大可视宽度和高度(像素) |
+
+### Sample Size Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| stsz/stz2 | Sample Table Box (stbl) | Y | 1(变体) |
+
+此 box 包含采样计数和一个表格，该表给出每个采样的字节数。这允许媒体数据本身未分帧。媒体中的采样总数使用显示在采样技术中。
+
+Sample Size Box 有两种。第一种有一个固定 32 位的字段用于表示采样尺寸；它允许为轨道内的所有采样定义固定尺寸。第二章允许更小的字段，以便在尺寸不同且较小时可以节省空间。必须存在这两种 box 之一；为了最大兼容性首选第一个版本。
+
+```code
+aligned(8) class SampleSizeBox extends FullBox(‘stsz’, version = 0, 0) {
+  unsigned int(32) sample_size;
+  unsigned int(32) sample_count;
+  if (sample_size==0) {
+    for (i=1; i <= sample_count; i++) {
+      unsigned int(32) entry_size;
+    }
+  }
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| version | 整数 | 指定此 box 的版本 |
+| sample_size | 整数 | 指定默认采样大小。如果所有采样大小相同，此字段包含该值。如果此字段为 0，那么采样大小不相同，且采样大小保存保存在采样尺寸表中。如果此字段不是 0，它指定固定采样大小，且之后没有数组 |
+| sample_count | 整数 | 给出轨道内的采样数；如果 sample_size 为 0，这也是下表的条目数 |
+| entry_size | 整数 | 指定采样大小，通过采样编号进行索引 |
+
+### Sample To Chunk Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| stsc | Sample Table Box (stbl) | Y | 1 |
+
+媒体内的采样分分组成块。块大小可以不同，且同一块中的采样大小可以不同。此表可用于查找包含采样的块，块的位置和相关的样本描述。
+
+此表示紧凑编码的。每个条目给出一组块的第一个块的索引，这些块具有相同特征。通过从上一个条目减去一个条目，可以计算该组有多少块。你可以将其乘以合适的“采样数/块”从而转换为采样数。
+
+```code
+aligned(8) class SampleToChunkBox
+  extends FullBox(‘stsc’, version = 0, 0) {
+  unsigned int(32) entry_count;
+  for (i=1; i <= entry_count; i++) {
+    unsigned int(32) first_chunk;
+    unsigned int(32) samples_per_chunk;
+    unsigned int(32) sample_description_index;
+  }
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| version | 整数 | 指定此 box 的版本 |
+| entry_count | 整数 | 给出下表的条目数 |
+| first_chunk | 整数 | 给出一组块的第一个块的索引，这些块有相同的 samples_per_chunk 和sample_description_index；轨道中第一个块的索引值是 1(此 box 的第一个记录的 first_chunk 值为 1，表示第一个采样映射到该块) |
+| samples_per_chunk | 整数 | 给出这些块中每个块的采样数 |
+| sample_description_index | 整数 | 给出采样条目的索引，该条目描述此块的采样。索引范围从 1 到 Sample Description Box 的采样条目数 |
+
+### Chunk Offset Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| stso/co64 | Sample Table Box (stbl) | Y | 1(变体) |
+
+块偏移表给出每个块到包含文件的索引。有两种表。允许使用 32 位或 64 位偏移。后者在管理非常大的演示时非常有用。在采样表的任何单个实例中，至多有其中一种表。
+
+偏移是文件的偏移，而不是文件中任何 box (比如 Media Data Box)的偏移。这允许引用没有任何 box 结构的文件内的媒体数据。这也意味着在构造一个独立的 ISO 文件且其前面有元数据(Movie Box)时需要格外小心，因为 Movie Box 的大小会影响媒体数据的块偏移。
+
+```code
+aligned(8) class ChunkOffsetBox
+  extends FullBox(‘stco’, version = 0, 0) {
+  unsigned int(32) entry_count;
+  for (i=1; i u entry_count; i++) {
+    unsigned int(32) chunk_offset;
+  }
+}
+aligned(8) class ChunkLargeOffsetBox
+  extends FullBox(‘co64’, version = 0, 0) {
+  unsigned int(32) entry_count;
+  for (i=1; i u entry_count; i++) {
+    unsigned int(64) chunk_offset;
+  }
+} 
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| version | 整数 | 指定此 box 的版本 |
+| entry_count | 整数 | 给出下表的条目数 |
+| chunk_offset | 32/64 位证书 | 给出块的开始到其包含的媒体文件内的偏移量 |
+
+### Sync Sample Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| stss | Sample Table Box (stbl) | N | 0/1 |
+
+此 box 提供了流内随机访问点的紧凑标记。该表按采样编号的严格递增顺序排序。
+
+如果不存在 Sync Sample Box，则每个采样都是一个随机访问点。
+
+```code
+aligned(8) class SyncSampleBox
+  extends FullBox(‘stss’, version = 0, 0) {
+  unsigned int(32) entry_count;
+  int i;
+  for (i=0; i < entry_count; i++) {
+    unsigned int(32) sample_number;
+  }
+ }
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| version | 整数 | 指定此 box 的版本 |
+| entry_count | 整数 | 给出下表的条目数。如果为 0，则流内没有随机访问点，且下表为空 |
+| sample_number | 整数 | 给出采样的编号，这些采样是流内的随机访问点 |
 
 ## 参考
 
