@@ -1,15 +1,13 @@
 # ISO 基本媒体文件格式
 
 - [ISO 基本媒体文件格式](#iso-基本媒体文件格式)
+  - [缩写](#缩写)
   - [介绍](#介绍)
   - [概念](#概念)
   - [对象结构文件组织](#对象结构文件组织)
     - [文件结构](#文件结构)
     - [对象结构](#对象结构)
     - [File Type Box](#file-type-box)
-      - [定义](#定义)
-      - [语法](#语法)
-      - [语义](#语义)
   - [设计注意事项](#设计注意事项)
     - [用途](#用途)
       - [介绍](#介绍-1)
@@ -81,7 +79,34 @@
       - [Independent and Disposable Samples Box](#independent-and-disposable-samples-box)
       - [Sample Groups](#sample-groups)
         - [SampleToGroup Box](#sampletogroup-box)
+        - [Sample Group Description Box](#sample-group-description-box)
+        - [Movie Fragment 的组结构表示](#movie-fragment-的组结构表示)
+      - [Random Access Recovery Points](#random-access-recovery-points)
+    - [Sample Scale Box](#sample-scale-box)
+    - [Sub-Sample Information Box](#sub-sample-information-box)
+    - [Progressive Download Information Box](#progressive-download-information-box)
+    - [Metadata Support](#metadata-support)
+      - [The Meta Box](#the-meta-box)
+      - [XML Box](#xml-box)
+      - [The Item Location Box](#the-item-location-box)
+      - [Primary Item Box](#primary-item-box)
+      - [Item Protection Box](#item-protection-box)
+      - [Item Information Box](#item-information-box)
+      - [Meta Box 的 URL 格式](#meta-box-的-url-格式)
+      - [静态的元数据](#静态的元数据)
+        - [简单的文本](#简单的文本)
+        - [其他格式](#其他格式)
+        - [MPEG-7 元数据](#mpeg-7-元数据)
+    - [支持受保护的流](#支持受保护的流)
+      - [Protection Scheme Information Box](#protection-scheme-information-box)
   - [参考](#参考)
+
+## 缩写
+
+```txt
+supplemental enhancement information, SEI  补充增强信息
+byte order mark, BOM  字节顺序标记
+```
 
 ## 介绍
 
@@ -162,10 +187,10 @@ aligned(8) class Box (unsigned int(32) boxtype,
 }
 ```
 
-两个字段的语义是：
-
-- `size`: 整数，指定 box 的字节数，包含其所有字段和容纳的 bxo；如果 `size` 为 1，那么实际大小保存在字段 `largesize`；如果 `size` 为 0，那么该 box 是文件中的最后一个，且其内容延伸到文件末尾(通常只用于媒体数据 box)
-- `type`: 标识 box 类型；标准 box 使用紧凑类型，通常是 4 个可打印字符，以便于标识，并在下面的 box 中显式。用户扩展使用扩展类型；在这种情况下，类型字段设置为 “uuid”
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| size | 整数 | 指定 box 的字节数，包含其所有字段和容纳的 box；如果为 1，那么实际大小保存在字段 largesize；如果为 0，那么该 box 是文件中的最后一个，且其内容延伸到文件末尾(通常只用于媒体数据 box) |
+| type | - | 标识 box 类型；标准 box 使用紧凑类型，通常是 4 个可打印字符，以便于标识，并在下面的 box 中显式。用户扩展使用扩展类型；在这种情况下，类型字段设置为 “uuid” |
 
 无法识别类型的 box 应该给忽略和跳过。
 
@@ -179,16 +204,14 @@ aligned(8) class FullBox(unsigned int(32) boxtype, unsigned int(8) v, bit(24) f)
 }
 ```
 
-两个字段的语义是：
-
-- `version`: 证书，指定 box 格式的版本
-- `flags`: 标识的映射
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| version | 整数 | 指定 box 格式的版本 |
+| flags | - | 标记的映射 |
 
 无法识别版本的 box 应该给忽略和跳过。
 
 ### File Type Box
-
-#### 定义
 
 | box 类型 | 容器 | 必要性 | 数量 |
 | --- | --- | --- | --- |
@@ -204,9 +227,7 @@ aligned(8) class FullBox(unsigned int(32) boxtype, unsigned int(8) v, bit(24) f)
 
 “avc1” brand 应用于表示该文件符合子章节的 “AVC 扩展名”。如果未使用其他 brand，这意味着需要支持这些扩展。规范可能支持使用 “avc1” 作为主要的 brand；在这种情况下，该规范定义文件扩展名和所需行为。
 
-如果在文件级别使用了具有 MPEG-7 句柄类型的 meta-box，那么 “mp71” brand 应该是 File Type Box 的 brand 兼容列表的成员之一。
-
-#### 语法
+如果在文件级别使用了具有 MPEG-7 handler 类型的 meta-box，那么 “mp71” brand 应该是 File Type Box 的 brand 兼容列表的成员之一。
 
 ```code
 aligned(8) class FileTypeBox
@@ -217,15 +238,15 @@ aligned(8) class FileTypeBox
 }
 ```
 
-#### 语义
-
 此 box 标识文件符合的规范。
 
 每个 brand 是可打印的 4 字符代码，通过 ISO 注册，用于表示精确的规范。
 
-- `major_brand`: brand 标识符
-- `minor_brand`: 信息性的证书，用于主要 brand 的次版本
-- `compatible_brands`: 一个 brand 列表，在 box 末尾
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| major_brand | 整数 | brand 标识符 |
+| minor_brand | 整数 | 信息性的证书，用于主要 brand 的次版本 |
+| compatible_brands | - | 一个 brand 列表，在 box 末尾 |
 
 ## 设计注意事项
 
@@ -445,7 +466,7 @@ hint 轨道根据引用将数据从其他轨道拉下来以构造流。这些其
 所有 hint 轨道使用通用的一组声明和结构：
 
 - 将 hint 轨道链接到其携带的基本流轨道，通过 “hint” 类型的轨道引用
-- 它们使用一个句柄—— Handler Reference Box 中是 “hint” 类型
+- 它们使用一个 handler 类型—— Handler Reference Box 中是 “hint” 类型
 - 它们使用一个 Hint Media Header Box
 - 它们使用一个 hint 采样入口，位于采样描述，包含一个名称和格式，对于其代表的协议是唯一的
 - 归于本地回放通常将它们标记为不可用，将其轨道头部标记置为 0
@@ -692,7 +713,7 @@ aligned(8) class MediaHeaderBox extends FullBox(‘mdhd’, version, 0) {
 | --- | --- | --- | --- |
 | hdlr | Media Box (mdia) 或 Meta Box (meta) | Y | 1 |
 
-此 box 在 Media Box 内，声明展示轨道中媒体数据的过程，从而声明轨道中媒体的性质。例如，视频轨道将由视频句柄处理。
+此 box 在 Media Box 内，声明展示轨道中媒体数据的过程，从而声明轨道中媒体的性质。例如，视频轨道将由视频 handler 处理。
 
 此 box 存在 Meta Box 内时，声明“元” box 内容的结构或格式。
 
@@ -730,7 +751,7 @@ aligned(8) class MediaInformationBox extends Box(‘minf’) {
 | --- | --- | --- | --- |
 | vmhd/smhd/hmhd/nmhd | Media Information Box (minf) | Y | 1 |
 
-每个轨道类型(对应媒体的句柄类型)有一个不同的媒体信息头；匹配的头部应该存在，可以是此处定义的头部之一，也可以是派生规范中定义。
+每个轨道类型(对应媒体的 handler 类型)有一个不同的媒体信息头；匹配的头部应该存在，可以是此处定义的头部之一，也可以是派生规范中定义。
 
 #### Video Media Header Box
 
@@ -1752,9 +1773,9 @@ aligned(8) class SampleDependencyTypeBox
 | --- | --- | --- | --- |
 | sbgp | Sample Table Box(stbl)/Track Fragment Box(traf) | N | >=0 |
 
-此表可用于查找采样所属的组，以及该采样组相关的描述。该表经过紧凑编码，每个条目给出一组采样的第一个采样的索引，这些采样具有相同的 Sample Group Description。group_description_index 是引用 SampleGroupDescription box 的索引，其中包含的条目描述每个采样组的特征。
+此表可用于查找采样所属的组，以及该采样组相关的描述。该表经过紧凑编码，每个条目给出一组采样的第一个采样的索引，这些采样具有相同的采样分组描述。group_description_index 是引用 SampleGroupDescription Box 的索引，其中包含的条目描述每个采样组的特征。
 
-如果轨道内的采样有多个采样分组，则此 box 可能有多个实例。每个 SampleToGroup box 的实例有一个类型码以区分不同的采样分组。在一个轨道内部，应最多有一个此 box 的实例，带有特定的分组类型。相关的 SampleGroupDescription 应为分组类型指示相同的值。
+如果一个轨道内的采样有多个采样分组，则此 box 可能有多个实例。SampleToGroup Box 的每个实例都有一个类型码以区分不同的采样分组。在一个轨道内部，应最多有一个具有特定分组类型的此 box 的实例。相关的 SampleGroupDescription 应为分组类型指示相同的值。
 
 ```code
 aligned(8) class SampleToGroupBox
@@ -1777,6 +1798,458 @@ aligned(8) class SampleToGroupBox
 | entry_count | 整数 | 给出下表的条目数 |
 | sample_count | 整数 | 给出具有相同 SampleGroupDescription 的连续采样的数目。如果此 box 的采样计数综合少于总的采样计数，则读者应有效扩展其条目，使剩下的样本与任何分组都不相关。如果此 box 内的总数大于其他地方记录的 sample_count，那么将无法定义读者行为 |
 | group_description_index | 整数 | 给出采样组条目的索引，该条目描述此分组中的采样。索引范围是 1 到 SampleGroupDescription box 内的采样组条目数，或者取值 0 表示该采样不属于此类型任何分组 |
+
+##### Sample Group Description Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| sgpd | Sample Table Box(stbl) | N | >=0，每个 SampleToGroup Box 一个 |
+
+这个描述表给出相同分组的特征信息。描述性的信息定义和表征采样组所需的任何其他信息。
+
+如果一个轨道中的采样有多个采样分组，则此 box 可能有多个实例。SampleGroupDescription Box 的每个实例都有一个类型码以区分不同的采样分组。在一个轨道内部，应最多有一个具有特定分组类型的此 box 的实例。相关的 SampleToGroup 应为分组类型指示相同的值。
+
+信息存储在 Sample Group Description Box 的 entry_count 之后。定义了抽象条目类型，采样分组应定义派生类型以表示每个采样组的描述。对于视频轨道，将抽象的 VisualSampleGroupEntry 与类似类型的音频和 hint 轨道一起使用。
+
+请注意：采样分组描述条目的基类不是 box，因此不会标识大小。当定义派生类时，确保它们有固定的大小，或使用长度字段明确标识大小。不建议使用隐含的大小(例如，通过解析数据获得)，因为这会使得扫描数组变得困难。
+
+```code
+// Sequence Entry
+abstract class SampleGroupDescriptionEntry (unsigned int(32) handler_type){
+}
+// Visual Sequence
+abstract class VisualSampleGroupEntry (type) extends SampleGroupDescriptionEntry
+(type){
+}
+// Audio Sequences
+abstract class AudioSampleGroupEntry (type) extends SampleGroupDescriptionEntry
+(type){
+}
+aligned(8) class SampleGroupDescriptionBox (unsigned int(32) handler_type)
+  extends FullBox('sgpd', 0, 0){
+  unsigned int(32) grouping_type;
+  unsigned int(32) entry_count;
+  int i;
+  for (i = 1 ; i <= entry_count ; i++){
+    switch (handler_type){
+    case ‘vide’: // for video tracks
+      VisualSampleGroupEntry ();
+      break;
+    case ‘soun’: // for audio tracks
+      AudioSampleGroupEntry();
+      break;
+    case ‘hint’: // for hint tracks
+      HintSampleGroupEntry();
+      break;
+    }
+  }
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| version | 整数 | 指定此 box 的版本 |
+| grouping_type | 整数 | 标识与此采样分组描述关联的 SampleToGroup box  |
+| entry_count | 整数 | 给出下表的条目数 |
+
+##### Movie Fragment 的组结构表示
+
+通过使用 SampleToGroup Box 以支持 Movie Fragment 中的新 SampleGroup，SampleToGroup Box 的容器变为 Track Fragment Box (“traf”)。在 8.40.3.2 小节中指定其定义、语法和语义。
+
+SampleToGroup Box 可用于查找轨道片段中的采样所属分组，以及该采样组的关联描述。此表经过紧凑编码，每个条目给出一组采样的第一个采样的索引，这些采样具有相同的采样分组描述。采样组描述 ID 是一个引用 SampleGroupDescription Box 的索引，该 Box 包含的条目描述每个采样组特征，且存在 SampleTableBox 中。
+
+如果一个轨道片段内的采样有多个采样分组，则可能有多个 SampleToGroup Box 实例。SampleToGroup Box 的每个实例都有一个类型码以区分不同的采样分组。相关的 SampleGroupDescription 应为分组类型指示相同的值。
+
+轨道片段中所有 SampleToGroup Box 内表示的采样总数必须和所有轨道片段组的采样总数匹配。每个 SampleToGroup Box 记录相同采样的不同分组。
+
+#### Random Access Recovery Points
+
+在某些编码系统中，可以在解码一些样本之后随即访问流并实现正确解码。这称为逐步解码刷新。例如，在视频中，编码器可能编码流中的帧内编码宏块，这样编码器就知道在一定的时间段内，整个图像的组成像素仅依赖该时间段内提供的帧内编码宏块。
+
+可以进行此类逐步刷新的采样被标记为该组的成员。组定义允许在周期的开始或末尾进行标记。然而，党羽特定媒体类型一起使用时，该组的使用可能限于仅标记一个末尾(即仅限于正火负滚动至)。将滚动组定义为具有相同滚动距离的采样组。
+
+```code
+class VisualRollRecoveryEntry() extends VisualSampleGroupEntry (’roll’) {
+ signed int(16) roll_distance;
+}
+class AudioRollRecoveryEntry() extends AudioSampleGroupEntry (’roll’) {
+ signed int(16) roll_distance;
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| roll_distance | 有符号整数 | 给出必须解码才能正确解码一个采样的采样数。正值表示必须解码对应数目的采样(位于组成员采样之后)，以完成最后一次恢复，即最后一个采样正确。负值表示必须解码对应数目的采样(位于组成员采样之前)，以完成被标记的采样。不能使用零值；Sync Sample Table 记录不需要恢复滚动的随机访问点 |
+
+### Sample Scale Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| stsl | Sample Entry | N | 0/1 |
+
+此 box 可出现在任何视觉采样条目中。它表示当视觉材料的宽高(在任何视觉采样条目内声明的 width 和 height 值)与轨道的宽高(在 Track Header Box 声明)不匹配时，应采用的缩放方法。此 box 的实现是可选的；如果存在且解码器可以解释，则应根据此 box 指定的缩放行为显示所有采样。否则，将所有采样缩放到 Track Header Box 指示的 width 和 height 大小。
+
+如果图像的尺寸大于显示区域，且 Sample Scale Box 应用了“隐藏”比例，则无法显示整个图像。在这种情况下，提供信息以确定显示区域很有用。然后，center 值将会标识每个视觉采样内的高优先级区域的中心。解码器可以根据这些值显示高优先级区域。center 值暗示一个序列中所有图像的一致裁剪。当所需视觉中心在图像中心下方或右侧时，偏移值为正，否则偏移值为负。
+
+scale_method 值的语义在 SMIL 1.0 区域的 “fit” 属性指定。
+
+```code
+aligned(8) class SampleScaleBox extends FullBox(‘stsl’, version = 0, 0) {
+  bit(7) reserved = 0;
+  bit(1) constraint_flag;
+  unsigned int(8) scale_method;
+  int(16) display_center_x;
+  int(16) display_center_y;
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| constraint_flag | - | 如果设置此标记，此采样条目描述的所有采样都应根据 scale_method 字段指定的方法进行缩放。否则，建议所有采样根据 scale_method 字段指定的方法进行缩放，但可以依据实现相关的方式进行显示，这可能包括不缩放图像(即既不缩放到 Track Header Box 指示的 width 和 height，也不根据这里指定的方法缩放) |
+| scale_method | 8 位 无符号整数 | 定义要使用的缩放模式。在 256 个可能的值中，0~127 保留给 ISO 使用，而 128~256 是用户定义的，在本国际标准中未指定；可由应用程序确定使用。在保留值中，目前定义了以下模式：1-fill 模式；2-hidden 模式；3-meet 模式；4-X 轴是 slice 模式；5-Y 轴是 slice 模式 |
+| display_center_x | 整数 | 应该优先显示的区域中心相对图像中心的水平偏移量(单位是像素)。默认值是 0。正值表示显示中心在图像中心右侧 |
+| display_center_y | 整数 | 应该优先显示的区域中心相对图像中心的垂直偏移量(单位是像素)。默认值是 0。正值表示显示中心在图像中心下方 |
+
+### Sub-Sample Information Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| subs | Sample Table Box(stbl)/Track Fragment Box(traf) | N | 0/1 |
+
+此 box 名为 Sub-Sample Information Box，旨在包含子采样信息。
+
+子采样是采样字节的连续范围。应为给定的编码系统(例如 ISO/IEC 14496-10，高级视频编码)提供子采样的具体定义。在缺少这种具体定义时，不应对使用该编码系统的采样应用此 box。
+
+如果任何条目的 subsample_count 为 0，则这些采样没有子采样信息，之后也没有数组。表格是稀疏编码的；通过记录每个条目之间的采样数量差异来标识哪些采样具有子采样结构。表格第一个条目记录第一个具有子采样信息的采样编号。
+
+请注意：可以结合 subsample_priority 和 discardable，以便当 subsample_priority 小于某个值时，将 discardable 设为 1。然而，因为不同的系统可能使用不同比例的优先级值，可以安全地将二者分开，使用干净的解决方案处理可丢弃的子采样。
+
+```code
+aligned(8) class SubSampleInformationBox
+  extends FullBox(‘subs’, version, 0) {
+  unsigned int(32) entry_count;
+  int i,j;
+  for (i=0; i < entry_count; i++) {
+    unsigned int(32) sample_delta;
+    unsigned int(16) subsample_count;
+    if (subsample_count > 0) {
+      for (j=0; j < subsample_count; j++) {
+        if(version == 1)
+        {
+          unsigned int(32) subsample_size;
+        }
+        else
+        {
+          unsigned int(16) subsample_size;
+        }
+        unsigned int(8) subsample_priority;
+        unsigned int(8) discardable;
+        unsigned int(32) reserved = 0;
+      }
+    }
+  }
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| version | 整数 | 指定此 box 的版本(此规范是 0 或 1) |
+| entry_count | 整数 | 给出下表的条目数 |
+| sample_delta | 整数 | 指定有子采样结构的采样的编号。将其编码为所需的采样的编号和前一个条目指示的采样编号的差值。如果当前条目是第一个，该值指示第一个有子采样结构的采样编号，即该值为采样编号和 0 的差值 |
+| subsample_count | 整数 | 指定当前采样的子采样数目。如果没有子采样结构，则此字段值为 0 |
+| subsample_size | 整数 | 指定当前子采样的字节数 |
+| subsample_priority | 整数 | 指定每个子采样的降级优先级。subsample_priority 值越高，表示子采样对解码质量很重要且影响更大 |
+| discardable | 整数 | 等于 0 表示解码当前采样需要子采样，而等于 1 表示解码当前采样不需要子采样，但可用于增强，例如子采样包含补充增强信息(SEI)消息 |
+
+### Progressive Download Information Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| pdin | 文件 | N | 0/1 |
+
+Progressive Download Information Box 帮助渐进式下载 ISO 文件，box 包含成对数字(到 box 末尾)，指定有效文件下载比特率(字节/秒)，以及建议的初始播放延迟(毫秒)。
+
+接收方可以预估正在下载的速率，并通过对条目对线性差值或从第一个条目或最后一个条目进行外推，获得合适的初始延迟的较高估计值。
+
+```code
+aligned(8) class ProgressiveDownloadInfoBox
+  extends FullBox(‘pdin’, version = 0, 0) {
+  for (i=0; ; i++) { // to end of box
+    unsigned int(32) rate;
+    unsigned int(32) initial_delay;
+  }
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| rate | - | 下载速率，表示为 字节/秒 |
+| initial_delay | - | 播放文件时建议使用的延迟，由此如果以给定速率继续下载，文件内所有数据将及时到达以供使用，且回放无需暂停 |
+
+### Metadata Support
+
+使用一个通用的基本结构包含一般的元数据，该结构称为 Meta Box。
+
+#### The Meta Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| meta | 文件/Movie Box(moov)/Track Box(trak) | N | 0/1 |
+
+Meta box 包含描述性或注释性元数据，“meta” box 需要包含一个 “hdlr” box，指示 “meta” box 内容的结构或格式。该元数据位于此 box 内的一个 box(比如 XML box)，或是通过 Primary Item Box 标识的 item 定位。
+
+包含的所有其他 box 都特定于 Handler Box 指定的格式。
+
+对于给定的格式，此处定义的其他 box 可能定义为可选或必需的。如果使用它们，则必须使用此处指定的格式。这些可选 box 包括：data-information box，用于记录放置元数据值(例如图片)的其他文件；item location box，用于记录每个 item 在这些文件中的位置(比如常见情况是在同一文件存放多张图片)。在文件、影片或轨道级别，每个级别最多出现一个 meta box。
+
+如果出现一个 ItemProtectionBox，除非考虑了保护系统，否则某些或所有元数据(可能包括主资源)可能已经被保护且无法读取。
+
+```code
+aligned(8) class MetaBox (handler_type)
+  extends FullBox(‘meta’, version = 0, 0) {
+  HandlerBox(handler_type) theHandler;
+  PrimaryItemBox primary_resource; // optional
+  DataInformationBox file_locations; // optional
+  ItemLocationBox item_locations; // optional
+  ItemProtectionBox protections; // optional
+  ItemInfoBox item_infos; // optional
+  IPMPControlBox IPMP_control; // optional
+  Box other_boxes[]; // optional
+}
+```
+
+元数据的结构或格式由 handler 声明。
+
+#### XML Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| xml/bxml | Meta Box(meta) | N | 0/1 |
+
+当主要数据是 XML 格式，且希望将 XML 直接存储在 Meta Box 中时，可以使用这些格式之一。仅当 handler 标识的已定义格式存在定义良好的 XML 二进制文件时，才可以使用 BinaryXML Box。
+
+XML box 内的数据为 UTF-8 格式，除非数据以字节顺序标记 (BOM) 开头，这种情况标识数据是 UTF-16 格式。
+
+```code
+aligned(8) class XMLBox
+  extends FullBox(‘xml ’, version = 0, 0) {
+  string xml;
+}
+aligned(8) class BinaryXMLBox
+  extends FullBox(‘bxml’, version = 0, 0) {
+  unsigned int(8) data[]; // to end of box
+}
+```
+
+#### The Item Location Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| iloc | Meta Box(meta) | N | 0/1 |
+
+Item Location Box 提供此文件或其他文件中的资源目录，通过定位其包含文件、在文件内的偏移量，及其长度实现。以二进制格式存放此 box，即使系统不了解所用的特定元数据系统(handler)，也能对这些数据进行通用处理。比如，系统可能将所有外部引用元数据资源整合到一个文件，相应地重新调整文件偏移量和文件引用。
+
+此 box 以三个值开头，分别指定 offset、length 和 base_offset 字段的字节大小。这些值必须来自集合 {0,4,8}。
+
+可将 item 存储成区间碎片，比如启用交织。区间是资源字节的连续子集；通过合并区间形成资源。如果只使用一个区间(extent_count=1)，则可能隐含 offset、length 之一或二者：
+
+- 如果未标识 offset(此字段长度为 0)，则标识文件开头(offset=0)
+- 如果未指定或指定 length 为 0，则标识整个文件长度。与此元数据相同的文件引用，或划分为不止一个区间的 item，应该具有显式的 offset 和 length，或使用 MIME 类型要求对该文件进行不同的解释，以避免无限递归
+
+item 的大小是 extent_length 的总和。
+
+请注意：区间可能和轨道 Sample Table 定义的块交织。
+
+data_reference_index 可能取值为 0，表示与此元数据相同的文件引用，或 data_reference 表的索引。
+
+某些引用数据本身可能使用 offset/length 技术来寻址其中的资源(比如，可能以这种方式“包含” MP4 文件)。通常，此类偏移量相对于包含文件的开头。base_offset 字段提供额外的偏移量，用于包含的数据内部的偏移量计算。比如，如果按照此规范格式化的文件包含一个 MP4 文件，则该 MP4 节中的数据偏移通常是相对于文件开头的； base_offset 增加到这些偏移量。
+
+```code
+aligned(8) class ItemLocationBox extends FullBox(‘iloc’, version = 0, 0) {
+  unsigned int(4) offset_size;
+  unsigned int(4) length_size;
+  unsigned int(4) base_offset_size;
+  unsigned int(4) reserved;
+  unsigned int(16) item_count;
+  for (i=0; i<item_count; i++) {
+    unsigned int(16) item_ID;
+    unsigned int(16) data_reference_index;
+    unsigned int(base_offset_size*8) base_offset;
+    unsigned int(16) extent_count;
+    for (j=0; j<extent_count; j++) {
+      unsigned int(offset_size*8) extent_offset;
+      unsigned int(length_size*8) extent_length;
+    }
+  }
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| offset_size | {0,4,8} | 标识 offset 字段的字节长度 |
+| length_size | {0,4,8} | 标识 length 字段的字节长度 |
+| base_offset_size | {0,4,8} | 标识 base_offset 字段的字节长度 |
+| item_count | 整数 | 计数下面的数组资源 |
+| item_ID | 整数 | 此资源的随机“名称”，可用于引用该资源(比如在 URL) |
+| data_reference_index | 整数 | 0 标识本文件；基于 1 的索引，索引 Data Information Box 的数据引用 |
+| base_offset | 整数 | 为引用的数据内的偏移量计算提供基础值。如果 base_offset_size 为 0，base_offset 取值为 0，即其未被使用 |
+| extent_count | 整数 | 提供资源被划分的区间计数；值必须大于等于 1 |
+| extent_offset | 整数 | 提供此 item 的绝对偏移量(单位是字节)，从包含文件的开头开始。如果 offset_size 为 0，则 offset 为 0  |
+| extent_length | 整数 | 提供此元数据 item 的绝对长度(单位是字节)。如果 length_size 为 0，length 为 0。如果此值为 0，则 item 的长度是整个引用文件的长度 |
+
+#### Primary Item Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| pitm | Meta Box(meta) | N | 0/1 |
+
+对于给定的 handler，当希望将其存储在其他地方或将划分为区间时，主要数据可以是引用的 item 之一；或者主要元数据可能包含在 Meta Box (比如在 XML Box)。或者此 box 必须休闲，或者 Meta Box 中必须有一个包含主要信息的 box (比如 XML Box)，信息是标识的 handler 所需的格式。
+
+```code
+aligned(8) class PrimaryItemBox
+  extends FullBox(‘pitm’, version = 0, 0) {
+  unsigned int(16) item_ID;
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| item_ID | 整数 | 主要 item 的标识符 |
+
+#### Item Protection Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| ipro | Meta Box(meta) | N | 0/1 |
+
+Item Protection Box 提供一组 item 保护信息，由 Item Information Box 使用。
+
+```code
+aligned(8) class ItemProtectionBox
+  extends FullBox(‘ipro’, version = 0, 0) {
+  unsigned int(16) protection_count;
+  for (i=1; i<=protection_count; i++) {
+    ProtectionSchemeInfoBox protection_information;
+  }
+}
+```
+
+#### Item Information Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| iinf | Meta Box(meta) | N | 0/1 |
+
+Item Information Box 提供有关所选项目的其他信息，包括符号(“文件”)名称。其出现是可选的，但是如果出现，必须对其进行解释，因为项目保护或内容编码可能已经更改了 item 中的数据格式。如果 item 同时标识了内容编码和保护，则读者应该先取消对 item 的保护，然后对 item 的内容编码进行解码。如果需要更多控制，可以使用 IPMP 序列码。
+
+此 box 包含一组条目，且每个条目都被格式化为一个 box。该数组在条目记录中按照增加的 item_ID 排序。
+
+```code
+aligned(8) class ItemInfoEntry
+  extends FullBox(‘infe’, version = 0, 0) {
+  unsigned int(16) item_ID;
+  unsigned int(16) item_protection_index
+  string item_name;
+  string content_type;
+  string content_encoding; //optional
+}
+aligned(8) class ItemInfoBox
+  extends FullBox(‘iinf’, version = 0, 0) {
+  unsigned int(16) entry_count;
+  ItemInfoEntry[ entry_count ] item_infos;
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| item_ID | 整数 | 主要资源(比如 “xml” box 中包含的 XML)是 0，或者是 item 的 ID，下面的信息为此 item 定义 |
+| item_protection_index | 整数 | 未保护的 item 是 0，或者基于 1 的索引，索引 Item Protection Box，其中定义此 item 应用的保护(Item Protection Box 中第一个 box 索引是 1) |
+| item_name | null 结尾的字符串 | UTF-8 字符。包含 item 的符号名称 |
+| content_type | 字符串 | item 的 MIME 类型 |
+| content_encoding | null 结尾的字符串 | 可选的，UTF-8 字符。用于标识二进制文件已编码，且在解释之前需要解码。这些值定义在 HTTP/1.1 的 Content-Encoding。一些可能的值是 “gzip”、“compress” 和 “deflate”。空字符串标识没有内容编码 |
+| entry_count | 整数 | 提供下面数组的条目技术 |
+
+#### Meta Box 的 URL 格式
+
+当使用 meta-box 时，可能使用绝对或相对的 URL 引用 meta-box 中的 item。绝对 URL 仅可用于引用文件级 meta-box 中的 item。
+
+当解释 meta-box 内容中的数据时(即文件级别的 meta-box 指文件，影片级别指演示，轨道级别指轨道)，将 meta-box 中的 item 视为 shadowing 文件，该文件和容器文件的位置相同。这个 shadowing 表示如果引用和容器文件同一位置的另一个文件，则可以解析为容器文件本身的一个 item。通过在容器文件本身之后追加 URL 片段，可以在容器文件内对该 item 进行寻址。该片段以 “#” 字符开头，且包含任意一项：
+
+- item_ID=\<n\>，通过 ID 标识 item (主要资源的 ID 可能为 0)
+- item_name=\<item_name\>，当使用 Item Information Box 时
+
+如果包含的 item 内的片段必须可以寻址，则该片段的初始 “#” 字符将替换为 “*”。
+
+考虑下面的示例：<http://a.com/d/v.qrv#item_name=tree.html*branch1>。我们假定 v.qrv 是一个文件，且在文件级别有一个 meta-box。
+
+- 客户端首先解析片段，使用 HTTP 从 a.com 拉取 v.qrv
+- 然后检查顶级 meta box，并将其中的 item 逻辑添加到 a.com 目录 d 的缓存中
+- 然后将 URL 重新格式化为 <http://a.com/d/tree.html#branch1>。注意，该片段已经提升为完整的文件名，并且第一个 “*” 已转回 “#”
+- 然后，客户端或者在 meta box 中找到名为 tree.html 的 item，或从 a.com 拉取 tree.html，然后在 tree.html 中找到锚点 “branch1”
+- 如果在 html 内部使用相对 URL (比如 “flower.gif”)引用了文件，客户端会使用正常规则将其转换为绝对 URL <http://a.com/d/flower.gif>，并再次检查 flower.gif 是否是命名的 item (并因此 shadow 一个此名称的单独文件)。如果不是命名的 item，从 a.com 拉取 flower.gif
+
+#### 静态的元数据
+
+这节定义 ISO 文件格式家族中静态(非定时)元数据的存储。
+
+元数据的读者支持通常是可选的，因此对于此处或其他地方定义的格式也是可选的，除非派生规范将其变成强制性的。
+
+##### 简单的文本
+
+user-data box 形式有简单文本标签的支持；当前只定义了一个——版权声明。如果满足以下条件，则可以支持其他使用此简单格式的元数据：
+
+- 使用注册的 box 类型，或使用 UUID 转义(今天允许使用后者)
+- 使用注册的标签，必须记录等效的 MPEG-7 结构称为注册的一部分
+
+##### 其他格式
+
+当需要其他格式的元数据时，上面定义的 “meta” box 可以包含在文档的适当级别。如果该文档本身是一个元数据文档，则 meta box 在文件级别。如果元数据注释了整个演示，则 meta box 在影片级别；如果注释整个流，则在轨道级别。
+
+##### MPEG-7 元数据
+
+MPEG-7 元数据存储在此规范的 meta box 中。
+
+- 对于 Unicode 格式的文本元数据，handler 类型为 “mp7t”
+- 对于以 BIM 格式压缩的二进制元数据，handler 类型为 “mp7b”。在这种情况下，二进制 XML box 包含配置信息，紧跟的二进制的 XML
+- 当为文本格式时，或者在元数据容器 “meta” 中有另一个名为 “xml” 的 box，其中包含文本的 MPEG-7 文档，或者有一个 Primary Item Box 用于标识包含 MPEG-7 XML 的 item
+- 当为二进制格式时，或者在元数据容器 “meta” 中有另一个名为 “bxml” 的 box，其中包含二进制的 MPEG-7 文档，或者有一个 Primary Item Box 用于标识包含 MPEG-7 二进制 XML 的 item
+- 如果在文件级别使用一个 MPEG-7 box，则 File Type Box 内的兼容性 brand 列表成员应该有 “mp71” brand
+
+### 支持受保护的流
+
+这节记录用于受保护内容的文件格式转换。下面的情况可使用这些转换：
+
+- 当内容已经转换(比如加密)，以致普通解码器无法再对其解码，必须使用
+- 仅在理解和实现保护系统时，才能对内容解码时，可以使用
+
+转换通过封装原始的数据声明起作用。封装修改了采样条目的四字符代码，以致不了解保护的读者将媒体流视为新的流格式。
+
+因为采样条目的格式随媒体类型而异，因此每种媒体类型(音频、视频、文本等)都是要不同的封装四字节代码。它们是：
+
+| 流(轨道)类型 | 采样条目代码 |
+| --- | --- |
+| 视频 | encv |
+| 音频 | enca |
+| 文本 | enct |
+| 系统 | encs |
+
+采样描述的转换通过下面的流程描述：
+
+1. 采样描述的四字符代码被替换为指示保护封装的四字符代码：这些代码仅根据媒体类型变化。比如，“mp4v” 替换为 “encv”，且 “mp4a” 替换为 “enca”
+2. 向采样描述添加 ProtectionSchemeInfoBox (在下面定义)，其他所有 box 都保持不变
+3. 原始采样条目类型(四字符代码)保存在 ProtectionSchemeInfoBox 中，在一个新的名为 OriginalFormatBox (在下面定义)的 box 中
+
+有三种方法用于标记保护性质，可以单独使用或结合使用。
+
+1. 使用 MPEG-4 系统时，必须使用 IPMP 以标记此流是受保护的
+2. MPEG-4 系统上下文之外也可使用 IPMP 描述符，使用包含 IPMP 描述符的 box
+3. 也可使用 scheme 类型和信息 box 描述应用的保护
+
+在 MPEG-4 系统之外使用 IPMP 时，在 “moov” atom 内也会出现“全局的”  IPMPControlBox。
+
+请注意，使用 MPEG-4 系统时，MPEG-4 系统终端可以使用 IPMP 描述符有效地处理，比如带有原始格式 “mp4v” 的 “encv” 视为和 “mp4v” 完全相同。
+
+#### Protection Scheme Information Box
 
 ## 参考
 
