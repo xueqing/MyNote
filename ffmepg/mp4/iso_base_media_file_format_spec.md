@@ -99,6 +99,11 @@
         - [MPEG-7 元数据](#mpeg-7-元数据)
     - [支持受保护的流](#支持受保护的流)
       - [Protection Scheme Information Box](#protection-scheme-information-box)
+      - [Original Format Box](#original-format-box)
+      - [IPMP Info Box](#ipmp-info-box)
+      - [IPMP Control Box](#ipmp-control-box)
+      - [Scheme Type Box](#scheme-type-box)
+      - [Scheme Information Box](#scheme-information-box)
   - [参考](#参考)
 
 ## 缩写
@@ -106,6 +111,8 @@
 ```txt
 supplemental enhancement information, SEI  补充增强信息
 byte order mark, BOM  字节顺序标记
+object descriptor, OD  对象描述符
+registration authority, RA  注册机构
 ```
 
 ## 介绍
@@ -2250,6 +2257,138 @@ MPEG-7 元数据存储在此规范的 meta box 中。
 请注意，使用 MPEG-4 系统时，MPEG-4 系统终端可以使用 IPMP 描述符有效地处理，比如带有原始格式 “mp4v” 的 “encv” 视为和 “mp4v” 完全相同。
 
 #### Protection Scheme Information Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| sinf | Protected Sample Entry/Item Protection Box(ipro) | Y | 1 |
+
+Protection Scheme Information Box 包含了了解应用的加密转化及其参数以及查找其他信息(例如密钥管理系统的类型和位置)所需的所有信息。它还记录了媒体的原始(未加密)格式。Protection Scheme Information Box 是一个容器 box。如果采样条目使用了指示受保护流的代码，则此 box 是必需的。
+
+当用于受保护的采样条目时，此 box 必须包含原始格式 box 来记录原始格式。以下指示方法必须使用至少一种，以标识应用的保护：
+
+- 带 IPMP 的 MPEG-4 系统：在 MPEG-4 系统流中使用 IPME 描述符时，没有其他 box
+- 标准的 IPMP：在 MPEG-4 系统之外使用 IPMP 描述符时，有一个 IPMPInfoBox
+- scheme 标识：使用 SchemeTypeBox 和 SchemeInformationBox (同时出现或只出现一个)
+
+```code
+aligned(8) class ProtectionSchemeInfoBox(fmt) extends Box('sinf') {
+  OriginalFormatBox(fmt) original_format;
+  IPMPInfoBox IPMP_descriptors; // optional
+  SchemeTypeBox scheme_type_box; // optional
+  SchemeInformationBox info; // optional
+}
+```
+
+#### Original Format Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| frma | Protection Scheme Information Box(sinf) | Y(在受保护的采样条目中) | 1 |
+
+Original Format Box “frma” 包含原始未转换采样描述符的四字符代码：
+
+```code
+aligned(8) class OriginalFormatBox(codingname) extends Box ('frma') {
+  unsigned int(32) data_format = codingname;
+  // format of decrypted, encoded data
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| data_format | - | 原始未转换采样描述符的四字符代码(例如，如果流包含受保护的 MPEG-4 视觉资源则为 “mp4v”) |
+
+#### IPMP Info Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| imif | Protection Scheme Information Box(sinf) | N | 1 |
+
+IPMP Info Box 包含 IPMP 描述符，它们记录流应用的保护。
+
+IPMP_Descriptor 在 14496-1 中定义。它是 MPEG-4 对象描述符(OD)的一部分，描述如何访问和编码对象。在 ISO 基本媒体文件格式中，IPMPInfoBox 可直接携带 IPMP 描述符而无需 OD 流。
+
+IPMPInfoBox 中存在 IPMP 描述符表示相关的媒体流受此描述符描述的 IPMP 工具的保护。
+
+每个 IPMP_Descriptor 有一个 IPMP_ToolID，指示保护所需的 IPMP 工具。使用了独立的注册机构(RA)，因此任何一方都可以注册自己的 IPMP 工具并进行识别，而不会发生冲突。
+
+IPMP_Descriptor 携带的 IPMP 信息用于一个或多个 IPMP 工具实例，它包含但是不限于 IPMP Rights Data、IPMP Key Data、Tool Configuration Data 等。
+
+如果此媒体流受多个 IPMP 工具保护，则此 IPMPInfoBox 可携带多个 IPMP 描述符。
+
+```code
+aligned (8) class IPMPInfoBox extends FullBox(‘imif’, 0, 0){
+  IPMP_Descriptor ipmp_desc[];
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| ipmp_desc | - | IPMP 描述符的数组 |
+
+#### IPMP Control Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| ipmc | Movie Box(moov)/Meta Box(meta) | N | 0/1 |
+
+IPMP Control Box 可能包含 IPMP 描述符，文件中的任何流可引用这些描述符。
+
+IPMP_ToolListDescriptor 在 14496-1 中定义，它在 ISO 基本媒体文件或 meta-box 中传达访问媒体流所需的 IPMP 工具列表，也可能包含备选的 IPMP 工具列表，或访问内容所需工具的参数描述。
+
+此 IPMPControlBox 中存在 IPMP 描述符 表示该文件或 metabox 中的媒体流受 IPMP 描述符描述的 IPMP 工具保护。如果有多个提供全局管理的 IPMP 工具，则此处可以携带多个 IPMP 描述符。
+
+```code
+aligned(8) class IPMPControlBox extends FullBox('ipmc', 0, flags) {
+  IPMP_ToolListDescriptor toollist;
+  int(8) no_of_IPMPDescriptors;
+  IPMP_Descriptor ipmp_desc[no_of_IPMPDescriptors];
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| toollist | - | 一个 IPMP_ToolListDescriptor，在 14496-1 中定义 |
+| no_of_IPMPDescriptors | - | 下面数据的大小 |
+| ipmp_desc | - | IPMP 描述符的数组 |
+
+#### Scheme Type Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| schm | Protection Scheme Information Box(sinf)/ SRTP Process Box(srpp) | N | 1 |
+
+Scheme Type Box (“schm”) 定义保护方案。
+
+```code
+aligned(8) class SchemeTypeBox extends FullBox('schm', 0, flags) {
+  unsigned int(32) scheme_type; // 4CC identifying the scheme
+  unsigned int(32) scheme_version; // scheme version
+  if (flags & 0x000001) {
+    unsigned int(8) scheme_uri[]; // browser uri
+  }
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| scheme_type | - | 定义保护方案的代码 |
+| scheme_version | 整数 | 用于创建内容的方案版本 |
+| scheme_uri | null 结尾的字符串 | 如果用户系统上未安装方案，允许将用户定义到网页。它是一个绝对 URI，UTF-8 字符组成 |
+
+#### Scheme Information Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| schi | Protection Scheme Information Box(sinf)/ SRTP Process Box(srpp) | N | 0/1 |
+
+Scheme Information Box 是一个容器 box，仅由使用的方案解释。加密系统需要的所有信息都存储在这里。此 box 的内容是一系列 box，这些 box 的类型和格式通过 SchemeTypeBox 内声明的方案定义。
+
+```code
+aligned(8) class SchemeInformationBox extends Box('schi') {
+  Box scheme_specific_data[];
+}
+```
 
 ## 参考
 
