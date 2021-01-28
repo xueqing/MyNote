@@ -270,7 +270,7 @@ aligned(8) class FullBox(unsigned int(32) boxtype, unsigned int(8) v, bit(24) f)
 
 | box 类型 | 容器 | 必要性 | 数量 |
 | --- | --- | --- | --- |
-| ftype | 文件 | Y | 1 |
+| ftyp | 文件 | Y | 1 |
 
 必须尽可能早地在文件中放置此 box (例如，在任何强制性签名之后，但在任何重要的可变大小 box 之前，比如 Movie Box、Media Data Box 或 Free Space)。它表示文件的“最佳使用”规范，以及该规范的次版本；还有文件符合的其他一系列规范。读者实现此格式时，应该尝试读取标记与其实现的任何规范兼容的文件。因此，规范中任何不兼容的更改应注册新的 “brand” 标识符，以表示符合新规范的文件。
 
