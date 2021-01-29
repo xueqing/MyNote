@@ -993,7 +993,7 @@ aligned(8) class DataReferenceBox
 
 如果包含 Sample Table Box 的轨道没有引用数据，那么 Sample Table Box 不需要包含任何子 box (这不是非常有用的媒体轨道)。
 
-如果包含 Sample Table Box 的轨道确实引用了数据，则需要以下子 box：Sample Description、Sample Size、Sample To Chunk 和 Chunk Offset。此外，Sample Description Box 应包含至少一个条目。需要 Sample Description Box 是因为其中包含数据引用索引字段，用来指示检索媒体采样时使用的 Data Reference Box。没有 Sample Description，就无法确定媒体采样存储的位置。Sync Sample Box 是可选的。如果它不存在，则所有采样都是同步采样。
+如果包含 Sample Table Box 的轨道确实引用了数据，则需要以下子 box：Sample Description、Sample Size、Sample To Chunk 和 Chunk Offset。此外，Sample Description Box 应包含至少一个条目。需要 Sample Description Box 是因为其中包含 data_reference_index 字段，用来指示检索媒体采样时使用的 Data Reference Box。没有 Sample Description，就无法确定媒体采样存储的位置。Sync Sample Box 是可选的。如果它不存在，则所有采样都是同步采样。
 
 附录 A 使用 Sample Table Box 中定义的结构，对随机访问做了叙述性描述。
 
@@ -1006,7 +1006,7 @@ aligned(8) class SampleTableBox extends Box(‘stbl’) {
 
 #### 8.15.1 定义
 
-采样的合成时间(CT)和解码时间(DT)来自 Time to Sample Box，其中有两种类型。解码时间再 Decoding Time to Sample Box 中定义，给出连续解码时间之间的时间增量。合成时间在 Composition Time to Sample Box 中，由合成时间与解码时间的时间偏移量得到。如果轨道中每个采样的合成时间和解码时间都相同，则仅需要 Decoding Time to Sample Box；一定不能出现 Composition Time to Sample Box。
+采样的合成时间(CT)和解码时间(DT)来自 Time to Sample Box，其中有两种类型。解码时间在 Decoding Time to Sample Box 中定义，给出连续解码时间之间的时间增量。合成时间在 Composition Time to Sample Box 中，由合成时间与解码时间的时间偏移量得到。如果轨道中每个采样的合成时间和解码时间都相同，则仅需要 Decoding Time to Sample Box；一定不能出现 Composition Time to Sample Box。
 
 Time to Sample Box 必须为所有采样提供非零的时长，最后一个采样可能除外。“stts” box 中的时长是严格的正数(非零)，除了最后一条条目可能为零。此规则源于流中没有两个时间戳可以相同的规则。将采样添加到流中时必须格外小心，为了遵守该规则，可能需要将先前最后一个采样的时长设为非零。如果最后一个采样的时长不确定，使用任意小的值和 “dwell” edit。
 
@@ -1026,7 +1026,7 @@ Time to Sample Box 必须为所有采样提供非零的时长，最后一个采�
 | --- | --- | --- | --- |
 | stts | Sample Table Box (stbl) | Y | 1 |
 
-此 box 包含表格的紧凑版本，该表允许从解码时间到采样版本的索引。其他表格则根据采样编号给出采样大小和指针。表中的每个条目给出具有相同时间增量的连续采样的数目，以及这些采样的增量。通过添加增量可以构建完整的采样时间图。
+此 box 包含表格的紧凑版本，该表允许从解码时间到采样编号的索引。其他表格则根据采样编号给出采样大小和指针。表中的每个条目给出具有相同时间增量的连续采样的数目，以及这些采样的增量。通过添加增量可以构建完整的采样时间图。
 
 Decoding Time to Sample Box 包含解码时间增量：DT(n+1)=DT(n)+STTS(n)，其中 STTS(n) 是采样 n 的(未压缩)表条目。
 
@@ -1058,7 +1058,7 @@ aligned(8) class TimeToSampleBox
 | --- | --- | --- |
 | version | 整数 | 指定此 box 的版本 |
 | entry_count | 整数 | 对下表的条目计数 |
-| sample_count | 整数 | 给定时长的连续采样的数目 |
+| sample_count | 整数 | 具有给定时长的连续采样的数目 |
 | sample_delta | 整数 | 在媒体的时间范围内给出这些采样的增量 |
 
 #### 8.15.3 Composition Time to Sample Box
@@ -1067,7 +1067,9 @@ aligned(8) class TimeToSampleBox
 | --- | --- | --- | --- |
 | ctts | Sample Table Box (stbl) | N | 0/1 |
 
-此 box 提供解码时间和合成时间的偏移量。因为解码时间必须小于合成时间，偏移表示为无符号数，以使 CT(n)=DT(n)+CTTS(n)，其中 CTTS(n) 是采样 n 的(未压缩)表条目。Composition Time to Sample Box 是可选的，且只有所有采样的 DT 与 CT 不同时才必须存在。
+此 box 提供解码时间和合成时间的偏移量。因为解码时间必须小于合成时间，偏移表示为无符号数，以使 CT(n)=DT(n)+CTTS(n)，其中 CTTS(n) 是采样 n 的(未压缩)表条目。
+
+Composition Time to Sample Table 是可选的，且只有所有采样的 DT 与 CT 不同时才必须存在。
 
 hint 轨道不使用此 box。
 
@@ -1102,7 +1104,7 @@ aligned(8) class CompositionOffsetBox
 | --- | --- | --- |
 | version | 整数 | 指定此 box 的版本 |
 | entry_count | 整数 | 对下表的条目计数 |
-| sample_count | 整数 | 给定偏移量的连续采样的数目 |
+| sample_count | 整数 | 具有给定偏移量的连续采样的数目 |
 | sample_offset | 非负整数 | 给出 CT 和 DT 的偏移量，以使 CT(n)=DT(n)+CTTS(n) |
 
 ### 8.16 Sample Description Box
@@ -1111,19 +1113,19 @@ aligned(8) class CompositionOffsetBox
 | --- | --- | --- | --- |
 | stsd | Sample Table Box (stbl) | Y | 1 |
 
-Sample Description Box 提供了有关使用的编码类型的详细信息，以及该编码所需的任何初始化信息。
+Sample Description Table 提供了有关使用的编码类型的详细信息，以及该编码所需的任何初始化信息。
 
-存储在 Sample Description Box 内 entry_count 之后的信息是特定轨道类型的，且在轨道类型内也可以有变体(例如，即使在视频轨道中，不同的编码可能在某些公共字段之后使用不同的特定信息)。
+存储在 Sample Description Box 内 entry_count 之后的信息是特定轨道类型的，正如此处记录的，且在轨道类型内也可以有变体(例如，即使在视频轨道中，不同的编码可能在某些公共字段之后使用不同的特定信息)。
 
 视频轨道使用 VisualSampleEntry；音频轨道使用 AudioSampleEntry。hint 轨道使用特定协议的条目格式，且具有合适的名称。
 
 对于 hint 轨道，Sample Description 包含使用于所用流协议的声明性数据，以及 hint 轨道的格式。Sample Description 的描述定义特定于协议。
 
-轨道内可能使用多个描述。
+一个轨道内可能使用多个描述。
 
 “protocol” 和 “codingname” 字段是已注册的标识符，用于唯一标识要使用的流协议和压缩格式解码器。给定的协议或编码名称对 Sample Description 可能有可选或必需的扩展名(例如编解码器初始化参数)。所有这些扩展名应在 box 内；这些 box 出现在必选字段之后。无法识别的 box 应被忽略。
 
-如果 SampleEntry  的 “format” 字段无法识别，则不应对 Sample Description 本身或相关的媒体采样进行解码。
+如果无法识别 SampleEntry 的 “format” 字段，则不应解码 Sample Description 本身或相关的媒体采样。
 
 在音频轨道中，音频采样率应作为媒体的时间刻度，并记录在这里的 samplerate 字段。
 
@@ -1314,7 +1316,7 @@ aligned(8) class SyncSampleBox
 | --- | --- | --- |
 | version | 整数 | 指定此 box 的版本 |
 | entry_count | 整数 | 给出下表的条目数。如果为 0，则流内没有随机访问点，且下表为空 |
-| sample_number | 整数 | 给出采样的编号，这些采样是流内的随机访问点 |
+| sample_number | 整数 | 给出采样(流内的随机访问点)的计数 |
 
 ### 8.21 Shadow Sync Sample Box
 
