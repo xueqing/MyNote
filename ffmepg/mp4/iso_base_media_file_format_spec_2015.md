@@ -70,43 +70,55 @@
         - [8.6.1.4 Composition to Decode Box](#8614-composition-to-decode-box)
       - [8.6.2 Sync Sample Box](#862-sync-sample-box)
       - [8.6.3 Shadow Sync Sample Box](#863-shadow-sync-sample-box)
+      - [8.6.4 Independent and Disposable Samples Box](#864-independent-and-disposable-samples-box)
+      - [8.6.5 Edit Box](#865-edit-box)
+      - [8.6.6 Edit List Box](#866-edit-list-box)
+    - [8.7 轨道数据布局结构](#87-轨道数据布局结构)
+      - [8.7.1 Data Information Box](#871-data-information-box)
+      - [8.7.2 Data Reference Box](#872-data-reference-box)
+      - [8.7.3 Sample Size Boxes](#873-sample-size-boxes)
+        - [8.7.3.1 定义](#8731-定义)
+        - [8.7.3.2 Sample Size Box](#8732-sample-size-box)
+        - [8.7.3.3 Compact Sample Size Box](#8733-compact-sample-size-box)
+      - [8.7.4 Sample To Chunk Box](#874-sample-to-chunk-box)
+      - [8.7.5 Chunk Offset Box](#875-chunk-offset-box)
+      - [8.7.6 Padding Bits Box](#876-padding-bits-box)
+      - [8.7.7 Sub-Sample Information Box](#877-sub-sample-information-box)
+      - [8.7.8 Sample Auxiliary Information Sizes Box](#878-sample-auxiliary-information-sizes-box)
+      - [8.7.9 Sample Auxiliary Information Offsets Box](#879-sample-auxiliary-information-offsets-box)
+    - [8.8 影片结构](#88-影片结构)
+      - [8.8.1 Movie Extends Box](#881-movie-extends-box)
+      - [8.8.2 Movie Extends Header Box](#882-movie-extends-header-box)
+      - [8.8.3 Track Extends Box](#883-track-extends-box)
+      - [8.8.4 Movie Fragment Box](#884-movie-fragment-box)
+      - [8.8.5 Movie Fragment Header Box](#885-movie-fragment-header-box)
+      - [8.8.6 Track Fragment Box](#886-track-fragment-box)
+      - [8.8.7 Track Fragment Header Box](#887-track-fragment-header-box)
+      - [8.8.8 Track Fragment Run Box](#888-track-fragment-run-box)
+      - [8.8.9 Movie Fragment Random Access Box](#889-movie-fragment-random-access-box)
+      - [8.8.10 Track Fragment Random Access Box](#8810-track-fragment-random-access-box)
+      - [8.8.11 Movie Fragment Random Access Offset Box](#8811-movie-fragment-random-access-offset-box)
+      - [8.8.12 Track Fragment Decode Time](#8812-track-fragment-decode-time)
+      - [8.8.13 Level Assignment Box](#8813-level-assignment-box)
+      - [8.8.14 Sample Auxiliary Information in Movie Fragments](#8814-sample-auxiliary-information-in-movie-fragments)
+      - [8.8.15 Track Extension Properties Box](#8815-track-extension-properties-box)
+      - [8.8.16 Alternative Startup Sequence Properties Box](#8816-alternative-startup-sequence-properties-box)
+      - [8.8.17 影片片段中的元数据和用户数据](#8817-影片片段中的元数据和用户数据)
+    - [8.9 采样分组结构](#89-采样分组结构)
+      - [8.9.1 介绍](#891-介绍)
+      - [8.9.2 Sample To Group Box](#892-sample-to-group-box)
+      - [8.9.3 Sample Group Description Box](#893-sample-group-description-box)
+      - [8.9.4 Movie Fragment 的组结构表示](#894-movie-fragment-的组结构表示)
     - [unknown](#unknown)
       - [8.4.5.2 Video Media Header Box](#8452-video-media-header-box)
       - [8.4.5.3 Sound Media Header Box](#8453-sound-media-header-box)
       - [8.11.4 Hint Media Header Box](#8114-hint-media-header-box)
-    - [8.12 Data Information Box](#812-data-information-box)
-    - [8.13 Data Reference Box](#813-data-reference-box)
-    - [8.17 Sample Size Box](#817-sample-size-box)
-    - [8.18 Sample To Chunk Box](#818-sample-to-chunk-box)
-    - [8.19 Chunk Offset Box](#819-chunk-offset-box)
-    - [8.21 Shadow Sync Sample Box](#821-shadow-sync-sample-box)
-    - [8.23 Padding Bits Box](#823-padding-bits-box)
-    - [8.25 Edit Box](#825-edit-box)
-    - [8.26 Edit List Box](#826-edit-list-box)
     - [8.27 User Data Box](#827-user-data-box)
     - [8.28 Copyright Box](#828-copyright-box)
-    - [8.29 Movie Extends Box](#829-movie-extends-box)
-    - [8.30 Movie Extends Header Box](#830-movie-extends-header-box)
-    - [8.31 Track Extends Box](#831-track-extends-box)
-    - [8.32 Movie Fragment Box](#832-movie-fragment-box)
-    - [8.33 Movie Fragment Header Box](#833-movie-fragment-header-box)
-    - [8.34 Track Fragment Box](#834-track-fragment-box)
-    - [8.35 Track Fragment Header Box](#835-track-fragment-header-box)
-    - [8.36 Track Fragment Run Box](#836-track-fragment-run-box)
-    - [8.37 Movie Fragment Random Access Box](#837-movie-fragment-random-access-box)
-    - [8.38 Track Fragment Random Access Box](#838-track-fragment-random-access-box)
-    - [8.39 Movie Fragment Random Access Offset Box](#839-movie-fragment-random-access-offset-box)
     - [8.40 AVC Extensions](#840-avc-extensions)
       - [8.40.1 介绍](#8401-介绍)
-      - [8.40.2 Independent and Disposable Samples Box](#8402-independent-and-disposable-samples-box)
-      - [8.40.3 Sample Groups](#8403-sample-groups)
-        - [8.40.3.1 介绍](#84031-介绍)
-        - [8.40.3.2 SampleToGroup Box](#84032-sampletogroup-box)
-        - [8.40.3.3 Sample Group Description Box](#84033-sample-group-description-box)
-        - [8.40.3.4 Movie Fragment 的组结构表示](#84034-movie-fragment-的组结构表示)
       - [8.40.4 Random Access Recovery Points](#8404-random-access-recovery-points)
     - [8.41 Sample Scale Box](#841-sample-scale-box)
-    - [8.42 Sub-Sample Information Box](#842-sub-sample-information-box)
     - [8.44 Metadata Support](#844-metadata-support)
       - [8.44.1 The Meta Box](#8441-the-meta-box)
       - [8.44.2 XML Box](#8442-xml-box)
@@ -1391,7 +1403,1078 @@ aligned(8) class SyncSampleBox
 
 #### 8.6.3 Shadow Sync Sample Box
 
-todo
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| stsh | Sample Table Box (stbl) | N | 0/1 |
+
+Shadow Sync Table 提供一组可选的同步样本，这些采样可用于 seek 或类似目的。在正常的前向播放中，将其忽略。
+
+Shadow Sync Table 中的每个条目由一对采样编号组成。第一个编号 (shadowed-sample-number) 指示将为该采样编号定义 shadow sync。这应该总是非同步采样(比如帧差异)。第二个采样编号  (sync-sample-number) 指示当在 shadowed-sample-number 或在其之前有随机访问时，可使用的同步采样(比如关键帧)的采样编号。
+
+Shadow Sync Box 中的条目应基于 shadowed-sample-number 字段进行排序。
+
+尽管不是必须的，但是通常将 shadow sync sample 放在正常播放期间未显示的轨道区域(通过 Edit List 进行编辑)。可以忽略 Shadow Sync Table，且忽略时轨道将正确(尽管可能不是最佳的)播放(和 seek)。
+
+Shadow Sync Sample 替换而不是增加其 shadow 的采样(也就是，下一个发送的采样是 shadowed-sample-number+1)。将 Shadow Sync Sample 视为好像在其 shadow 的采样发生时一样，具有该采样的时长。
+
+如果 shadow 采样也用作正常回放的一部分，或不止一次用作 shadow，hint 和传输可能会变得更加复杂。在这种情况下，hint 轨道可能需要单独的 shadow sync，所有 shadow sync 都可以从媒体轨道的一个 shadow sync 中获取其媒体数据，以允许其头部所需的不同时间戳等。
+
+```code
+aligned(8) class ShadowSyncSampleBox
+  extends FullBox(‘stsh’, version = 0, 0) {
+  unsigned int(32) entry_count;
+  int i;
+  for (i=0; i < entry_count; i++) {
+    unsigned int(32) shadowed_sample_number;
+    unsigned int(32) sync_sample_number;
+  }
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| version | 整数 | 指定此 box 的版本 |
+| entry_count | 整数 | 给出下表的条目数 |
+| shadowed_sample_number | 整数 | 给出存在备用同步采样的采样编号 |
+| sync_sample_number | 整数 | 给出备用同步采样的编号 |
+
+#### 8.6.4 Independent and Disposable Samples Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| sdtp | Sample Table Box (stbl) | N | 0/1 |
+
+这个可选的表格回答关于采样独立性的三个问题：
+
+1. 这个采样依赖其他采样吗(它是否是一个 I-picture)？
+2. 其他采样依赖这个采样吗？
+3. 这个采样在此瞬间(可能有不同的依赖)包含多个(冗余)的数据编码吗？
+
+在缺少此表的情况下：
+
+1. Sync Sample Table 回答第一个问题；在大多数视频编码中，I-picture 也是同步点
+2. 其他采样对这个采样的依赖是未知的
+3. 冗余编码的存在性是未知的
+
+当执行 “trick” 模式时，比如快速向前，可以使用第一条信息定位独立可解码的采样。类似地，当执行随机访问时，可能需要定位先前的同步点或随机访问恢复点，并从同步点或随机访问回复点的预滚动开始点向前滚动到所需的点。在向前滚动时，不需要检索或解码没有其他采样依赖的采样。
+
+“sample_is_depended_on” 值与冗余编码的存在性无关。然而，冗余编码可能对主编码有不同的依赖；如果有冗余编码，则 “sample_depends_on” 仅记录主要编码。
+
+相对于参考采样定义了前导采样(通常是视频中的图片)，参考样本是紧挨着的前一个采样，该采样标记为 “sample_depends_on” 没有依赖(一个 I 帧)。前导采样的合成时间在参考采样之前，还可能对参考采样之前的采样具有解码依赖性。因此，比如，如果回放和解码从参考采样开始，则那些标记为前导的采样将不再需要，且可能无法解码。因此，前导采样本身不能标记为没有依赖性。
+
+对于 handler_type 不是 “vide”、“soun”、“hint”或“auxv”的轨道，如果已经处理了 sample_depends_on=2 或标记为“同步采样”的另一个样本，除非另外指定，可以丢弃标记为 sample_depends_on=2 以及 sample_has_redundancy=1 的采样，并将其时长增加到前一个采样的时长，以保持后续采样的时间。
+
+表的大小 sample_count 取自 Sample Size Box(“stsz”) 或 Compact Sample Size Box (“stz2”) 的 sample_count。
+
+Track Fragment Box 中也可能出现采样依赖 box。
+
+```code
+aligned(8) class SampleDependencyTypeBox
+  extends FullBox(‘sdtp’, version = 0, 0) {
+  for (i=0; i < sample_count; i++){
+  unsigned int(2) is_leading;
+  unsigned int(2) sample_depends_on;
+  unsigned int(2) sample_is_depended_on;
+  unsigned int(2) sample_has_redundancy;
+  }
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| is_leading | - | 取自下面 4 个值之一：0-此采样的前导属性位置；1-此采样是前导采样，对参考的 I 帧之前有依赖(因此不可解码)；2-此采样不是前导采样；3-次采样是前导采样，对参考的 I 帧之前没有依赖(因此可以解码) |
+| sample_depends_on | 整数 | 取自下面 4 个值之一：0-此采样的依赖未知；1-此采样依赖其他采样(不是 I 帧)；2-此采样不依赖其他采样(I 帧)；3-保留 |
+| sample_is_depended_on | 整数 | 取自下面 4 个值之一：0-其他采样对此采样的依赖未知；1-其他采样依赖此采样(不可丢弃的)；2-其他采样不依赖此采样(可丢弃的)；3-保留 |
+| sample_has_redundancy | 整数 | 取自下面 4 个值之一：0-此采样是否有冗余编码未知；1-此采样有冗余编码；2-此采样没有冗余编码；3-保留 |
+
+#### 8.6.5 Edit Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| edts | Track Box (trak) | N | 0/1 |
+
+Edit Box 将演示时间线映射到存储在文件中的媒体时间线。Edit Box 是 Edit List Box 的容器。
+
+Edit Box 是可选的。在没有此 box 的情况下，这些时间线存在隐式的一对一映射，且轨道的显示从演示的开头开始。空的 Edit Box 用于抵消轨道的开始时间。
+
+```code
+aligned(8) class EditBox extends Box(‘edts’) {
+}
+```
+
+#### 8.6.6 Edit List Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| elst | Edit Box (edts) | N | >=0 |
+
+此 box 包含一个显式的时间线映射。每个条目定义轨道时间线的一部分：通过映射媒体时间线的一部分，或通过指示“空”时间，或通过定义 “dwell”，对应媒体内的单个时间点将保持一段时间。
+
+请注意，未限制 edit 落在采样时间上。这意味着，当进入 edit 时，可能有必要：
+
+- 备份到一个同步点，并从该位置预滚动，然后
+- 注意第一个采样的时长——如果 edit 进入采样的正常时长内，采样可能被截断
+
+如果是音频，则可能需要对该帧重新解码，然后完成最后的切片。同样，在 edit 中最后一个采样的时长可能需要切片。
+
+轨道(流)的起始偏移量用一个初始的空 edit 表示。比如，要从轨道开始播放 30 秒，但是在演示播放第 10 秒时，我们有下面的 edit list：
+
+```txt
+entry_count = 2
+
+segment_duration = 10s
+media_time = -1
+media_rate = 1
+
+segment_duration = 30s (可能是整个轨道的长度)
+media_time = 0s
+media_rate = 1
+```
+
+非空 edit 啃个会插入媒体时间线的一部分，该部分在初始影片中不存在，且仅在后续影片片段中存在。特别是分段影片文件的空初始影片中(还没有出现媒体采样)，此 edit 的 segment_duration 可为 0，因此，edit 为影片和后续的影片片段提供了媒体合成时间到影片显示时间的偏移量。当使用合成偏移量时，建议用这样的 edit 为第一个显示的采样构建显示时间为 0。
+
+例如，如果第一个合成帧的和城市间是 20，则将媒体时间从 20 开始映射到影片时间 0 开始的 edit，将显示为：
+
+```txt
+entry_count = 1
+
+segment_duration = 0
+media_time = 20
+media_rate = 1
+```
+
+```code
+aligned(8) class EditListBox extends FullBox(‘elst’, version, 0) {
+  unsigned int(32) entry_count;
+  for (i=1; i <= entry_count; i++) {
+  if (version==1) {
+    unsigned int(64) segment_duration;
+    int(64) media_time;
+  } else { // version==0
+    unsigned int(32) segment_duration;
+    int(32) media_time;
+  }
+  int(16) media_rate_integer;
+  int(16) media_rate_fraction = 0;
+  }
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| version | 整数 | 指定此 box 的版本(0 或 1) |
+| entry_count | 整数 | 指定下标的条目数 |
+| segment_duration | 整数 | 指定此 edit 段的时长，单位是 Movie Header Box 的 timescale |
+| media_time | 整数 | 包含此 edit 段的媒体内的起始时间(以媒体的时间刻度为单位，以合成时间为单位)。如果此字段为 -1，则为空 edit。轨道中最后一个 edit 不应为空。Movie Header Box 的时长和轨道时长的任何差异表示为最后隐含的空 edit |
+| media_rate_integer/media_rate_fraction | 整数 | 指定播放对应此 edit 段的媒体的相对速率。如果值为 0，则说明 edit 指定了 “dwell”：在 media_time 处的媒体显示 segment_duration。否则此字段的值应为 1 |
+
+### 8.7 轨道数据布局结构
+
+#### 8.7.1 Data Information Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| dinf | Media Information Box (minf)/Meta Box (meta) | Y(minf)/N(meta) | 1 |
+
+box 包含声明轨道内媒体信息位置的对象。
+
+```code
+aligned(8) class DataInformationBox extends Box(‘dinf’) {
+}
+```
+
+#### 8.7.2 Data Reference Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| dref | Data Information Box (dinf) | Y | 1 |
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| url/urn | Data Information Box (dref) | Y(至少出现一个 url 或 urn) | >=1 |
+
+数据引用对象包含一个数据引用表(通常是 URL)，这些表声明了演示中使用的媒体数据的位置。采样描述内的数据引用索引将此表中的条目和轨道中的采样关联。可通过此方式将轨道分为多个源。
+
+如果设置了标记以指示数据与此 box 在同一文件，则在条目字段中不应提供任何字符串(空字符串也不行)。
+
+DataReferenceBox 内的 entry_count 应该大于等于 1；DataReferenceBox 内的每个 DataEntryBox 应该是 DataEntryUrnBox 或 DataEntryUrlBox。
+
+```code
+aligned(8) class DataEntryUrlBox (bit(24) flags)
+  extends FullBox(‘url ’, version = 0, flags) {
+  string location;
+}
+aligned(8) class DataEntryUrnBox (bit(24) flags)
+  extends FullBox(‘urn ’, version = 0, flags) {
+  string name;
+  string location;
+}
+aligned(8) class DataReferenceBox
+  extends FullBox(‘dref’, version = 0, 0) {
+  unsigned int(32) entry_count;
+  for (i=1; i <= entry_count; i++) { entry_count; i++) {
+    DataEntryBox(entry_version, entry_flags) data_entry;
+  }
+} 
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| version | 整数 | 指定此 box 的版本 |
+| entry_count | 整数 | 对实际条目计数 |
+| entry_version | 整数 | 指定条目格式的版本 |
+| entry_flags | 24 位整数 | 定义 0x000001 标记，表示媒体数据与包含此数据引用的 Movie Box 在同一文件 |
+| data_entry | - | URL 或 URN 条目。name 是 URN， 且在 URN 条目是必须的。location 是 URL (URL 条目必须，URN 条目可选)，提供位置以使用给定名称查找资源。每个都是使用 UTF-8 字符以空字符结尾的字符串。如果设置了 selfcontained 标记，使用 URL 形式且不存在任何字符串；box 以 entry_flags 字段结尾。URL 类型(如类型为文件、http、ftp 等)应该是提供文件的服务，且该服务理想情况下支持还支持随机访问。允许相对 URL，且是相对于包含 Movie Box 的文件，该 Movie Box 包含此数据引用 |
+
+#### 8.7.3 Sample Size Boxes
+
+##### 8.7.3.1 定义
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| stsz/stz2 | Sample Table Box (stbl) | Y | 1(变体) |
+
+此 box 包含采样计数和一个表格，该表给出每个采样的字节数。这允许媒体数据本身未分帧。媒体中的采样总数使用显示在采样技术中。
+
+Sample Size Box 有两种。第一种有一个固定 32 位的字段用于表示采样尺寸；它允许为轨道内的所有采样定义固定尺寸。第二章允许更小的字段，以便在尺寸不同且较小时可以节省空间。必须存在这两种 box 之一；为了最大兼容性首选第一个版本。
+
+注意，通常不禁止将采样大小设为 0，但是对于采样所属的编码系统(如采样条目所定义)，该大小必须有效且已定义。
+
+##### 8.7.3.2 Sample Size Box
+
+```code
+aligned(8) class SampleSizeBox extends FullBox(‘stsz’, version = 0, 0) {
+  unsigned int(32) sample_size;
+  unsigned int(32) sample_count;
+  if (sample_size==0) {
+    for (i=1; i <= sample_count; i++) {
+      unsigned int(32) entry_size;
+    }
+  }
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| version | 整数 | 指定此 box 的版本 |
+| sample_size | 整数 | 指定默认采样大小。如果所有采样大小相同，此字段包含该值。如果此字段为 0，那么采样大小不相同，且采样大小保存保存在采样尺寸表中。如果此字段不是 0，它指定固定采样大小，且之后没有数组 |
+| sample_count | 整数 | 给出轨道内的采样数；如果 sample_size 为 0，这也是下表的条目数 |
+| entry_size | 整数 | 指定采样大小，通过采样编号进行索引 |
+
+##### 8.7.3.3 Compact Sample Size Box
+
+```code
+aligned(8) class CompactSampleSizeBox extends FullBox(‘stz2’, version = 0, 0) {
+  unsigned int(24) reserved = 0;
+  unisgned int(8) field_size;
+  unsigned int(32) sample_count;
+  for (i=1; i <= sample_count; i++) {
+    unsigned int(field_size) entry_size;
+  }
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| version | 整数 | 指定此 box 的版本 |
+| field_size | 整数 | 指定下标条目的大小(单位比特)；其值应取自 4/8/16。如果使用 4，则每个字节包含两个值：entry\[i\]<=4+entry\[i+1\]；如果大小不能填充整数字节，则最后一个字节使用零填充 |
+| sample_count | 整数 | 给出下表的条目数 |
+| entry_size | 整数 | 指定采样大小，通过采样编号进行索引 |
+
+#### 8.7.4 Sample To Chunk Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| stsc | Sample Table Box (stbl) | Y | 1 |
+
+媒体内的采样分分组成块。块大小可以不同，且同一块中的采样大小可以不同。此表可用于查找包含采样的块，块的位置和相关的样本描述。
+
+此表示紧凑编码的。每个条目给出一组块的第一个块的索引，这些块具有相同特征。通过从上一个条目减去一个条目，可以计算该组有多少块。你可以将其乘以合适的“采样数/块”从而转换为采样数。
+
+```code
+aligned(8) class SampleToChunkBox
+  extends FullBox(‘stsc’, version = 0, 0) {
+  unsigned int(32) entry_count;
+  for (i=1; i <= entry_count; i++) {
+    unsigned int(32) first_chunk;
+    unsigned int(32) samples_per_chunk;
+    unsigned int(32) sample_description_index;
+  }
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| version | 整数 | 指定此 box 的版本 |
+| entry_count | 整数 | 给出下表的条目数 |
+| first_chunk | 整数 | 给出一组块的第一个块的索引，这些块有相同的 samples_per_chunk 和sample_description_index；轨道中第一个块的索引值是 1(此 box 的第一个记录的 first_chunk 值为 1，表示第一个采样映射到该块) |
+| samples_per_chunk | 整数 | 给出这些块中每个块的采样数 |
+| sample_description_index | 整数 | 给出采样条目的索引，该条目描述此块的采样。索引范围从 1 到 Sample Description Box 的采样条目数 |
+
+#### 8.7.5 Chunk Offset Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| stso/co64 | Sample Table Box (stbl) | Y | 1(变体) |
+
+块偏移表给出每个块到包含文件的索引。有两种表。允许使用 32 位或 64 位偏移。后者在管理非常大的演示时非常有用。在采样表的任何单个实例中，至多有其中一种表。
+
+偏移是文件的偏移，而不是文件中任何 box (比如 Media Data Box)的偏移。这允许引用没有任何 box 结构的文件内的媒体数据。这也意味着在构造一个独立的 ISO 文件且其前面有元数据(Movie Box)时需要格外小心，因为 Movie Box 的大小会影响媒体数据的块偏移。
+
+```code
+aligned(8) class ChunkOffsetBox
+  extends FullBox(‘stco’, version = 0, 0) {
+  unsigned int(32) entry_count;
+  for (i=1; i u entry_count; i++) {
+    unsigned int(32) chunk_offset;
+  }
+}
+aligned(8) class ChunkLargeOffsetBox
+  extends FullBox(‘co64’, version = 0, 0) {
+  unsigned int(32) entry_count;
+  for (i=1; i u entry_count; i++) {
+    unsigned int(64) chunk_offset;
+  }
+} 
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| version | 整数 | 指定此 box 的版本 |
+| entry_count | 整数 | 给出下表的条目数 |
+| chunk_offset | 32/64 位证书 | 给出块的开始到其包含的媒体文件内的偏移量 |
+
+#### 8.7.6 Padding Bits Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| padb | Sample Table Box (stbl) | N | 0/1 |
+
+在某些流中，媒体采样并未占据采样大小给定的字节所有位，而是在末尾填充到字节边界。在某些情况下，需要在外部记录所用的填充位数。此表提供了该信息。
+
+```code
+aligned(8) class PaddingBitsBox extends FullBox(‘padb’, version = 0, 0) {
+  unsigned int(32) sample_count;
+  int i;
+  for (i=0; i < ((sample_count + 1)/2); i++) {
+    bit(1) reserved = 0;
+    bit(3) pad1;
+    bit(1) reserved = 0;
+    bit(3) pad2;
+  }
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| sample_count | 整数 | 对轨道中的采样计数；应该和其他表中的计数匹配 |
+| pad1 | 0-7 | 指示采样 (i*2)+1 末尾的比特数 |
+| pad2 | 0-7 | 指示采样 (i*2)+2 末尾的比特数 |
+
+#### 8.7.7 Sub-Sample Information Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| subs | Sample Table Box (stbl)/Track Fragment Box (traf) | N | 0/1 |
+
+此 box 名为 Sub-Sample Information Box，旨在包含子采样信息。
+
+子采样是采样字节的连续范围。应为给定的编码系统(例如 ISO/IEC 14496-10，高级视频编码)提供子采样的具体定义。在缺少这种具体定义时，不应对使用该编码系统的采样应用此 box。
+
+如果任何条目的 subsample_count 为 0，则这些采样没有子采样信息，之后也没有数组。表格是稀疏编码的；通过记录每个条目之间的采样数量差异来标识哪些采样具有子采样结构。表格第一个条目记录第一个具有子采样信息的采样编号。
+
+请注意：可以结合 subsample_priority 和 discardable，以便当 subsample_priority 小于某个值时，将 discardable 设为 1。然而，因为不同的系统可能使用不同比例的优先级值，可以安全地将二者分开，使用干净的解决方案处理可丢弃的子采样。
+
+同一容器 box 内出现多个 Sub-Sample Information Box 时，每个 Sub-Sample Information Box 的 flags 值应互不相同。如果 flags 对于给定的编码系统没有语义，flags 值应为 0。
+
+```code
+aligned(8) class SubSampleInformationBox
+  extends FullBox(‘subs’, version, flags) {
+  unsigned int(32) entry_count;
+  int i,j;
+  for (i=0; i < entry_count; i++) {
+    unsigned int(32) sample_delta;
+    unsigned int(16) subsample_count;
+    if (subsample_count > 0) {
+      for (j=0; j < subsample_count; j++) {
+        if(version == 1)
+        {
+          unsigned int(32) subsample_size;
+        }
+        else
+        {
+          unsigned int(16) subsample_size;
+        }
+        unsigned int(8) subsample_priority;
+        unsigned int(8) discardable;
+        unsigned int(32) codec_specific_parameters;
+      }
+    }
+  }
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| version | 整数 | 指定此 box 的版本(此规范是 0 或 1) |
+| entry_count | 整数 | 给出下表的条目数 |
+| sample_delta | 整数 | 指定有子采样结构的采样的编号。将其编码为所需的采样的编号和前一个条目指示的采样编号的差值。如果当前条目是第一个，该值指示第一个有子采样结构的采样编号，即该值为采样编号和 0 的差值 |
+| subsample_count | 整数 | 指定当前采样的子采样数目。如果没有子采样结构，则此字段值为 0 |
+| subsample_size | 整数 | 指定当前子采样的字节数 |
+| subsample_priority | 整数 | 指定每个子采样的降级优先级。subsample_priority 值越高，表示子采样对解码质量很重要且影响更大 |
+| discardable | 整数 | 等于 0 表示解码当前采样需要子采样，而等于 1 表示解码当前采样不需要子采样，但可用于增强，例如子采样包含补充增强信息(SEI)消息 |
+| codec_specific_parameters 整数 | 由使用中的编解码器定义。如果没有这样的定义，此字段应设为 0 |
+
+#### 8.7.8 Sample Auxiliary Information Sizes Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| saiz | Sample Table Box (stbl)/Track Fragment Box (traf) | N | >=0 |
+
+每个采样的采样辅助信息可与采样数据本身存储在同一文件的任何地方；对于独立的媒体文件，这通常在 MediaData Box 或派生规范的 box 中。它(a)或者存储在多个块中(包含每个块的采样数以及与主采样数据块匹配的块的数目)，(b)或者在单个块中存储一个 Movie Sample Table (或 Movie Fragment)中的所有采样。单个采样块(或轨道组)中所有采样的 Sample Auxiliary Information 存储连续(类似采样数据)。
+
+Sample Auxiliary Information (如果存在) 总是和相关采样存储在同一文件，因为它们共享相同的数据引用(“dref”)结构。但是，此数据可能位于文件中任何位置，使用 Auxiliary Information Offset (“saio”) 来指示数据的位置。
+
+采样辅助信息是允许还是需要的，可以通过使用的 brand 或编码格式指定。采样辅助信息的格式由 aux_info_type 确定。如果省略了 aux_info_type 和 aux_info_type_parameter，则 aux_info_type 的隐含值为(a)对于转换后的内容(比如受保护的内容)，Protection Scheme Information box 中包含的 scheme_type，否则为(b)采样条目类型。aux_info_type_parameter 的，默认值为 0。aux_info_type 的某些值可能会限制为仅用于特定轨道类型。轨道可能具有多个不同类型的采样辅助信息流。这些类型注册在注册机构中。
+
+尽管 aux_info_type 确定辅助信息的格式，当其 aux_info_type_parameter 值不同时，这些辅助信息流可以使用相同格式。必须指定特定 aux_info_type 值的 aux_info_type_parameter 语义，同时指定特定 aux_info_type 值的语义以及隐含的辅助信息格式。
+
+此 box 提供每个采样的辅助信息大小。对于此 box 的每个实例，必须有一个匹配的 SampleAuxiliaryInformationOffsetsBox (aux_info_type 和 aux_info_type_parameter 值相同)，提供此辅助信息的偏移量信息。
+
+注意，关于使用采样辅助信息和其他机制的讨论，参阅附录 C.8。
+
+```code
+aligned(8) class SampleAuxiliaryInformationSizesBox
+  extends FullBox(‘saiz’, version = 0, flags) {
+  if (flags & 1) {
+    unsigned int(32) aux_info_type;
+    unsigned int(32) aux_info_type_parameter;
+  }
+  unsigned int(8) default_sample_info_size;
+  unsigned int(32) sample_count;
+  if (default_sample_info_size == 0) {
+    unsigned int(8) sample_info_size[ sample_count ];
+  }
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| aux_info_type | 整数 | 标识采样辅助信息的类型。包含相同 aux_info_type 和 aux_info_type_parameter 的此 box 在包含的 box 中至多出现一次 |
+| aux_info_type_parameter | 整数 | 标识具有相同 aux_info_type且关联到同一轨道的辅助信息的“流”。aux_info_type_parameter 的语义由 aux_info_type 的值确定 |
+| default_sample_info_size | 整数 | 当所有指示的采样具有相同的采样辅助信息大小时，default_sample_info_size 用于指定采样辅助信息大小。如果采样辅助信息大小不一，则此字段应为 0 |
+| sample_count | 整数 | 给出已定义大小的采样数。对于出现在 Sample Table Box 中 Sample Auxiliary Information Sizes Box，此值必须等于或小于 Sample Size Box 或 Compact Sample Size Box 中的 sample_count。对于出现在 Track Fragment Box 中 Sample Auxiliary Information Sizes Box，此 box 必须等于或小于 Track  Fragment 的 Track Fragment Run Box 内 sample_count 条目的综总和。如果此值小于采样数，则为初始采样提供辅助信息，且其余采样没有关联的辅助信息 |
+| sample_info_size | 整数 | 给出采样辅助信息的字节数。可以为 0 指示采样没有关联的辅助信息 |
+
+#### 8.7.9 Sample Auxiliary Information Offsets Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| saio | Sample Table Box (stbl)/Track Fragment Box (traf) | N | >=0 |
+
+参阅 Sample Auxiliary Information Sizes Box 的定义，获取采样辅助信息的介绍。
+
+此 box 为采样辅助信息提供位置信息，此方式类似采样数据的块偏移量。
+
+```code
+aligned(8) class SampleAuxiliaryInformationOffsetsBox
+  extends FullBox(‘saio’, version, flags) {
+  if (flags & 1) {
+    unsigned int(32) aux_info_type;
+    unsigned int(32) aux_info_type_parameter;
+  }
+  unsigned int(32) entry_count;
+  if ( version == 0 ) {
+    unsigned int(32) offset[ entry_count ];
+  }
+  else {
+    unsigned int(64) offset[ entry_count ];
+  }
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| aux_info_type | 整数 | 标识采样辅助信息的类型。包含相同 aux_info_type 和 aux_info_type_parameter 的此 box 在包含的 box 中至多出现一次 |
+| aux_info_type_parameter | 整数 | 标识具有相同 aux_info_type且关联到同一轨道的辅助信息的“流”。aux_info_type_parameter 的语义由 aux_info_type 的值确定 |
+| default_sample_info_size | 整数 | 当所有指示的采样具有相同的采样辅助信息大小时，default_sample_info_size 用于指定采样辅助信息大小。如果采样辅助信息大小不一，则此字段应为 0 |
+| sample_count | 整数 | 给出已定义大小的采样数。对于出现在 Sample Table Box 中 Sample Auxiliary Information Sizes Box，此值必须等于或小于 Sample Size Box 或 Compact Sample Size Box 中的 sample_count。对于出现在 Track Fragment Box 中 Sample Auxiliary Information Sizes Box，此 box 必须等于或小于 Track  Fragment 的 Track Fragment Run Box 内 sample_count 条目的综总和。如果此值小于采样数，则为初始采样提供辅助信息，且其余采样没有关联的辅助信息 |
+| sample_info_size | 整数 | 给出采样辅助信息的字节数。可以为 0 指示采样没有关联的辅助信息 |
+
+### 8.8 影片结构
+
+#### 8.8.1 Movie Extends Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| mvex | Movie Box (moov) | N | 0/1 |
+
+此 box 警告读者文件中可能有 Movie Fragment Box。要了解轨道中的所有采样，必须按顺序查找和扫描这些 Movie Fragment Box，并将其信息逻辑添加到 Movie Box 找到的片段上。
+
+附录 A 有 Movie Fragment 的叙述性介绍。
+
+```code
+aligned(8) class MovieExtendsBox extends Box(‘mvex’){
+}
+```
+
+#### 8.8.2 Movie Extends Header Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| mehd | Movie Extends Box (mvex) | N | 0/1 |
+
+Movie Extends Header 是可选的，且提供分段影片的整体时长，包括片段。如果此 box 不存在，则必须通过检查每个片段来计算总体时长。
+
+```code
+aligned(8) class MovieExtendsHeaderBox extends FullBox(‘mehd’, version, 0) {
+  if (version==1) {
+    unsigned int(64) fragment_duration;
+  } else { // version==0
+    unsigned int(32) fragment_duration;
+  }
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| fragment_duration | 整数 | 声明包含片段的整个影片演示的长度(以 Movie Header Box 的时间刻度为单位)。此字段的值对应最长轨道(包含片段)的时长。如果实时创建 MP4 文件，例如实时流使用，fragment_duration 不太可能事先已知，因此可以忽略此 box |
+
+#### 8.8.3 Track Extends Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| trex | Movie Extends Box (mvex) | Y | Movie Box 内每个轨道一个 |
+
+此 box 设置影片片段使用的默认值。通过此方式设置默认值，可为每个 Track Fragment Box 节省空间和复杂度。
+
+将采样片段内的采样标记字段编码为 32 位的值(包括这里以及 Track Fragment Header Box 的 default_sample_flags，Track Fragment Run Box 内的 sample_flags 和 first_sample_flags)。该值具有下面的结构：
+
+```code
+bit(4) reserved=0;
+unsigned int(2) is_leading;
+unsigned int(2) sample_depends_on;
+unsigned int(2) sample_is_depended_on;
+unsigned int(2) sample_has_redundancy;
+bit(3) sample_padding_value;
+bit(1) sample_is_non_sync_sample;
+unsigned int(16) sample_degradation_priority;
+```
+
+is_leading、sample_depends_on、sample_is_depended_on 和 sample_has_redundancy 值在 Independent and Disposable Samples Box 内定义。
+
+sample_is_non_sync_sample 标记提供和 Sync Sample Table (8.6.2) 相同的信息。当采样的此值设为 0，等同于该采样不在影片片段中，且 Sync Sample Table 内有一个条目对其标记(或者，如果所有采样都是同步采样，则不存在 Sync Sample Table)。
+
+sample_padding_value 的定义和 Padding Bits Box 相同。sample_degradation_priority 定义和 Degradation Priority Box 相同。
+
+```code
+aligned(8) class TrackExtendsBox extends FullBox(‘trex’, 0, 0){
+  unsigned int(32) track_ID;
+  unsigned int(32) default_sample_description_index;
+  unsigned int(32) default_sample_duration;
+  unsigned int(32) default_sample_size;
+  unsigned int(32) default_sample_flags
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| track_ID | 整数 | 标识轨道；这应该是 Movie Box 内的轨道的 track_ID |
+| default_xxx | 整数 | 这些字段设置轨道片段所用的默认值 |
+
+#### 8.8.4 Movie Fragment Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| moof | 文件 | N | 0/1 |
+
+影片片段会及时扩展演示。它们提供了以前在 Movie Box 中的信息。如果实际采样在同一文件中，则和通常一样，这些采样在 Media Data Box。数据引用索引在采样描述中，因此当媒体数据在除包含 Movie Box 的文件之外，可以构建增量演示。
+
+Movie Fragment Box 是顶级 box(即和 Movie Box、Media Data Box 对等)。它包含一个 Movie Fragment Header Box，以及一个或多个 Track Fragment Box。
+
+注意，不需要任何特定影片片段扩展存在于 Movie Header 中的所有轨道，且对影片片段引用的媒体数据的位置也没有限制。但是，派生规范可以有这样的限制。
+
+```code
+aligned(8) class MovieFragmentBox extends Box(‘moof’){
+}
+```
+
+#### 8.8.5 Movie Fragment Header Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| mfhd | Movie Fragment Box (moof) | Y | 1 |
+
+Movie Fragment Header 包含一个序列号，作为安全检查。序列号通常从 1 开始，且按照文件内每个影片片段出现的顺序，此值增加。这使读者可以验证序列的完整性；构成片段乱序的文件是错误的。
+
+```code
+aligned(8) class MovieFragmentHeaderBox
+  extends FullBox(‘mfhd’, 0, 0){
+  unsigned int(32) sequence_number;
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| sequence_number | 整数 | 此片段关联的数字 |
+
+#### 8.8.6 Track Fragment Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| traf | Movie Fragment Box (moof) | N | 0/1 |
+
+影片片段内有一组轨道片段，每个轨道 0 或多个片段。轨道片段又包含 0 或多个轨道组，每个轨道组记录该轨道的连续采样组。在这些结构中，许多字段是可选的，且可以是默认的。
+
+可以使用这些结构向轨道增加“空时间”和采样。比如，可在音频轨道中使用空插入实现静音。
+
+```code
+aligned(8) class TrackFragmentBox extends Box(‘traf’){
+}
+```
+
+#### 8.8.7 Track Fragment Header Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| tfhd | Track Fragment Box (traf) | Y | 1 |
+
+每个影片片段可以增加 0 或多个片段到每个轨道；每个轨道片段可增加 0 或多个连续采样组。Track Fragment Header 设置这些采样组所用的信息和默认值。
+
+base_data_offset (如果显式提供)是一个数据偏移量，和 Chunk Offset Box 中的块偏移量相同，即应用到整个文件(比如，以 File Type Box 和 Movie Box 开头)。不存在完整文件或文件大小未知的情况下，可能无法使用显式的 base_data_offset；那么，需要构建相对于影片片段的偏移量。
+
+在 tf_flags 定义下面的标记：
+
+- 0x000001 base-data-offset-present: 指示存在 base_data_offset 字段。这为每个轨道组的数据偏移量提供了一个明确的定位点(参见下文)。如果未提供，则影片片段中第一个轨道的 base_data_offset 是封闭的 Movie Fragment Box 的第一个字节的位置，且对于第二个及后续轨道片段，默认值是前一个片段定义的数据数据结尾。片段以这种方式“继承”其偏移量必须全部使用相同的数据引用(即，这些轨道的数据必须位于同一文件)
+- 0x000002 sample-description-index-present：指示存在 sample_description_index 字段，它会在此片段覆盖 Track Extends Box 设置的默认值
+- 0x000008 default-sample-duration-present
+- 0x000010 default-sample-size-present
+- 0x000020 default-sample-flags-present
+- 0x010000 duration-is-empty：指示由 default_sample_duration 或 default_sample_duration 内的 default_sample_duration 提供的时长为空，即此时间间隔没有采样。制作的演示同时具有 Movie Box 的 edit list 和空时长片段，则该演示是错误的
+- 0x020000 default‐base‐is‐moof：如果 base-data-offset-present 是 1，则忽视此标记。如果 base-data-offset-present 是 0，此标记指示此轨道片段的 base-data-offset 是闭合的 Movie Fragment Box 的第一个字节的位置。在 “iso5” brand 下要求支持 default‐base‐is‐moof 标记，且不应在 brand 内或 iso5 之前的兼容 brand 内使用此标记
+
+注意：default‐base‐is‐moof 标记的使用破坏了此文件格式早期 brand 的兼容性，因为它设置偏移量计算的锚点和之前的版本不同。因此，当 File Type Box 包含早期 brand 时，不能设置 default‐base‐is‐moof 标记。
+
+```code
+aligned(8) class TrackFragmentHeaderBox
+  extends FullBox(‘tfhd’, 0, tf_flags){
+  unsigned int(32) track_ID;
+  // all the following are optional fields
+  unsigned int(64) base_data_offset;
+  unsigned int(32) sample_description_index;
+  unsigned int(32) default_sample_duration;
+  unsigned int(32) default_sample_size;
+  unsigned int(32) default_sample_flags
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| base_data_offset | 整数 | 计算数据偏移量时所用的基本偏移量 |
+
+#### 8.8.8 Track Fragment Run Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| trun | Track Fragment Box (traf) | N | >=0 |
+
+Track Fragment Box 内部有 0 或多个 Track Run Box。如果 tf_flags 设置了 duration-is-empty，则没有轨道组。每个轨道组记录轨道连续的一组采样。
+
+可选字段的数目由 flags 的低字节设置的位数决定，且记录的大小由 flags 第二个字节设置的位数确定。应该遵循此程序，以允许定义新字段。
+
+如果不存在 data-offset，则此组的数据将在上一组的数据之后立即开始，或者如果是轨道片段的第一组，则从轨道片段头部定义的 base-data-offset 开始。如果存在 data-offset，则它是相对于 Track Fragment Header 中定义的 base-data-offset。
+
+定义下面的标记：
+
+- 0x000001 data-offset-present
+- 0x000004 first-sample-flags-present：这将仅覆盖第一个采样的默认标记。这使得可以记录一组帧，其中第一个是关键帧，其他的是差异帧，而无需为每个采样提供显式的标记。如果使用此标记和字段，则不应存在 sample-flags
+- 0x000100 sample-duration-present-present：每个采样有自己的时长，否则使用默认值
+- 0x000200 sample-size-present:每个采样有自己的大小，否则使用默认值
+- 0x000400 sample-flags-present：每个采样有自己的标记，否则使用默认值
+- 0x000800 sample-composition-time-offsets-present：每个采样有一个合成时间偏移量(即用于 MPEG 的 I/P/B 视频)
+
+Composition Time to Sample Box 和 Track Run Box 内的 合成偏移量值可以是有符号或无符号的。Composition Time to Sample Box 中给出的关于有符号合成偏移量的用法也在这里适用。
+
+```code
+aligned(8) class TrackRunBox
+  extends FullBox(‘trun’, 0, tr_flags) {
+  unsigned int(32) sample_count;
+  // the following are optional fields
+  signed int(32) data_offset;
+  unsigned int(32) first_sample_flags;
+  // all fields in the following array are optional
+  {
+    unsigned int(32) sample_duration;
+    unsigned int(32) sample_size;
+    unsigned int(32) sample_flags
+    unsigned int(32) sample_composition_time_offset;
+  }[ sample_count ]
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| sample_count | 整数 | 增加到此片段的采样数；也是下表的行数(行数可为空) |
+| data_offset | 整数 | 增加到 Track Fragment Header 中建立的隐式或显式的 data-offset |
+| first_sample_flags | 整数 | 仅为此组第一个采样提供一组设置 |
+
+#### 8.8.9 Movie Fragment Random Access Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| mfra | 文件 | N | 0/1 |
+
+Movie Fragment Random Access Box(“mfra”) 提供一个表，可帮助读者使用影片片段查找文件中的随机访问点。对于每个提供信息的轨道(可能不是所有轨道)，它包含一个 Track Fragment Random Access Box。通常将此 box 放在文件末尾或靠近末尾；Movie Fragment Random Access Box 内最后一个 box 提供了 Movie Fragment Random Access Box 的 length 字段的副本。读者可通过检查文件的最后 32 位来尝试查找 Movie Fragment Random Access Box，或从文件末尾向后扫描获取 Movie Fragment Random Access Offset Box 并使用其中的大小信息，以查看该 box 是否位于 Movie Fragment Random Access Box 的开头。
+
+此 box 仅提供随机访问点的位置提示；影片片段本身是确定的。建议读者在定位和使用此 box 时格外注意，因为在创建文件后修改文件可能会导致指针或随机访问点的声明不正确。
+
+```code
+aligned(8) class MovieFragmentRandomAccessBox
+ extends Box(‘mfra’) {
+}
+```
+
+#### 8.8.10 Track Fragment Random Access Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| tfra | Movie Fragment Random Access Box (mfra) | N | 0 或每个轨道 1 个 |
+
+每个条目包含随机访问采样的位置和显示时间。它表示可以随机访问条目中的采样。请注意，并不需要在此表中列举轨道中的每个随机访问采样。
+
+没有此 box 并不意味着所有采样都是同步采样。不管是否存在此 box，都应适当设置 “trun”、“traf” 和 “trex” 中的随机访问信息。
+
+```code
+aligned(8) class TrackFragmentRandomAccessBox
+  extends FullBox(‘tfra’, version, 0) {
+  unsigned int(32) track_ID;
+  const unsigned int(26) reserved = 0;
+  unsigned int(2) length_size_of_traf_num;
+  unsigned int(2) length_size_of_trun_num;
+  unsigned int(2) length_size_of_sample_num;
+  unsigned int(32) number_of_entry;
+  for(i=1; i <= number_of_entry; i++){
+  if(version==1){
+    unsigned int(64) time;
+    unsigned int(64) moof_offset;
+  }else{
+    unsigned int(32) time;
+    unsigned int(32) moof_offset;
+  }
+  unsigned int((length_size_of_traf_num+1) * 8) traf_number;
+  unsigned int((length_size_of_trun_num+1) * 8) trun_number;
+  unsigned int((length_size_of_sample_num+1) * 8) sample_number;
+  }
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| track_ID | 整数 | 标识轨道 ID |
+| length_size_of_traf_num | 整数 | traf_number 字段的字节长度 - 1 |
+| length_size_of_trun_num | 整数 | trun_number 字段的字节长度 - 1 |
+| length_size_of_sample_num | 整数 | sample_number 字段的字节长度 - 1 |
+| number_of_entry | 整数 | 给出此轨道的条目数。如果值为 0，标识每个采样是一个随机访问点，且之后没有表条目 |
+| time | 32 或 64 位整数 | 指示此随机访问采样的显示时间，使用相关轨道的 “mdhd” 定义的单位 |
+| moof_offset | 32 或 64 位整数 | 给出此条目所用 “moof” 的偏移量。偏移量是文件开头到 “moof” 开头的字节差值 |
+| traf_number | 整数 | 指示包含随机访问采样的 “traf” 数目。每个 “moof” 内此数值范围从 1 开始(第一个 traf 编号是 1) |
+| trun_number | 整数 | 指示包含随机访问采样的 “trun” 数目。每个 “traf” 内此数值范围从 1 开始 |
+| sample_number | 整数 | 指示包含随机访问采样的采样编号。每个 “trun” 内此数值范围从 1 开始 |
+
+#### 8.8.11 Movie Fragment Random Access Offset Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| mfro | Movie Fragment Random Access Box (mfra) | Y | 1 |
+
+Movie Fragment Random Access Offset Box 提供闭合的 Movie Fragment Random Access Box 的 length 字段的拷贝。将其放置在该 box 最后，以便 size 字段也在闭合的 Movie Fragment Random Access Box 最后。当 Movie Fragment Random Access Box 也在文件末尾时，这允许轻松定位。这里的 size 字段必须正确。然而，Movie Fragment Random Access Box 是否存在，以及其位置是否在文件末尾都不能保证。
+
+```code
+aligned(8) class MovieFragmentRandomAccessOffsetBox
+  extends FullBox(‘mfro’, version, 0) {
+  unsigned int(32) size;
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| size | 整数 | 给出闭合的 “mfra” box 的字节数。此字段放在闭合的 box 最后，以支持读者在查找 “mfra” box 时从文件末尾扫描 |
+
+#### 8.8.12 Track Fragment Decode Time
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| tfdt | Track Fragment Box (traf) | N | 0/1 |
+
+Track Fragment Base Media Decode Time Box 提供在媒体时间线上测量，轨道片段中按解码顺序第一个采样的绝对解码时间。例如，在文件中执行随机访问时这很有用；不需要对之前片段中所有之前采样的采样时长求和即可找到此值(采样时长是 Decoding Time to Sample Box 的增量和之前轨道组的 sample_durations)。
+
+Track Fragment Base Media Decode Time Box (如果存在)放在 Track Fragment Header Box 之后，在第一个 Track Fragment Run Box 之前。
+
+注意，解码时间线是媒体时间线，在媒体时间到显式时间的任何显式或隐式映射(比如通过编辑列表或类似结构)之前建立。
+
+如果 Track Fragment Decode Time (“tfdt”) 中表示的时间，超过之前的影片和影片片段中采样的时长总和，则此轨道片段之前的最后一个采样的时长将延长，以使总和现在等于此 box 中给出的时间。这样，在尚不知道下一个采样的时间时，可以生成包含采样的片段。
+
+特别地，可以使用空的轨道片段(没有采样，但是有 Track Fragment Decode Time Box)构建最后一个采样的时长。
+
+```code
+aligned(8) class TrackFragmentBaseMediaDecodeTimeBox
+  extends FullBox(‘tfdt’, version, 0) {
+  if (version==1) {
+    unsigned int(64) baseMediaDecodeTime;
+  } else { // version==0
+    unsigned int(32) baseMediaDecodeTime;
+  }
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| version | 整数 | 指定此 box 的版本(此规范是 0 或 1) |
+| baseMediaDecodeTime | 整数 | 等于媒体中所有更早的采样的解码时长之和，单位是媒体的 timescale。它不包含闭合的轨道片段中增加的采样 |
+
+#### 8.8.13 Level Assignment Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| leva | Movie Extends Box (mvex) | N | 0/1 |
+
+等级指定文件的子集。映射到等级 n 的采样可能依赖等级 m 的任何采样(m <= n)，且不应依赖等级 p 的任何采样(p > n)。比如，可根据时间等级(比如 SVC 或 MVC 的 temporal_id)指定等级。
+
+不能为初始影片指定等级。存在 Level Assignment Box 时，它适用于初始影片之后的所有影片片段。
+
+对于 Level Assignment Box 的上下文，定义 fraction 组成一个或多个 Movie Fragment Box 以及关联的 Media Data Box，可能仅包含最后一个 Media Data Box 的一个初始部分。在 fraction 内部，每个等级的数据应连续出现。fraction 内部的等级数据应该按照等级值递增的出现。应将 fraction 内的所有数据分配给等级。
+
+注意，在 DASH (ISO/IEC 23009-1) 的上下文中，Subsegment Index Box 内索引的每个子片段是一个 fraction。
+
+Level Assignment Box 提供功能(比如可伸缩性层)到等级的映射。可以通过一个轨道、轨道内的一个子轨道，或轨道的一个采样分组指定功能。
+
+padding_flag 等于 1，这表示构建符合的 fraction，可以通过连接 fraction 内任何正整数等级，并用零字节填充最后一个 Media Data Box 直到最后一个 Media Data Box 头部指示的完整大小。比如，下面的条件为真时可设置 padding_flag 为 1：
+
+- 每个 fraction 包含统一视频比特率的两个或更多 AVC、SVC 或 MVC (ISO/IEC 14496-15) 轨道
+- fraction 的每个轨道的采样是连续的，且按照 Media Data Box 中的解码顺序
+- 第一个 AVC、SVC 或 MVC 等级的采样包含提取器 NAL 单元，用于包含来自同一 fraction 其他等级的视频编码 NAL 单元
+
+```code
+aligned(8) class LevelAssignmentBox extends FullBox(‘leva’, 0, 0)
+{
+  unsigned int(8) level_count;
+  for (j=1; j <= level_count; j++) {
+    unsigned int(32) track_id;
+    unsigned int(1) padding_flag;
+    unsigned int(7) assignment_type;
+    if (assignment_type == 0) {
+      unsigned int(32) grouping_type;
+    }
+    else if (assignment_type == 1) {
+      unsigned int(32) grouping_type;
+      unsigned int(32) grouping_type_parameter;
+    }
+    else if (assignment_type == 2) {} // no further syntax elements needed
+    else if (assignment_type == 3) {} // no further syntax elements needed
+    else if (assignment_type == 4) {
+      unsigned int(32) sub_track_id;
+    }
+    // other assignment_type values are reserved
+  }
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| level_count | 整数 | 指定每个 fraction 分组的等级数。值应大于等于 2 |
+| track_id | 整数 | 用于循环条目 j 指定分配给等级 j 的轨道的轨道标识符 |
+| padding_flag | 整数 | 等于 1 表示构建符合的 fraction，可以通过连接 fraction 内任何正整数等级，并用零字节填充最后一个 Media Data Box 直到最后一个 Media Data Box 头部指示的完整大小。padding_flag 等于 0 表示不确定 |
+| assignment_type | 整数 | 表示用于指定给等级赋值的机制。预留 assignment_type 大于 4 的值，而其他值的语义按如下规则指定。限制 assignment_type 的序列为类型 2 或 3 的集合(零个或多个)，其后是一个类型的零个或多个：0-采样组用于指定等级，即映射到特定采样组的不同采样分组描述索引的采样，位于标识轨道内的不同等级；其他轨道不受影响且其数据必须在一个等级；1-和 0 相同，除了通过参数化采样分组对等级赋值；2/3-通过轨道对等级赋值(参阅 Subsegment Index Box 获取处理这些等级的差异)；4-各个等级包含一个自轨道的采样。通过 Sub Track Box 指定子轨道；其他轨道不受影响且其数据必须在一个等级 |
+| grouping_type/grouping_type_parameter | 整数 | 如果存在，指定所用的采样分组，用于映射 Sample Group Description Box 内的采样分组描述条目到等级。等级 n 包含映射到采样分组描述条目的采样，这些条目在 Sample Group Description Box 内索引是 n，且 grouping_type 和 grouping_type_parameter (如果存在)和此 box 提供的相同 |
+| sub_track_id | 整数 | 表示循环条目 j 内通过 sub_track_id 标识的子轨道映射到等级 j |
+
+#### 8.8.14 Sample Auxiliary Information in Movie Fragments
+
+Movie Fragment Box 中存在采样辅助信息(8.7.8 和 8.7.9)时，将 Sample Auxiliary Information Offsets Box 中的偏移量视为和 Track Fragment Run Box 中的 data_offset 相同，也就是说，他们都相对于为该轨道片段构建的任何基本数据偏移量。如果使用影片片段相对取址(Track Fragment Header 中未提供基本数据偏移量)，且存在辅助信息，则还必须在该 Track Fragment Header 的标记中设置 default_base_is_moof。
+
+如果仅提供一个偏移量，则片段中所有轨道组的 Sample Auxiliary Information 将连续存储，否则必须为每个轨道组提供一个偏移量。
+
+如果在这些 box 中有一个 default_sample_info_size 字段不为零，则辅助信息的大小对于所标识的采样是恒定的。
+
+此外，如果：
+
+- 此 box 出现在 Movie Box 中
+- 且 Movie Box 中的这个 box 中，default_sample_info_size 不为零
+- 且影片片段中不存在 Sample Auxiliary Information Offsets Box
+
+则对于影片片段中的每个采样，辅助信息也必须有相同的恒定大小；这样就不必在影片片段中重复这个 box。
+
+#### 8.8.15 Track Extension Properties Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| trep | Movie Extends Box (mvex) | N | 0 或者每个轨道 1 个 |
+
+此 box 可用于记录或概括后续影片片段中轨道的特点。它可以包含任意数量的子 box。
+
+```code
+class TrackExtensionPropertiesBox extends FullBox(‘trep’, 0, 0) {
+  unsigned int(32) track_id;
+  // Any number of boxes may follow
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| track_id | 整数 | 指示此 box 中为该轨道提供了轨道扩展属性 |
+
+#### 8.8.16 Alternative Startup Sequence Properties Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| assp | Track Extension Properties Box (trep) | N | 0/1 |
+
+此 box 指示备用启动序列采样组的属性，这些采样组在轨道(包含的 Track Extension Properties Box 指示)的后续轨道片段中。
+
+如果将版本 0 的 Sample to Group Box 用于备用启动序列采样分组，则使用 Alternative Startup Sequence Properties Box 的版本 0。如果将版本 1 的 Sample to Group Box 用于备用启动序列采样分组，则使用 Alternative Startup Sequence Properties Box 的版本 1。
+
+```code
+class AlternativeStartupSequencePropertiesBox extends FullBox(‘assp’, version, 0) {
+  if (version == 0) {
+    signed int(32) min_initial_alt_startup_offset;
+  }
+  else if (version == 1) {
+    unsigned int(32) num_entries;
+    for (j=1; j <= num_entries; j++) {
+      unsigned int(32) grouping_type_parameter;
+      signed int(32) min_initial_alt_startup_offset;
+    }
+  }
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| min_initial_alt_startup_offset | 整数 |备用启动序列采样分组引用的采样分组描述条目的 sample_offset\[1\] 不应当小于 min_initial_alt_startup_offset。在此 box 的版本 0 中，引用使用 Sample to Group Box  版本 0 的备用启动序列采样分组。在此 box 的版本 1 中，引用使用 Sample to Group Box  版本 1 的备用启动序列采样分组，按照 grouping_type_parameter 进一步限制|
+| num_entries | 整数 | 指示此 box 中记录的备用启动序列采样分组的数目 |
+| grouping_type_parameter | 整数 | 指示此喜欢条目使用的备用采样分组 |
+
+#### 8.8.17 影片片段中的元数据和用户数据
+
+Meta Box 出现在 Movie Fragment 或 Track Fragment Box 中时，适用下面的内容。必须对文件分段，以使影片或轨道片段中需要的任何元数据都是联合 Movie Box 中的元数据与片段形成的，而不考虑或使用其他任何片段中的元数据。影片或轨道片段中的元数据在逻辑上“迟到”，但是对于整个轨道有效。在对文件进行分段逆向处理时，影片或轨道片段中的元数据必须分别合并到 Movie 或 Track Box。此过程允许“及时”交付支持字段和带宽管理，同时保留未定时元数据的本质时空性质。如果元数据确实随时间变化，可能需要定时的元数据轨道。
+
+如果在此合并期间，或者(a)有相同 item_ID 的元数据 item，或者(b)有相同类型的元数据 item，则适用以下内容：
+
+- 对于整个影片(包含所有片段)，所有数据(user-data box 或元数据 item)的出现必须为 “true”
+- 在更高编号的影片片段(“较晚”出现)在的出现可能更准确或“更优先”
+- 特别是，空的初始影片 atom 中的数据可能只是估计值或“不超过”值，而最终的空影片片段中的数据可能是“最终的”或最准确的值
+
+### 8.9 采样分组结构
+
+#### 8.9.1 介绍
+
+本节指定了表示轨道中采样分区的一种通用机制。采样分组是根据分组标准，将轨道的每个采样分配为一个采样组的成员。采样分组中的采样组不限于连续的采样，且可以包含不相邻的采样。由于轨道中的采样可能有多个采样分组，因此每个采样分组有一个 type 字段来指示分组的类型。例如，一个文件可能包含包含同一轨道的两个分组：一个基于样本对图层的分配，另一个基于对子序列的分配。
+
+采样分组由两个链接的数据结构表示：(1)SampleToGroup Box 表示将采样分配给采样组；(2)SampleGroupDescription Box 为每个采样组包含一个采样组条目，描述该组的属性。根据不同的分组标准，可能存在 SampleToGroup Box 和 SampleGroupDescription Box 的多个实例。
+
+特定分组类型的分组可使用采样中的参数进行分组映射；如果是这样，必须在组中记录参数的含义。一个例子可能是在多个视频流的多路复用中记录同步点；组定义可能是“是一个 I 帧”，且组参数可能是每个流的标识符。因为 Sample To Group Box 对于每个流只出现一次，因此它现在既是紧凑的，有分别将每个流通知给读者。
+
+使用这些表的一个示例是，表示根据图层分配采样。在这种情况下，每个采样分组表示一层，具有的 SampleToGroup Box 实例描述了采样所属的层。
+
+#### 8.9.2 Sample To Group Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| sbgp | Sample Table Box (stbl)/Track Fragment Box (traf) | N | >=0 |
+
+此表可用于查找采样所属的组，以及该采样组相关的描述。该表经过紧凑编码，每个条目给出一组采样的第一个采样的索引，这些采样具有相同的采样分组描述。group_description_index 是引用 SampleGroupDescription Box 的索引，其中包含的条目描述每个采样组的特征。
+
+如果一个轨道内的采样有多个采样分组，则此 box 可能有多个实例。SampleToGroup Box 的每个实例都有一个类型码以区分不同的采样分组。在一个轨道内部，应最多有一个具有特定分组类型的此 box 的实例。相关的 SampleGroupDescription 应为分组类型指示相同的值。
+
+只有需要分组类型参数时才应使用此 box 的版本 1。
+
+```code
+aligned(8) class SampleToGroupBox
+  extends FullBox(‘sbgp’, version, 0) {
+  unsigned int(32) grouping_type;
+  if (version == 1) {
+    unsigned int(32) grouping_type_parameter;
+  }
+  unsigned int(32) entry_count;
+  for (i=1; i <= entry_count; i++)
+  {
+    unsigned int(32) sample_count;
+    unsigned int(32) group_description_index;
+  }
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| version | 整数 | 指定此 box 的版本(0 或 1) |
+| grouping_type | 整数 | 标识采样分组的类型(即用于构成采样组的标准)，并将其链接到具有相同分组类型值的 SampleGroupDescription 表。对于一个轨道，具有相同 grouping_type(且，如果使用，grouping_type_parameter) 值的此 box 应最多出现一次 |
+| grouping_type_parameter | 整数 | 指示分组的子类型 |
+| entry_count | 整数 | 给出下表的条目数 |
+| sample_count | 整数 | 给出具有相同采样分组描述符的连续采样的数目。如果此 box 的采样计数综合少于总的采样计数，或某些采样没有适用的 Sample To Group Box(比如轨道片段没有)，则读者应将没有显式分组描述的采样关联到 SampleDescriptionGroup Box 中定义的默认分组(如果有)，或者如果没有则不与分组关联。如果此 box 内的总数大于其他地方记录的 sample_count，这是一个错误，且读者行为将是未定义的 |
+| group_description_index | 整数 | 给出采样组条目的索引，该条目描述此分组中的采样。索引范围是 1 到 SampleGroupDescription box 内的采样组条目数，或者取值 0 表示该采样不属于此类型任何分组 |
+
+#### 8.9.3 Sample Group Description Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| sgpd | Sample Table Box (stbl)/Track Fragment Box (traf) | N | >=0，每个 Sample To Group Box 一个 |
+
+这个描述表给出相同分组的特征信息。描述性的信息定义和表征采样组所需的任何其他信息。
+
+如果一个轨道中的采样有多个采样分组，则此 box 可能有多个实例。SampleGroupDescription Box 的每个实例都有一个类型码以区分不同的采样分组。在 Sample Table Box 或 Track Fragment Box 中，应最多有一个具有特定分组类型的此 box 的实例。相关的 SampleToGroup 应为分组类型指示相同的值。todo
+
+信息存储在 Sample Group Description Box 的 entry_count 之后。定义了抽象条目类型，采样分组应定义派生类型以表示每个采样组的描述。对于视频轨道，将抽象的 VisualSampleGroupEntry 与类似类型的音频和 hint 轨道一起使用。
+
+请注意：采样分组描述条目的基类不是 box，因此不会标识大小。当定义派生类时，确保它们有固定的大小，或使用长度字段明确标识大小。不建议使用隐含的大小(例如，通过解析数据获得)，因为这会使得扫描数组变得困难。
+
+```code
+// Sequence Entry
+abstract class SampleGroupDescriptionEntry (unsigned int(32) handler_type){
+}
+// Visual Sequence
+abstract class VisualSampleGroupEntry (type) extends SampleGroupDescriptionEntry
+(type){
+}
+// Audio Sequences
+abstract class AudioSampleGroupEntry (type) extends SampleGroupDescriptionEntry
+(type){
+}
+aligned(8) class SampleGroupDescriptionBox (unsigned int(32) handler_type)
+  extends FullBox('sgpd', 0, 0){
+  unsigned int(32) grouping_type;
+  unsigned int(32) entry_count;
+  int i;
+  for (i = 1 ; i <= entry_count ; i++){
+    switch (handler_type){
+    case ‘vide’: // for video tracks
+      VisualSampleGroupEntry ();
+      break;
+    case ‘soun’: // for audio tracks
+      AudioSampleGroupEntry();
+      break;
+    case ‘hint’: // for hint tracks
+      HintSampleGroupEntry();
+      break;
+    }
+  }
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| version | 整数 | 指定此 box 的版本 |
+| grouping_type | 整数 | 标识与此采样分组描述关联的 SampleToGroup box  |
+| entry_count | 整数 | 给出下表的条目数 |
+
+#### 8.9.4 Movie Fragment 的组结构表示
+
+通过使用 SampleToGroup Box 以支持 Movie Fragment 中的新 SampleGroup，SampleToGroup Box 的容器变为 Track Fragment Box (“traf”)。在 8.40.3.2 小节中指定其定义、语法和语义。
+
+SampleToGroup Box 可用于查找轨道片段中的采样所属分组，以及该采样组的关联描述。此表经过紧凑编码，每个条目给出一组采样的第一个采样的索引，这些采样具有相同的采样分组描述。采样组描述 ID 是一个引用 SampleGroupDescription Box 的索引，该 Box 包含的条目描述每个采样组特征，且存在 SampleTableBox 中。
+
+如果一个轨道片段内的采样有多个采样分组，则可能有多个 SampleToGroup Box 实例。SampleToGroup Box 的每个实例都有一个类型码以区分不同的采样分组。相关的 SampleGroupDescription 应为分组类型指示相同的值。
+
+轨道片段中所有 SampleToGroup Box 内表示的采样总数必须和所有轨道片段组的采样总数匹配。每个 SampleToGroup Box 记录相同采样的不同分组。
 
 ### unknown
 
@@ -1459,281 +2542,6 @@ aligned(8) class HintMediaHeaderBox
 | maxbitrate | 整数 | 给出在任何一秒窗口的最大速率(比特/秒) |
 | avgbitrate | 整数 | 整个演示的平均速率(比特/秒) |
 
-### 8.12 Data Information Box
-
-| box 类型 | 容器 | 必要性 | 数量 |
-| --- | --- | --- | --- |
-| dinf | Media Information Box (minf) 或 Meta Box (meta) | Y(minf)/N(meta) | 1 |
-
-box 包含声明轨道内媒体信息位置的对象。
-
-```code
-aligned(8) class DataInformationBox extends Box(‘dinf’) {
-}
-```
-
-### 8.13 Data Reference Box
-
-| box 类型 | 容器 | 必要性 | 数量 |
-| --- | --- | --- | --- |
-| url/urn/dref | Data Information Box (dinf) | Y | 1 |
-
-数据引用对象包含一个数据引用表(通常是 URL)，这些表声明了演示中使用的媒体数据的位置。采样描述内的数据引用索引将此表中的条目和轨道中的采样关联。可通过此方式将轨道分为多个源。
-
-如果设置了标记以指示数据与此 box 在同一文件，则在条目字段中不应提供任何字符串(空字符串也不行)。
-
-DataReferenceBox 内的 DataEntryBox 应该是 DataEntryUrnBox 或 DataEntryUrlBox。
-
-```code
-aligned(8) class DataEntryUrlBox (bit(24) flags)
-  extends FullBox(‘url ’, version = 0, flags) {
-  string location;
-}
-aligned(8) class DataEntryUrnBox (bit(24) flags)
-  extends FullBox(‘urn ’, version = 0, flags) {
-  string name;
-  string location;
-}
-aligned(8) class DataReferenceBox
-  extends FullBox(‘dref’, version = 0, 0) {
-  unsigned int(32) entry_count;
-  for (i=1; i • entry_count; i++) { entry_count; i++) {
-    DataEntryBox(entry_version, entry_flags) data_entry;
-  }
-} 
-```
-
-| 字段 | 类型 | 含义 |
-| --- | --- | --- |
-| version | 整数 | 指定此 box 的版本 |
-| entry_count | 整数 | 对实际条目计数 |
-| entry_version | 整数 | 指定条目格式的版本 |
-| entry_flags | 24 位整数 | 定义 0x000001 标记，表示媒体数据与包含此数据引用的 Movie Box 在同一文件 |
-| data_entry | - | URL 或 URN 条目。name 是 URN， 且在 URN 条目是必须的。location 是 URL (URL 条目必须，URN 条目可选)，提供位置以使用给定名称查找资源。每个都是使用 UTF-8 字符以空字符结尾的字符串。如果设置了 selfcontained 标记，使用 URL 形式且不存在任何字符串；box 以 entry_flags 字段结尾。URL 类型(如类型为文件、http、ftp 等)应该是提供文件的服务，且该服务理想情况下支持还支持随机访问。允许相对 URL，且是相对于包含 Movie Box 的文件，该 Movie Box 包含此数据引用 |
-
-### 8.17 Sample Size Box
-
-| box 类型 | 容器 | 必要性 | 数量 |
-| --- | --- | --- | --- |
-| stsz/stz2 | Sample Table Box (stbl) | Y | 1(变体) |
-
-此 box 包含采样计数和一个表格，该表给出每个采样的字节数。这允许媒体数据本身未分帧。媒体中的采样总数使用显示在采样技术中。
-
-Sample Size Box 有两种。第一种有一个固定 32 位的字段用于表示采样尺寸；它允许为轨道内的所有采样定义固定尺寸。第二章允许更小的字段，以便在尺寸不同且较小时可以节省空间。必须存在这两种 box 之一；为了最大兼容性首选第一个版本。
-
-```code
-aligned(8) class SampleSizeBox extends FullBox(‘stsz’, version = 0, 0) {
-  unsigned int(32) sample_size;
-  unsigned int(32) sample_count;
-  if (sample_size==0) {
-    for (i=1; i <= sample_count; i++) {
-      unsigned int(32) entry_size;
-    }
-  }
-}
-```
-
-| 字段 | 类型 | 含义 |
-| --- | --- | --- |
-| version | 整数 | 指定此 box 的版本 |
-| sample_size | 整数 | 指定默认采样大小。如果所有采样大小相同，此字段包含该值。如果此字段为 0，那么采样大小不相同，且采样大小保存保存在采样尺寸表中。如果此字段不是 0，它指定固定采样大小，且之后没有数组 |
-| sample_count | 整数 | 给出轨道内的采样数；如果 sample_size 为 0，这也是下表的条目数 |
-| entry_size | 整数 | 指定采样大小，通过采样编号进行索引 |
-
-### 8.18 Sample To Chunk Box
-
-| box 类型 | 容器 | 必要性 | 数量 |
-| --- | --- | --- | --- |
-| stsc | Sample Table Box (stbl) | Y | 1 |
-
-媒体内的采样分分组成块。块大小可以不同，且同一块中的采样大小可以不同。此表可用于查找包含采样的块，块的位置和相关的样本描述。
-
-此表示紧凑编码的。每个条目给出一组块的第一个块的索引，这些块具有相同特征。通过从上一个条目减去一个条目，可以计算该组有多少块。你可以将其乘以合适的“采样数/块”从而转换为采样数。
-
-```code
-aligned(8) class SampleToChunkBox
-  extends FullBox(‘stsc’, version = 0, 0) {
-  unsigned int(32) entry_count;
-  for (i=1; i <= entry_count; i++) {
-    unsigned int(32) first_chunk;
-    unsigned int(32) samples_per_chunk;
-    unsigned int(32) sample_description_index;
-  }
-}
-```
-
-| 字段 | 类型 | 含义 |
-| --- | --- | --- |
-| version | 整数 | 指定此 box 的版本 |
-| entry_count | 整数 | 给出下表的条目数 |
-| first_chunk | 整数 | 给出一组块的第一个块的索引，这些块有相同的 samples_per_chunk 和sample_description_index；轨道中第一个块的索引值是 1(此 box 的第一个记录的 first_chunk 值为 1，表示第一个采样映射到该块) |
-| samples_per_chunk | 整数 | 给出这些块中每个块的采样数 |
-| sample_description_index | 整数 | 给出采样条目的索引，该条目描述此块的采样。索引范围从 1 到 Sample Description Box 的采样条目数 |
-
-### 8.19 Chunk Offset Box
-
-| box 类型 | 容器 | 必要性 | 数量 |
-| --- | --- | --- | --- |
-| stso/co64 | Sample Table Box (stbl) | Y | 1(变体) |
-
-块偏移表给出每个块到包含文件的索引。有两种表。允许使用 32 位或 64 位偏移。后者在管理非常大的演示时非常有用。在采样表的任何单个实例中，至多有其中一种表。
-
-偏移是文件的偏移，而不是文件中任何 box (比如 Media Data Box)的偏移。这允许引用没有任何 box 结构的文件内的媒体数据。这也意味着在构造一个独立的 ISO 文件且其前面有元数据(Movie Box)时需要格外小心，因为 Movie Box 的大小会影响媒体数据的块偏移。
-
-```code
-aligned(8) class ChunkOffsetBox
-  extends FullBox(‘stco’, version = 0, 0) {
-  unsigned int(32) entry_count;
-  for (i=1; i u entry_count; i++) {
-    unsigned int(32) chunk_offset;
-  }
-}
-aligned(8) class ChunkLargeOffsetBox
-  extends FullBox(‘co64’, version = 0, 0) {
-  unsigned int(32) entry_count;
-  for (i=1; i u entry_count; i++) {
-    unsigned int(64) chunk_offset;
-  }
-} 
-```
-
-| 字段 | 类型 | 含义 |
-| --- | --- | --- |
-| version | 整数 | 指定此 box 的版本 |
-| entry_count | 整数 | 给出下表的条目数 |
-| chunk_offset | 32/64 位证书 | 给出块的开始到其包含的媒体文件内的偏移量 |
-
-### 8.21 Shadow Sync Sample Box
-
-| box 类型 | 容器 | 必要性 | 数量 |
-| --- | --- | --- | --- |
-| stsh | Sample Table Box (stbl) | N | 0/1 |
-
-Shadow Sync Table 提供一组可选的同步样本，这些采样可用于 seek 或类似目的。在正常的前向播放中，将其忽略。
-
-Shadow Sync Table 中的每个条目由一对采样编号组成。第一个编号 (shadowed-sample-number) 指示将为该采样编号定义 shadow sync。这应该总是非同步采样(比如帧差异)。第二个采样编号  (sync-sample-number) 指示当在 shadowed-sample-number 或在其之前有随机访问时，可使用的同步采样(比如关键帧)的采样编号。
-
-Shadow Sync Box 中的条目应基于 shadowed-sample-number 字段进行排序。
-
-尽管不是必须的，但是通常将 shadow sync sample 放在正常播放期间未显示的轨道区域(通过 Edit List 进行编辑)。可以忽略 Shadow Sync Table，且忽略时轨道将正确(尽管可能不是最佳的)播放(和 seek)。
-
-Shadow Sync Sample 替换而不是增加其 shadow 的采样(也就是，下一个发送的采样是 shadowed-sample-number+1)。将 Shadow Sync Sample 视为好像在其 shadow 的采样发生时一样，具有该采样的时长。
-
-如果 shadow 采样也用作正常回放的一部分，或不止一次用作 shadow，hint 和传输可能会变得更加复杂。在这种情况下，hint 轨道可能需要单独的 shadow sync，所有 shadow sync 都可以从媒体轨道的一个 shadow sync 中获取其媒体数据，以允许其头部所需的不同时间戳等。
-
-```code
-aligned(8) class ShadowSyncSampleBox
-  extends FullBox(‘stsh’, version = 0, 0) {
-  unsigned int(32) entry_count;
-  int i;
-  for (i=0; i < entry_count; i++) {
-    unsigned int(32) shadowed_sample_number;
-    unsigned int(32) sync_sample_number;
-  }
-}
-```
-
-| 字段 | 类型 | 含义 |
-| --- | --- | --- |
-| version | 整数 | 指定此 box 的版本 |
-| entry_count | 整数 | 给出下表的条目数 |
-| shadowed_sample_number | 整数 | 给出存在备用同步采样的采样编号 |
-| sync_sample_number | 整数 | 给出备用同步采样的编号 |
-
-### 8.23 Padding Bits Box
-
-| box 类型 | 容器 | 必要性 | 数量 |
-| --- | --- | --- | --- |
-| padb | Sample Table Box (stbl) | N | 0/1 |
-
-在某些流中，媒体采样并未占据采样大小给定的字节所有位，而是在末尾填充到字节边界。在某些情况下，需要在外部记录所用的填充位数。此表提供了该信息。
-
-```code
-aligned(8) class PaddingBitsBox extends FullBox(‘padb’, version = 0, 0) {
-  unsigned int(32) sample_count;
-  int i;
-  for (i=0; i < ((sample_count + 1)/2); i++) {
-    bit(1) reserved = 0;
-    bit(3) pad1;
-    bit(1) reserved = 0;
-    bit(3) pad2;
-  }
-}
-```
-
-| 字段 | 类型 | 含义 |
-| --- | --- | --- |
-| sample_count | 整数 | 对轨道中的采样计数；应该和其他表中的计数匹配 |
-| pad1 | 0-7 | 指示采样 (i*2)+1 末尾的比特数 |
-| pad2 | 0-7 | 指示采样 (i*2)+2 末尾的比特数 |
-
-### 8.25 Edit Box
-
-| box 类型 | 容器 | 必要性 | 数量 |
-| --- | --- | --- | --- |
-| edts | Track Box(trak) | N | 0/1 |
-
-Edit Box 将演示时间线映射到存储在文件中的媒体时间线。Edit Box 是 Edit List Box 的容器。
-
-Edit Box 是可选的。在没有此 box 的情况下，这些时间线存在隐式的一对一映射，且轨道的显示从演示的开头开始。空的 Edit Box 用于抵消轨道的开始时间。
-
-```code
-aligned(8) class EditBox extends Box(‘edts’) {
-}
-```
-
-### 8.26 Edit List Box
-
-| box 类型 | 容器 | 必要性 | 数量 |
-| --- | --- | --- | --- |
-| elst | Edit Box(edts) | N | >=0 |
-
-此 box 包含一个显式的时间线映射。每个条目定义轨道时间线的一部分：通过映射媒体时间线的一部分，或通过指示“空”时间，或通过定义 “dwell”，对应媒体内的单个时间点将保持一段时间。
-
-请注意，未限制 edit 落在采样时间上。这意味着，当进入 edit 时，可能有必要：
-
-- 备份到一个同步点，并从该位置预滚动，然后
-- 注意第一个采样的时长——如果 edit 进入采样的正常时长内，采样可能被截断
-
-如果是音频，则可能需要对该帧重新解码，然后完成最后的切片。同样，在 edit 中最后一个采样的时长可能需要切片。
-
-轨道(流)的起始偏移量有一个初始的空 edit 表示。比如，要从轨道开始播放 30 秒，但是在演示播放第 10 秒时，我们有下面的 edit list：
-
-```txt
-entry_count = 2
-segment_duration = 10s
-media_time = -1
-media_rate = 1
-segment_duration = 30s (可能是整个轨道的长度)
-media_time = 0s
-media_rate = 1
-```
-
-```code
-aligned(8) class EditListBox extends FullBox(‘elst’, version, 0) {
-  unsigned int(32) entry_count;
-  for (i=1; i <= entry_count; i++) {
-  if (version==1) {
-    unsigned int(64) segment_duration;
-    int(64) media_time;
-  } else { // version==0
-    unsigned int(32) segment_duration;
-    int(32) media_time;
-  }
-  int(16) media_rate_integer;
-  int(16) media_rate_fraction = 0;
-  }
-}
-```
-
-| 字段 | 类型 | 含义 |
-| --- | --- | --- |
-| version | 整数 | 指定此 box 的版本(0 或 1) |
-| entry_count | 整数 | 指定下标的条目数 |
-| segment_duration | 整数 | 指定此 edit 段的时长，单位是 Movie Header Box 的 timescale |
-| media_time | 整数 | 包含此 edit 段的媒体内的起始时间(以媒体的时间刻度为单位，以合成时间为单位)。如果此字段为 -1，则为空 edit。轨道中最后一个 edit 不应为空。Movie Header Box 的时长和轨道时长的任何差异表示为最后隐含的空 edit |
-| media_rate_integer/media_rate_fraction | 整数 | 指定播放对应此 edit 段的媒体的相对速率。如果值为 0，则说明 edit 指定了 “dwell”：在 media_time 处的媒体显示 segment_duration。否则此字段的值应为 1 |
-
 ### 8.27 User Data Box
 
 | box 类型 | 容器 | 必要性 | 数量 |
@@ -1773,451 +2581,11 @@ aligned(8) class CopyrightBox
 | language | - | 声明下面文本的语言代码。参阅 ISO 639-2/T 获取三字符代码集合。每个字符是其 ASCII 值和 0x60 的差值。此代码限制为三个小写字母，因此这些值是严格为正 |
 | notice | null 结尾的字符串 | UTF-8 或 UTF-16 字符，给出版权声明。如果使用 UTF-16，字符串应以 BYTE ORDER MARK(0xFEFF) 开头，以便区分 UTF-8 字符串。最后的字符串不包含此标识 |
 
-### 8.29 Movie Extends Box
-
-| box 类型 | 容器 | 必要性 | 数量 |
-| --- | --- | --- | --- |
-| mvex | Movie Box(moov) | N | 0/1 |
-
-此 box 警告读者文件中可能有 Movie Fragment Box。要了解鼓捣中的所有采样，必须按顺序查找和扫描这些 Movie Fragment Box，并将其信息逻辑添加到 Movie Box 找到的片段上。
-
-附录 A 有 Movie Fragment 的叙述性介绍。
-
-```code
-aligned(8) class MovieExtendsBox extends Box(‘mvex’){
-}
-```
-
-### 8.30 Movie Extends Header Box
-
-| box 类型 | 容器 | 必要性 | 数量 |
-| --- | --- | --- | --- |
-| mehd | Movie Extends Box(mvex) | N | 0/1 |
-
-Movie Extends Header 是可选的，且提供分段影片的整体时长，包括片段。如果不存此 box，则必须通过检查每个片段来计算总体时长。
-
-```code
-aligned(8) class MovieExtendsHeaderBox extends FullBox(‘mehd’, version, 0) {
-  if (version==1) {
-    unsigned int(64) fragment_duration;
-  } else { // version==0
-    unsigned int(32) fragment_duration;
-  }
-}
-```
-
-| 字段 | 类型 | 含义 |
-| --- | --- | --- |
-| fragment_duration | 整数 | 声明包含片段的整个影片演示的长度(以 Movie Header Box 的时间刻度为单位)。此字段的值对应最长轨道(包含片段)的时长。如果实时创建 MP4 文件，例如实时流使用，fragment_duration 不太可能事先已知，因此可以忽略此 box |
-
-### 8.31 Track Extends Box
-
-| box 类型 | 容器 | 必要性 | 数量 |
-| --- | --- | --- | --- |
-| trex | Movie Extends Box(mvex) | Y | Movie Box 内每个轨道一个 |
-
-此 box 设置影片片段使用的默认值。通过此方式设置默认值，可为每个 Track Fragment Box 节省空间和复杂度。
-
-将采样片段内的标记字段编码为 32 位的值，包括这里以及 Track Fragment Header Box 的 default_sample_flags，Track Fragment Run Box 内的 sample_flags 和 first_sample_flags。该值具有下面的结构：
-
-```code
-bit(6) reserved=0;
-unsigned int(2) sample_depends_on;
-unsigned int(2) sample_is_depended_on;
-unsigned int(2) sample_has_redundancy;
-bit(3) sample_padding_value;
-bit(1) sample_is_difference_sample;
- // i.e. when 1 signals a non-key or non-sync sample
-unsigned int(16) sample_degradation_priority;
-```
-
-sample_depends_on、sample_is_depended_on 和 sample_has_redundancy 值在 Independent and Disposable Samples Box 内定义。
-
-sample_padding_value 的定义和 Padding Bits Box 相同。sample_degradation_priority 定义和 Degradation Priority Box 相同。
-
-```code
-aligned(8) class TrackExtendsBox extends FullBox(‘trex’, 0, 0){
-  unsigned int(32) track_ID;
-  unsigned int(32) default_sample_description_index;
-  unsigned int(32) default_sample_duration;
-  unsigned int(32) default_sample_size;
-  unsigned int(32) default_sample_flags
-}
-```
-
-| 字段 | 类型 | 含义 |
-| --- | --- | --- |
-| track_ID | 整数 | 标识轨道；这应该是 Movie Box 内的轨道的 track_ID |
-| default_xxx | 整数 | 这些字段设置轨道片段所用的默认值 |
-
-### 8.32 Movie Fragment Box
-
-| box 类型 | 容器 | 必要性 | 数量 |
-| --- | --- | --- | --- |
-| moof | 文件 | N | 0/1 |
-
-影片片段会及时扩展演示。它们提供了以前在 Movie Box 中的信息。如果实际采样在同一文件中，则和通常一样，这些采样在 Media Data Box。数据引用索引在采样描述中，因此当媒体数据在除包含 Movie Box 的文件之外，可以构建增量演示。
-
-Movie Fragment Box 是顶级 box(即和 Movie Box、Media Data Box 对等)。它包含一个 Movie Fragment Header Box，以及一个或多个 Track Fragment Box。
-
-```code
-aligned(8) class MovieFragmentBox extends Box(‘moof’){
-}
-```
-
-### 8.33 Movie Fragment Header Box
-
-| box 类型 | 容器 | 必要性 | 数量 |
-| --- | --- | --- | --- |
-| mfhd | Movie Fragment Box(moof) | Y | 1 |
-
-Movie Fragment Header 包含一个序列号，作为安全检查。序列号通常从 1 开始，且按照文件内每个影片片段出现的顺序，此值增加。这使读者可以验证序列的完整性；构成片段乱序的文件是错误的。
-
-```code
-aligned(8) class MovieFragmentHeaderBox
-  extends FullBox(‘mfhd’, 0, 0){
-  unsigned int(32) sequence_number;
-}
-```
-
-| 字段 | 类型 | 含义 |
-| --- | --- | --- |
-| sequence_number | 整数 | 片段的序数，以递增顺序 |
-
-### 8.34 Track Fragment Box
-
-| box 类型 | 容器 | 必要性 | 数量 |
-| --- | --- | --- | --- |
-| traf | Movie Fragment Box(moof) | N | 0/1 |
-
-影片片段内有一组轨道片段，每个轨道 0 或多个片段。轨道片段又包含 0 或多个轨道组，每个轨道组记录该轨道的连续采样组。在这些结构中，许多字段是可选的，且可以是默认的。
-
-可以使用这些结构向轨道增加“空时间”和采样。比如，可在音频轨道中使用空插入实现静音。
-
-```code
-aligned(8) class TrackFragmentBox extends Box(‘traf’){
-}
-```
-
-### 8.35 Track Fragment Header Box
-
-| box 类型 | 容器 | 必要性 | 数量 |
-| --- | --- | --- | --- |
-| tfhd | Track Fragment Box(traf) | Y | 1 |
-
-每个影片片段可以增加 0 或多个片段到每个轨道；每个轨道片段可增加 0 或多个连续采样组。Track Fragment Header 设置这些采样组所用的信息和默认值。
-
-在 tf_flags 定义下面的标记：
-
-- 0x000001 base-data-offset-present: 指示存在 base_data_offset 字段。这为每个轨道组的数据偏移量提供了一个明确的定位点(参见下文)。如果未提供，则影片片段中第一个轨道的 base_data_offset 是封闭的 Movie Fragment Box 的第一个字节的位置，且对于第二个及后续轨道片段，默认值是前一个片段定义的数据数据结尾。片段以这种方式“继承”其偏移量必须全部使用相同的数据引用(即，这些轨道的数据必须位于同一文件)
-- 0x000002 sample-description-index-present：指示存在 sample_description_index 字段，它会在此片段覆盖 Track Extends Box 设置的默认值
-- 0x000008 default-sample-duration-present
-- 0x000010 default-sample-size-present
-- 0x000020 default-sample-flags-present
-- 0x010000 duration-is-empty：指示由 default_sample_duration 或 default_sample_duration 内的 default_sample_duration 提供的时长为空，即此时间间隔没有采样。制作的演示同时具有 Movie Box 的 edit list 和空时长片段，则该演示是错误的
-
-```code
-aligned(8) class TrackFragmentHeaderBox
-  extends FullBox(‘tfhd’, 0, tf_flags){
-  unsigned int(32) track_ID;
-  // all the following are optional fields
-  unsigned int(64) base_data_offset;
-  unsigned int(32) sample_description_index;
-  unsigned int(32) default_sample_duration;
-  unsigned int(32) default_sample_size;
-  unsigned int(32) default_sample_flags
-}
-```
-
-| 字段 | 类型 | 含义 |
-| --- | --- | --- |
-| base_data_offset | 整数 | 计算数据偏移量时所用的基本偏移量 |
-
-### 8.36 Track Fragment Run Box
-
-| box 类型 | 容器 | 必要性 | 数量 |
-| --- | --- | --- | --- |
-| trun | Track Fragment Box(traf) | N | >=0 |
-
-Track Fragment Box 内部有 0 或多个 Track Run Box。如果 tf_flags 设置了 duration-is-empty，则没有轨道组。每个轨道组记录轨道连续的一组采样。
-
-可选字段的数目由 flags 的低字节设置的位数决定，且记录的大小由 flags 第二个字节设置的位数确定。应该遵循此程序，以允许定义新字段。
-
-如果不存在 data-offset，则此组的数据将在上一组的数据之后立即开始，或者如果是轨道片段的第一组，则从轨道片段头部定义的 base-data-offset 开始。如果存在 data-offset，则它是相对于 Track Fragment Header 中定义的 base-data-offset。
-
-定义下面的标记：
-
-- 0x000001 data-offset-present
-- 0x000004 first-sample-flags-present：这将仅覆盖第一个采样的默认标记。这使得可以记录一组帧，其中第一个是关键帧，其他的是差异帧，而无需为每个采样提供显式的标记。如果使用此标记和字段，则不应存在 sample-flags
-- 0x000100 sample-duration-present-present：每个采样有自己的时长，否则使用默认值
-- 0x000200 sample-size-present:每个采样有自己的大小，否则使用默认值
-- 0x000400 sample-flags-present：每个采样有自己的标记，否则使用默认值
-- 0x000800 sample-composition-time-offsets-present：每个采样有一个合成时间偏移量(即用于 MPEG 的 I/P/B 视频)
-
-```code
-aligned(8) class TrackRunBox
-  extends FullBox(‘trun’, 0, tr_flags) {
-  unsigned int(32) sample_count;
-  // the following are optional fields
-  signed int(32) data_offset;
-  unsigned int(32) first_sample_flags;
-  // all fields in the following array are optional
-  {
-    unsigned int(32) sample_duration;
-    unsigned int(32) sample_size;
-    unsigned int(32) sample_flags
-    unsigned int(32) sample_composition_time_offset;
-  }[ sample_count ]
-}
-```
-
-| 字段 | 类型 | 含义 |
-| --- | --- | --- |
-| sample_count | 整数 | 增加到此片段的采样数；也是下标的行数(行数可为空) |
-| data_offset | 整数 | 增加到data-offset，在 Track Fragment Header 中隐式或显式建立的 |
-| first_sample_flags | 整数 | 仅为此组第一个采样提供一组设置 |
-
-### 8.37 Movie Fragment Random Access Box
-
-| box 类型 | 容器 | 必要性 | 数量 |
-| --- | --- | --- | --- |
-| mfra | 文件 | N | 1 |
-
-Movie Fragment Random Access Box(“mfra”) 提供一个表，可帮助读者使用影片片段查找文件中的随机访问点。对于每个提供信息的轨道(可能不是所有轨道)，它包含一个 Track Fragment Random Access Box。通常将此 box 放在文件末尾或靠近末尾；Movie Fragment Random Access Box 内最后一个 box 提供了 Movie Fragment Random Access Box 的 length 字段的副本。读者可通过检查文件的最后 32 位来尝试查找 Movie Fragment Random Access Box，或从文件末尾向后扫描获取 Movie Fragment Random Access Offset Box 并使用其中的大小信息，以查看该 box 是否位于 Movie Fragment Random Access Box 的开头。
-
-此 box 仅提供随机访问点的位置提示；影片片段本身是确定的。建议读者在定位和使用此 box 时格外注意，因为在创建文件后修改文件可能会导致指针或随机访问点的声明不正确。
-
-```code
-aligned(8) class MovieFragmentRandomAccessBox
- extends Box(‘mfra’) {
-}
-```
-
-### 8.38 Track Fragment Random Access Box
-
-| box 类型 | 容器 | 必要性 | 数量 |
-| --- | --- | --- | --- |
-| tfra | Movie Fragment Random Access Box(mfra) | N | >=1 |
-
-每个条目包含随机访问采样的位置和显示时间。它表示可以随机访问条目中的采样。请注意，并不需要在此表中列举轨道中的每个随机访问采样。
-
-没有此 box 并不意味着所有采样都是同步采样。不管是否存在此 box，都应适当设置 “trun”、“traf” 和 “trex” 中的随机访问信息。
-
-```code
-aligned(8) class TrackFragmentRandomAccessBox
-  extends FullBox(‘tfra’, version, 0) {
-  unsigned int(32) track_ID;
-  const unsigned int(26) reserved = 0;
-  unsigned int(2) length_size_of_traf_num;
-  unsigned int(2) length_size_of_trun_num;
-  unsigned int(2) length_size_of_sample_num;
-  unsigned int(32) number_of_entry;
-  for(i=1; i • number_of_entry; i++){
-  if(version==1){
-    unsigned int(64) time;
-    unsigned int(64) moof_offset;
-  }else{
-    unsigned int(32) time;
-    unsigned int(32) moof_offset;
-  }
-  unsigned int((length_size_of_traf_num+1) * 8) traf_number;
-  unsigned int((length_size_of_trun_num+1) * 8) trun_number;
-  unsigned int((length_size_of_sample_num+1) * 8) sample_number;
-  }
-}
-```
-
-| 字段 | 类型 | 含义 |
-| --- | --- | --- |
-| track_ID | 整数 | 标识轨道 ID |
-| length_size_of_traf_num | 整数 | traf_number 字段的字节长度 - 1 |
-| length_size_of_trun_num | 整数 | trun_number 字段的字节长度 - 1 |
-| length_size_of_sample_num | 整数 | sample_number 字段的字节长度 - 1 |
-| number_of_entry | 整数 | 给出此轨道的条目数。如果值为 0，标识每个采样是一个随机访问点，且之后没有表条目 |
-| time | 32 或 64 位整数 | 指示此随机访问采样的显示时间，使用相关轨道的 “mdhd” 定义的单位 |
-| moof_offset | 32 或 64 位整数 | 给出此条目所用 “moof” 的偏移量。偏移量是文件开头到 “moof” 开头的字节差值 |
-| traf_number | 整数 | 指示包含随机访问采样的 “traf” 数目。每个 “moof” 内此数值范围从 1 开始(第一个 traf 编号是 1) |
-| trun_number | 整数 | 指示包含随机访问采样的 “trun” 数目。每个 “traf” 内此数值范围从 1 开始 |
-| sample_number | 整数 | 指示包含随机访问采样的采样编号。每个 “trun” 内此数值范围从 1 开始 |
-
-### 8.39 Movie Fragment Random Access Offset Box
-
-| box 类型 | 容器 | 必要性 | 数量 |
-| --- | --- | --- | --- |
-| mfro | Movie Fragment Random Access Box(mfra) | Y | 1 |
-
-Movie Fragment Random Access Offset Box 提供闭合的 Movie Fragment Random Access Box 的 length 字段的拷贝。将其放置在该 box 最后，以便 size 字段也在闭合的 Movie Fragment Random Access Box 最后。当 Movie Fragment Random Access Box 也在文件末尾时，这允许轻松定位。这里的 size 字段必须正确。然而，Movie Fragment Random Access Box 是否存在，以及其位置是否在文件末尾都不能保证。
-
-```code
-aligned(8) class MovieFragmentRandomAccessOffsetBox
-  extends FullBox(‘mfro’, version, 0) {
-  unsigned int(32) size;
-}
-```
-
-| 字段 | 类型 | 含义 |
-| --- | --- | --- |
-| size | 整数 | 给出闭合的 “mfra” box 的字节数。此字段放在闭合的 box 最后，以支持读者在查找 “mfra” box 时从文件末尾扫描 |
-
 ### 8.40 AVC Extensions
 
 #### 8.40.1 介绍
 
 此章节记录的技术补充最初为 AVC 支持而设计，但这些补充更加通用。
-
-#### 8.40.2 Independent and Disposable Samples Box
-
-| box 类型 | 容器 | 必要性 | 数量 |
-| --- | --- | --- | --- |
-| sdtp | Sample Table Box(stbl)/Track Fragment Box(traf) | N | 0/1 |
-
-这个可选的表格回答关于采样独立性的三个问题：
-
-1. 这个采样依赖其他采样吗(它是否是一个 I-picture)？
-2. 其他采样依赖这个采样吗？
-3. 这个采样在此瞬间(可能有不同的依赖)包含多个(冗余)的数据编码吗？
-
-在缺少此表的情况下：
-
-1. Sync Sample Table 回答第一个问题；在大多数视频编码中，I-picture 也是同步点
-2. 其他采样对这个采样的依赖是未知的
-3. 冗余编码的存在性是未知的
-
-当执行 “trick” 模式时，比如快速向前，可以使用第一条信息定位独立可解码的采样。类似地，当执行随机访问时，可能需要定位先前的同步点或随机访问恢复点，并从同步点或随机访问回复点的预滚动开始点向前滚动到所需的点。在向前滚动时，不需要检索或解码没有其他采样依赖的采样。
-
-“sample_is_depended_on” 值与冗余编码的存在性无关。然而，冗余编码可能对主编码有不同的依赖；如果有冗余编码，则 “sample_depends_on” 仅记录主要编码。
-
-表的大小 sample_count 取自 Sample Size Box(“stsz”) 或 Compact Sample Size Box (“stz2”) 的 sample_count。
-
-Track Fragment Box 中也可能出现采样依赖 box。
-
-```code
-aligned(8) class SampleDependencyTypeBox
-  extends FullBox(‘sdtp’, version = 0, 0) {
-  for (i=0; i < sample_count; i++){
-    unsigned int(2) reserved = 0;
-    unsigned int(2) sample_depends_on;
-    unsigned int(2) sample_is_depended_on;
-    unsigned int(2) sample_has_redundancy;
-  }
-}
-```
-
-| 字段 | 类型 | 含义 |
-| --- | --- | --- |
-| sample_depends_on | 整数 | 取自下面 4 个值之一：0-这个采样的依赖未知；1-这个采样依赖其他采样(不是 I 帧)；2-这个采样不依赖其他采样(I 帧)；3-保留 |
-| sample_is_depended_on | 整数 | 取自下面 4 个值之一：0-其他采样对这个采样的依赖未知；1-其他采样依赖这个采样(不可丢弃的)；2-其他采样不依赖这个采样(可丢弃的)；3-保留 |
-| sample_has_redundancy | 整数 | 取自下面 4 个值之一：0-这个采样是否有冗余编码未知；1-这个采样有冗余编码；2-这个采样没有冗余编码；3-保留 |
-
-#### 8.40.3 Sample Groups
-
-##### 8.40.3.1 介绍
-
-本节指定了表示轨道中采样分区的一种通用机制。采样分组是根据分组标准，将轨道的每个采样分配为一个采样组的成员。采样分组中的采样组不限于连续的采样，且可以包含不相邻的采样。由于轨道中的采样可能有多个采样分组，因此每个采样分组有一个 type 字段来指示分组的类型。例如，一个文件可能包含包含同一轨道的两个分组：一个基于样本对图层的分配，另一个基于对子序列的分配。
-
-采样分组由两个链接的数据结构表示：
-
-1. SampleToGroup Box 表示将采样分配给采样组
-2. SampleGroupDescription Box 为每个采样组包含一个采样组条目，描述该组的属性
-
-根据不同的分组标准，可能存在 SampleToGroup Box 和 SampleGroupDescription Box 的多个实例。
-
-使用这些表的一个示例是，表示根据图层分配采样。在这种情况下，每个采样分组表示一层，具有的 SampleToGroup Box 实例描述了采样所属的层。
-
-##### 8.40.3.2 SampleToGroup Box
-
-| box 类型 | 容器 | 必要性 | 数量 |
-| --- | --- | --- | --- |
-| sbgp | Sample Table Box(stbl)/Track Fragment Box(traf) | N | >=0 |
-
-此表可用于查找采样所属的组，以及该采样组相关的描述。该表经过紧凑编码，每个条目给出一组采样的第一个采样的索引，这些采样具有相同的采样分组描述。group_description_index 是引用 SampleGroupDescription Box 的索引，其中包含的条目描述每个采样组的特征。
-
-如果一个轨道内的采样有多个采样分组，则此 box 可能有多个实例。SampleToGroup Box 的每个实例都有一个类型码以区分不同的采样分组。在一个轨道内部，应最多有一个具有特定分组类型的此 box 的实例。相关的 SampleGroupDescription 应为分组类型指示相同的值。
-
-```code
-aligned(8) class SampleToGroupBox
-  extends FullBox(‘sbgp’, version = 0, 0)
-{
-  unsigned int(32) grouping_type;
-  unsigned int(32) entry_count;
-  for (i=1; i <= entry_count; i++)
-  {
-    unsigned int(32) sample_count;
-    unsigned int(32) group_description_index;
-  }
-}
-```
-
-| 字段 | 类型 | 含义 |
-| --- | --- | --- |
-| version | 整数 | 指定此 box 的版本 |
-| grouping_type | 整数 | 标识采样分组的类型(即用于构成采样组的标准)，并将其链接到具有相同分组类型值的 SampleGroupDescription 表。对于一个轨道，具有相同 grouping_type 值的此 box 应最多出现一次 |
-| entry_count | 整数 | 给出下表的条目数 |
-| sample_count | 整数 | 给出具有相同 SampleGroupDescription 的连续采样的数目。如果此 box 的采样计数综合少于总的采样计数，则读者应有效扩展其条目，使剩下的样本与任何分组都不相关。如果此 box 内的总数大于其他地方记录的 sample_count，那么将无法定义读者行为 |
-| group_description_index | 整数 | 给出采样组条目的索引，该条目描述此分组中的采样。索引范围是 1 到 SampleGroupDescription box 内的采样组条目数，或者取值 0 表示该采样不属于此类型任何分组 |
-
-##### 8.40.3.3 Sample Group Description Box
-
-| box 类型 | 容器 | 必要性 | 数量 |
-| --- | --- | --- | --- |
-| sgpd | Sample Table Box(stbl) | N | >=0，每个 SampleToGroup Box 一个 |
-
-这个描述表给出相同分组的特征信息。描述性的信息定义和表征采样组所需的任何其他信息。
-
-如果一个轨道中的采样有多个采样分组，则此 box 可能有多个实例。SampleGroupDescription Box 的每个实例都有一个类型码以区分不同的采样分组。在一个轨道内部，应最多有一个具有特定分组类型的此 box 的实例。相关的 SampleToGroup 应为分组类型指示相同的值。
-
-信息存储在 Sample Group Description Box 的 entry_count 之后。定义了抽象条目类型，采样分组应定义派生类型以表示每个采样组的描述。对于视频轨道，将抽象的 VisualSampleGroupEntry 与类似类型的音频和 hint 轨道一起使用。
-
-请注意：采样分组描述条目的基类不是 box，因此不会标识大小。当定义派生类时，确保它们有固定的大小，或使用长度字段明确标识大小。不建议使用隐含的大小(例如，通过解析数据获得)，因为这会使得扫描数组变得困难。
-
-```code
-// Sequence Entry
-abstract class SampleGroupDescriptionEntry (unsigned int(32) handler_type){
-}
-// Visual Sequence
-abstract class VisualSampleGroupEntry (type) extends SampleGroupDescriptionEntry
-(type){
-}
-// Audio Sequences
-abstract class AudioSampleGroupEntry (type) extends SampleGroupDescriptionEntry
-(type){
-}
-aligned(8) class SampleGroupDescriptionBox (unsigned int(32) handler_type)
-  extends FullBox('sgpd', 0, 0){
-  unsigned int(32) grouping_type;
-  unsigned int(32) entry_count;
-  int i;
-  for (i = 1 ; i <= entry_count ; i++){
-    switch (handler_type){
-    case ‘vide’: // for video tracks
-      VisualSampleGroupEntry ();
-      break;
-    case ‘soun’: // for audio tracks
-      AudioSampleGroupEntry();
-      break;
-    case ‘hint’: // for hint tracks
-      HintSampleGroupEntry();
-      break;
-    }
-  }
-}
-```
-
-| 字段 | 类型 | 含义 |
-| --- | --- | --- |
-| version | 整数 | 指定此 box 的版本 |
-| grouping_type | 整数 | 标识与此采样分组描述关联的 SampleToGroup box  |
-| entry_count | 整数 | 给出下表的条目数 |
-
-##### 8.40.3.4 Movie Fragment 的组结构表示
-
-通过使用 SampleToGroup Box 以支持 Movie Fragment 中的新 SampleGroup，SampleToGroup Box 的容器变为 Track Fragment Box (“traf”)。在 8.40.3.2 小节中指定其定义、语法和语义。
-
-SampleToGroup Box 可用于查找轨道片段中的采样所属分组，以及该采样组的关联描述。此表经过紧凑编码，每个条目给出一组采样的第一个采样的索引，这些采样具有相同的采样分组描述。采样组描述 ID 是一个引用 SampleGroupDescription Box 的索引，该 Box 包含的条目描述每个采样组特征，且存在 SampleTableBox 中。
-
-如果一个轨道片段内的采样有多个采样分组，则可能有多个 SampleToGroup Box 实例。SampleToGroup Box 的每个实例都有一个类型码以区分不同的采样分组。相关的 SampleGroupDescription 应为分组类型指示相同的值。
-
-轨道片段中所有 SampleToGroup Box 内表示的采样总数必须和所有轨道片段组的采样总数匹配。每个 SampleToGroup Box 记录相同采样的不同分组。
 
 #### 8.40.4 Random Access Recovery Points
 
@@ -2266,57 +2634,6 @@ aligned(8) class SampleScaleBox extends FullBox(‘stsl’, version = 0, 0) {
 | scale_method | 8 位 无符号整数 | 定义要使用的缩放模式。在 256 个可能的值中，0~127 保留给 ISO 使用，而 128~256 是用户定义的，在本国际标准中未指定；可由应用程序确定使用。在保留值中，目前定义了以下模式：1-fill 模式；2-hidden 模式；3-meet 模式；4-X 轴是 slice 模式；5-Y 轴是 slice 模式 |
 | display_center_x | 整数 | 应该优先显示的区域中心相对图像中心的水平偏移量(单位是像素)。默认值是 0。正值表示显示中心在图像中心右侧 |
 | display_center_y | 整数 | 应该优先显示的区域中心相对图像中心的垂直偏移量(单位是像素)。默认值是 0。正值表示显示中心在图像中心下方 |
-
-### 8.42 Sub-Sample Information Box
-
-| box 类型 | 容器 | 必要性 | 数量 |
-| --- | --- | --- | --- |
-| subs | Sample Table Box(stbl)/Track Fragment Box(traf) | N | 0/1 |
-
-此 box 名为 Sub-Sample Information Box，旨在包含子采样信息。
-
-子采样是采样字节的连续范围。应为给定的编码系统(例如 ISO/IEC 14496-10，高级视频编码)提供子采样的具体定义。在缺少这种具体定义时，不应对使用该编码系统的采样应用此 box。
-
-如果任何条目的 subsample_count 为 0，则这些采样没有子采样信息，之后也没有数组。表格是稀疏编码的；通过记录每个条目之间的采样数量差异来标识哪些采样具有子采样结构。表格第一个条目记录第一个具有子采样信息的采样编号。
-
-请注意：可以结合 subsample_priority 和 discardable，以便当 subsample_priority 小于某个值时，将 discardable 设为 1。然而，因为不同的系统可能使用不同比例的优先级值，可以安全地将二者分开，使用干净的解决方案处理可丢弃的子采样。
-
-```code
-aligned(8) class SubSampleInformationBox
-  extends FullBox(‘subs’, version, 0) {
-  unsigned int(32) entry_count;
-  int i,j;
-  for (i=0; i < entry_count; i++) {
-    unsigned int(32) sample_delta;
-    unsigned int(16) subsample_count;
-    if (subsample_count > 0) {
-      for (j=0; j < subsample_count; j++) {
-        if(version == 1)
-        {
-          unsigned int(32) subsample_size;
-        }
-        else
-        {
-          unsigned int(16) subsample_size;
-        }
-        unsigned int(8) subsample_priority;
-        unsigned int(8) discardable;
-        unsigned int(32) reserved = 0;
-      }
-    }
-  }
-}
-```
-
-| 字段 | 类型 | 含义 |
-| --- | --- | --- |
-| version | 整数 | 指定此 box 的版本(此规范是 0 或 1) |
-| entry_count | 整数 | 给出下表的条目数 |
-| sample_delta | 整数 | 指定有子采样结构的采样的编号。将其编码为所需的采样的编号和前一个条目指示的采样编号的差值。如果当前条目是第一个，该值指示第一个有子采样结构的采样编号，即该值为采样编号和 0 的差值 |
-| subsample_count | 整数 | 指定当前采样的子采样数目。如果没有子采样结构，则此字段值为 0 |
-| subsample_size | 整数 | 指定当前子采样的字节数 |
-| subsample_priority | 整数 | 指定每个子采样的降级优先级。subsample_priority 值越高，表示子采样对解码质量很重要且影响更大 |
-| discardable | 整数 | 等于 0 表示解码当前采样需要子采样，而等于 1 表示解码当前采样不需要子采样，但可用于增强，例如子采样包含补充增强信息(SEI)消息 |
 
 ### 8.44 Metadata Support
 
