@@ -183,7 +183,7 @@ ISO/IEC 14496 的此部分适用于 MPEG-4，但其技术内容与 ISO/IEC 15444
 box
   面向对象的构建块，由一个唯一的类型标识符和长度定义(在一些规范中称为 'atom'，包括 MP4 的第一个定义)
 chunk
-  某个轨道的一组连续样本
+  某个轨道的一组连续采样
 container box
   一种 box，只用于容纳和分组一系列相关的 box
 hint track
@@ -1234,7 +1234,7 @@ aligned(8) class SampleSizeBox extends FullBox(‘stsz’, version = 0, 0) {
 | --- | --- | --- | --- |
 | stsc | Sample Table Box(stbl) | Y | 1 |
 
-媒体内的采样分分组成块。块大小可以不同，且同一块中的采样大小可以不同。此表可用于查找包含采样的块，块的位置和相关的样本描述。
+媒体内的采样分分组成块。块大小可以不同，且同一块中的采样大小可以不同。此表可用于查找包含采样的块，块的位置和相关的采样描述。
 
 此表示紧凑编码的。每个条目给出一组块的第一个块的索引，这些块具有相同特征。通过从上一个条目减去一个条目，可以计算该组有多少块。你可以将其乘以合适的“采样数/块”从而转换为采样数。
 
@@ -1324,7 +1324,7 @@ aligned(8) class SyncSampleBox
 | --- | --- | --- | --- |
 | stsh | Sample Table Box(stbl) | N | 0/1 |
 
-Shadow Sync Table 提供一组可选的同步样本，这些采样可用于 seek 或类似目的。在正常的前向播放中，将其忽略。
+Shadow Sync Table 提供一组可选的同步采样，这些采样可用于 seek 或类似目的。在正常的前向播放中，将其忽略。
 
 Shadow Sync Table 中的每个条目由一对采样编号组成。第一个编号 (shadowed-sample-number) 指示将为该采样编号定义 shadow sync。这应该总是非同步采样(比如帧差异)。第二个采样编号  (sync-sample-number) 指示当在 shadowed-sample-number 或在其之前有随机访问时，可使用的同步采样(比如关键帧)的采样编号。
 
@@ -1871,7 +1871,7 @@ aligned(8) class SampleDependencyTypeBox
 
 ##### 8.40.3.1 介绍
 
-本节指定了表示轨道中采样分区的一种通用机制。采样分组是根据分组标准，将轨道的每个采样分配为一个采样组的成员。采样分组中的采样组不限于连续的采样，且可以包含不相邻的采样。由于轨道中的采样可能有多个采样分组，因此每个采样分组有一个 type 字段来指示分组的类型。例如，一个文件可能包含包含同一轨道的两个分组：一个基于样本对图层的分配，另一个基于对子序列的分配。
+本节指定了表示轨道中采样分区的一种通用机制。采样分组是根据分组标准，将轨道的每个采样分配为一个采样组的成员。采样分组中的采样组不限于连续的采样，且可以包含不相邻的采样。由于轨道中的采样可能有多个采样分组，因此每个采样分组有一个 type 字段来指示分组的类型。例如，一个文件可能包含包含同一轨道的两个分组：一个基于采样对图层的分配，另一个基于对子序列的分配。
 
 采样分组由两个链接的数据结构表示：(1)SampleToGroup Box 表示将采样分配给采样组；(2)SampleGroupDescription Box 为每个采样组包含一个采样组条目，描述该组的属性。根据不同的分组标准，可能存在 SampleToGroup Box 和 SampleGroupDescription Box 的多个实例。
 
@@ -1906,7 +1906,7 @@ aligned(8) class SampleToGroupBox
 | version | 整数 | 指定此 box 的版本 |
 | grouping_type | 整数 | 标识采样分组的类型(即用于构成采样组的标准)，并将其链接到具有相同分组类型值的 SampleGroupDescription 表。对于一个轨道，具有相同 grouping_type 值的此 box 应最多出现一次 |
 | entry_count | 整数 | 给出下表的条目数 |
-| sample_count | 整数 | 给出具有相同 SampleGroupDescription 的连续采样的数目。如果此 box 的采样计数综合少于总的采样计数，则读者应有效扩展其条目，使剩下的样本与任何分组都不相关。如果此 box 内的总数大于其他地方记录的 sample_count，那么将无法定义读者行为 |
+| sample_count | 整数 | 给出具有相同 SampleGroupDescription 的连续采样的数目。如果此 box 的采样计数综合少于总的采样计数，则读者应有效扩展其条目，使剩下的采样与任何分组都不相关。如果此 box 内的总数大于其他地方记录的 sample_count，那么将无法定义读者行为 |
 | group_description_index | 整数 | 给出采样组条目的索引，该条目描述此分组中的采样。索引范围是 1 到 SampleGroupDescription box 内的采样组条目数，或者取值 0 表示该采样不属于此类型任何分组 |
 
 ##### 8.40.3.3 Sample Group Description Box
@@ -1974,7 +1974,7 @@ SampleToGroup Box 可用于查找轨道片段中的采样所属分组，以及�
 
 #### 8.40.4 Random Access Recovery Points
 
-在某些编码系统中，可以在解码一些样本之后随即访问流并实现正确解码。这称为逐步解码刷新。例如，在视频中，编码器可能编码流中的帧内编码宏块，这样编码器就知道在一定的时间段内，整个图像的组成像素仅依赖该时间段内提供的帧内编码宏块。
+在某些编码系统中，可以在解码一些采样之后随即访问流并实现正确解码。这称为逐步解码刷新。例如，在视频中，编码器可能编码流中的帧内编码宏块，这样编码器就知道在一定的时间段内，整个图像的组成像素仅依赖该时间段内提供的帧内编码宏块。
 
 可以进行此类逐步刷新的采样被标记为该组的成员。组定义允许在周期的开始或末尾进行标记。然而，党羽特定媒体类型一起使用时，该组的使用可能限于仅标记一个末尾(即仅限于正火负滚动至)。将滚动组定义为具有相同滚动距离的采样组。
 
@@ -2332,9 +2332,9 @@ MPEG-7 元数据存储在此规范的 meta box 中。
 - 当内容已经转换(比如加密)，以致普通解码器无法再对其解码，必须使用
 - 仅在理解和实现保护系统时，才能对内容解码时，可以使用
 
-转换通过封装原始的数据声明起作用。封装修改了采样条目的四字符代码，以致不了解保护的读者将媒体流视为新的流格式。
+转换通过*封装*原始的数据声明起作用。封装修改了采样条目的四字符代码，以致不了解保护的读者将媒体流视为新的流格式。
 
-因为采样条目的格式随媒体类型而异，因此每种媒体类型(音频、视频、文本等)都是要不同的封装四字节代码。它们是：
+因为采样条目的格式随媒体类型而异，因此每种媒体类型(音频、视频、文本等)都使用不同的封装四字节代码。它们是：
 
 | 流(轨道)类型 | 采样条目代码 |
 | --- | --- |
@@ -2369,7 +2369,7 @@ Protection Scheme Information Box 包含了了解应用的加密转化及其参�
 
 当用于受保护的采样条目时，此 box 必须包含原始格式 box 来记录原始格式。以下指示方法必须使用至少一种，以标识应用的保护：
 
-- 带 IPMP 的 MPEG-4 系统：在 MPEG-4 系统流中使用 IPME 描述符时，没有其他 box
+- 带 IPMP 的 MPEG-4 系统：在 MPEG-4 系统流中使用 IPMP 描述符时，没有其他 box
 - 标准的 IPMP：在 MPEG-4 系统之外使用 IPMP 描述符时，有一个 IPMPInfoBox
 - scheme 标识：使用 SchemeTypeBox 和 SchemeInformationBox(同时出现或只出现一个)
 
@@ -2459,7 +2459,7 @@ aligned(8) class IPMPControlBox extends FullBox('ipmc', 0, flags) {
 
 | box 类型 | 容器 | 必要性 | 数量 |
 | --- | --- | --- | --- |
-| schm | Protection Scheme Information Box(sinf)/ SRTP Process Box(srpp) | N | 1 |
+| schm | Protection Scheme Information Box(sinf)/SRTP Process Box(srpp) | N | 1 |
 
 Scheme Type Box(“schm”) 定义保护方案。
 
@@ -2483,7 +2483,7 @@ aligned(8) class SchemeTypeBox extends FullBox('schm', 0, flags) {
 
 | box 类型 | 容器 | 必要性 | 数量 |
 | --- | --- | --- | --- |
-| schi | Protection Scheme Information Box(sinf)/ SRTP Process Box(srpp) | N | 0/1 |
+| schi | Protection Scheme Information Box(sinf)/SRTP Process Box(srpp) | N | 0/1 |
 
 Scheme Information Box 是一个容器 box，仅由使用的方案解释。加密系统需要的所有信息都存储在这里。此 box 的内容是一系列 box，这些 box 的类型和格式通过 SchemeTypeBox 内声明的方案定义。
 
@@ -2542,7 +2542,7 @@ else {
 
 出于限制目的，可将此规范用作特定文件格式的基础：比如，MPEG-4 的 MP4 文件格式和 Motion JPEG 2000 文件格式二者都由此规范衍生。编写衍生的规范时，必须制定以下内容：
 
-新格式的名称，以及 File Type Box 的 brand 和兼容性类型。通常会使用新的文件扩展名，以及新的 MIME 类型和 Machintosh 文件类型，尽管这些定义和注册在本规范的范围之外。
+新格式的名称，以及 File Type Box 的 brand 和兼容性类型。通常会使用新的文件扩展名，以及新的 MIME 类型和 Machintosh 文件类型，不过这些定义和注册在本规范的范围之外。
 
 必须显式声明所有模板字段；且其使用必须符合此处的规范。
 
@@ -2935,7 +2935,7 @@ aligned(8) class hintpayloadID extends box(‘payt’) {
 
 方法是为全局(每个轨道一次)和每个片段内的每个采样设置默认值。只有那些具有非默认值的片段需要包含这些值。这使得普通情况——规则、重复、结构——紧凑，而不会禁用具有变体影片的增量构建。
 
-常规的 Movie Box 设置影片的结构。它可能出现在文件中的任何位置，尽管如果位于片段之前对读者最好。(这不是规则，因为对 Movie Box 的小改动以强制将其放在文件末尾是不可能的。)此 Movie Box：
+常规的 Movie Box 设置影片的结构。它可能出现在文件中的任何位置，不过如果位于片段之前对读者最好。(这不是规则，因为对 Movie Box 的小改动以强制将其放在文件末尾是不可能的。)此 Movie Box：
 
 - 必须自己代表一部有效的影片(尽管轨道可能根本没有采样)
 - 内部有一个 box，指示应该发现和使用的片段
