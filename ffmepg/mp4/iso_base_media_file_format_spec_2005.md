@@ -120,8 +120,8 @@
     - [10.2 采样描述格式](#102-采样描述格式)
       - [10.2.1 SRTP Process Box](#1021-srtp-process-box)
     - [10.3 采样格式](#103-采样格式)
-      - [10.3.1 Packet Entry 格式](#1031-packet-entry-格式)
-      - [10.3.2 Constructor 格式](#1032-constructor-格式)
+      - [10.3.1 包条目格式](#1031-包条目格式)
+      - [10.3.2 构造器格式](#1032-构造器格式)
     - [10.4 SDP 信息](#104-sdp-信息)
       - [10.4.1 影片 SDP 信息](#1041-影片-sdp-信息)
       - [10.4.2 轨道 SDP 信息](#1042-轨道-sdp-信息)
@@ -2562,7 +2562,7 @@ else {
 
 RTP 是由 IETF (RFC 1889 和 1890)定义的实时流传输协议，当前定义为能够携带一组有限的媒体类型(主要是音频和视频)和编码。双方都在讨论将 MPEG-4 基本流打包到 RTP 中。但是，很明显，媒体打包方式与现有技术在种类上没有不同，即 RTP 中其他编解码器所使用和此方案支持的技术。
 
-在标准 RTP 中，每个媒体流都作为单独的 RTP 流发送；多路复用的实现是通过使用 IP 端口即多路复用，而非将多个流中的数据交织到单个 RTP 会话。但是，如果使用 MOEG，可能需要独用多个媒体轨道到一个 RTP 轨道(比如，在 RTP 中使用 MPEG-2 传输或 FlexMux)。因此，通过轨道引用将每个 hint 轨道绑定到一组媒体轨道。hint 轨道通过索引此表从其媒体轨道提取数据。媒体轨道的 hint 轨道引用的引用类型是 “hint”。
+在标准 RTP 中，每个媒体流都作为单独的 RTP 流发送；多路复用的实现是通过使用 IP 端口级别的多路复用，而非将多个流中的数据交织到单个 RTP 会话。但是，如果使用 MOEG，可能需要独用多个媒体轨道到一个 RTP 轨道(比如，在 RTP 中使用 MPEG-2 传输或 FlexMux)。因此，通过轨道引用将每个 hint 轨道绑定到一组媒体轨道。hint 轨道通过索引此表从其媒体轨道提取数据。媒体轨道的 hint 轨道引用的引用类型是 “hint”。
 
 此设计在创建 hint 轨道时确定包大小；因此，我们在 hint 轨道的声明中指示选择的包大小。它在采样描述中。请注意，每个媒体轨道有多个具有不同数据包大小选择的 RTP hint 轨道，这是有效的。类似地，提供了 RTP 时钟的时间刻度。hint 轨道时间刻度的选择通常与媒体轨道的时间刻度匹配，或为服务器选择合适的值。在某些情况下，RTP 时间刻度不相同(比如，一些 MPEG 负载是 90kHz)，并且支持这种变化。会话描述(SAP/SDP) 循序存储在轨道的用户数据 box。
 
@@ -2623,7 +2623,7 @@ class SrtpHintSampleEntry() extends SampleEntry (‘srtp‘) {
 
 | box 类型 | 容器 | 必要性 | 数量 |
 | --- | --- | --- | --- |
-| srpp | 相同。但是，SrtpHintSampleEntry | Y | 1 |
+| srpp | SrtpHintSampleEntry | Y | 1 |
 
 SRTP Process Box 可以指导服务器应该应用的 SRTP 算法。
 
@@ -2638,7 +2638,7 @@ aligned(8) class SRTPProcessBox extends FullBox(‘srpp’, version, 0) {
 }
 ```
 
-上面受保护媒体轨道已经定义了SchemeTypeBox 和 SchemeInformationBox 的语法。它们用于提供应用 SRTP 所需的参数。SchemeTypeBox 用于指示流必要的密钥管理和安全策略，以扩展到 SRTPProcessBox提供的已定义算法指针。密钥管理功能还用于建立所有必须的 SRTP 参数，参数在 SRTP 规范的 8.2 小结列举。保护方案的确定定义超出了文件格式的范围。
+上面受保护媒体轨道已经定义了 SchemeTypeBox 和 SchemeInformationBox 的语法。它们用于提供应用 SRTP 所需的参数。SchemeTypeBox 用于指示流必要的密钥管理和安全策略，以扩展到 SRTPProcessBox 提供的已定义算法指针。密钥管理功能还用于建立所有必须的 SRTP 参数，参数在 SRTP 规范的 8.2 小结列举。保护方案的确定定义超出了文件格式的范围。
 
 SRTP 定义了加密和完整性保护的算法。此处定义以下格式标识符。可以使用四个空格($20$20$20$20)的条目表示加密或完整性保护算法的选择由文件格式之外的进程决定。
 
@@ -2666,7 +2666,7 @@ aligned(8) class RTPsample {
 }
 ```
 
-#### 10.3.1 Packet Entry 格式
+#### 10.3.1 包条目格式
 
 Packet Entry Table 中的每个包具有下面的结构：
 
@@ -2681,6 +2681,7 @@ aligned(8) class RTPpacket {
   bit(4) reserved;
   bit(1) M_bit;
   bit(7) payload_type;
+
   unsigned int(16) RTPsequenceseed;
   unsigned int(13) reserved = 0;
   unsigned int(1) extra_flag;
@@ -2693,6 +2694,7 @@ aligned(8) class RTPpacket {
   }
   dataentry constructors[entrycount];
 }
+
 class rtpoffsetTLV() extends Box(‘rtpo’) {
   int(32) offset;
 }
@@ -2704,11 +2706,11 @@ class rtpoffsetTLV() extends Box(‘rtpo’) {
 | - | 2 字节(2+1+1+4+1+7) | 下面的两个字节正好覆盖 RTP 头部；它们帮助服务器生成 RTP 头(服务器会填充剩下的字段) |
 | RTPsequenceseed | - | RTP 序列号基础。如果 hint 轨道导致传输相同 RTP 包的多个副本，那么此值对于副本都是相同的。服务器通常增加一个随机偏移到此值(但是参阅上面的 “sequenceoffset”) |
 | extra_flag | - | 指示在构造器之前有其他信息，是“类型-长度-值”形式的集合。目前只定义了一个这样的集合；“rtpo” 提供 32 位有符号整数偏移量，用于要放置在数据包中的实际 RTP 时间戳。这使数据包可以按解码顺序放置在 hint 轨道，但是传输的数据包中的演示时间采用不同的顺序。这对于某些 MPEG 负载是必需的 |
+| extra_information_length | 整数 | 此字段以及所有 TLV 条目的字节长度。注意，TLV box 在 32 位边界上对齐；box 大小指示实际使用的字节数，而非填充长度。extra_information_length 将是正确的 |
 | bframe_flag | - | 指示一个可丢弃的“b 帧” |
 | repeat_flag | - | 指示一个“重复包”，作为前一包的副本被传输。服务器可能希望优化对这些包的处理 |
-| extra_information_length | 整数 | 此字段以及所有 TLV 条目的字节长度。注意，TLV box 在 32 位边界上对齐；box 大小指示实际使用的字节数，而非填充长度。extra_information_length 将是正确的 |
 
-#### 10.3.2 Constructor 格式
+#### 10.3.2 构造器格式
 
 有多种形式的构造器。每个构造器都是 16 字节，使得迭代更简单。第一个字节是一个联合判别器：
 
@@ -2801,6 +2803,7 @@ aligned(8) class rtptracksdphintinformation extends box(‘sdp ‘) {
 ```code
 aligned(8) class hintstatisticsbox extends box(‘hinf’) {
 }
+
 aligned(8) class hintBytesSent extends box(‘trpy’) {
   uint(64) bytessent; // total bytes sent, including 12-byte RTP headers
 }
