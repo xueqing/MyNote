@@ -171,6 +171,35 @@
       - [8.16.3 Segment Index Box](#8163-segment-index-box)
       - [8.16.4 Subsegment Index Box](#8164-subsegment-index-box)
       - [8.16.5 Producer Reference Time Box](#8165-producer-reference-time-box)
+    - [8.17 支持不完整的轨道](#817-支持不完整的轨道)
+      - [8.17.1 通用的](#8171-通用的)
+      - [8.17.2 转换](#8172-转换)
+      - [8.17.3 Complete Track Information Box](#8173-complete-track-information-box)
+  - [9 hint 轨道格式](#9-hint-轨道格式)
+    - [9.1 RTP 和 SRTP hint 轨道格式](#91-rtp-和-srtp-hint-轨道格式)
+      - [9.1.1 介绍](#911-介绍)
+      - [9.1.2 采样描述格式](#912-采样描述格式)
+        - [9.1.2.1 SRTP Process Box](#9121-srtp-process-box)
+      - [9.1.3 采样格式](#913-采样格式)
+        - [9.1.3.1 包条目格式](#9131-包条目格式)
+        - [9.1.3.2 构造器格式](#9132-构造器格式)
+      - [9.1.4 SDP 信息](#914-sdp-信息)
+        - [9.1.4.1 影片 SDP 信息](#9141-影片-sdp-信息)
+        - [9.1.4.2 轨道 SDP 信息](#9142-轨道-sdp-信息)
+        - [9.1.4.5 统计信息](#9145-统计信息)
+    - [9.2 ALC/LCT 和 FLUTE hint 轨道格式](#92-alclct-和-flute-hint-轨道格式)
+      - [9.2.1 介绍](#921-介绍)
+      - [9.2.2 设计原则](#922-设计原则)
+      - [9.2.3 采样条目格式](#923-采样条目格式)
+      - [9.2.4 采样格式](#924-采样格式)
+        - [9.2.4.1 采样容器](#9241-采样容器)
+        - [9.2.4.2 包条目格式](#9242-包条目格式)
+        - [9.2.4.3 LCT 头部模板格式](#9243-lct-头部模板格式)
+        - [9.2.4.4 LCT 头部扩展构造器格式](#9244-lct-头部扩展构造器格式)
+        - [9.2.4.5 包构造器格式](#9245-包构造器格式)
+        - [9.2.4.6 Extra Data Box](#9246-extra-data-box)
+        - [9.2.4.7 FEC Information Box](#9247-fec-information-box)
+    - [9.3 MPEG-2 传输 hint 轨道格式](#93-mpeg-2-传输-hint-轨道格式)
     - [unknown](#unknown)
       - [8.4.5.2 Video Media Header Box](#8452-video-media-header-box)
       - [8.4.5.3 Sound Media Header Box](#8453-sound-media-header-box)
@@ -183,17 +212,6 @@
     - [9.1 对象](#91-对象)
     - [9.2 存储格式](#92-存储格式)
     - [9.3 派生的文件格式](#93-派生的文件格式)
-  - [10 RTP 和 SRTP hint 轨道格式](#10-rtp-和-srtp-hint-轨道格式)
-    - [10.1 介绍](#101-介绍)
-    - [10.2 采样描述格式](#102-采样描述格式)
-      - [10.2.1 SRTP Process Box](#1021-srtp-process-box)
-    - [10.3 采样格式](#103-采样格式)
-      - [10.3.1 Packet Entry 格式](#1031-packet-entry-格式)
-      - [10.3.2 Constructor 格式](#1032-constructor-格式)
-    - [10.4 SDP 信息](#104-sdp-信息)
-      - [10.4.1 影片 SDP 信息](#1041-影片-sdp-信息)
-      - [10.4.2 轨道 SDP 信息](#1042-轨道-sdp-信息)
-    - [10.5 统计信息](#105-统计信息)
   - [附录 A (提供信息) 概述和介绍](#附录-a-提供信息-概述和介绍)
     - [A.1 章节概述](#a1-章节概述)
     - [A.2 核心概念](#a2-核心概念)
@@ -3780,67 +3798,487 @@ aligned(8) class SegmentIndexBox extends FullBox(‘sidx’, version, 0) {
 
 | box 类型 | 容器 | 必要性 | 数量 |
 | --- | --- | --- | --- |
-| sidx | 文件 | N | >=0 |
+| ssix | 文件 | N | >=0 |
 
-todo
+Subsegment Index Box(“ssix”)提供从级别(由 Level Assignment box 指定)到索引子段的字节范围的映射。换句话说，此 box 提供了一个紧凑的索引，用于指示如何根据级别将子段中的数据排序为部分子段。通过下载子段中的数据范围，它使客户端能够轻松访问部分子段的数据。
+
+子段中的每个字节都应明确分配给一个级别，因此范围计数必须大于等于 2。如果范围未与级别分配中的任何信息关联，则可以使用未包含在级别分配中的任何级别。
+
+每个 Segment Index Box 应有 0 或 1 个 Subsegment Index Box，这些 box 仅索引叶子子段，即仅索引子段而非段索引。Subsegment Index Box(如果有的话)应是关联的 Segment Index Box 之后的下一个 box。Subsegment Index Box 记录了紧接在前的 Segment Index Box 中指示的子段。
+
+通常，从字节范围构造的媒体数据是不完整的，即，它不符合整个子段的媒体格式。
+
+对于基于此规范(即基于 Movie Sample Table 和影片片段)的叶子子段：
+
+- 每个级别应只分配给一个部分子段，即，一个级别的字节范围应是连续的
+- 部分子段的级别应通过增加子段中的数字来分配，即，部分子段的采样可能依赖同一子段中先前的部分子段的任何采样，但不能反过来。例如，每个部分子段包含具有相同时间级别的采样，并且部分子段在子段内以时间等级递增顺序出现
+- 当以这种方式访问部分子段时，对于除 3 之外的任何 assignment_type，最终的 Media Data box 可能不完整，也就是说，所访问的数据少于 Media Data box 的长度指示所表示的数量。Media Data box 的长度可能需要调整或使用填充。Level Assignment Box 中的 padding_flag 指示是否可以用零代替此丢失的数据。如果不是，则对于分配给未访问级别的采样，不存在采样数据，并且应注意不要尝试处理此类采样
+- 与部分子段对应的数据范围包括 Movie Fragment Box 和 Media Data box。第一个部分子片段(即最低级别)将对应  Movie Fragment Box 以及(部分)Media Data box，而随后的部分子段(较高级别)可能仅对应(部分)Media Data box
+
+注意：例如，当视频比特流的帧在子段内按时间顺序排序时，可以将等于 0 的 assignment_type(在 Subsegment Index Box “leva” 中指定)与时间级别采样分组(“tele”)一起使用；例如，当多视图视频比特流的每个视图包含在单独的轨道中并且所有视图的轨道片段包含在单个影片片段中时，可以使用等于 2 的 assignment_type。例如，当音频和视频电影片段(包括相应的 Media Data box)交错时，可以使用等于 3 的 assignment_type。可以指定第一级别包含音频电影片段(包括相应的 Media Data box)，而可以指定第二级包含音频和视频电影片段(包括所有 Media Data box)。
 
 ```code
-aligned(8) class SegmentIndexBox extends FullBox(‘sidx’, version, 0) {
-  unsigned int(32) reference_ID;
-  unsigned int(32) timescale;
-  if (version==0) {
-    unsigned int(32) earliest_presentation_time;
-    unsigned int(32) first_offset;
-  }
-  else {
-    unsigned int(64) earliest_presentation_time;
-    unsigned int(64) first_offset;
-  }
-  unsigned int(16) reserved = 0;
-  unsigned int(16) reference_count;
-  for(i=1; i <= reference_count; i++)
+aligned(8) class SubsegmentIndexBox extends FullBox(‘ssix’, 0, 0) {
+  unsigned int(32) subsegment_count;
+  for( i=1; i <= subsegment_count; i++)
   {
-    bit (1) reference_type;
-    unsigned int(31) referenced_size;
-    unsigned int(32) subsegment_duration;
-    bit(1) starts_with_SAP;
-    unsigned int(3) SAP_type;
-    unsigned int(28) SAP_delta_time;
+    unsigned int(32) range_count;
+    for ( j=1; j <= range_count; j++) {
+      unsigned int(8) level;
+      unsigned int(24) range_size;
+    }
   }
 }
 ```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| subsegment_count | 正整数 | 指定此 box 中为其指定部分子段信息的子段数。 subsegment_count 必须等于紧接在前的 Segment Index Box 中的 reference_count(即影片片段引用的数量) |
+| range_count | 整数 | 指定将媒体数据分组到的部分子段级别的数量。该值应大于或等于 2 |
+| range_size | 整数 | 指示部分子段的大小 |
+| level | 整数 | 指定此部分子段分配的级别 |
 
 #### 8.16.5 Producer Reference Time Box
 
 | box 类型 | 容器 | 必要性 | 数量 |
 | --- | --- | --- | --- |
-| sidx | 文件 | N | >=0 |
+| prft | 文件 | N | >=0 |
+
+Producer Reference Time Box 提供了有关影片片段或包含影片片段（例如段）的文件的相对挂钟时间。当实时生产和使用这些文件时，这可以为客户提供信息，以使消耗和生产能够以相等的速率进行，从而避免可能的缓冲区上溢或下溢。
+
+此 box 与按位流顺序跟在其后的下一个 Movie Fragment Box 相关。它必须跟随该段中的任何 Segment Type Box 或 Segment Index Box（如果有），并出现在接着的 Movie Fragment Box（它所引用的）之前。如果段文件包含任何 Producer Reference Time Box，则第一个应出现在该段中第一个 Movie Fragment Box 之前。
+
+该 box 包含一个在时钟上测量的时间值，该时钟使用 NTP 格式，以与 UTC-同步的 NTP [RFC 5905]时钟相同的速率递增。这与影片片段中其中一个轨道的媒体时间相关。该媒体时间应在相关影片片段中该轨道的时间范围内。
+
+Producer Reference Time 最多应与一条轨道相关联。
 
 ```code
-aligned(8) class SegmentIndexBox extends FullBox(‘sidx’, version, 0) {
-  unsigned int(32) reference_ID;
-  unsigned int(32) timescale;
+aligned(8) class ProducerReferenceTimeBox extends FullBox(‘prft’, version, 0) {
+  unsigned int(32) reference_track_ID;
+  unsigned int(64) ntp_timestamp;
   if (version==0) {
-    unsigned int(32) earliest_presentation_time;
-    unsigned int(32) first_offset;
-  }
-  else {
-    unsigned int(64) earliest_presentation_time;
-    unsigned int(64) first_offset;
-  }
-  unsigned int(16) reserved = 0;
-  unsigned int(16) reference_count;
-  for(i=1; i <= reference_count; i++)
-  {
-    bit (1) reference_type;
-    unsigned int(31) referenced_size;
-    unsigned int(32) subsegment_duration;
-    bit(1) starts_with_SAP;
-    unsigned int(3) SAP_type;
-    unsigned int(28) SAP_delta_time;
+    unsigned int(32) media_time;
+  } else {
+    unsigned int(64) media_time;
   }
 }
 ```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| reference_track_ID | 整数 | 提供引用轨道的 track_ID |
+| ntp_timestamp | 整数 | 表示与解码时间对应的 UTC 时间(NTP 格式) |
+| media_time | 整数 | 与 ntp_timestamp 对应同一时间，但单位是引用磁道所用时间单位，并在制作媒体时在此媒体时钟上进行测量 |
+
+注意：在大多数情况下，此时间戳将不等于引用轨道相邻段的第一个采样的时间戳，但是建议此时间戳在包含此 Producer Reference Time Box 的段的范围内。
+
+### 8.17 支持不完整的轨道
+
+#### 8.17.1 通用的
+
+本小节记录了不完整轨道的采样条目格式。不完整的轨道可能包含标记为空或未使用此采样格式接收的采样。
+
+例如，当根据级别分配部分接收到子段时，且 Level Assignment box 中的 padding_flag 指示 Media Data box 中未接收到的数据可以替换为零时，可能会导致轨道不完整。因此，不存在分配给未访问级别的采样数据，并且应注意不要尝试处理此类采样。但是，在部分接收的子段中，某些轨道的内容可能保持完整，而其他轨道可能不完整，并且仅包含通过完整轨道引用包含的数据。
+
+本小节规定了对不完整轨道的采样条目格式的支持。借助此支持，读者可以从采样条目中检测出不完整的轨道并避免处理此类轨道，或者在处理此类轨道时不考虑空的或未接收到的采样。
+
+对不完整轨道的支持类似于内容保护转换，在内容保护转换中，采样条目被隐藏在通用采样条目（例如 “encv” 和 “enca”）之后。由于采样条目的格式随媒体类型的不同而不同，因此对于每种媒体类型（音频、视频、文本等）的不完整轨道，将使用不同的封装四字符代码。他们是：
+
+| 流(轨道)类型 | 采样条目代码 |
+| --- | --- |
+| 视频 | icpv |
+| 音频 | icpa |
+| 文本 | icpt |
+| 系统 | icps |
+| hint | icph |
+| 定时的元数据 | icpm |
+
+可以通过引用将不完整轨道的采样数据包括在其他轨道的采样中，因此，只要任何轨道引用指向不完整轨道，就不应将其删除。
+
+注意–原始录音客户端对级别的选择可能会随时间而变化，且有时代表完整的轨道。此处未指示级别，并且在一段时间内实际上已收到所有级别时，不要求将采样条目从“不完整”更改为“完整”。另请注意，如果部分接收和解密适用于该加密格式，则“原始格式”可能表示已加密。
+
+#### 8.17.2 转换
+
+轨道变得不完整(例如通过部分接收)的采样条目，应按照如下修改：
+
+1）采样条目的四字符代码，例如 “avc1” 被新的采样条目代码 “icpv” 代替，表示曲目不完整
+2）将 Complete Track Information box 添加到采样描述中，而所有其他 box 保持不变
+3）原始采样条目类型(例如 “avc1”)存储在 Complete Track Information box 中的 Original Format box
+
+转换后，示例 AVC 采样条目可能看起来像这样：
+
+```code
+class IncompleteAVCSampleEntry() extends VisualSampleEntry (‘icpv’){
+  CompleteTrackInfoBox();
+  AVCConfigurationBox config;
+  MPEG4BitRateBox (); // optional
+  MPEG4ExtensionDescriptorsBox (); // optional
+}
+```
+
+#### 8.17.3 Complete Track Information Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| cinf | 不完整轨道的采样条目 | Y | 1 |
+
+Complete Track Information Box 在 Original Format box 中包含完整轨道的采样输入格式，该完整轨道已转换为当前的不完整轨道。它可能包含可选 box，例如，其中包含处理当前不完整轨道采样所需的信息。 Complete Track Information Box 是一个容器 box。对于使用代码指示不完整轨道的采样条目，是强制的。
+
+```code
+aligned(8) class CompleteTrackInfoBox(fmt) extends Box('cinf') {
+  OriginalFormatBox(fmt) original_format;
+}
+```
+
+## 9 hint 轨道格式
+
+### 9.1 RTP 和 SRTP hint 轨道格式
+
+#### 9.1.1 介绍
+
+RTP 是由 IETF (RFC 1889 和 1890)定义的实时流传输协议，当前定义为能够携带一组有限的媒体类型(主要是音频和视频)和编码。双方都在讨论将 MPEG-4 基本流打包到 RTP 中。但是，很明显，媒体打包方式与现有技术在种类上没有不同，即 RTP 中其他编解码器所使用和此方案支持的技术。
+
+在标准 RTP 中，每个媒体流都作为单独的 RTP 流发送；多路复用的实现是通过使用 IP 端口级别的多路复用，而非将多个流中的数据交织到单个 RTP 会话。但是，如果使用 MOEG，可能需要独用多个媒体轨道到一个 RTP 轨道(比如，在 RTP 中使用 MPEG-2 传输或 FlexMux)。因此，通过轨道引用将每个 hint 轨道绑定到一组媒体轨道。hint 轨道通过索引此表从其媒体轨道提取数据。媒体轨道的 hint 轨道引用的引用类型是 “hint”。
+
+此设计在创建 hint 轨道时确定包大小；因此，我们在 hint 轨道的声明中指示选择的包大小。它在采样描述中。请注意，每个媒体轨道有多个具有不同数据包大小选择的 RTP hint 轨道，这是有效的。类似地，提供了 RTP 时钟的时间刻度。hint 轨道时间刻度的选择通常与媒体轨道的时间刻度匹配，或为服务器选择合适的值。在某些情况下，RTP 时间刻度不相同(比如，一些 MPEG 负载是 90kHz)，并且支持这种变化。会话描述(SAP/SDP) 循序存储在轨道的用户数据 box。
+
+RTP hint 轨道不是有合成时间偏移表(ctts)。相反，hint 过程可能使用传输时间偏移来设置传输时间，建立正确的传输顺序和时间戳。
+
+hinted 内容可能需要流使用 SRTP，通过使用此处定义的 SRTP hint 轨道格式。SRTP hint 轨道与 RTP hint 轨道相同，除了：
+
+- 采样条目名称从 “rtp” 变为 “srtp”，以指示需要 SRTP 的服务
+- 采样条目增加一个额外的 box，可用于指导服务器必须应用的实时加密和完整性保护
+
+#### 9.1.2 采样描述格式
+
+RTP hint 轨道是 hint 轨道(媒体 handler “hint”)，采样描述中有一个 “rtp” 条目格式：
+
+```code
+class RtpHintSampleEntry() extends SampleEntry (‘rtp‘) {
+  uint(16) hinttrackversion = 1;
+  uint(16) highestcompatibleversion = 1;
+  uint(32) maxpacketsize;
+  box additionaldata[];
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| hinttrackversion | 整数 | 目前是 1；最高兼容性 version 字段指定次轨道向后兼容的最旧版本 |
+| maxpacketsize | 整数 | 指示此轨道将生成的最大包的大小 |
+| additionaldata | - | 来自下面的一组 box |
+
+```code
+class timescaleentry() extends Box(‘tims’) {
+ uint(32) timescale;
+}
+class timeoffset() extends Box(‘tsro’) {
+ int(32) offset;
+}
+class sequenceoffset extends Box(‘snro’) {
+ int(32) offset;
+}
+```
+
+timescaleentry 是必须的。另外两个是可选的。offset 覆盖默认的服务器行为，即选择随机偏移量。因此，0 值将导致服务器不分别对时间戳和序列号应用偏移。
+
+当需要 SRTP 处理时，使用 SRTP Hint Sample Entry。
+
+```code
+class SrtpHintSampleEntry() extends SampleEntry (‘srtp‘) {
+  uint(16) hinttrackversion = 1;
+  uint(16) highestcompatibleversion = 1;
+  uint(32) maxpacketsize;
+  box additionaldata[];
+}
+```
+
+字段和 box 定义和 ISO 基本媒体文件格式的 RtpHintSampleEntry(“rtp”) 相同。但是，SrtpHintSampleEntry 应包含一个 SRTP Process Box 作为 additionaldata 的 box 之一。
+
+##### 9.1.2.1 SRTP Process Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| srpp | SrtpHintSampleEntry | Y | 1 |
+
+SRTP Process Box 可以指导服务器应该应用的 SRTP 算法。
+
+```code
+aligned(8) class SRTPProcessBox extends FullBox(‘srpp’, version, 0) {
+  unsigned int(32) encryption_algorithm_rtp;
+  unsigned int(32) encryption_algorithm_rtcp;
+  unsigned int(32) integrity_algorithm_rtp;
+  unsigned int(32) integrity_algorithm_rtcp;
+  SchemeTypeBox scheme_type_box;
+  SchemeInformationBox info;
+}
+```
+
+上面受保护媒体轨道已经定义了 Scheme Type Box 和 Scheme Information Box 的语法。它们用于提供应用 SRTP 所需的参数。Scheme Type Box 用于指示流必要的密钥管理和安全策略，以扩展到 SRTP Process Box 提供的已定义算法指针。密钥管理功能还用于建立所有必须的 SRTP 参数，参数在 SRTP 规范的 8.2 小结列举。保护方案的确定定义超出了文件格式的范围。
+
+SRTP 定义了加密和完整性保护的算法。此处定义以下格式标识符。可以使用四个空格($20$20$20$20)的条目表示加密或完整性保护算法的选择由文件格式之外的进程决定。
+
+| 格式 | 算法 |
+| --- | --- |
+| $20$20$20$20 | 加密或完整性保护算法的选择由文件格式之外的进程决定 |
+| ACM1 | 加密使用 AES，带 128 位密钥的 Counter Mode，在 SRTP 规范的 4.1.1 小节定义 |
+| AF81 | 加密使用 AES，带 128 位密钥的 F8-Mode，在 SRTP 规范的 4.1.2 小节定义 |
+| ENUL | 加密使用 NULL 算法，在 SRTP 规范的 4.1.3 小节定义 |
+| SHM2 | 完整性保护使用 HMAC-SHA-1，带 160 位密钥，在 SRTP 规范的 4.2.1 小节定义 |
+| ANUL | 完整性保护未应用到 RTP(但是仍应用到 RTCP)。请注意：这只对 integrity_algorithm_rtp 有效 |
+
+#### 9.1.3 采样格式
+
+hint 轨道的每个采样将生成一个或多个 RTP 包，其 RTP 时间戳和 hint 采样时间相同。因此，一个采样生成的所有包具有相同的时间戳。但是，规定要求服务器“扭曲”实际的传输时间，例如用于数据速率平滑处理。
+
+每个采样包含两个区域: 组成数据包的说明，以及发送这些包所需的任何其他数据(比如媒体数据的加密版本)。请注意，采样大小可从 Sample Size Table 得知。
+
+```code
+aligned(8) class RTPsample {
+  unsigned int(16) packetcount;
+  unsigned int(16) reserved;
+  RTPpacket packets[packetcount];
+  byte extradata[];
+}
+```
+
+##### 9.1.3.1 包条目格式
+
+Packet Entry Table 中的每个包具有下面的结构：
+
+```code
+aligned(8) class RTPpacket {
+  int(32) relative_time;
+  // the next fields form initialization for the RTP
+  // header (16 bits), and the bit positions correspond
+  bit(2) RTP_version;
+  bit(1) P_bit;
+  bit(1) X_bit;
+  bit(4) CSRC_count;
+  bit(1) M_bit;
+  bit(7) payload_type;
+  unsigned int(16) RTPsequenceseed;
+  unsigned int(13) reserved = 0;
+  unsigned int(1) extra_flag;
+  unsigned int(1) bframe_flag;
+  unsigned int(1) repeat_flag;
+  unsigned int(16) entrycount;
+  if (extra_flag) {
+    uint(32) extra_information_length;
+    box extra_data_tlv[];
+  }
+  dataentry constructors[entrycount];
+}
+```
+
+RTP 服务 hint 轨道的字段语义在下面指定。RTP 接收 hint 轨道使用相同的包结构。当在 RTP 接收 hint 轨道中使用包结构时，这些字段的语义在 9.4.1.4 小节中指定。
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| relative_time | - | “扭曲”实际传输时间偏离采样时间。这可以实现平滑处理 |
+| - | 2 字节(2+1+1+4+1+7) | 下面的两个字节正好覆盖 RTP 头部；它们帮助服务器生成 RTP 头(服务器会填充剩下的字段)。在这两个字节内部，RTP_version 和 CSRC_count 在服务(传输) hint 轨道中保留，服务器填充这些字段 |
+| RTPsequenceseed | - | RTP 序列号基础。如果 hint 轨道导致传输相同 RTP 包的多个副本，那么此值对于副本都是相同的。服务器通常增加一个随机偏移到此值(但是参阅上面的 “sequenceoffset”) |
+| extra_flag | - | 等于 1 指示在构造器之前有其他信息，是“类型-长度-值”形式的集合 |
+| extra_information_length | 整数 | 指示构造器之前的所有其他信息的字节长度，包括 extra_information_length 字段的 4 个字节。之后位于构造之前的 box(作为 TLV box 被引用) 在 32 位边界上对齐。任何 TLV box 的 bxo 大小指示实际使用的字节数，而非填充到 32 位边界需要的长度。extra_information_length 值包含为 32 位边界填充所需的长度 |
+| bframe_flag | - | 指示一个可丢弃的“b 帧” |
+| repeat_flag | - | 指示一个“重复包”，作为前一包的副本被传输。服务器可能希望优化对这些包的处理 |
+
+rtpoffsetTLV(“rtpo”) 提供 32 位有符号整数偏移量，用于要放置在数据包中的实际 RTP 时间戳。这使数据包可以按解码顺序放置在 hint 轨道，但是传输的数据包中的演示时间采用不同的顺序。这对于某些 MPEG 负载是必需的。
+
+##### 9.1.3.2 构造器格式
+
+有多种形式的构造器。每个构造器都是 16 字节，使得迭代更简单。第一个字节是一个联合判别器：
+
+```code
+aligned(8) class RTPconstructor(type) {
+  unsigned int(8) constructor_type = type;
+}
+aligned(8) class RTPnoopconstructor
+  extends RTPconstructor(0)
+{
+  uint(8) pad[15];
+}
+aligned(8) class RTPimmediateconstructor
+  extends RTPconstructor(1)
+{
+  unsigned int(8) count;
+  unsigned int(8) data[count];
+  unsigned int(8) pad[14 - count];
+}
+aligned(8) class RTPsampleconstructor
+  extends RTPconstructor(2)
+{
+  signed int(8) trackrefindex;
+  unsigned int(16) length;
+  unsigned int(32) samplenumber;
+  unsigned int(32) sampleoffset;
+  unsigned int(16) bytesperblock = 1;
+  unsigned int(16) samplesperblock = 1;
+}
+aligned(8) class RTPsampledescriptionconstructor
+  extends RTPconstructor(3)
+{
+  signed int(8) trackrefindex;
+  unsigned int(16) length;
+  unsigned int(32) sampledescriptionindex;
+  unsigned int(32) sampledescriptionoffset;
+  unsigned int(32) reserved;
+}
+```
+
+immediate 模式允许插入负载特定的头部(比如 RTP H.261 头部)。
+
+对于“明文”发送媒体的 hint 轨道，采样条目会指定要从媒体轨道复制的字节数，通过给出采样编号(samplenumber)、数据偏移(sampleoffset)和要复制的长度(length)。轨道引用(trackrefindex, 严格为正)可以索引到轨道引用表，命名 hint 轨道本身(-1)，或命名唯一关联的媒体轨道(0)(因此，零值等于 1)。bytesperblock 和 samplesperblock 与使用 MP4 之前方案的压缩音频有关，该方案中的文件音频分帧不明显。对于 MP4 文件这些字段固定值为 1。
+
+sampledescription 模式允许通过引用发送采样描述符(其中将包含基本流描述符)，作为 RTP 包的一部分。该索引(sampledescriptionindex)是 Sample Description Box 中的 SampleEntry 的索引，且偏移量(sampledescriptionoffset)是相对于 SampleEntry 的开头。
+
+对于复杂的情况(例如加密或前向纠错)，转换后的数据会放在 hint 采样内的 extradata 字段，然后将使用 sample 模式引用 hint 轨道本身。
+
+注意，不要求连续的包传输媒体流的连续字节。例如，为了符合 H.261 RTP 标准打包，有时需要在一个数据包末尾和下一个数据包起始发送一个字节(当宏块边界落入一个字节时)。
+
+#### 9.1.4 SDP 信息
+
+使用 RTSP 和 SDP 的流媒体服务器通常使用 SDP 作为描述格式；且 SDP 信息和 RTP 流之间有必要联系，比如负载 ID 和 mime 名称的映射。因此要求 hinterland 在文件中保留 SDP 信息片段，以帮助服务器形成完整的 SDP 描述。请注意，服务还应生成必需的 SDP 条目。这里的 SDP 信息仅仅是部分的。
+
+在影片和轨道级别，将 SDP 信息格式化为用户数据 box 内的一组 box。影片级别的 SDP box 内的文本应放置在任何媒体特定行之前(SDP 文件中的第一个 “m=” 之前)。
+
+##### 9.1.4.1 影片 SDP 信息
+
+在影片级别，用户数据 box("udta") 内，可能有一个 hint 信息容器 box：
+
+```code
+aligned(8) class moviehintinformation extends box(‘hnti’) {
+}
+aligned(8) class rtpmoviehintinformation extends box(‘rtp ‘) {
+  uint(32) descriptionformat = ‘sdp ‘;
+  char sdptext[];
+}
+```
+
+hint 信息 box 可能包含多个协议的信息；这里只定义 RTP。RTP box 可能包含多种描述格式的信息；此只定义 SDP。按照 SDP 要求将 sdptext 正确格式化为一系列行，每行以 \<crlf\> 终止。
+
+##### 9.1.4.2 轨道 SDP 信息
+
+在轨道级别，结构类似；但是，我们已经从采样描述知道该轨道是一个 RTP hint 轨道。因此子 box 仅仅指定描述格式。
+
+```code
+aligned(8) class trackhintinformation extends box(‘hnti’) {
+}
+aligned(8) class rtptracksdphintinformation extends box(‘sdp ‘) {
+  char sdptext[];
+}
+```
+
+按照 SDP 要求将 sdptext 正确格式化为一系列行，每行以 \<crlf\> 终止。
+
+##### 9.1.4.5 统计信息
+
+除了 hint 媒体头部的统计数据之外，hinter 可能在轨道用户数据 box 内的 hint statistics box 中放置额外数据。这是一个容器 box，其中可能包含许多子 box。
+
+```code
+aligned(8) class hintstatisticsbox extends box(‘hinf’) {
+}
+
+aligned(8) class hintBytesSent extends box(‘trpy’) {
+  uint(64) bytessent; // total bytes sent, including 12-byte RTP headers
+}
+aligned(8) class hintPacketsSent extends box(‘nump’) {
+  uint(64) packetssent; // total packets sent
+}
+aligned(8) class hintBytesSent extends box(‘tpyl’) {
+  uint(64) bytessent; // total bytes sent, not including RTP headers
+}
+aligned(8) class hintBytesSent extends box(‘totl’) {
+  uint(32) bytessent; // total bytes sent, including 12-byte RTP headers
+}
+aligned(8) class hintPacketsSent extends box(‘npck’) {
+  uint(32) packetssent; // total packets sent
+}
+aligned(8) class hintBytesSent extends box(‘tpay’) {
+  uint(32) bytessent; // total bytes sent, not including RTP headers
+}
+aligned(8) class hintmaxrate extends box(‘maxr’) { // maximum data rate
+  uint(32) period; // in milliseconds
+  uint(32) bytes; // max bytes sent in any period ‘period’ long
+                  // including RTP headers
+}
+aligned(8) class hintmediaBytesSent extends box(‘dmed’) {
+  uint(64) bytessent; // total bytes sent from media tracks
+}
+aligned(8) class hintimmediateBytesSent extends box(‘dimm’) {
+  uint(64) bytessent; // total bytes sent immediate mode
+}
+aligned(8) class hintrepeatedBytesSent extends box(‘drep’) {
+  uint(64) bytessent; // total bytes in repeated packets
+}
+aligned(8) class hintminrelativetime extends box(‘tmin’) {
+  int(32) time; // smallest relative transmission time, milliseconds
+}
+aligned(8) class hintmaxrelativetime extends box(‘tmax’) {
+  int(32) time; // largest relative transmission time, milliseconds
+}
+aligned(8) class hintlargestpacket extends box(‘pmax’) {
+  uint(32) bytes; // largest packet sent, including RTP header
+}
+aligned(8) class hintlongestpacket extends box(‘dmax’) {
+  uint(32) time; // longest packet duration, milliseconds
+}
+aligned(8) class hintpayloadID extends box(‘payt’) {
+  uint(32) payloadID; // payload ID used in RTP packets
+  uint(8) count;
+  char rtpmap_string[count];
+}
+```
+
+注意，并非所有子 box 都会出现，且可能有多个 “maxr” box 覆盖不同时期。
+
+### 9.2 ALC/LCT 和 FLUTE hint 轨道格式
+
+#### 9.2.1 介绍
+
+该文件格式支持带有 FEC 保护的文件的多播/广播分发。将要分发的文件作为 item 存储在容器文件（由文件格式定义）中，并且修改 meta box 带有关于如何将文件划分为源符号的信息。对于 FEC 编码的每个源块，可以预先计算其他奇偶校验符号并将其存储为 FEC 存储库 item。分区取决于 FEC 方案、目标数据包大小和所需的 FEC 开销。可以将预先组合的源符号存储为文件存储库 item，以最大程度地减少容器文件中的重复信息，尤其是对于 MBMS-FEC。实际的传输由包含服务器指令的 hint 轨道控制，这些服务器指令有助于将源和 FEC 符号封装到数据包中。
+
+FD hint 轨道已针对 ALC/LCT（异步分层编码/分层编码传输）和 FLUTE（单向传输上的文件分发）协议进行了设计。 LCT 为可靠的内容分发和流分发协议提供了传输级别的支持。ALC 是 LCT 构建块的协议实例化，并且它是用于任意二进制对象的大规模可扩展可靠多播分发的基本协议。FLUTE 建立在 ALC/LCT 之上，并定义了用于文件单向分发的协议。
+
+FLUTE 定义了文件分发表（FDT），该表携带 ALC/LCT 会话中分发的文件相关联的元数据，并提供机制用于带内分发和 FDT 更新。相比之下，ALC/LCT 依赖其他方式进行文件元数据的带外传递，例如，通常在 ALC/LCT 会话之前将电子服务指南很好地传递给客户端，并结合 ALC/LCT 会话期间可以发送的更新片段。
+
+文件分区和 FEC 存储库可以独立于 FD hint 轨道使用，反之亦然。前者有助于 hint 轨道的设计，并允许替代的 hint 轨道（例如，具有不同的 FEC 开销）重用相同的 FEC 符号。它们还提供了独立访问源符号和其他 FEC 符号的方法以进行交付后修复，可以通过 ALC/LCT 或 FLUTE 或通过其他协议在带外执行。为了降低服务器遵循 hint 轨道指令时的复杂性，hint 轨道直接引用 item 的数据区间或复制到 hint 采样中的数据。
+
+建议服务器为每次重传文件发送一组不同的 FEC 符号。
+
+将 Meta Box 用作源文件的容器文件的语法在 8.10.4 中定义，分区、文件和 FEC 存储库在 8.13 中定义，而 FD hint 轨道的语法在 9.2 中定义。
+
+#### 9.2.2 设计原则
+
+对文件分发的支持旨在通过使ALC/LCT或FLUTE服务器遵循简单的指令来优化服务器传输过程。每个通道遵循一条预定义的指令序列即可传输一个会话。文件格式可以存储预先计算的源块和符号分区，即可以将文件划分为适合预期数据包大小的符号，并预先计算一定数量的FEC符号，这些符号也可以用于会话后修理。该文件格式还允许存储可能导致等效最终结果的替代ALC/LCT或FLUTE传输会话指令。由于更高的FEC保护，甚至通过使用不同的纠错方案，此类替代方案可能旨在用于不同的信道条件。备用会话可以引用一组通用符号。提示轨道是灵活的，可用于组成FDT片段以及在实际对象传输中对此类片段进行交织。几个提示轨道可以组合为一个或多个会话，其中涉及同时通过多个通道进行传输。
+
+重要的是要在传输会话的定义和此类会话的调度之间进行区别。 ALC/LCT和FLUTE服务器文件仅解决服务器传输过程的优化问题。为了确保此类预定义会话的最大使用率和灵活性，有关调度地址等的所有详细信息均保留在文件格式的定义范围之外。外部调度应用程序决定这些细节，这对于优化传输会话本身并不重要。特别是，以下信息超出了文件格式的范围：时间安排，目标地址和端口，源地址和端口以及所谓的传输会话标识符（TSI）。
+
+与文件传递提示轨道的样本相关联的样本号提供了编号的序列。提示音轨采样时间为默认比特率提供了ALC/LCT或FLUTE数据包的发送时间。根据实际的传输比特率，ALC/LCT或FLUTE服务器可以应用线性时间缩放。采样时间可以简化调度过程，但是由服务器决定是否及时发送ALC/LCT或FLUTE数据包。
+
+图6提供了一个文件的示意图，该文件包含三个替代提示轨道，它们具有与源文件不同的FEC开销。在此示例中，每个源块仅包含一个子块。
+
+上图中的源文件分为两个包含固定大小符号的源块。为两个源块都计算FEC冗余符号，并将其存储为FEC存储库项。由于提示轨道引用了文件中的相同项目，因此不会重复信息。不使用提示轨道的维修服务器也可以使用原始的源符号和FEC储存库。
+
+#### 9.2.3 采样条目格式
+
+#### 9.2.4 采样格式
+
+##### 9.2.4.1 采样容器
+
+##### 9.2.4.2 包条目格式
+
+##### 9.2.4.3 LCT 头部模板格式
+
+##### 9.2.4.4 LCT 头部扩展构造器格式
+
+##### 9.2.4.5 包构造器格式
+
+##### 9.2.4.6 Extra Data Box
+
+##### 9.2.4.7 FEC Information Box
+
+### 9.3 MPEG-2 传输 hint 轨道格式
 
 ### unknown
 
@@ -4024,304 +4462,6 @@ else {
 所有新的轨道引用类型必须注册和定义。
 
 如上定义，可用可选或必需的 box 扩展采样描述格式。这样做的通常语法是定义一个具有特定名称的新 box，扩展 VisualSampleEntry (比如)，并包含新 box。
-
-## 10 RTP 和 SRTP hint 轨道格式
-
-### 10.1 介绍
-
-RTP 是由 IETF (RFC 1889 和 1890)定义的实时流传输协议，当前定义为能够携带一组有限的媒体类型(主要是音频和视频)和编码。双方都在讨论将 MPEG-4 基本流打包到 RTP 中。但是，很明显，媒体打包方式与现有技术在种类上没有不同，即 RTP 中其他编解码器所使用和此方案支持的技术。
-
-在标准 RTP 中，每个媒体流都作为单独的 RTP 流发送；多路复用的实现是通过使用 IP 端口即多路复用，而非将多个流中的数据交织到单个 RTP 会话。但是，如果使用 MOEG，可能需要独用多个媒体轨道到一个 RTP 轨道(比如，在 RTP 中使用 MPEG-2 传输或 FlexMux)。因此，通过轨道引用将每个 hint 轨道绑定到一组媒体轨道。hint 轨道通过索引此表从其媒体轨道提取数据。媒体轨道的 hint 轨道引用的引用类型是 “hint”。
-
-此设计在创建 hint 轨道时确定包大小；因此，我们在 hint 轨道的声明中指示选择的包大小。它在采样描述中。请注意，每个媒体轨道有多个具有不同数据包大小选择的 RTP hint 轨道，这是有效的。类似地，提供了 RTP 时钟的时间刻度。hint 轨道时间刻度的选择通常与媒体轨道的时间刻度匹配，或为服务器选择合适的值。在某些情况下，RTP 时间刻度不相同(比如，一些 MPEG 负载是 90kHz)，并且支持这种变化。会话描述(SAP/SDP) 循序存储在轨道的用户数据 box。
-
-RTP hint 轨道不是有合成时间偏移表(ctts)。hint 不是“合成的”。相反，hint 过程可能使用传输时间偏移来设置传输时间，建立正确的传输顺序和时间戳。
-
-hinted 内容可能需要流使用 SRTP，通过使用此处定义的 SRTP hint 轨道格式。SRTP hint 轨道与 RTP hint 轨道相同，除了：
-
-- 采样条目名称从 “rtp” 变为 “srtp”，以指示需要 SRTP 的服务
-- 采样条目增加一个额外的 box，可用于指导服务器必须应用的实时加密和完整性保护
-
-### 10.2 采样描述格式
-
-RTP hint 轨道是 hint 轨道(媒体 handler “hint”)，采样描述中有一个 “rtp” 条目格式：
-
-```code
-class RtpHintSampleEntry() extends SampleEntry (‘rtp‘) {
-  uint(16) hinttrackversion = 1;
-  uint(16) highestcompatibleversion = 1;
-  uint(32) maxpacketsize;
-  box additionaldata[];
-}
-```
-
-| 字段 | 类型 | 含义 |
-| --- | --- | --- |
-| hinttrackversion | 整数 | 目前是 1；最高兼容性 version 字段指定次轨道向后兼容的最旧版本 |
-| maxpacketsize | 整数 | 指示此轨道将生成的最大包的大小 |
-| additionaldata | - | 来自下面的一组 box |
-
-```code
-class timescaleentry() extends Box(‘tims’) {
- uint(32) timescale;
-}
-class timeoffset() extends Box(‘tsro’) {
- int(32) offset;
-}
-class sequenceoffset extends Box(‘snro’) {
- int(32) offset;
-}
-```
-
-timescaleentry 是必须的。另外两个是可选的。offset 覆盖默认的服务器行为，即选择随机偏移量。因此，0 值将导致服务器不分别对时间戳和序列号应用偏移。
-
-当需要 SRTP 处理时，使用 SRTP Hint Sample Entry。
-
-```code
-class SrtpHintSampleEntry() extends SampleEntry (‘srtp‘) {
-  uint(16) hinttrackversion = 1;
-  uint(16) highestcompatibleversion = 1;
-  uint(32) maxpacketsize;
-  box additionaldata[];
-}
-```
-
-字段和 box 定义和 ISO 基本媒体文件格式的 RtpHintSampleEntry(“rtp”) 相同。但是，SrtpHintSampleEntry 应包含一个 SRTP Process Box 作为 additionaldata 的 box 之一。
-
-#### 10.2.1 SRTP Process Box
-
-| box 类型 | 容器 | 必要性 | 数量 |
-| --- | --- | --- | --- |
-| srpp | 相同。但是，SrtpHintSampleEntry | Y | 1 |
-
-SRTP Process Box 可以指导服务器应该应用的 SRTP 算法。
-
-```code
-aligned(8) class SRTPProcessBox extends FullBox(‘srpp’, version, 0) {
-  unsigned int(32) encryption_algorithm_rtp;
-  unsigned int(32) encryption_algorithm_rtcp;
-  unsigned int(32) integrity_algorithm_rtp;
-  unsigned int(32) integrity_algorithm_rtcp;
-  SchemeTypeBox scheme_type_box;
-  SchemeInformationBox info;
-}
-```
-
-上面受保护媒体轨道已经定义了SchemeTypeBox 和 SchemeInformationBox 的语法。它们用于提供应用 SRTP 所需的参数。SchemeTypeBox 用于指示流必要的密钥管理和安全策略，以扩展到 SRTPProcessBox提供的已定义算法指针。密钥管理功能还用于建立所有必须的 SRTP 参数，参数在 SRTP 规范的 8.2 小结列举。保护方案的确定定义超出了文件格式的范围。
-
-SRTP 定义了加密和完整性保护的算法。此处定义以下格式标识符。可以使用四个空格($20$20$20$20)的条目表示加密或完整性保护算法的选择由文件格式之外的进程决定。
-
-| 格式 | 算法 |
-| --- | --- |
-| $20$20$20$20 | 加密或完整性保护算法的选择由文件格式之外的进程决定 |
-| ACM1 | 加密使用 AES，带 128 位密钥的 Counter Mode，在 SRTP 规范的 4.1.1 小节定义 |
-| AF81 | 加密使用 AES，带 128 位密钥的 F8-Mode，在 SRTP 规范的 4.1.2 小节定义 |
-| ENUL | 加密使用 NULL 算法，在 SRTP 规范的 4.1.3 小节定义 |
-| SHM2 | 完整性保护使用 HMAC-SHA-1，带 160 位密钥，在 SRTP 规范的 4.2.1 小节定义 |
-| ANUL | 完整性保护未应用到 RTP(但是仍应用到 RTCP)。请注意：这只对 integrity_algorithm_rtp 有效 |
-
-### 10.3 采样格式
-
-hint 轨道的每个采样将生成一个或多个 RTP 包，其 RTP 时间戳和 hint 采样时间相同。因此，一个采样生成的所有包具有相同的时间戳。但是，规定要求服务器“扭曲”实际的传输时间，例如用于数据速率平滑处理。
-
-每个采样包含两个区域: 组成数据包的说明，以及发送这些包所需的任何其他数据(比如媒体数据的加密版本)。请注意，采样大小可从 Sample Size Table 得知。
-
-```code
-aligned(8) class RTPsample {
-  unsigned int(16) packetcount;
-  unsigned int(16) reserved;
-  RTPpacket packets[packetcount];
-  byte extradata[];
-}
-```
-
-#### 10.3.1 Packet Entry 格式
-
-Packet Entry Table 中的每个包具有下面的结构：
-
-```code
-aligned(8) class RTPpacket {
-  int(32) relative_time;
-  // the next fields form initialization for the RTP
-  // header (16 bits), and the bit positions correspond
-  bit(2) reserved;
-  bit(1) P_bit;
-  bit(1) X_bit;
-  bit(4) reserved;
-  bit(1) M_bit;
-  bit(7) payload_type;
-  unsigned int(16) RTPsequenceseed;
-  unsigned int(13) reserved = 0;
-  unsigned int(1) extra_flag;
-  unsigned int(1) bframe_flag;
-  unsigned int(1) repeat_flag;
-  unsigned int(16) entrycount;
-  if (extra_flag) {
-    uint(32) extra_information_length;
-    box extra_data_tlv[];
-  }
-  dataentry constructors[entrycount];
-}
-class rtpoffsetTLV() extends Box(‘rtpo’) {
-  int(32) offset;
-}
-```
-
-| 字段 | 类型 | 含义 |
-| --- | --- | --- |
-| relative_time | - | “扭曲”实际传输时间偏离采样时间。这可以实现平滑处理 |
-| - | 2 字节(2+1+1+4+1+7) | 下面的两个字节正好覆盖 RTP 头部；它们帮助服务器生成 RTP 头(服务器会填充剩下的字段) |
-| RTPsequenceseed | - | RTP 序列号基础。如果 hint 轨道导致传输相同 RTP 包的多个副本，那么此值对于副本都是相同的。服务器通常增加一个随机偏移到此值(但是参阅上面的 “sequenceoffset”) |
-| extra_flag | - | 指示在构造器之前有其他信息，是“类型-长度-值”形式的集合。目前只定义了一个这样的集合；“rtpo” 提供 32 位有符号整数偏移量，用于要放置在数据包中的实际 RTP 时间戳。这使数据包可以按解码顺序放置在 hint 轨道，但是传输的数据包中的演示时间采用不同的顺序。这对于某些 MPEG 负载是必需的 |
-| bframe_flag | - | 指示一个可丢弃的“b 帧” |
-| repeat_flag | - | 指示一个“重复包”，作为前一包的副本被传输。服务器可能希望优化对这些包的处理 |
-| extra_information_length | 整数 | 此字段以及所有 TLV 条目的字节长度。注意，TLV box 在 32 位边界上对齐；box 大小指示实际使用的字节数，而非填充长度。extra_information_length 将是正确的 |
-
-#### 10.3.2 Constructor 格式
-
-有多种形式的构造器。每个构造器都是 16 字节，使得迭代更简单。第一个字节是一个联合判别器：
-
-```code
-aligned(8) class RTPconstructor(type) {
-  unsigned int(8) constructor_type = type;
-}
-aligned(8) class RTPnoopconstructor
-  extends RTPconstructor(0)
-{
-  uint(8) pad[15];
-}
-aligned(8) class RTPimmediateconstructor
-  extends RTPconstructor(1)
-{
-  unsigned int(8) count;
-  unsigned int(8) data[count];
-  unsigned int(8) pad[14 - count];
-}
-aligned(8) class RTPsampleconstructor
-  extends RTPconstructor(2)
-{
-  signed int(8) trackrefindex;
-  unsigned int(16) length;
-  unsigned int(32) samplenumber;
-  unsigned int(32) sampleoffset;
-  unsigned int(16) bytesperblock = 1;
-  unsigned int(16) samplesperblock = 1;
-}
-aligned(8) class RTPsampledescriptionconstructor
-  extends RTPconstructor(3)
-{
-  signed int(8) trackrefindex;
-  unsigned int(16) length;
-  unsigned int(32) sampledescriptionindex;
-  unsigned int(32) sampledescriptionoffset;
-  unsigned int(32) reserved;
-}
-```
-
-immediate 模式允许插入负载特定的头部(比如 RTP H.261 头部)。
-
-对于“明文”发送媒体的 hint 轨道，采样条目会指定要从媒体轨道复制的字节数，通过给出采样编号(samplenumber)、数据偏移(sampleoffset)和要复制的长度(length)。轨道引用(trackrefindex, 严格为正)可以索引到轨道引用表，命名 hint 轨道本身(-1)，或命名唯一关联的媒体轨道(0)(因此，零值等于 1)。bytesperblock 和 samplesperblock 与使用 MP4 之前方案的压缩音频有关，该方案中的文件音频分帧不明显。对于 MP4 文件这些字段固定值为 1。
-
-sampledescription 模式允许通过引用发送采样描述符(其中将包含基本流描述符)，作为 RTP 包的一部分。该索引(sampledescriptionindex)是 Sample Description Box 中的 SampleEntry 的索引，且偏移量(sampledescriptionoffset)是相对于 SampleEntry 的开头。
-
-对于复杂的情况(例如加密或前向纠错)，转换后的数据会放在 hint 采样内的 extradata 字段，然后将使用 sample 模式引用 hint 轨道本身。
-
-注意，不要求连续的包传输媒体流的连续字节。例如，为了符合 H.261 RTP 标准打包，有时需要在一个数据包末尾和下一个数据包起始发送一个字节(当宏块边界落入一个字节时)。
-
-### 10.4 SDP 信息
-
-使用 RTSP 和 SDP 的流媒体服务器通常使用 SDP 作为描述格式；且 SDP 信息和 RTP 流之间有必要联系，比如负载 ID 和 mime 名称的映射。因此要求 hinterland 在文件中保留 SDP 信息片段，以帮助服务器形成完整的 SDP 描述。请注意，服务还应生成必需的 SDP 条目。这里的 SDP 信息仅仅是部分的。
-
-在影片和轨道级别，将 SDP 信息格式化为用户数据 box 内的一组 box。影片级别的 SDP box 内的文本应放置在任何媒体特定行之前(SDP 文件中的第一个 “m=” 之前)。
-
-#### 10.4.1 影片 SDP 信息
-
-在影片级别，用户数据 box("udta") 内，可能有一个 hint 信息容器 box：
-
-```code
-aligned(8) class moviehintinformation extends box(‘hnti’) {
-}
-aligned(8) class rtpmoviehintinformation extends box(‘rtp ‘) {
-  uint(32) descriptionformat = ‘sdp ‘;
-  char sdptext[];
-}
-```
-
-hint 信息 box 可能包含多个协议的信息；这里只定义 RTP。RTP box 可能包含多种描述格式的信息；此只定义 SDP。按照 SDP 要求将 sdptext 正确格式化为一系列行，每行以 \<crlf\> 终止。
-
-#### 10.4.2 轨道 SDP 信息
-
-在轨道级别，结构类似；但是，我们已经从采样描述知道该轨道是一个 RTP hint 轨道。因此子 box 仅仅指定描述格式。
-
-```code
-aligned(8) class trackhintinformation extends box(‘hnti’) {
-}
-aligned(8) class rtptracksdphintinformation extends box(‘sdp ‘) {
-  char sdptext[];
-}
-```
-
-按照 SDP 要求将 sdptext 正确格式化为一系列行，每行以 \<crlf\> 终止。
-
-### 10.5 统计信息
-
-除了 hint 媒体头部的统计数据之外，hinter 可能在轨道用户数据 box 内的 hint statistics box 中放置额外数据。这是一个容器 box，其中可能包含许多子 box。
-
-```code
-aligned(8) class hintstatisticsbox extends box(‘hinf’) {
-}
-aligned(8) class hintBytesSent extends box(‘trpy’) {
-  uint(64) bytessent; // total bytes sent, including 12-byte RTP headers
-}
-aligned(8) class hintPacketsSent extends box(‘nump’) {
-  uint(64) packetssent; // total packets sent
-}
-aligned(8) class hintBytesSent extends box(‘tpyl’) {
-  uint(64) bytessent; // total bytes sent, not including RTP headers
-}
-aligned(8) class hintBytesSent extends box(‘totl’) {
-  uint(32) bytessent; // total bytes sent, including 12-byte RTP headers
-}
-aligned(8) class hintPacketsSent extends box(‘npck’) {
-  uint(32) packetssent; // total packets sent
-}
-aligned(8) class hintBytesSent extends box(‘tpay’) {
-  uint(32) bytessent; // total bytes sent, not including RTP headers
-}
-aligned(8) class hintmaxrate extends box(‘maxr’) { // maximum data rate
-  uint(32) period; // in milliseconds
-  uint(32) bytes; // max bytes sent in any period ‘period’ long
-                  // including RTP headers
-}
-aligned(8) class hintmediaBytesSent extends box(‘dmed’) {
-  uint(64) bytessent; // total bytes sent from media tracks
-}
-aligned(8) class hintimmediateBytesSent extends box(‘dimm’) {
-  uint(64) bytessent; // total bytes sent immediate mode
-}
-aligned(8) class hintrepeatedBytesSent extends box(‘drep’) {
-  uint(64) bytessent; // total bytes in repeated packets
-}
-aligned(8) class hintminrelativetime extends box(‘tmin’) {
-  int(32) time; // smallest relative transmission time, milliseconds
-}
-aligned(8) class hintmaxrelativetime extends box(‘tmax’) {
-  int(32) time; // largest relative transmission time, milliseconds
-}
-aligned(8) class hintlargestpacket extends box(‘pmax’) {
-  uint(32) bytes; // largest packet sent, including RTP header
-}
-aligned(8) class hintlongestpacket extends box(‘dmax’) {
-  uint(32) time; // longest packet duration, milliseconds
-}
-aligned(8) class hintpayloadID extends box(‘payt’) {
-  uint(32) payloadID; // payload ID used in RTP packets
-  uint(8) count;
-  char rtpmap_string[count];
-}
-```
-
-注意，并非所有子 box 都会出现，且可能有多个 “maxr” box 覆盖不同时期。
 
 ## 附录 A (提供信息) 概述和介绍
 
