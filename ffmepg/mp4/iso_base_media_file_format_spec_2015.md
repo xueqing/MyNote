@@ -200,6 +200,44 @@
         - [9.2.4.6 Extra Data Box](#9246-extra-data-box)
         - [9.2.4.7 FEC Information Box](#9247-fec-information-box)
     - [9.3 MPEG-2 传输 hint 轨道格式](#93-mpeg-2-传输-hint-轨道格式)
+      - [9.3.1 介绍](#931-介绍)
+      - [9.3.2 设计原则](#932-设计原则)
+        - [9.3.2.1 重用已有的传输流](#9321-重用已有的传输流)
+        - [9.3.2.2 时间](#9322-时间)
+        - [9.3.2.3 包分组](#9323-包分组)
+        - [9.3.2.4 随机访问点](#9324-随机访问点)
+        - [9.3.2.5 应用作为一个接收 hint 轨道](#9325-应用作为一个接收-hint-轨道)
+      - [9.3.3 采样描述格式](#933-采样描述格式)
+      - [9.3.4 采样格式](#934-采样格式)
+      - [9.3.5 受保护的 MPEG 2 传输流 hint 轨道](#935-受保护的-mpeg-2-传输流-hint-轨道)
+    - [9.4 RTP、RTCP、SRTP 和 SRTCP 接收 hint 轨道](#94-rtprtcpsrtp-和-srtcp-接收-hint-轨道)
+      - [9.4.1 RTP 接收 hint 轨道](#941-rtp-接收-hint-轨道)
+        - [9.4.1.1 介绍](#9411-介绍)
+        - [9.4.1.2 采样描述格式](#9412-采样描述格式)
+        - [9.4.1.3 采样格式](#9413-采样格式)
+        - [9.4.1.4 包条目格式](#9414-包条目格式)
+        - [9.4.1.5 SDP 信息](#9415-sdp-信息)
+      - [9.4.2 RTCP 接收 hint 轨道](#942-rtcp-接收-hint-轨道)
+        - [9.4.2.1 介绍](#9421-介绍)
+        - [9.4.2.2 通用的](#9422-通用的)
+        - [9.4.2.3 采样描述格式](#9423-采样描述格式)
+        - [9.4.2.4 采样格式](#9424-采样格式)
+      - [9.4.3 SRTP 接收 hint 轨道](#943-srtp-接收-hint-轨道)
+        - [9.4.3.1 介绍](#9431-介绍)
+        - [9.4.3.2 采样描述格式](#9432-采样描述格式)
+          - [9.4.3.2.1 采样描述条目](#94321-采样描述条目)
+          - [9.4.3.2.2 Received Cryptographic Context ID Box](#94322-received-cryptographic-context-id-box)
+          - [9.4.3.2.3 Rollover Counter Box](#94323-rollover-counter-box)
+        - [9.4.3.3 采样和包条目格式](#9433-采样和包条目格式)
+      - [9.4.4 SRTCP 接收 hint 轨道](#944-srtcp-接收-hint-轨道)
+        - [9.4.4.1 介绍](#9441-介绍)
+        - [9.4.4.2 通用的](#9442-通用的)
+        - [9.4.4.3 采样描述格式](#9443-采样描述格式)
+        - [9.4.4.4 采样格式](#9444-采样格式)
+      - [9.4.5 受保护的 RTP 接收 hint 轨道](#945-受保护的-rtp-接收-hint-轨道)
+      - [9.4.6 录制过程](#946-录制过程)
+      - [9.4.7 解析过程](#947-解析过程)
+  - [10 采样组](#10-采样组)
     - [unknown](#unknown)
       - [8.4.5.2 Video Media Header Box](#8452-video-media-header-box)
       - [8.4.5.3 Sound Media Header Box](#8453-sound-media-header-box)
@@ -3697,7 +3735,7 @@ Segment Index Box(“sidx”) 提供了一个媒体流的紧凑索引，位于�
 
 每个 Segment Index Box 记录如何将一个(子)细分划分为一个或多个子段(可以使用 Segment Index Box 对其本身进一步细分)。
 
-子段定义为包含(子)段的一个时间间隔，并且对应于包含(子)段的单个字节范围。所有子段的持续时间总和为包含(子段的持续时间。
+子段定义为包含(子)段的一个时间间隔，并且对应于包含(子)段的单个字节范围。所有子段的时长总和为包含(子段的时长。
 
 Segment Index Box 中的每个条目都包含一个引用类型，该引用类型指示引用是直接指向所引用的叶子段的媒体字节，还是指向描述如何进一步细分所引用的子段的 Segment Index Box；结果，可以通过记录适用于同一(子)部分的其他 Segment Index Box 的时间和字节偏移信息，以“分层”或“菊花链”或其他形式对段进行索引。
 
@@ -3844,9 +3882,9 @@ aligned(8) class SubsegmentIndexBox extends FullBox(‘ssix’, 0, 0) {
 | --- | --- | --- | --- |
 | prft | 文件 | N | >=0 |
 
-Producer Reference Time Box 提供了有关影片片段或包含影片片段（例如段）的文件的相对挂钟时间。当实时生产和使用这些文件时，这可以为客户提供信息，以使消耗和生产能够以相等的速率进行，从而避免可能的缓冲区上溢或下溢。
+Producer Reference Time Box 提供了有关影片片段或包含影片片段(例如段)的文件的相对挂钟时间。当实时生产和使用这些文件时，这可以为客户提供信息，以使消耗和生产能够以相等的速率进行，从而避免可能的缓冲区上溢或下溢。
 
-此 box 与按位流顺序跟在其后的下一个 Movie Fragment Box 相关。它必须跟随该段中的任何 Segment Type Box 或 Segment Index Box（如果有），并出现在接着的 Movie Fragment Box（它所引用的）之前。如果段文件包含任何 Producer Reference Time Box，则第一个应出现在该段中第一个 Movie Fragment Box 之前。
+此 box 与按位流顺序跟在其后的下一个 Movie Fragment Box 相关。它必须跟随该段中的任何 Segment Type Box 或 Segment Index Box(如果有)，并出现在接着的 Movie Fragment Box(它所引用的)之前。如果段文件包含任何 Producer Reference Time Box，则第一个应出现在该段中第一个 Movie Fragment Box 之前。
 
 该 box 包含一个在时钟上测量的时间值，该时钟使用 NTP 格式，以与 UTC-同步的 NTP [RFC 5905]时钟相同的速率递增。这与影片片段中其中一个轨道的媒体时间相关。该媒体时间应在相关影片片段中该轨道的时间范围内。
 
@@ -3868,7 +3906,7 @@ aligned(8) class ProducerReferenceTimeBox extends FullBox(‘prft’, version, 0
 | --- | --- | --- |
 | reference_track_ID | 整数 | 提供引用轨道的 track_ID |
 | ntp_timestamp | 整数 | 表示与解码时间对应的 UTC 时间(NTP 格式) |
-| media_time | 整数 | 与 ntp_timestamp 对应同一时间，但单位是引用磁道所用时间单位，并在制作媒体时在此媒体时钟上进行测量 |
+| media_time | 整数 | 与 ntp_timestamp 对应同一时间，但单位是引用轨道所用时间单位，并在制作媒体时在此媒体时钟上进行测量 |
 
 注意：在大多数情况下，此时间戳将不等于引用轨道相邻段的第一个采样的时间戳，但是建议此时间戳在包含此 Producer Reference Time Box 的段的范围内。
 
@@ -3882,7 +3920,7 @@ aligned(8) class ProducerReferenceTimeBox extends FullBox(‘prft’, version, 0
 
 本小节规定了对不完整轨道的采样条目格式的支持。借助此支持，读者可以从采样条目中检测出不完整的轨道并避免处理此类轨道，或者在处理此类轨道时不考虑空的或未接收到的采样。
 
-对不完整轨道的支持类似于内容保护转换，在内容保护转换中，采样条目被隐藏在通用采样条目（例如 “encv” 和 “enca”）之后。由于采样条目的格式随媒体类型的不同而不同，因此对于每种媒体类型（音频、视频、文本等）的不完整轨道，将使用不同的封装四字符代码。他们是：
+对不完整轨道的支持类似于内容保护转换，在内容保护转换中，采样条目被隐藏在通用采样条目(例如 “encv” 和 “enca”)之后。由于采样条目的格式随媒体类型的不同而不同，因此对于每种媒体类型(音频、视频、文本等)的不完整轨道，将使用不同的封装四字符代码。他们是：
 
 | 流(轨道)类型 | 采样条目代码 |
 | --- | --- |
@@ -3901,9 +3939,9 @@ aligned(8) class ProducerReferenceTimeBox extends FullBox(‘prft’, version, 0
 
 轨道变得不完整(例如通过部分接收)的采样条目，应按照如下修改：
 
-1）采样条目的四字符代码，例如 “avc1” 被新的采样条目代码 “icpv” 代替，表示曲目不完整
-2）将 Complete Track Information box 添加到采样描述中，而所有其他 box 保持不变
-3）原始采样条目类型(例如 “avc1”)存储在 Complete Track Information box 中的 Original Format box
+1)采样条目的四字符代码，例如 “avc1” 被新的采样条目代码 “icpv” 代替，表示曲目不完整
+2)将 Complete Track Information box 添加到采样描述中，而所有其他 box 保持不变
+3)原始采样条目类型(例如 “avc1”)存储在 Complete Track Information box 中的 Original Format box
 
 转换后，示例 AVC 采样条目可能看起来像这样：
 
@@ -4236,13 +4274,13 @@ aligned(8) class hintpayloadID extends box(‘payt’) {
 
 #### 9.2.1 介绍
 
-该文件格式支持带有 FEC 保护的文件的多播/广播分发。将要分发的文件作为 item 存储在容器文件（由文件格式定义）中，并且修改 meta box 带有关于如何将文件划分为源符号的信息。对于 FEC 编码的每个源块，可以预先计算其他奇偶校验符号并将其存储为 FEC 存储库 item。分区取决于 FEC 方案、目标数据包大小和所需的 FEC 开销。可以将预先组合的源符号存储为文件存储库 item，以最大程度地减少容器文件中的重复信息，尤其是对于 MBMS-FEC。实际的传输由包含服务器指令的 hint 轨道控制，这些服务器指令有助于将源和 FEC 符号封装到数据包中。
+该文件格式支持带有 FEC 保护的文件的多播/广播分发。将要分发的文件作为 item 存储在容器文件(由文件格式定义)中，并且修改 meta box 带有关于如何将文件划分为源符号的信息。对于 FEC 编码的每个源块，可以预先计算其他奇偶校验符号并将其存储为 FEC 存储库 item。分区取决于 FEC 方案、目标数据包大小和所需的 FEC 开销。可以将预先组合的源符号存储为文件存储库 item，以最大程度地减少容器文件中的重复信息，尤其是对于 MBMS-FEC。实际的传输由包含服务器指令的 hint 轨道控制，这些服务器指令有助于将源和 FEC 符号封装到数据包中。
 
-FD hint 轨道已针对 ALC/LCT（异步分层编码/分层编码传输）和 FLUTE（单向传输上的文件分发）协议进行了设计。 LCT 为可靠的内容分发和流分发协议提供了传输级别的支持。ALC 是 LCT 构建块的协议实例化，并且它是用于任意二进制对象的大规模可扩展可靠多播分发的基本协议。FLUTE 建立在 ALC/LCT 之上，并定义了用于文件单向分发的协议。
+FD hint 轨道已针对 ALC/LCT(异步分层编码/分层编码传输)和 FLUTE(单向传输上的文件分发)协议进行了设计。LCT 为可靠的内容分发和流分发协议提供了传输级别的支持。ALC 是 LCT 构建块的协议实例化，并且它是用于任意二进制对象的大规模可扩展可靠多播分发的基本协议。FLUTE 建立在 ALC/LCT 之上，并定义了用于文件单向分发的协议。
 
-FLUTE 定义了文件分发表（FDT），该表携带 ALC/LCT 会话中分发的文件相关联的元数据，并提供机制用于带内分发和 FDT 更新。相比之下，ALC/LCT 依赖其他方式进行文件元数据的带外传递，例如，通常在 ALC/LCT 会话之前将电子服务指南很好地传递给客户端，并结合 ALC/LCT 会话期间可以发送的更新片段。
+FLUTE 定义了文件分发表(FDT)，该表携带 ALC/LCT 会话中分发的文件相关联的元数据，并提供机制用于带内分发和 FDT 更新。相比之下，ALC/LCT 依赖其他方式进行文件元数据的带外传递，例如，通常在 ALC/LCT 会话之前将电子服务指南很好地传递给客户端，并结合 ALC/LCT 会话期间可以发送的更新片段。
 
-文件分区和 FEC 存储库可以独立于 FD hint 轨道使用，反之亦然。前者有助于 hint 轨道的设计，并允许替代的 hint 轨道（例如，具有不同的 FEC 开销）重用相同的 FEC 符号。它们还提供了独立访问源符号和其他 FEC 符号的方法以进行交付后修复，可以通过 ALC/LCT 或 FLUTE 或通过其他协议在带外执行。为了降低服务器遵循 hint 轨道指令时的复杂性，hint 轨道直接引用 item 的数据区间或复制到 hint 采样中的数据。
+文件分区和 FEC 存储库可以独立于 FD hint 轨道使用，反之亦然。前者有助于 hint 轨道的设计，并允许替代的 hint 轨道(例如，具有不同的 FEC 开销)重用相同的 FEC 符号。它们还提供了独立访问源符号和其他 FEC 符号的方法以进行交付后修复，可以通过 ALC/LCT 或 FLUTE 或通过其他协议在带外执行。为了降低服务器遵循 hint 轨道指令时的复杂性，hint 轨道直接引用 item 的数据区间或复制到 hint 采样中的数据。
 
 建议服务器为每次重传文件发送一组不同的 FEC 符号。
 
@@ -4250,35 +4288,735 @@ FLUTE 定义了文件分发表（FDT），该表携带 ALC/LCT 会话中分发�
 
 #### 9.2.2 设计原则
 
-对文件分发的支持旨在通过使ALC/LCT或FLUTE服务器遵循简单的指令来优化服务器传输过程。每个通道遵循一条预定义的指令序列即可传输一个会话。文件格式可以存储预先计算的源块和符号分区，即可以将文件划分为适合预期数据包大小的符号，并预先计算一定数量的FEC符号，这些符号也可以用于会话后修理。该文件格式还允许存储可能导致等效最终结果的替代ALC/LCT或FLUTE传输会话指令。由于更高的FEC保护，甚至通过使用不同的纠错方案，此类替代方案可能旨在用于不同的信道条件。备用会话可以引用一组通用符号。提示轨道是灵活的，可用于组成FDT片段以及在实际对象传输中对此类片段进行交织。几个提示轨道可以组合为一个或多个会话，其中涉及同时通过多个通道进行传输。
+对文件分发的支持旨在通过使 ALC/LCT 或 FLUTE 服务器遵循简单的指令来优化服务器传输过程。每个通道遵循一条预定义的指令序列即可传输一个会话。文件格式可以存储预先计算的源块和符号分区(即可以将文件划分为适合预期数据包大小的符号)并预先计算一定数量的 FEC 符号，这些符号也可以用于会话后修复。该文件格式还允许存储替代的 ALC/LCT 或 FLUTE 传输会话指令，这些指令可能导致等效的最终结果。由于更高的 FEC 保护，甚至通过使用不同的纠错方案，此类替代方案可能旨在用于不同的通道条件。备用会话可以引用一组通用符号。hint 轨道是灵活的，可用于组成 FDT 片段以及在实际对象传输中对此类片段进行交织。几个 hint 轨道可以组合为一个或多个会话，其中涉及同时通过多个通道进行传输。
 
-重要的是要在传输会话的定义和此类会话的调度之间进行区别。 ALC/LCT和FLUTE服务器文件仅解决服务器传输过程的优化问题。为了确保此类预定义会话的最大使用率和灵活性，有关调度地址等的所有详细信息均保留在文件格式的定义范围之外。外部调度应用程序决定这些细节，这对于优化传输会话本身并不重要。特别是，以下信息超出了文件格式的范围：时间安排，目标地址和端口，源地址和端口以及所谓的传输会话标识符（TSI）。
+重要的是区分传输会话的定义和此类会话的调度。 ALC/LCT 和 FLUTE 服务器文件仅解决服务器传输过程的优化问题。为了确保此类预定义会话的最大使用率和灵活性，有关调度地址等的所有详细信息均保留在文件格式定义的范围之外。外部调度应用程序决定这些细节，这对于优化传输会话本身并不重要。特别是，以下信息超出了文件格式的范围：时间调度、目标地址和端口、源地址和端口，以及所谓的传输会话标识符(TSI)。
 
-与文件传递提示轨道的样本相关联的样本号提供了编号的序列。提示音轨采样时间为默认比特率提供了ALC/LCT或FLUTE数据包的发送时间。根据实际的传输比特率，ALC/LCT或FLUTE服务器可以应用线性时间缩放。采样时间可以简化调度过程，但是由服务器决定是否及时发送ALC/LCT或FLUTE数据包。
+与文件分发 hint 轨道的采样相关的采样编号提供了编号的序列。hint 轨道采样时间为默认比特率提供了 ALC/LCT 或 FLUTE 包的发送时间。根据实际的传输比特率，ALC/LCT 或 FLUTE 服务器可以应用线性时间缩放。采样时间可以简化调度过程，但是由服务器决定是否及时发送 ALC/LCT 或 FLUTE 包。
 
-图6提供了一个文件的示意图，该文件包含三个替代提示轨道，它们具有与源文件不同的FEC开销。在此示例中，每个源块仅包含一个子块。
+图 6 提供了一个文件的示意图，该文件包含三个替代 hint 轨道，它们具有与源文件不同的 FEC 开销。在此示例中，每个源块仅包含一个子块。
 
-上图中的源文件分为两个包含固定大小符号的源块。为两个源块都计算FEC冗余符号，并将其存储为FEC存储库项。由于提示轨道引用了文件中的相同项目，因此不会重复信息。不使用提示轨道的维修服务器也可以使用原始的源符号和FEC储存库。
+![图 4-替代轨道提供的源文件的不同 FEC 开销](figure4-different-fec-overheads-of-a-source-file-provided-by-alternative-hint-tracks.png)
+
+上图中的源文件分为两个包含固定大小符号的源块。为两个源块都计算 FEC 冗余符号，并将其存储为 FEC 存储库项。由于 hint 轨道引用了文件中的相同项目，因此不会有重复信息。不使用 hint 轨道的修复服务器也可以使用原始的源符号和 FEC 储存库。
 
 #### 9.2.3 采样条目格式
+
+FD hint 轨道带有 “hint” handler_type，并且在 Sample Description Box 中有 “fdp” 条目格式。FD hint 采样条目包含在 Sample Description Box(“stsd”) 中。
+
+```code
+class FDHintSampleEntry() extends SampleEntry ('fdp ') {
+  unsigned int(16) hinttrackversion = 1;
+  unsigned int(16) highestcompatibleversion = 1;
+  unsigned int(16) partition_entry_ID;
+  unsigned int(16) FEC_overhead;
+  Box additionaldata[]; //optional
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| partition_entry_ID | 整数 | 表示 FD Item Information Box 中的分区条目。零值表示没有分区条目与此采样条目相关，例如对于 FDT。如果相应的 FD hint 轨道仅包含开销数据，那么此值应指示讨论的开销数据的分区条目 |
+| FEC_overhead | 定点数 8.8 | 指示 hint 采样使用的保护开销的百分比。提供此值的目的是提供特征帮助服务器选择会话组(和相应的 FD hint 轨道)。如果相应的 FD hint 轨道仅包含开销数据，则此值应指示通过使用会话组中的所有 FD hint 轨道直至所讨论的 FD hint 轨道实现的保护开销 |
+
+hinttrackversion 和 maximumcompatibleversion 字段的解释与 9.1.2 中描述的 RTP hint 采样条目中的解释相同。作为附加数据，可以提供 Time Scale Entry Box。如果未提供，则不会给出有关包时序的指示。
+
+FDT 或电子服务指南所需的文件条目可以通过观察 hint 轨道的所有采样条目以及上述分区条目 ID 引用的对应项的  Item Information Box 来创建。如果没有任何采样引用，则 hint 轨道中不应包含任何采样条目。
 
 #### 9.2.4 采样格式
 
 ##### 9.2.4.1 采样容器
 
+hint 轨道中的每个 FD 采样将生成一个或多个 FD 包。
+
+每个采样都包含两个区域：组成包的指令，以及发送这些包时所需的任何其他数据(例如复制到采样中，而不是驻留在源文件或 FEC 的项中的编码符号)。请注意，采样大小可从采样大小表中得知。
+
+```code
+aligned(8) class FDsample extends Box(‘fdsa’) {
+  FDPacketBox packetbox[]
+  ExtraDataBox extradata; //optional
+}
+```
+
+FD 采样的采样编号号定义了服务器应处理的顺序。同样，每个 FD 采样中的 FD Packet Box 应按其处理顺序出现。如果 FD hint 采样条目中存在 Time Scale Entry Box，则定义了采样时间，且其为默认比特率提供包的相对发送时间。根据实际的传输比特率，服务器可以应用线性时间缩放。采样时间可以简化调度过程，但是由服务器决定是否及时发送包。
+
 ##### 9.2.4.2 包条目格式
+
+FD 采样中的每个包具有下面的结构(参考：RFC 3926、3450、3451)：
+
+```code
+aligned(8) class FDpacketBox extends Box(‘fdpa’) {
+  LCTheaderTemplate LCT_header_info;
+  unsigned int(16) entrycount1;
+  LCTheaderExtension header_extension_constructors[ entrycount1 ];
+  unsigned int(16) entrycount2;
+  dataentry packet_constructors[ entrycount2 ];
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| LCT_header_info | - | 包含当前 FD 包的 LCT 头部模板 |
+| header_extension_constructors | - | 用于构造 LCT 头部扩展的结构 |
+| packet_constructors | - | 用于构造 FD 包中的 FEC 负载 ID 和源符号的结构 |
 
 ##### 9.2.4.3 LCT 头部模板格式
 
+LCT 头部模板定义如下：
+
+```code
+aligned(8) class LCTheaderTemplate {
+  unsigned int(1) sender_current_time_present;
+  unsigned int(1) expected_residual_time_present;
+  unsigned int(1) session_close_bit;
+  unsigned int(1) object_close_bit;
+  unsigned int(4) reserved;
+  unsigned int(16) transport_object_identifier;
+}
+```
+
+服务器可以使用它为包构造 LCT 头部。请注意，头部的某些部分取决于服务器策略，且不包含在模板中。某些字段的长度还取决于服务器分配的 LCT 头部位。服务器可能还需要更改传输对象标识符(TOI)的值。
+
 ##### 9.2.4.4 LCT 头部扩展构造器格式
+
+LCT 头部扩展构造器格式定义如下：
+
+```code
+aligned(8) class LCTheaderextension {
+  unsigned int(8) header_extension_type;
+  if (header_extension_type > 127) {
+    unsigned int(8) content[3];
+  }
+  else {
+    unsigned int(8) length;
+    if (length > 0) {
+      unsigned int(8) content[(length*4) - 2];
+    }
+  }
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| length | 整数 | 正值以 32 位字的倍数指定构造其内容的长度。零值表示标头是由服务器生成的 |
+| header_extension_type | - | LCT 头部扩展的用法和规则在 RFC 3451(LCT RFC)中定义。此字段包含 LCT 头部扩展类型(HET)值。0-127 之间的 HET 值用于可变长度(多个 32 位字)扩展。 HET 值在 128-255 之间用于固定长度(一个 32 位字)扩展。如果 header_extension_type 小于 128，则 length 字段对应 RFC 3451 中定义的 LCT 头部扩展长度(HEL) |
+| content | - | 始终对应标题扩展内容(HEC) |
+
+注意：服务器可以通过观察是否存在 EXT_FDT(header_extension_type == 192) 来识别包括 FDT 的包。
 
 ##### 9.2.4.5 包构造器格式
 
+构造器有多种形式。每个构造器都是 16 个字节，以使迭代更容易。第一个字节是联合标识符。包构造器用于在包含 FEC 有效负载 ID 以及 FD 数据包中的源和奇偶校验符号。
+
+```code
+aligned(8) class FDconstructor(type) {
+  unsigned int(8) constructor_type = type;
+}
+aligned(8) class FDnoopconstructor extends FDconstructor(0) {
+  unsigned int(8) pad[15];
+}
+aligned(8) class FDimmediateconstructor extends FDconstructor(1) {
+  unsigned int(8) count;
+  unsigned int(8) data[count];
+  unsigned int(8) pad[14 - count];
+}
+aligned(8) class FDsampleconstructor extends FDconstructor(2) {
+  signed int(8) trackrefindex;
+  unsigned int(16) length;
+  unsigned int(32) samplenumber;
+  unsigned int(32) sampleoffset;
+  unsigned int(16) bytesperblock = 1;
+  unsigned int(16) samplesperblock = 1;
+}
+aligned(8) class FDitemconstructor extends FDconstructor(3) {
+  unsigned int(16) item_ID;
+  unsigned int(16) extent_index;
+  unsigned int(64) data_offset; //offset in byte within extent
+  unsigned int(24) data_length; //non-zero length in byte within extent or
+  //if (data_length==0) rest of extent
+}
+aligned(8) class FDitemconstructorLarge extends FDconstructor(5) {
+  unsigned int(32) item_ID;
+  unsigned int(32) extent_index;
+  unsigned int(64) data_offset; //offset in byte within extent
+  unsigned int(24) data_length; //non-zero length in byte within extent or
+  //if (data_length==0) rest of extent
+}
+aligned(8) class FDxmlboxconstructor extends FDconstructor(4) {
+  unsigned int(64) data_offset; //offset in byte within XMLBox or BinaryXMLBox
+  unsigned int(32) data_length;
+  unsigned int(24) reserved;
+}
+```
+
 ##### 9.2.4.6 Extra Data Box
+
+FD hint 轨道中的每个采样可包含存储在 Extra Data Box 中的附加数据。
+
+```code
+aligned(8) class ExtraDataBox extends Box(‘extr’) {
+  FECInformationBox feci;
+  bit(8) extradata[];
+}
+```
 
 ##### 9.2.4.7 FEC Information Box
 
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| feci | Extra Data Box(extr) | N | 0/1 |
+
+FEC Information Box 存储 FEC 编码 ID、FEC 实例 ID 和 FEC 有效载荷 ID，发送 FD 包时需要这些信息。
+
+```code
+aligned(8) class FECInformationBox extends Box('feci') {
+  unsigned int(8) FEC_encoding_ID;
+  unsigned int(16) FEC_instance_ID;
+  unsigned int(16) source_block_number;
+  unsigned int(16) encoding_symbol_ID;
+} 
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| FEC_encoding_ID | 整数 | 标识 FEC 编码方案并接受 IANA 注册(请参阅 RFC 5052)，其中 (i)0 对应“紧凑型无码 FEC 方案”，也称为 “Null-FEC”(RFC 3695)；(ii)1 对应 “MBMS FEC”(3GPP TS 26.346)；(iii)对于 0-127(含)范围内的值，FEC 方案为完全指定，而对于 128-255(含端点)范围内的值，FEC 方案为不完全指定 |
+| FEC_instance_ID | 整数 | 提供了用于不完全指定 FEC 方案的 FEC 编码器的更具体标识。对于完全指定的 FEC 方案，此值应设为零，并且在解析 FEC_encoding_ID 在 0-127(包括 0 和 127)之间的文件时，应将其忽略。FEC_instance_ID 受 FEC_encoding_ID 限制。有关更多详细信息，参阅 RFC 5052 |
+| source_block_number | 整数 | 标识从对象的哪个源块生成 FD 包中的编码符号 |
+| encoding_symbol_ID | 整数 | 标识从源块生成的哪些特定编码符号包含在 FD 包中 |
+
 ### 9.3 MPEG-2 传输 hint 轨道格式
+
+#### 9.3.1 介绍
+
+MPEG-2 TS(传输流)是一种流多路复用，可以承载一个或多个由音频、视频和其他媒体组成的节目。该文件格式支持在 hint 轨道中存储 MPEG-2 TS。MPEG-2 TS hint 轨道既可以用于存储接收到的 TS 包(作为接收 hint 轨道)，又可用作服务器 hint 轨道(用于生成 MPEG-2 TS)。
+
+MPEG-2 TS hint 轨道定义支持所谓的“预先计算的 hint”。预先计算的 hint 不使用通过引用其他轨道包含含的数据，而是以这种方式存储 MPEG-2 TS 包。这允许重用存储在单独文件中的 MPEG-2 TS 包。此外，预先计算的 hint 有助于简单的录制操作。
+
+除了预先计算的 hint 采样外，还可以通过引用媒体轨道将媒体数据包括到 hint 采样中。将接收到的传输流转换为媒体轨道，则符合 ISO 基本媒体文件格式早期版本的现有播放器就可以处理录制的文件(只要支持媒体格式)。存储原始传输头会保留有价值的信息，用于隐藏错误和重建原始传输流。
+
+#### 9.3.2 设计原则
+
+MPEG-2 TS hint 轨道格式的设计原理如下。
+
+MPEG-2 TS hint 轨道中的采样序列是一组预先计算和构造的 MPEG-2 TS 包。预先计算的包是 TS 包，在接收的情况下将保持不变，或者将直接发送。这在无法解复用数据且无法创建基本流的情况下尤其重要。比如当传输流被加密且不允许存储解密时。因此，有必要能够将这样的 MPEG-2 TS 存储在 hint 轨道中。构造的包使用与 RTP hint 轨道相同的方法，即采样包含用于流服务器构造包的指令。实际的媒体数据包含在其他轨道中。使用 “hint” 类型的轨道引用。
+
+##### 9.3.2.1 重用已有的传输流
+
+期望重用现有的 TS 实例，因此存在一种附加机制来覆盖各种现有的 TS 记录。这些记录可能不仅包含 TS 包，还包含每个 TS 包的前导或尾随数据。前导数据的一种特殊情况是每个 TS 包前面有一个 4 字节的时间戳，以消除传输系统的抖动。尾随数据的一种特殊情况是在容易出错的信道上传输 TS 包时，添加 FEC。
+
+##### 9.3.2.2 时间
+
+MPEG-2 TS 为每个节目定义一个时钟，以 27MHz 的频率运行，该采样值在 TS 中作为 PCR 传输，用于时钟恢复。 MPEG-2 TS hint 轨道的时间标度建议为 90000，或可以整除 90000，或是 90000 的整数倍。
+
+MPEG-2 TS hint 轨道中采样的解码时间是该包或包分组的第一个比特的接收/传输时间，建议从 TS 的 PCR 时间戳中派生，因为如果使用 PCR 时间，则可以假定分段线性，且 “stts” 表紧凑。采样描述中的可选 “tsti” box 可用于表示当 hint 轨道为接收 hint 轨道时，是否使用具有时钟恢复或没有时钟恢复的接收时间。在服务器 hint 轨道的情况下，则假定 PCR 时间。
+
+注意：如果采样中有多个包，则无法为它们指定独立的传输时间偏移。
+
+##### 9.3.2.3 包分组
+
+MPEG-2 传输流 hint 轨道的采样格式允许一个采样中包含多个 TS 包。特定应用程序(例如某些IPTV 应用程序)在 RTP 流中传送 TS 数据包。对于一个 RTP 包中携带的所有 TS 包，只能得到一个接收时间戳。在一个采样中存储多个 TS 包的另一个应用是 SPTS，其中一个采样包含 GoP 的所有 TS 包。在这种情况下，每个采样都是一个随机访问点。
+
+请注意，如果每个采样使用多个 TS 包，则无法通过文件格式随机访问每个 TS 包。
+
+对于 MPTS，每个采样只能使用一个包。这有助于在每个包的基础上使用采样组机制。
+
+##### 9.3.2.4 随机访问点
+
+同步采样是一个可以开始处理轨道而不会出错的点。MPEG-2 TS hint轨道支持 MPTS 和 SPTS，但是通常只为 SPTS 定义标记为同步采样的随机访问点，它指定一个包的开始，该包包含流(使用差分编码)的可独立解码媒体访问单元(例如 MPEG-2 视频 I 帧或 MPEG-4 AVC IDR 图片)的第一个字节。对于 MPTS，同步采样表通常会存在但为空，表示轨道中没有一点可以开始无错误地处理整个轨道。建议在采样描述中包含 PSI/SI，以便仅使用媒体数据就可以进行真正的随机访问。
+
+注意：在 MPTS 的情况下，同步采样表存在但为空(这实际上意味着没有采样是同步采样)。
+
+还应注意，在 SPTS 的情况下，包括多个 TS 包的采样应在采样开始处具有一个同步点(例如 GoP 边界)。然后，同步采样表将采样标记为同步点(例如 GoP 的开始)；如果没有同步采样表，则所有采样均为同步点。如果同步采样表存在但为空，则同步采样位置未知，并且可能不在采样开始时。
+
+注意：搜索关键帧的应用程序可以在该位置开始读取，但是通常它还必须读取更多的 MPEG-2 TS 包(关于文件格式，这些是后续采样)，以便解码器可以解码完整的帧。
+
+##### 9.3.2.5 应用作为一个接收 hint 轨道
+
+当记录一个或多个数据包流时，可以使用接收 hint 轨道。它们指示接收到的包的顺序、接收时间和内容等。
+
+注 1：播放器可以基于接收 hint 轨道再现生成接收到的数据包流，并像新接收到的一样处理再现的数据包流。
+
+接收 hint 轨道与服务器的 hint 轨道具有相同的结构。
+
+接收 hint 采样的格式由接收 hint 轨道的采样描述指示。每个协议都有自己的接收 hint 采样格式和名称。
+
+注 2：使用接收 hint 轨道作为发送接收流的 hint 的服务器应妥善处理接收流的潜在降级，例如传输延迟抖动和包丢失，并确保无论接收到流的潜在降级如何，都会遵守协议的约束和所包含的数据格式。
+
+注 3：与服务器 hint 轨道一样，接收 hint 轨道的采样格式可以通过引用将数据从其他轨道中拉出来构造数据包。这些其他轨道可能是 hint 轨道或媒体轨道。这些指针的确切形式由协议的采样格式定义，但通常它们由四部分信息组成：轨道引用索引、采样编号、偏移量和长度。其中某些对于特定协议可能是隐式的。这些“指针”始终指向数据的实际来源，即不允许间接引用数据。如果一个 hint 轨道建在另一个 hint 轨道的“顶部”，则第二个 hint 轨道必须直接引用第一个轨道使用的媒体轨道，第一个轨道将来自这些媒体轨道的数据放置在流中。
+
+如果将接收到的数据提取到媒体轨道，则去 hint 过程必须确保媒体流有效，即流必须无错误(这需要例如错误隐藏)。
+
+接收 hint 轨道中允许使用大小为零的采样，并且此类采样可以忽略。
+
+#### 9.3.3 采样描述格式
+
+MPEG2-TS 接收 hint 轨道的采样描述包含描述该流或其一部分的所有静态元数据，尤其是 PSI/SI 表。 MPEG-2 TS 接收 hint 轨道在 “rm2t”(表示 MPEG-2 传输流)的采样描述中使用条目格式。MPEG2-TS 服务器 hint 轨道的条目格式为 “sm2t”。
+
+静态元数据记录例如 PSI/SI 表。静态元数据的存在是可选的。如果存在，则静态元数据对其描述的 MPEG2-TS 包应有效。因此，如果流中有一条静态元数据发生更改，则更改处或更改后的第一个采样都需要一个新的采样条目。如果采样条目中不存在静态元数据，则存储在 MPEG2-TS 包中的结构(例如 PSI/SI 表)是有效的，并且必须对流进行扫描，以找出哪些静态元数据值对于特定的采样有效。
+
+```code
+class MPEG2TSReceptionSampleEntry extends MPEG2TSSampleEntry(`rm2t´) {
+}
+class MPEG2TSServerSampleEntry extends MPEG2TSSampleEntry(`sm2t´) {
+}
+class MPEG2TSSampleEntry(name) extends HintSampleEntry(name) {
+  uint(16) hinttrackversion = 1;
+  uint(16) highestcompatibleversion = 1;
+  uint(8) precedingbyteslen;
+  uint(8) trailingbyteslen;
+  uint(1) precomputed_only_flag;
+  uint(7) reserved;
+  box additionaldata[];
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| hinttrackversion | 整数 | 目前为 1 |
+| highestcompatibleversion | 整数 | 指定此轨道向后兼容的最旧版本 |
+| precedingbyteslen | 整数 | 表示每个 MPEG2-TS 包之前的字节数(例如，可能是来自外部录制设备的时间码) |
+| trailingbyteslen | 整数 | 表示每个 MPEG2-TS 包末尾的字节数(例如，可能包含校验和或由录制设备添加的其他数据) |
+| precomputed_only_flag | 整数 | 指示如果设置为 1，则关联的采样是否是纯预先计算的 |
+| additionaldata | - | 是一组 box。该集合可以包含描述 PSI/SI 表的一个通用版本的 box，通过 “tPAT” box 或 “tPMT” box 或其他数据，比如仅对一个采样(包含多个包)有效并描述 STC 初始条件的 box，或定义先前或尾随数据内容的 box。additionaldata 中最多应存在每个 PATBox、TSTimingBox、InitialSampleTimeBox 中的一个 |
+
+为 additionaldata 定义了以下可选的 box：
+
+```code
+aligned(8) class PATBox() extends Box(‘tPAT’) {
+  uint(3) reserved;
+  uint(13) PID;
+  uint(8) sectiondata[];
+}
+aligned(8) class PMTBox() extends Box(‘tPMT’) {
+  uint(3) reserved;
+  uint(13) PID;
+  uint(8) sectiondata[];
+}
+aligned(8) class ODBox () extends Box (‘tOD ’) {
+  uint(3) reserved;
+  uint(13) PID;
+  uint(8) sectiondata[];
+}
+aligned(8) class TSTimingBox() extends Box(‘tsti’) {
+  uint(1) timing_derivation_method;
+  uint(2) reserved;
+  uint(13) PID;
+}
+aligned(8) class InitialSampleTimeBox() extends Box(‘istm’) {
+  uint(32) initialsampletime;
+  uint(32) reserved;
+}
+```
+
+“tPAT” box 包含 PAT 的节数据，每个 “tPMT” box 包含其中一个 PMT 的节数据。
+
+对于 SPTS，强烈建议在 additionaldata 中出现 “tPMT” box。如果采样数据中不存在 PMT，则其应存在于 additionaldata 中。如果存在 “tPMT” box，则该 box 应为采样数据中包含节目的 PMT(尽管录制的流可能包含其他节目且为 MPTS)。
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| PID | 整数 | 是从中提取数据的 MPEG2-TS 包的 PID。对于 “tPAT” box，该值始终为 0 |
+| sectiondata | - | 扩展到 box 的末尾，是具有相同版本号的完整 MPEG2-TS 表，其中包含串联的节 |
+| initialsampletime | 整数 | 指定在采样时间不是从 0 开始的情况下，采样时间的初始值。与媒体轨道不同，MPEG-2 TS hint 轨道通常具有不从 0 开始的采样时间，例如 PCR 时间和接收时间。由于 “stts” 仅存储采样时间之间的差异，因此，此字段对于重构原始采样时间是必需的：OriginalSampleTime(n)=initialsampletime + STTS(n)。如果将 PCR 时间用于采样时间，则在随机访问样品时，重构的采样时间可用于初始化 STC。注意，编辑后可能需要更新此字段 |
+| timing_derivation_method | - | 是一个标志，用于指定为给定 PID 设置采样时间所用的方法。timing_derivation_method 的值如下：0x0 接收时间：采样时间是从接收时间得出的。不能保证为得出接收时间恢复了 STC；0x1 PCR 之间的分段线性：采样时间是从该节目重​​构的 STC 得到。假设相邻 PCR 之间存在分段线性，并且采样中的所有 TS 包在此范围内具有恒定的时长 |
+
+#### 9.3.4 采样格式
+
+MPEG-2 TS hint 轨道的每个采样都包含一组
+
+- 预先计算的包：一个或多个带有相关头部和尾部的 MPEG-2 TS 包
+- 构造的包：通过指向另一轨道的数据，将一个或多个带有相关头部和尾部的 MPEG-2 TS 包组合在一起的指令
+
+注意：采样中的每个 MPEG-2 TS 包都可以在 preheader(precedingbytes)之前，或在 posttrailer(trailingbytes)之后，如采样描述格式中所述。preheader 和 posttrailer 的大小分别由采样描述中的 precedingbyteslen 和 trailingbyteslen 指定，以允许使用更少块的紧凑型采样表。
+
+预先计算和构造的采样的混合可能出现在同一轨道中。如果需要填充传输流数据包，则可以使用 adaptation_field 实现或通过适当使用 MPEG2TSImmediateConstructor 显式实现。
+
+注 1：如果采样仅包含预先计算的包，则可以直接从采样大小表中得出采样中 MPEG-2 TS 包的数量，这是在采样条目中设置了 precomputed_only_flag 的结论。采样中 MPEG-2 TS 包的数量可以是可变的或受限的，例如此文件格式的扩展名可能会定义一个采样仅包含一个包。
+
+注 2：可以压缩传输包中的公共字节序列，方法是将这些字节直接包含在一个或多个包中，例如在其 precedingbytes 或 trailingbytes 部分，然后在其他位置使用 MPEG2TSSampleConstructor 引用它们；这对于 0xFF 字节的运行尤其重要。
+
+```code
+// Constructor format
+aligned(8) abstract class MPEG2TSConstructor (uint(8) type) {
+  uint(8) constructor_type = type;
+}
+aligned(8) class MPEG2TSImmediateConstructor
+    extends MPEG2TSConstructor(1) {
+    uint(8) immediatedatalen;
+    uint(8) data[immediatedatalen];
+}
+aligned(8) class MPEG2TSSampleConstructor
+  extends MPEG2TSConstructor(2) {
+  uint(8) sampledatalen;
+  uint(16) trackrefindex;
+  uint(32) samplenumber;
+  uint(32) sampleoffset;
+}
+// Packet format
+aligned(8) class MPEG2TSPacketRepresentation {
+  uint(8) precedingbytes[precedingbyteslen];
+  uint(8) sync_byte;
+  if (sync_byte == 0x47) {
+    uint(8) packet[187];
+  } else if (sync_byte == 0x00 || sync_byte == 0x01) {
+    uint(8) headerdatalen;
+    uint(4) reserved;
+    uint(4) num_constructors;
+    bit(1) transport_error_indicator;
+    bit(1) payload_unit_start_indicator;
+    bit(1) transport_priority;
+    bit(13) PID;
+    bit(2) transport_scrambling_control;
+    bit(2) adaptation_field_control;
+    bit(4) continuity_counter;
+    if (sync_byte == 0x00 && (adaptation_field_control == ´10´ ||
+      adaptation_field_control == ´11´)) {
+      uint(8) adaptation_field[headerdatalen-3];
+    }
+    MPEG2TSConstructor constructors[num_constructors];
+  } else if (sync_byte == 0xFF) {
+    // implicit null packet that has been removed
+  }
+  uint(8) trailingbytes[trailingbyteslen];
+}
+// Sample format
+aligned(8) class MPEG2TSSample {
+  MPEG2TSPacketRepresentation sample[];
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| precedingbytes | - | 包含包之前的任何其他数据，通常由录制设备提供。例如，这可以包括时间戳 |
+| sync_byte | - | 如果此值为 0x47，则包表示形式包含一个传输流数据包(预先计算的接收 hint 轨道采样)，其余字节位于字段 packet 中。值 0x00 和 0x01 用于构造的包表示形式。如果使用 MPEG2TSSampleConstructor 构造包表示形式，则它指向引用类型为 “hint” 的 Track Reference Box 中 trackrefindex 索引的轨道。如果该值为 0xFF，则表示在此位置已删除一个空包。目前保留所有其他值 |
+| trackrefindex | 整数 | 索引引用类型为 “hint” 的 Track Reference Box，指示当前采样与哪个媒体轨道关联。MPEG2TSSampleConstructor 中的 samplenumber 和 sampleoffset 字段指向此媒体轨道。 trackrefindex 值从 1 开始。保留值 0 供将来使用 |
+| packet | - | 除了同步字节(0x47)以外的 MPEG-2 TS 包 |
+| constructors | MPEG2TSConstructor 数组 | 是一个或多个构造器条目的集合，以允许一个传输流数据包中有多个访问单元。MPEG2TSImmediateConstructor 可以包含 PES 头。MPEG2TSSampleConstructor 引用关联媒体轨道中的数据。MPEG2TSPacket 的所有构造器的 headerdatalen 和 datalen 字段的总和必须等于正在构造的传输流数据包的长度，减去 1 个字节，即 187 |
+| trailingbytes | - | 包含包后面的所有其他数据。例如，这可以包括校验和 |
+| samplenumber | 整数 | 指示包中包含的引用轨道内的采样 |
+| sampleoffset | 整数 | 指示包中包含的引用媒体采样的起始字节位置，其中包含 sampledatalen 字节。sampleoffset 值从 0 开始 |
+| immediatedatalen | 整数 | 表示 data 字段中包含在采样中的字节数，而不是通过引用媒体轨道包含在采样中的数据 |
+| headerdatalen | 整数 | 指示 TS 包头部(不带同步字节)长度，以字节为单位。如果不存在 adaptation_field，则该字段的值为3，或者为值(adaptation_field_length + 3)，其中 adaption_field_length 是 ISO/IEC 13818-1 中定义的 adaptation_field 结构的第一个八位位组 |
+
+本规范未定义 precedingbytes 和 trailingbytes 的格式。
+
+采样结构的其余字段(transport_error_indicator、payload_unit_start_indicator、transport_priority、PID、transport_scrambling_control、adaptation_field_control、continuity_counter、adaptation_field)包含 TS 包的包头的副本，如 ISO/IEC 13818-1 中定义。
+
+#### 9.3.5 受保护的 MPEG 2 传输流 hint 轨道
+
+本节定义了一种将媒体流标记为受保护的机制。这可以通过更改 SampleEntry 的四字符代码，并附加包含保护机制的详细信息和原始四字符代码的 box 实现。但在这种情况下，该轨道不受保护；这是一个“明确”的 hint 轨道，其中包含受保护的数据。本节描述如何使用类似的机制并使用相同的 box 将 hint 轨道标记为承载受保护的数据。
+
+```code
+class ProtectedMPEG2TransportStreamSampleEntry
+  extends MPEG2TransportStreamSampleEntry(‘pm2t’) {
+  ProtectionSchemeInfoBox SchemeInformation;
+}
+```
+
+SchemeInformation(“sinf”)box (在 0 定义)应包含应用的保护方案的详细信息。这应包括OriginalFormatBox，其中应包含 MPEG-2 Transport StreamSampleEntry box 的原始采样条目类型。
+
+### 9.4 RTP、RTCP、SRTP 和 SRTCP 接收 hint 轨道
+
+#### 9.4.1 RTP 接收 hint 轨道
+
+##### 9.4.1.1 介绍
+
+本节指定了IETF RFC 3550 中定义的实时传输协议(RTP)的接收 hint 轨道格式。
+
+RTP 用于通过 Internet 协议进行实时媒体传输。每个 RTP 流承载一种媒体类型，且一个 RTP 接收 hint 轨道承载一个 RTP 流。因此，将录制音视频节目导致至少两个 RTP 接收 hint 轨道。
+
+RTP 接收 hint 轨道格式的设计尽可能遵循 RTP 服务器 hint 轨道格式的设计。无论是基于 RTP 接收 hint 轨道还是 RTP 服务器 hint 轨道，此设计都应确保 RTP 包的传输非常相似。此外，文件格式中新数据结构的数量因此保持尽可能小。
+
+RTP 接收 hint 轨道的格式允许将包有效载荷存储在 hint 采样中，或者将 RTP 包有效载荷转换为媒体采样，并通过引用 hint 采样将其包括在内，或者组合两种方法。如前所述，将接收到的流转换为媒体轨道，只要支持媒体格式，则符合 ISO 基本媒体文件格式早期版本的现有播放器可以处理录制的文件。存储原始 RTP 头保留有价值的信息，用于错误隐藏和重建原始 RTP 流。注意，将数据包有效载荷转换为媒体采样，可能会在预计算的 RTP 接收 hint 轨道中的流录制完成后“离线”发生。
+
+##### 9.4.1.2 采样描述格式
+
+RTP 接收 hint 轨道的采样描述中的条目格式为 “rrtp”。采样条目的语法与具有条目格式 “rtp” 的 RTP 服务器 hint 轨道的语法相同。
+
+```code
+class ReceivedRtpHintSampleEntry() extends SampleEntry (‘rrtp‘) {
+  uint(16) hinttrackversion = 1;
+  uint(16) highestcompatibleversion = 1;
+  uint(32) maxpacketsize;
+  box additionaldata[];
+}
+```
+
+RTP 接收 hint 轨道的采样描述中的条目格式标识符不同于 RTP 服务器 hint 轨道的采样描述中的条目格式，以避免将包含错误的 RTP 接收 hint 轨道用作有效的服务器 hint 轨道。
+
+additionaldata 的 box 集合可以包括 Timescale Entry(“tims”)和 Time Offset(“tsro”)box。此外，additionaldata 可以包含 Timestamp Synchrony Box。
+
+Timescale Entry Box(“tims”)应该存在，并且时间刻度的值应设置匹配接收 hint 轨道中捕获流的 RTP 时间戳的时钟频率。
+
+可能会出现 Time Offset Box(“tsro”)。如果不存在 Time Offset Box，则推断 offset 字段的值等于 0。按照 9.4.1.4 指定，将 offset 字段值用于派生 RTP 时间戳。
+
+RTP 时间戳通常不从零开始，特别是如果 RTP 接收器“调谐”到流中时。因此，应在 RTP 接收 hint 轨道中显示 Time Offset Box，并且应设置 Time Offset Box 中的 offset 值等于RTP 流接收顺序中第一个 RTP 时间戳。
+
+零或一个 Timestamp Synchrony Box 可能出现在 RTP 接收 hint 轨道的采样条目的 additionaldata 中。如果不存在 Timestamp Synchrony Box，则推断 timestamp_sync 的值等于 0。
+
+```code
+class timestampsynchrony() extends Box(‘tssy’) {
+  unsigned int(6) reserved;
+  unsigned int(2) timestamp_sync;
+}
+```
+
+- timestamp_sync 等于 0 表示从 9.4.1.4 中公式得到的当前 RTP 接收 hint 轨道的 RTP 时间戳可能与其他 RTP 接收 hint 轨道的 RTP 时间戳同步或不同步
+- timestamp_sync 等于 1 表示从 9.4.1.4 中公式得到的当前 RTP 接收 hint 轨道的 RTP 时间戳准确地反映了接收到的 RTP 时间戳(没有校正同步到任何其他 RTP 接收 hint 轨道)
+- timestamp_sync 等于 2 表示从 9.4.1.4 中公式得到的当前 RTP 接收 hint 轨道的 RTP 时间戳与其他RTP 接收 hint 轨道的 RTP 时间戳同步
+
+当 timestamp_sync 等于 0 或 1 时，播放器应使用存储的 RTCP 发送者报告修正流间同步。当 timestamp_sync 等于 2 时，可以根据重构的 RTP 时间戳同步播放 RTP 接收 hint 轨道中包含的媒体，而无需使用 RTCP 发送者报告进行同步校正。如果期望将 RTP 接收 hint 轨道用于重新发送录制的 RTP 流，则建议将 timestamp_sync 设置为 0 或 1，因为可以重用已存储的 RTCP 发送者报告。
+
+保留 timestamp_sync 等于3。
+
+对于一个文件中出现的所有 RTP 接收 hint 轨道，timestamp_sync 的值应相同。
+
+当还使用 RTCP hint 轨道存储 RTCP 时，仅当通过在 RTP 轨道中使用设置的时间偏移量(“tsro”)锚定 RTP 时间戳时，才能维护 RTP 和 RTCP hint 轨道之间的时间戳关系。如果 RTCP 存储在 RTCP hint 轨道中，则时间偏移是必需的。
+
+RTP 接收 hint 轨道的采样描述符条目的 additionaldata 中应存在零或一个由四字符代码 “rssr” 标识的ReceivedSsrcBox：
+
+```code
+class ReceivedSsrcBox extends Box(‘rssr’) {
+  unsigned int(32) SSRC
+}
+```
+
+SSRC 值必须等于该采样描述所描述的所有记录的 SRTP 包头部的 SSRC 值。
+
+##### 9.4.1.3 采样格式
+
+RTP 接收 hint 轨道的采样格式与 RTP 服务器 hint 轨道的采样格式的语法相同。接收 hint 轨道中的每个采样代表一个或多个接收到的RTP 包。如果 RTP 流中的媒体帧没有分段也没有交织，则建议每个采样代表所有接收到的具有相同 RTP 时间戳的 RTP 包，即具有相同 RTP 时间戳按照 RTP 序列号顺序的连续包。
+
+每个 RTP 接收 hint 采样都包含两个区域：组成数据包的指令以及组成数据包所需的任何其他数据，例如数据包有效负载的副本。注意，采样大小可从采样大小表中得知。
+
+由于包的接收时间可能会发生变化，因此可以为每个数据包发出此变化的信号，如下所述。
+
+接收 hint 轨道中允许使用大小为零的采样，并且此类采样可以忽略。
+
+##### 9.4.1.4 包条目格式
+
+包条目表中的每个包都具有与 9.1.3.1 中的服务器(传输) hint 轨道相同的结构。
+
+其中 i 是采样的采样号，8.6.1.2 中指定的采样时间 DT(i) 和 relative_time 的总和表示包的接收时间。接收时间的时钟源是不确定的，例如可以是接收者的挂钟。如果一个接收 hint 轨道的接收时间范围与另一个接收 hint 轨道的接收时间范围全部或部分重叠，则这些 hint 轨道的时钟源应相同。
+
+建议接收者可以在 Decoding Time to Sample Box(“stts”) 中为 sample_delta 使用一个尽可能合理的恒定值，并且通过在存储的接收 hint 采样中自适应地设置 relative_time 来平滑数据包调度和端到端延迟变化。设置 sample_delta 和 relative_time 值的这种安排可以促进紧凑的 Decoding Time to Sample Box。在这种情况下，timestamp_sync 设为1，采样时长大多是恒定的，并且时间偏移量(“tsro”)存储在采样条目中。
+
+应设置 RTP_version、P_bit、X_bit、CSRC_count、M_bit、payload_type 和 RTPsequenceseed 的值等于采样中捕获的 RTP 包的 V、P、X、CC、M、PT 和序列号字段。
+
+字段 bframe_flag 和 repeat_flag 在接收 hint 轨道中保留，并且必须为零。
+
+extra_flag 和 extra_information_length 的语义和 RTP 服务器 hint 轨道指定的语义相同。
+
+指定了以下 TLV box：rtphdrextTLV、rtpoffsetTLV、receivedCSRC。
+
+如果设置了 X_bit，则应存在一个 rtphdrextTLV box，用于存储接收到的 RTP 头部扩展。
+
+```code
+aligned(8) class rtphdrextTLV extends Box(‘rtpx’) {
+  unsigned int(8) data[];
+}
+```
+
+data 是特定于应用程序的原始 RTP 头部扩展。
+
+9.1.3.1 中指定了 rtpoffsetTLV box 的语法。
+
+offset 表示 32 位有符号整数偏移量，相对于接收到的 RTP 包的 RTP 时间戳。令 i 为采样的采样号，DT(i) 等于 8.6.1.2 中为采样号 i 指定的 DT，tsro.offset 为引用的接收 hint 采样条目的 “tsro” box 中的 offset 值，% 为取模运算。offset 的值应满足以下公式：
+
+$$RTPtimestamp=(DT_i + tsro.offset + offset) mod 2^{32}$$
+
+注 1：当每个接收 hint 采样代表所有接收到的具有相同 RTP 时间戳的 RTP 包时，可以设置 Decoding Time to Sample Box 中的 sample_delta 值与 RTP 时间戳相匹配。换句话说，如上所述，可以设置 DT(i) 等于 (RT P时间戳 – tsro.offset - offset)(假定结果值将大于等于0)。建议这样做。
+
+注 2：在所有 RTP 流中，RTP 时间戳不一定随 RTP 序列号增加，即，包的传输顺序和播放顺序可能不相同。例如，许多视频编码方案都允许根据回放顺序中上一张和下一张图片进行双向预测。由于采样按照其解码顺序出现在轨道中，即 RTP 接收 hint 轨道的接收顺序，因此 rtpoffsetTLV box 中的 offset 可用于使 RTP时间戳偏离采样时间 DT(i)。
+
+为了 Edit List Box 中的编辑，推断接收到的 RTP 包的合成时间为采样时间 DT(i) 和上述 offset 的总和。
+
+如果 CSRC_count 值不等于零，则可以存在 receivedCSRC box，用于存储每个 RTP 包接收到的 CSRC 头部字段。receivedCSRC box 由四字符的代码 “rcsr” 标识。
+
+```code
+aligned(8) class receivedCSRC extends Box('rcsr') {
+  unsigned int(32) CSRC[]; //to end of the box
+}
+```
+
+CSRC[] 中的条目数等于收到的 SRTP 包的 CC 值。 CSRC[] 的第 n 个条目应等于 RTP 包头部的第 n 个 CSRC 值。
+
+##### 9.4.1.5 SDP 信息
+
+如 9.1.​​4 中指定，影片和轨道 SDP 信息都可能存在。
+
+#### 9.4.2 RTCP 接收 hint 轨道
+
+##### 9.4.2.1 介绍
+
+本节为 IETF RFC 3550 中定义的实时控制协议（RTCP）指定接收 hint 轨道格式。
+
+RTCP 用于通过 Internet 协议实时传输 RTP 会话的控制信息。在流传输期间，每个 RTP 流通常具有一个伴随的 RTCP 流，该 RTCP 流承载了 RTP 流的控制信息。一个 RTCP 接收 hint 轨道携带一个 RTCP 流，并通过轨道引用与对应的 RTP 接收 hint 轨道相关联。
+
+RTCP 接收 hint 轨道的格式允许在 hint 采样中存储 RTCP 发送者报告。
+
+RTCP 发送者报告对于流录制特别感兴趣，因为它们反映了服务器的当前状态，例如，媒体时间（音频/视频包的 RTP 时间戳）与服务器时间（NTP 格式的绝对时间）之间的关系。回放录制的 RTP 接收 hint 轨道必须了解这种关系，才能检测和校正时钟漂移和抖动。
+
+9.4.1.2 中指定的 Timestamp Synchrony box 可以在播放文件之前校正时钟漂移和抖动，因此，当 timestamp_sync 等于 2 时，RTCP 流的录制是可选的。
+
+没有与 RTCP 接收 hint 轨道等效的服务器 hint 轨道，因为 RTCP 消息是在传输过程中即时生成的。
+
+##### 9.4.2.2 通用的
+
+每个 RTP 接收 hint 轨道应有零或一个 RTCP 接收 hint 轨道。RTCP 接收 hint 轨道应包含一个 Track Reference Box，其中包含相关的 RTP 接收 hint 轨道的 “cdsc” 类型引用。
+
+当 i 是采样的采样号时，8.6.1.2 中指定的采样时间 DT（i） 表示包的接收时间。接收时间的时钟源应与相关的 RTP 接收 hint 轨道相同。RTCP 接收 hint 轨道的 Media Header Box 中的 timescale 值应等于相关的 RTP 接收 hint 轨道的 Media Header Box 中的 timescale 值。
+
+##### 9.4.2.3 采样描述格式
+
+RTCP 接收 hint 轨道的采样描述中的条目格式为 “rtcp”。在其他方面，它的结构与 RTP 的采样条目格式相同。没有为 additionaldata 字段定义 box。
+
+##### 9.4.2.4 采样格式
+
+接收 hint 轨道中的每个采样代表一个或多个接收到的 RTCP 包。每个采样包含两个区域：原始 RTCP 包和所需的任何其他数据。注意，采样大小可从采样大小表中获知，且 RTCP 包的大小在包本身内指示（如 RFC 3550 中记录），其计数比该包内 32 位字数量少一。
+
+```code
+aligned(8) class receivedRTCPpacket {
+  unsigned int(8) data[];
+}
+aligned(8) class receivedRTCPsample {
+  unsigned int(16) packetcount;
+  unsigned int(16) reserved;
+  receivedRTCPpacket packets[packetcount];
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| data | - | 包含一个原始 RTCP 包，包括 RTCP 报告头、20 字节的发送者信息块和任意数量的报告块。注意，通过解析 RTCP 头的 16 位长度字段，可以知道每个 RTCP 包的大小 |
+| packetcount | - | 指示采样中包含的已接收 RTCP 包的数量 |
+| packets | - | 包含收到的 RTCP 包 |
+
+#### 9.4.3 SRTP 接收 hint 轨道
+
+##### 9.4.3.1 介绍
+
+本节为 IETF RFC 3711 中定义的安全实时传输协议（SRTP）指定接收 hint 轨道格式。
+
+SRTP 是 Internet 协议上实时媒体传输（RTP）的安全扩展。每个 SRTP 流携带一种媒体类型，且一个 SRTP 接收 hint 轨道携带一个 SRTP 流。因此，录制视听节目导致至少两个 SRTP 接收 hint 轨道。
+
+SRTP 接收 hint 轨道格式的设计遵循 RTP 接收 hint 轨道的设计，并重用了 RTP 接收 hint 轨道提供的大多数框架。RTP 和 SRTP 接收 hint 轨道之间的主要区别在于，实际的媒体有效负载以加密形式存储在 SRTP 接收 hint 轨道中，而对于 RTP 接收 hint 轨道则未加密。SRTP 接收 hint 轨道提供其他 box，用于存储回放时解密加密内容所需的信息。另外，SRTP 包头的所有头部字段应与有效载荷一起存储，因为此信息对于检查接收数据的完整性是必需的。SRTP 接收 hint 轨道通常与 SRTCP 接收 hint 轨道一起使用。
+
+SRTP 接收 hint 轨道可以用于例如存储受保护的移动电视内容。
+
+##### 9.4.3.2 采样描述格式
+
+###### 9.4.3.2.1 采样描述条目
+
+SRTP 接收 hint 轨道的采样描述格式与 RTP 接收 hint 轨道的采样描述格式相同，不同之处在于采样条目名称从 “rrtp” 更改为 “rsrp”，并且其中可能包含其他 box：
+
+```code
+class ReceivedSrtpHintSampleEntry() extends SampleEntry (‘rsrp‘) {
+  uint(16) hinttrackversion = 1;
+  uint(16) highestcompatibleversion = 1;
+  uint(32) maxpacketsize;
+  box additionaldata[];
+}
+```
+
+字段和 box 与 ReceivedRtpHintSampleEntry（“rrtp”） 的相同。SRTP 接收 hint 轨道中每个采样描述条目的 addtionaldata[] 都应恰好包含一个 ReceivedSsrc Box（“rssr”）。
+
+此外，additionaldata[] 可能包含下面定义的 Received Cryptographic Context ID Box 和 Rollover Counter Box。此外，也应包括 SRTP Process Box 作为 additionaldata box 之一。因为内容以加密方式存储，SRTP Process Box 中的完整性和加密算法字段将指定应用于接收流的算法。四个空格（$20$20$20$20）条目可用于表示该算法的定义在本文档范围以外。
+
+###### 9.4.3.2.2 Received Cryptographic Context ID Box
+
+SRTP 接收 hint 轨道的采样描述符条目的 additionaldata 中可能存在零或一个 ReceivedCryptoContextIdBox，由四字符代码 “ccid” 标识。可以在这里存储用于恢复接收的 SRTP 流的加密上下文的信息。
+
+```code
+aligned(8) class ReceivedCryptoContextIdBox extends Box (‘ccid’) {
+  unsigned int(16) destPort;
+  unsigned int(8) ip_version;
+  switch (ip_version) {
+    case 4: // IPv4
+      unsigned int(32) destIP;
+      break;
+    case 6: // IPv6
+      unsigned int(64) destIP;
+      break;
+  }
+}
+```
+
+destPort 和 destIP 参数分别包含 SRTP 会话的端口号和 IP 地址（如接收的 IPv4 或 IPv6 包中所示），通过该端口可以接收录制的 SRTP 包。ip_version 包含 4 或 6，分别代表 IPv4 或 IPv6。
+
+###### 9.4.3.2.3 Rollover Counter Box
+
+SRTP 接收 hint 轨道的采样描述符条目的 additionaldata 中可能存在零或一个 RolloverCounterBox，由四字符代码 “sroc” 标识。通常，每 65536 SRTP 包会修改翻转计数器值。
+
+```code
+aligned(8) class RolloverCounterBox extends Box (‘sroc’) {
+  unsigned int(32) rollover_counter;
+}
+```
+
+rollover_counter 是一个非零整数，为所有关联的接收到的 SRTP 包提供 ROC 字段的值。
+
+注意：翻转计数器（ROC）是 SRTP 流加密上下文的元素，并且取决于包在 RTP 流中的绝对位置。为了解密接收到的 SRTP 包，必须知道 ROC 值。可选地使用 Rollover Counter Box 作为 RFC 4771 定义的一种可选机制，在 SRTP 包的身份验证标签中显式表示 ROC 值。
+
+##### 9.4.3.3 采样和包条目格式
+
+SRTP 接收 hint 轨道的采样格式和包条目格式均与 9.4.1.3 和 9.4.1.4 中定义的 RTP 接收 hint 轨道的格式相同。包有效载荷被存储为在 SRTP 包接收到的，即 SRTP 包中接收的所有信息（不包括头部），或者换句话说，加密的有效载荷以及密钥标识符（MKI）和身份验证标签。
+
+如果对于接收到的 SRTP 包，CSRC_count 值不等于零，则与此接收到的 SRTP 包对应的 extra_data_tlv 应恰好包含一个 receivedCSRC box（“rcsr”）。
+
+#### 9.4.4 SRTCP 接收 hint 轨道
+
+##### 9.4.4.1 介绍
+
+本节为 IETF RFC 3711 中定义的安全实时控制协议（SRTCP）指定接收 hint 轨道格式。
+
+SRTCP 用于通过 Internet 协议实时传输 SRTP 会话的控制信息。SRTCP 在 SRTP 承担的角色和 RTCP 在 RTP 承担的角色相同，参阅 9.4.2。在流传输期间，每个 SRTP 流通常具有一个伴随的 SRTCP 流，该 SRTCP 流携带 SRTP 流的控制信息。一个 SRTCP 接收 hint 轨道携带一个 SRTCP 流，并通过轨道引用关联相应的 SRTP 接收 hint 轨道。
+
+SRTCP 接收 hint 轨道的格式允许在 hint 采样(例如 SRTCP 发送者报告)中存储 SRTCP 包。
+
+SRTCP 发送者报告对于流录制特别感兴趣，因为它们反映了服务器的当前状态，例如，媒体时间（音频/视频包的 SRTP 时间戳）与服务器时间（NTP 格式的绝对时间）之间的关系。为了回放录制的 SRTP 接收 hint 轨道，也需要了解这种关系，以便能够检测和校正时钟漂移和抖动。
+
+9.4.1.2 中指定的 Timestamp Synchrony box 可以在播放文件之前校正时钟漂移和抖动，因此录制 SRTCP 流是可选的。
+
+没有与 SRCTP 接收 hint 轨道等效的服务器 hint 轨道，因为 SRTCP 消息是在传输过程中即时生成的。
+
+##### 9.4.4.2 通用的
+
+每个 SRTP 接收 hint 轨道应有零或一个 SRTCP 接收 hint 轨道。SRTCP 接收 hint 轨道应包含一个 Track Reference Box，其中包含相关的 SRTP 接收 hint 轨道的 “cdsc” 类型引用。
+
+当 i 是采样的采样号时，8.6.1.2 中指定的采样时间 DT（i） 表示包的接收时间。接收时间的时钟源应与相关的 SRTP 接收 hint 轨道相同。SRTCP 接收 hint 轨道的 Media Header Box 中的 timescale 值应等于相关的 SRTP 接收 hint 轨道的 Media Header Box 中的 timescale 值。
+
+##### 9.4.4.3 采样描述格式
+
+SRTCP 接收 hint 轨道的采样描述中的条目格式为 “stcp”。在其他方面，它的结构与 RTCP 的采样条目格式相同。SRTCP hint 轨道的加密和认证方法由相应 SRTP hint 轨道的 SRTP Process box 中的相应条目定义。
+
+注意：SRTCP 不需要等效的为 SRTP 定义的 ROC box，因为 SRTCP 包包含显式表示的初始化向量。
+
+##### 9.4.4.4 采样格式
+
+采样格式是 9.4.2.4 中定义的 RTCP 接收 hint 轨道的采样格式。
+
+#### 9.4.5 受保护的 RTP 接收 hint 轨道
+
+此规范定义了一种将媒体流标记为受保护的机制。这可以通过更改 SampleEntry 的四字符代码，并附加包含保护机制的详细信息和原始四字符代码的 box 实现。但在这种情况下，该轨道不受保护；这是一个“明确”的 hint 轨道，其中包含受保护的数据。本节描述如何使用类似的机制并使用相同的 box 将接收 hint 轨道标记为承载受保护的数据。
+
+```code
+Class ProtectedRtpReceptionHintSampleEntry
+  extends RtpReceptionHintSampleEntry (‘prtp‘) {
+  ProtectionSchemeInfoBox SchemeInformation;
+}
+```
+
+SchemeInformation（“sinf”） box 应包含所应用保护方案的详细信息。其中应包括 OriginalFormatBox，该 box 应包含四字符代码 “rrtp”（原始 RTPReceptionHintSampleEntry box 的四字符代码）。
+
+#### 9.4.6 录制过程
+
+参见附录 H。
+
+#### 9.4.7 解析过程
+
+参见附录 H。
+
+## 10 采样组
 
 ### unknown
 
