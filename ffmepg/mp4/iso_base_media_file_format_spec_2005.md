@@ -88,7 +88,7 @@
         - [8.40.3.2 SampleToGroup Box](#84032-sampletogroup-box)
         - [8.40.3.3 Sample Group Description Box](#84033-sample-group-description-box)
         - [8.40.3.4 Movie Fragment 的组结构表示](#84034-movie-fragment-的组结构表示)
-      - [8.40.4 Random Access Recovery Points](#8404-random-access-recovery-points)
+      - [8.40.4 随机访问恢复点](#8404-随机访问恢复点)
     - [8.41 Sample Scale Box](#841-sample-scale-box)
     - [8.42 Sub-Sample Information Box](#842-sub-sample-information-box)
     - [8.43 Progressive Download Information Box](#843-progressive-download-information-box)
@@ -1972,7 +1972,7 @@ SampleToGroup Box 可用于查找轨道片段中的采样所属分组，以及�
 
 轨道片段中所有 SampleToGroup Box 内表示的采样总数必须和所有轨道片段组的采样总数匹配。每个 SampleToGroup Box 记录相同采样的不同分组。
 
-#### 8.40.4 Random Access Recovery Points
+#### 8.40.4 随机访问恢复点
 
 在某些编码系统中，可以在解码一些采样之后随即访问流并实现正确解码。这称为逐步解码刷新。例如，在视频中，编码器可能编码流中的帧内编码宏块，这样编码器就知道在一定的时间段内，整个图像的组成像素仅依赖该时间段内提供的帧内编码宏块。
 
