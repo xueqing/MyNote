@@ -250,17 +250,55 @@
       - [10.3.3 语义](#1033-语义)
       - [10.3.4 示例](#1034-示例)
     - [10.4 随机访问点(RAP)采样分组](#104-随机访问点rap采样分组)
+    - [10.5 时间级别的采样分组](#105-时间级别的采样分组)
+    - [10.6 流访问点采样组](#106-流访问点采样组)
+  - [11 可扩展性](#11-可扩展性)
+    - [11.1 对象](#111-对象)
+    - [11.2 存储格式](#112-存储格式)
+    - [11.3 派生的文件格式](#113-派生的文件格式)
+  - [12 特定媒体的定义](#12-特定媒体的定义)
+    - [12.1 视频媒体](#121-视频媒体)
+      - [12.1.1 媒体 handler](#1211-媒体-handler)
+      - [12.1.2 Video Media Header Box](#1212-video-media-header-box)
+      - [12.1.3 采样条目](#1213-采样条目)
+      - [12.1.4 Pixel Aspect Ratio 和 Clean Aperture](#1214-pixel-aspect-ratio-和-clean-aperture)
+        - [12.1.4.1 定义](#12141-定义)
+        - [12.1.4.2 语法](#12142-语法)
+        - [12.1.4.3 语义](#12143-语义)
+      - [12.1.5 Colour Information Box](#1215-colour-information-box)
+    - [12.2 音频媒体](#122-音频媒体)
+      - [12.2.1 媒体 handler](#1221-媒体-handler)
+      - [12.2.2 Sound Media Header Box](#1222-sound-media-header-box)
+      - [12.2.3 采样条目](#1223-采样条目)
+      - [12.2.4 Channel Layout Box](#1224-channel-layout-box)
+      - [12.2.5 Downmix Instructions Box](#1225-downmix-instructions-box)
+      - [12.2.6 DRC 信息](#1226-drc-信息)
+      - [12.2.7 Audio Stream Loudness Box](#1227-audio-stream-loudness-box)
+    - [12.3 元数据媒体](#123-元数据媒体)
+      - [12.3.1 媒体 handler](#1231-媒体-handler)
+      - [12.3.2 媒体头部](#1232-媒体头部)
+      - [12.3.3 采样条目](#1233-采样条目)
+    - [12.4 hint 媒体](#124-hint-媒体)
+      - [12.4.1 媒体 handler](#1241-媒体-handler)
+      - [12.4.2 Hint Media Header Box](#1242-hint-media-header-box)
+      - [12.4.3 采样条目](#1243-采样条目)
+    - [12.5 文本媒体](#125-文本媒体)
+      - [12.5.1 媒体 handler](#1251-媒体-handler)
+      - [12.5.2 媒体头部](#1252-媒体头部)
+      - [12.5.3 采样条目](#1253-采样条目)
+    - [12.6 字幕媒体](#126-字幕媒体)
+      - [12.6.1 媒体 handler](#1261-媒体-handler)
+      - [12.6.2 Subtitle Media Header Box](#1262-subtitle-media-header-box)
+      - [12.6.3 采样条目](#1263-采样条目)
+    - [12.7 字体媒体](#127-字体媒体)
+      - [12.7.1 媒体 handler](#1271-媒体-handler)
+      - [12.7.2 媒体头部](#1272-媒体头部)
+      - [12.7.3 采样条目](#1273-采样条目)
+    - [12.8 转换的媒体](#128-转换的媒体)
     - [unknown](#unknown)
-      - [8.4.5.2 Video Media Header Box](#8452-video-media-header-box)
-      - [8.4.5.3 Sound Media Header Box](#8453-sound-media-header-box)
-      - [8.11.4 Hint Media Header Box](#8114-hint-media-header-box)
     - [8.40 AVC Extensions](#840-avc-extensions)
       - [8.40.1 介绍](#8401-介绍)
     - [8.41 Sample Scale Box](#841-sample-scale-box)
-  - [9 可扩展性](#9-可扩展性)
-    - [9.1 对象](#91-对象)
-    - [9.2 存储格式](#92-存储格式)
-    - [9.3 派生的文件格式](#93-派生的文件格式)
   - [附录 A (提供信息) 概述和介绍](#附录-a-提供信息-概述和介绍)
     - [A.1 章节概述](#a1-章节概述)
     - [A.2 核心概念](#a2-核心概念)
@@ -1936,7 +1974,7 @@ aligned(8) class SubSampleInformationBox
 
 Sample Auxiliary Information (如果存在) 总是和相关采样存储在同一文件，因为它们共享相同的数据引用(“dref”)结构。但是，此数据可能位于文件中任何位置，使用 Auxiliary Information Offset (“saio”) 来指示数据的位置。
 
-采样辅助信息是允许还是需要的，可以通过使用的 brand 或编码格式指定。采样辅助信息的格式由 aux_info_type 确定。如果省略了 aux_info_type 和 aux_info_type_parameter，则 aux_info_type 的隐含值为(a)对于转换后的内容(比如受保护的内容)，Protection Scheme Information box 中包含的 scheme_type，否则为(b)采样条目类型。aux_info_type_parameter 的，默认值为 0。aux_info_type 的某些值可能会限制为仅用于特定轨道类型。轨道可能具有多个不同类型的采样辅助信息流。这些类型注册在注册机构中。
+采样辅助信息是允许还是需要的，可以通过使用的 brand 或编码格式指定。采样辅助信息的格式由 aux_info_type 确定。如果忽略了 aux_info_type 和 aux_info_type_parameter，则 aux_info_type 的隐含值为(a)对于转换后的内容(比如受保护的内容)，Protection Scheme Information box 中包含的 scheme_type，否则为(b)采样条目类型。aux_info_type_parameter 的，默认值为 0。aux_info_type 的某些值可能会限制为仅用于特定轨道类型。轨道可能具有多个不同类型的采样辅助信息流。这些类型注册在注册机构中。
 
 尽管 aux_info_type 确定辅助信息的格式，当其 aux_info_type_parameter 值不同时，这些辅助信息流可以使用相同格式。必须指定特定 aux_info_type 值的 aux_info_type_parameter 语义，同时指定特定 aux_info_type 值的语义以及隐含的辅助信息格式。
 
@@ -2931,7 +2969,7 @@ aligned(8) class ItemProtectionBox
 | --- | --- | --- | --- |
 | iinf | Meta Box(meta) | N | 0/1 |
 
-Item Information Box 提供有关所选 item 的其他信息，包括符号(“文件”)名称。其出现是可选的，但是如果出现，必须对其进行解释，因为 item 保护或内容编码可能已经更改了 item 中的数据格式。如果 item 同时标识了内容编码和保护，则读者应该先取消对 item 的保护，然后对 item 的内容编码进行解码。如果需要更多控制，可以使用 IPMP 序列码。
+Item Information Box 提供有关所选 item 的其他信息，包括符号(“文件”)名称。其出现是可选的，但是如果出现，必须对其进行解释，因为 item 保护或内容编码可能已经更改了 item 中的数据格式。如果 item 同时间刻度识了内容编码和保护，则读者应该先取消对 item 的保护，然后对 item 的内容编码进行解码。如果需要更多控制，可以使用 IPMP 序列码。
 
 此 box 包含一组条目，且每个条目都被格式化为一个 box。该数组在条目记录中按照增加的 item_ID 排序。
 
@@ -4517,7 +4555,7 @@ MPEG-2 TS hint 轨道中的采样序列是一组预先计算和构造的 MPEG-2 
 
 ##### 9.3.2.2 时间
 
-MPEG-2 TS 为每个节目定义一个时钟，以 27MHz 的频率运行，该采样值在 TS 中作为 PCR 传输，用于时钟恢复。 MPEG-2 TS hint 轨道的时间标度建议为 90000，或可以整除 90000，或是 90000 的整数倍。
+MPEG-2 TS 为每个节目定义一个时钟，以 27MHz 的频率运行，该采样值在 TS 中作为 PCR 传输，用于时钟恢复。 MPEG-2 TS hint 轨道的时间刻度建议为 90000，或可以整除 90000，或是 90000 的整数倍。
 
 MPEG-2 TS hint 轨道中采样的解码时间是该包或包分组的第一个比特的接收/传输时间，建议从 TS 的 PCR 时间戳中派生，因为如果使用 PCR 时间，则可以假定分段线性，且 “stts” 表紧凑。采样描述中的可选 “tsti” box 可用于表示当 hint 轨道为接收 hint 轨道时，是否使用具有时钟恢复或没有时钟恢复的接收时间。在服务器 hint 轨道的情况下，则假定 PCR 时间。
 
@@ -4627,7 +4665,7 @@ aligned(8) class InitialSampleTimeBox() extends Box(‘istm’) {
 | --- | --- | --- |
 | PID | 整数 | 是从中提取数据的 MPEG2-TS 包的 PID。对于 “tPAT” box，该值始终为 0 |
 | sectiondata | - | 扩展到 box 的末尾，是具有相同版本号的完整 MPEG2-TS 表，其中包含串联的节 |
-| initialsampletime | 整数 | 指定在采样时间不是从 0 开始的情况下，采样时间的初始值。与媒体轨道不同，MPEG-2 TS hint 轨道通常具有不从 0 开始的采样时间，例如 PCR 时间和接收时间。由于 “stts” 仅存储采样时间之间的差异，因此，此字段对于重构原始采样时间是必需的：OriginalSampleTime(n)=initialsampletime + STTS(n)。如果将 PCR 时间用于采样时间，则在随机访问样品时，重构的采样时间可用于初始化 STC。注意，编辑后可能需要更新此字段 |
+| initialsampletime | 整数 | 指定在采样时间不是从 0 开始的情况下，采样时间的初始值。与媒体轨道不同，MPEG-2 TS hint 轨道通常具有不从 0 开始的采样时间，例如 PCR 时间和接收时间。由于 “stts” 仅存储采样时间之间的差异，因此，此字段对于重构原始采样时间是必需的：OriginalSampleTime(n)=initialsampletime + STTS(n)。如果将 PCR 时间用于采样时间，则在随机访问采样时，重构的采样时间可用于初始化 STC。注意，编辑后可能需要更新此字段 |
 | timing_derivation_method | - | 是一个标志，用于指定为给定 PID 设置采样时间所用的方法。timing_derivation_method 的值如下：0x0 接收时间：采样时间是从接收时间得出的。不能保证为得出接收时间恢复了 STC；0x1 PCR 之间的分段线性：采样时间是从该节目重​​构的 STC 得到。假设相邻 PCR 之间存在分段线性，并且采样中的所有 TS 包在此范围内具有恒定的时长 |
 
 #### 9.3.4 采样格式
@@ -5134,25 +5172,211 @@ class RateShareEntry() extends SampleGroupDescriptionEntry('rash') {
 
 #### 10.3.1 定义
 
+备用启动序列包含某个时段内某个轨道的采样子集，该子集从同步采样或以 “rap” 采样分组标记的采样开始，以下统称为初始采样。通过解码该采样子集，可以比对解码所有采样的情况更早地开始渲染采样。
+
+“alst” 采样组描述条目指示任何备用启动序列中的采样数量，备用启动序列后应处理所有采样。
+
+Sample To Group Box 的版本 0 或版本 1 均可与备用启动序列采样分组一起使用。如果使用 Sample To Group Box 版本 1，没有定义 grouping_type_parameter 的语义，但是对于 grouping_type_parameter的特定值，应始终使用相同的算法得到备用启动序列。
+
+利用备用启动顺序的播放器可以如下操作。首先，识别要从其开始解码的初始同步采样，通过使用 Sync Sample Box，轨道片段中包含采样的 sample_is_non_sync_sample 标志或 “rap” 采样分组。然后，如果初始同步采样关联到类型 “alst” 的采样组描述条目(roll_count 大于 0)，则播放器可以使用备用启动顺序。然后，播放器仅解码映射到备用启动序列的那些采样，直到已解码的采样数等于 roll_count。之后，解码所有采样。
+
 #### 10.3.2 语法
+
+```code
+class AlternativeStartupEntry() extends VisualSampleGroupEntry (’alst’) {
+  unsigned int(16) roll_count;
+  unsigned int(16) first_output_sample;
+  for (i=1; i <= roll_count; i++)
+    unsigned int(32) sample_offset[i];
+  j=1;
+  do { // optional, until the end of the structure
+    unsigned int(16) num_output_samples[j];
+    unsigned int(16) num_total_samples[j];
+    j++;
+  }
+}
+```
 
 #### 10.3.3 语义
 
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| roll_count | 整数 | 指示备用启动序列中的采样数。如果roll_count 等于0，则关联的采样不属于任何备用启动序列，且 first_output_sample 的语义未指定。映射到每个备用启动序列该采样组条目的采样数应等于 roll_count |
+| first_output_sample | 整数 | 表示备用启动序列采样中要输出的第一个采样的索引。开始备用启动序列的同步初始采样的索引为 1，并且索引按备用启动序列中每个采样的解码顺序递增 1 |
+| sample_offset\[i\] | 整数 | 表示备用启动序列中第 i 个采样的解码时间相对于从 Decoding Time to Sample Box 或 Track Fragment Header Box 得出采样的常规解码时间的增量。开始备用启动序列的同步初始采样是其第一个采样 |
+| num_output_samples\[j\]/num_total_samples\[j\] | 整数 | 表示备用启动序列中的采样输出速率。备用启动顺序分为 k 个连续片段，其中每个片段的采样率恒定，且与相邻片段的采样率不相等。第一个片段从 first_output_sample 指示的采样开始。num_output_samples\[j\] 表示备用启动序列第 j 个片段的输出采样数量。num_total_samples\[j\] 表示采样总数，包括不在备用启动序列中的采样，从第 j 个片段中第一个输出采样到结束该备用启动序列的较早（按合成顺序）采样和第（j+1）个片段的第一个输出采样之前的采样 |
+
 #### 10.3.4 示例
+
+分层时间可伸缩性（例如在 AVC 和 SVC 中）提高了压缩效率，但是由于解码的图像从（解码）顺序到输出顺序的重新排序增加了解码延迟。在某些研究中，已证明深度时间分层在压缩效率方面很有用。当时间层次很深且解码器的操作速度受到限制（不能快于实时处理）时，从解码开始到渲染开始的初始延迟很大，可能会负面影响终端用户的体验。
+
+图 7 说明了具有五个时间级别的典型的分层可伸缩比特流。图 7a 以输出顺序显示示例序列。box 中包含的值表示图片的 frame_num 值。斜体字的值表示非引用图片，而其他图片是引用图片。图 7b 以解码顺序显示示例序列。图 7c 显示当假设输出时间线与解码时间线重合并且一个图片的解码持续一个图片间隔时的输出顺序示例序列。可以看出，流的回放比流的解码开始晚五个图片间隔。如果以 25Hz 对图像采样，则图像间隔为 40 毫秒，并且回放延迟 0.2 秒。
+
+![图 7-具有 5 个时间级别示例序列的的解码图片缓冲延时](figure7-decoded-picture-buffering-delay-of-an-example-sequence-with-five-temporal-levels.png)
+
+由于时间分层，可以仅解码序列开始的图片子集。因此，可以更快地开始渲染，但是开始时显示图片的速率较低。换句话说，播放器可以在初始启动延迟的持续时间和初始显示图像速率之间进行权衡。图 8 和图 9 显示了两个备用启动序列的示例，其中解码了图 7 的比特流子集。
+
+选择用于解码的采样和解码器输出分别在图 8a 和图 8b 中显示。frame_num 等于 4 的引用图片和 frame_num 等于 5 的非引用图片未解码。在此示例中，图片渲染的开始比图 7 早四个图片间隔。当图片速率为 25Hz 时，启动延迟节省 160 毫秒。节省启动延迟的缺点是在比特流开始时显示图像速率较低。
+
+![figure8-an-example-of-an-alternative-startup-sequence](figure8-an-example-of-an-alternative-startup-sequence.png)
+
+在图 9 的示例中，展示另一种方式选择图片进行解码。解码的图片依赖 frame_num 等于 3 的图片将被忽略，并且第一组图片的后半部分内非引用图片的解码也被忽略。由 frame_num 等于 2 的采样得到的解码图片是第一个输出的图片。结果，第一组图像的输出图像速率是正常图像速率的一半，但是显示过程的开始比图 7 所示的传统解决方案早两个帧间隔（25Hz 图像速率中为 80 毫秒）。
+
+![figure9-another-example-of-an-alternative-startup-sequence](figure9-another-example-of-an-alternative-startup-sequence.png)
 
 ### 10.4 随机访问点(RAP)采样分组
 
-### unknown
+同步采样被指定为随机访问点，该点之后可以正确解码所有解码顺序的采样。但是，可以编码“开放式”随机访问点，该点之后所有输出顺序的采样可以正确解码，但是随机访问点之后按解码顺序以及随机访问点之前按输出顺序的一些采样不需要正确可解码。例如，开始一个开放图片组的一个帧内图片可以按解码顺序跟随（双向）预测图片，但是这些（双向）预测图片按照输出顺序位于该内部图片之前；尽管如果从帧内图片开始解码，则可能无法正确解码这些（双向）预测图片，不需要它们。
+
+可以通过成为该组成员来标记此类“开放式”随机访问采样。此组标记的采样必须是随机访问点，也可以是同步点（即，不要求排除由同步采样表标记的采样）。
+
+```code
+class VisualRandomAccessEntry() extends VisualSampleGroupEntry (’rap ’) {
+  unsigned int(1) num_leading_samples_known;
+  unsigned int(7) num_leading_samples;
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| num_leading_samples_known | 整数 | 等于 1 表示该组中每个采样的前导采样数是已知的，并且该数目由 num_leading_samples 指定。前导采样是与“开放式”随机访问点（RAP）相关的采样。它在显示顺序上位于 RAP 之前，并在解码顺序上紧跟 RAP 或另一个前导采样，并且当从 RAP 开始解码时，无法正确解码该采样 |
+| num_leading_samples | 整数 | 指定该组中每个采样的前导采样数。当 num_leading_samples_known 等于 0 时，应忽略此字段 |
+
+### 10.5 时间级别的采样分组
+
+许多视频编解码器支持时间可扩展性，其中可以提取一个或多个可独立解码的帧子集。一种简单的情况是，以定期的 I 帧间隔（例如 IPPPIPPP…）提取比特流的 I 帧，其中每第 4 张图片是一个 I 帧。同样，也可以提取这些 I 帧的子集，以获得更低的帧速率。可以使用分层的 B 或 P 帧构造具有多个时间级别的更复杂的情况。
+
+时间级别采样分组（“tele”）提供了独立于编解码器的采样分组，可用于根据时间级别对轨道（和潜在的轨道片段）中的采样（访问单元）进行分组，其中一个时间级别的采样对更高时间级别的采样没有编码依赖。时间级别等于采样组描述索引（取值 1、2、3 等）。仅包含从第一时间级别到较高时间级别的访问单元的比特流保持符合编码标准。
+
+根据时间级别进行分组有助于轻松提取时间子序列，例如使用 0 中的 Subsegment Indexing box。
+
+```code
+class TemporalLevelEntry() extends VisualSampleGroupEntry('tele') {
+  bit(1) level_independently_decodable;
+  bit(7) reserved=0;
+}
+```
+
+采样组中采样的时间级别等于采样组描述索引。
+
+level_independently_decodable 是一个标志。1 表示此级别的所有采样对其他级别的采样都没有编码依赖。0 表示未提供任何信息。
+
+### 10.6 流访问点采样组
+
+如附录 I 定义，流访问点允许随机访问媒体流的容器。SAP 采样分组将采样（其第一个字节是附录 I 中为 SAP 指定的位置 Isau）标识为指示的 SAP 类型。
+
+grouping_type_parameter 的语法和语义如下指定。
+
+```code
+{
+  unsigned int(28) target_layers;
+  unsigned int(4) layer_id_method_idc;
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| target_layers | 整数 | 根据附录 I 为指示的 SAP 指定目标层。target_layers 的语义取决于 layer_id_method_idc 的值。 当 layer_id_method_idc 等于 0 时，保留 target_layers |
+| layer_id_method_idc | 整数 | 指定 target_layers 的语义。layer_id_method_idc 等于 0 表示目标层包含轨道表示的所有层。派生媒体格式规范指定了不等于 0 的 layer_id_method_idc |
+
+```code
+class SAPEntry() extends SampleGroupDescriptionEntry('sap ') {
+  unsigned int(1) dependent_flag;
+  unsigned int(3) reserved;
+  unsigned int(4) SAP_type;
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| reserved | 整数 | 应等于 0。解析器应允许和忽略所有 reserved 值 |
+| dependent_flag | 整数 | 对于非分层媒体，dependent_flag 应为0。dependent_flag 等于 1，指定用于预测目标层的引用层（如果有）可能必须解码，才能访问此采样组的采样。dependent_flag等于 0 表示，用于预测目标层的引用层（如果有）无需解码即可访问此采样组的任何 SAP |
+| SAP_type | 整数 | 根据附 |
+
+保留等于 0 和 7 的 SAP_type 值；SAP_type 值在 1-6（含1和6） 的范围，用于指定相关采样（对于该采样，此组中采样的第一个字节位于位置 Isau）的 SAP 类型（附录 I 中指定）。
+
+## 11 可扩展性
+
+### 11.1 对象
+
+此规范中定义的规范对象通过 32 位值标识，该值通常是 ISO 8859-1 字符集中四个可打印字符的集合。
+
+为了允许用户扩展格式、存储新的对象类型，以及允许格式化为此规范的文件和某些分布式计算环境互操作，有一个类型映射和类型扩展机制，二者一起形成一对。
+
+分布式计算中常用的是 16 字节的 UUID(统一唯一标识符)。通过组合 4 字节类型值和 12 字节的 ISO 保留值(0xXXXXXXXX-0011-0010-8000-00AA00389B71)，可以将此处指定的任何规范类型直接映射到 UUID 空间。四字节替换前面数字中的 XXXXXXXX。ISO 将这些类型标识为本规范中使用的对象类型。
+
+用户对象使用转义类型 “uuid”。它们已记录在上面的 6.2 小节。在 size 和 type 字段之后，有一个完整的 16 字节的 UUID。
+
+希望将每个对象视为对象具有 UUID 的系统可以采用以下算法：
+
+```code
+size := read_uint32();
+type := read_uint32();
+if (type==‘uuid’)
+  then uuid := read_uuid()
+  else uuid := form_uuid(type, ISO_12_bytes);
+```
+
+类似地，将一组对象线性化为按此规范格式化的文件时，应用下面的算法：
+
+```code
+write_uint32( object_size(object) );
+uuid := object_uuid_type(object);
+if (is_ISO_uuid(uuid))
+  write_uint32( ISO_type_of(uuid) )
+else {
+  write_uint32(‘uuid’);
+  write_uuid(uuid);
+}
+```
+
+如果文件包含此规范的 box，这些 box 使用 “uuid” 转义和完整的 UUID 编写，则该文件不符合要求；系统不需要识别使用 “uuid” 和 ISO UUID 编写的标准 box。
+
+### 11.2 存储格式
+
+包含元数据的主文件可能使用其他文件来存储媒体数据。这些其他文件可能包含来自各种标准(包括此标准)的头部声明。
+
+如果此类次要文件设置了元数据声明，则该元数据不属于整个演示的一部分。这允许将小演示文件整合成较大的整个演示，通过构建新的元数据并引用该媒体数据，而不是复制它。
+
+对这些其他文件的引用不必使用这些文件中的所有数据；以这种方式，可以使用媒体数据的子集，或者忽略不需要的头部。
+
+### 11.3 派生的文件格式
+
+出于限制目的，可将此规范用作特定文件格式的基础：比如，MPEG-4 的 MP4 文件格式和 Motion JPEG 2000 文件格式二者都由此规范衍生。编写衍生的规范时，必须制定以下内容：
+
+新格式的名称，以及 File Type Box 的 brand 和兼容性类型。通常会使用新的文件扩展名，以及新的 MIME 类型和 Machintosh 文件类不过这些定义和注册在本规范的范围之外。
+
+必须显式声明所有模板字段；且其使用必须符合此处的规范。
+
+必须定义采样描述内使用的确切 “codingname” 和 “protocol” 标识符。这些代码点标识的采样格式也必须定义。然而，与其在此级别定义新代码点，可能不如将新编码系统适合现有框架(比如 MPEG-4 系统框架)。比如，新的音频格式可以使用新的 codingname，或使用 “mp4a” 并在 MPEG-4 音频框架内注册新的标识符。
+
+尽管不建议，但可以定义新的 box。
+
+如果衍生规范需要除了视频和音频以外的新轨道类型，则必须注册新的 handler-type。必须标识此轨道所需的媒体头。如果是新 box，必须对其定义并注册其 box 类型。通常，期望大多数系统可以使用现有轨道类型。
+
+所有新的轨道引用类型必须注册和定义。
+
+如上定义，可用可选或必需的 box 扩展采样描述格式。这样做的通常语法是定义一个具有特定名称的新 box，扩展 Visual Sample Entry (比如)，并包含新 box。
+
+## 12 特定媒体的定义
+
+### 12.1 视频媒体
+
+#### 12.1.1 媒体 handler
+
+视频媒体在 Media Box 的 Handler Box 中使用 “vide” handler 类型，如 8.4.3 定义。
+
+辅助视频媒体在 Media Box 的 Handler Box 中使用 “auxv” handler 类型，如 8.4.3 定义。
+
+辅助视频轨道的编码方式与视频轨道相同，但是使用的是不同的 handler 类型，并且不希望在视觉上显示（例如，它包含深度信息，或其他单色或彩色二维信息）。通常通过适当的轨道引用将辅助视频轨道链接到视频轨道。
+
+#### 12.1.2 Video Media Header Box
 
 | box 类型 | 容器 | 必要性 | 数量 |
 | --- | --- | --- | --- |
-| vmhd/smhd/hmhd/nmhd | Media Information Box(minf) | Y | 1 |
+| vmhd | Media Information Box(minf) | Y | 1 |
 
-每个轨道类型(对应媒体的 handler 类型)有一个不同的媒体信息头；匹配的头部应该存在，可以是此处定义的头部之一，也可以是派生规范中定义。
-
-#### 8.4.5.2 Video Media Header Box
-
-视频媒体头部包含视频媒体的常规演示信息，与编码无关。请注意 flags 字段值为 1.
+视频轨道使用 VideoMediaHeaderbox，在 8.4.5 节定义的 Media Information Box 中。视频媒体头部包含视频媒体的常规演示信息，与编码无关。请注意 flags 字段值为 1.
 
 ```code
 aligned(8) class VideoMediaHeaderBox
@@ -5168,9 +5392,153 @@ aligned(8) class VideoMediaHeaderBox
 | graphicsmode | - | 从以下枚举集合为该视频轨道指定组合模式，可通过派生规范对齐扩展：copy=0 复制现有图像 |
 | opcolor | - | 3 色值(红绿蓝)集合，可供 graphicsmode 使用 |
 
-#### 8.4.5.3 Sound Media Header Box
+#### 12.1.3 采样条目
 
-音频媒体头部包含音频媒体的常规演示信息，与编码无关。此头部用于所有包含音频的轨道。
+视频轨道使用 VisualSampleEntry。
+
+在视频轨道中，除非媒体格式的规范明确记录了此模板字段且允许更大的值，否则 frame_count 字段必须为 1。该规范必须记录如何找到视频的各个帧（它们的大小信息）以及如何确定它们的时间。该时间可能就像将采样时长除以帧计数以建立帧时长一样简单。
+
+视频采样条目中的 width 和 height 记录编解码器将分发的像素数；这样可以分配缓冲区。由于这些是计数，因此不考虑像素长宽比。
+
+```code
+class VisualSampleEntry(codingname) extends SampleEntry (codingname){
+  unsigned int(16) pre_defined = 0;
+  const unsigned int(16) reserved = 0;
+  unsigned int(32)[3] pre_defined = 0;
+  unsigned int(16) width;
+  unsigned int(16) height;
+  template unsigned int(32) horizresolution = 0x00480000; // 72 dpi
+  template unsigned int(32) vertresolution = 0x00480000; // 72 dpi
+  const unsigned int(32) reserved = 0;
+  template unsigned int(16) frame_count = 1;
+  string[32] compressorname;
+  template unsigned int(16) depth = 0x0018;
+  int(16) pre_defined = -1;
+  // other boxes from derived specifications
+  CleanApertureBox clap; // optional
+  PixelAspectRatioBox pasp; // optional
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| horizresolution/vertresolution | 定点数 16.16 | 给出图像的分辨率(像素/英寸) |
+| frame_count | 整数 | 指示每个采样中存储的压缩视频帧数。默认值是 1，即每个采样一帧；对于每个采样多帧的情况值可能大于 1 |
+| compressorname | 字符串 | 名称，用于参考。以固定的 32 字节字段设置，第一个字节设置为要显示的字节数，其后是对应字节数的显示数据，然后填充到完整的 32 字节(包含大小占用的字节)。此字段可设为 0 |
+| depth | 整数 | 取自下值之一：0x0018(图像带色彩，没有透明度) |
+| width/height | 整数 | 此采样描述描述的流的最大可视宽度和高度(像素) |
+
+#### 12.1.4 Pixel Aspect Ratio 和 Clean Aperture
+
+##### 12.1.4.1 定义
+
+可以分别使用 “pasp” 和 “clap” Sample Entry Box 指定视频的像素长宽比和纯净光圈。二者都是可选的；如果存在，它们会覆盖视频编解码器特有结构中的声明（如果有），如果不存在这些 box，则应检查该结构。为了获得最大的兼容性，这些 box 应紧随派生规范中定义或要求的任何 box 之后，而不是之前。
+
+在 PixelAspectRatioBox 中，hSpacing 和 vSpacing 具有相同的单位，但未指定这些单位：只有比率很重要。hSpacing 和 vSpacing 可能会也可能不会简化，它们可能会简化到 1/1。它们二者都必须为正。
+
+将它们定义为像素的长宽比，以任意单位表示。如果像素出现 H 宽和 V 高，则 hSpacing/vSpacing 等于 H/V。这意味着显示上的一个 n 像素高的正方形必须为 n*vSpacing/hSpacing 像素宽才能显示正方形。
+
+注意：调整像素长宽比时，通常会根据需要（即，如果最终显示系统的像素长宽比与视频源不同）缩放视频的水平尺寸。
+
+注意：建议尽可能通过流水线携带原始像素和合成的变换。如果“校正”像素宽高比为正方形网格、归一化到轨道尺寸、合成或放置（例如，轨道和/或影片矩阵）以及归一化显示特性所导致的变换是单位矩阵，则不需要进行重采样。特别是，如果可能的话，在渲染过程中不应多次对视频进行重采样。
+
+CleanApertureBox 中理论上有四个值。这些参数表示为 N/D 分数。分数可以也可以不简化。我们将参数对 fooN 和 fooD 称为 foo。对于 horizOff 和 vertOff，D 必须为正，而 N 可以为正或负。对于cleanApertureWidth 和 cleanApertureHeight，N 和 D 都必须为正。
+
+注意：这些是分数，有几个原因。首先，在某些系统中，像素长宽比校正后的确切宽度是整数，而不是校正前的像素数。其次，如果在整个光圈中调整视频大小，则纯净光圈的确切表示可能不是完整的。最后，由于这是使用中心和偏移量表示的，因此需要除以二，因此可能会出现半值。
+
+考虑由 VisualSampleEntry width 和 heigh 定义的像素尺寸。如果图像的图片中心在 pcX 和 pcY 处，则 horizOff 和 vertOff 定义如下：
+
+```code
+pcX = horizOff + (width - 1)/2
+pcY = vertOff + (height - 1)/2;
+```
+
+通常，horizOff 和 vertOff 为零，因此图像以图片中心为中心。
+
+纯净光圈的最左/最右像素和最顶/最底线位于：
+
+```code
+pcX ± (cleanApertureWidth - 1)/2
+pcY ± (cleanApertureHeight - 1)/2;
+```
+
+##### 12.1.4.2 语法
+
+```code
+class PixelAspectRatioBox extends Box(‘pasp’){
+  unsigned int(32) hSpacing;
+  unsigned int(32) vSpacing;
+}
+
+class CleanApertureBox extends Box(‘clap’){
+  unsigned int(32) cleanApertureWidthN;
+  unsigned int(32) cleanApertureWidthD;
+  unsigned int(32) cleanApertureHeightN;
+  unsigned int(32) cleanApertureHeightD;
+  unsigned int(32) horizOffN;
+  unsigned int(32) horizOffD;
+  unsigned int(32) vertOffN;
+  unsigned int(32) vertOffD;
+}
+```
+
+##### 12.1.4.3 语义
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| hSpacing/vSpacing | 整数 | 定义像素的相对宽度和高度 |
+| cleanApertureWidthN/cleanApertureWidthD | 整数 | 一个分数，定义视频图像的确切纯净光圈宽度（以像素为单位） |
+| cleanApertureHeightN/cleanApertureHeightD | 整数 | 一个分数，定义视频图像的确切纯净光圈高度（以像素为单位） |
+| horizOffN/horizOffD | 整数 | 一个分数，定义了纯净光圈中心的水平偏移量减去（width-1）/2。 通常为 0 |
+| vertOffN/vertOffD | 整数 | 一个分数，定义了纯净光圈中心的垂直偏移量减去（height-1）/2。 通常为 0 |
+
+#### 12.1.5 Colour Information Box
+
+可以在 VisualSampleEntry 中放置一或多个 ColourInformationBox 提供色彩信息。在采样条目中按顺序放置这些 box 应从最准确（并且可能是最难处理）开始，逐步发展到最小。这些是建议性的，涉及渲染和色彩转换，并且没有与之相关的规范性行为；读者可以选择最合适的使用。可忽略色彩类型未知的 ColourInformationBox。
+
+如果使用 ICC 配置，则其可能是受限的，使用代码 “rICC”，允许更简单的处理。该配置应为输入配置的单色或三成分基于矩阵的类别，在 ISO 15076-1 定义。如果配置是其他类别，则必须使用 “prof” 指示器。
+
+如果在此 box 以及视频比特流中都提供了色彩信息，则此 box 优先，并覆盖比特流中的信息。
+
+注意：如果指定了 ICC 配置，则如果需要为 ICC 配置描述的原色构建 Y'CbCr 到 R'G'B' 转换矩阵，SMPTE RP 177 “基本电视色彩方程的推导” 可能会有所帮助。
+
+```code
+class ColourInformationBox extends Box(‘colr’){
+  unsigned int(32) colour_type;
+  if (colour_type == ‘nclx’) /* on-screen colours */ {
+    unsigned int(16) colour_primaries;
+    unsigned int(16) transfer_characteristics;
+    unsigned int(16) matrix_coefficients;
+    unsigned int(1) full_range_flag;
+    unsigned int(7) reserved = 0;
+  }
+  else if (colour_type == ‘rICC’) {
+    ICC_profile; // restricted ICC profile
+  }
+  else if (colour_type == ‘prof’) {
+    ICC_profile; // unrestricted ICC profile
+  }
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| colour_type | 整数 | 指示提供的色彩信息的类型。对于 colour_type “nclx”：这些字段正是 ISO/IEC 29199-2 的 A.7.2 节为 PTM_COLOR_INFO（） 定义的四字节，但请注意，这里的整个范围标志处于不同的比特位置 |
+| ICC_profile | - | 提供了 ISO 15076-1 或 ICC.1：2010 中定义的 ICC 配置 |
+
+### 12.2 音频媒体
+
+#### 12.2.1 媒体 handler
+
+音频媒体在 Media Box 的 Handler Box 中使用 “soun” handler 类型，如 8.4.3 定义。
+
+#### 12.2.2 Sound Media Header Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| smhd | Media Information Box(minf) | Y | 应该仅存在一个特定的媒体头 |
+
+音频轨道使用 SoundMediaHeaderbox，在 8.4.5 节定义的 Media Information Box 中。音频媒体头部包含音频媒体的常规演示信息，与编码无关。此头部用于所有包含音频的轨道。
 
 ```code
 aligned(8) class SoundMediaHeaderBox
@@ -5185,9 +5553,366 @@ aligned(8) class SoundMediaHeaderBox
 | version | 整数 | 指定此 box 的版本 |
 | balance | 定点数 8.8 | 将单声道音频放在立体空间中；0 为中心(正常值)；全左为 -1.0，全右 为 1.0 |
 
-#### 8.11.4 Hint Media Header Box
+#### 12.2.3 采样条目
 
-hint 媒体头部包含 hint 轨道的常规演示信息，与编码无关。
+音频轨道使用 AudioSampleEntry 或 AudioSampleEntryV1。
+
+samplerate/samplesize 和 channelcount 字段记录此媒体的默认音频输出回放格式。应选择音频轨道的时间刻度与采样率匹配，或为采样率的整数倍，以实现采样准确的时间。当 channelcount 值大于零时，它指示音频流中扬声器声道的预期数量。channelcount 为 1 表示单声道音频，而 2 表示立体声（左/右）。当使用大于 2 的值时，编解码器配置应识别通道分配。
+
+当希望指示音频采样率大于 samplerate 字段可以表示的值时，可以使用以下方法：
+
+- 使用 AudioSampleEntryV1，它要求包含的 Sample Description Box 也采用版本 1
+- Sample Rate Box 可能仅出现在 AudioSampleEntryV1 中，并且当其存在时，它会覆盖 samplerate 字段并记录实际的采样率
+- 当出现 Sample Rate Box 时，媒体时间刻度应与采样率相同，或可以整除采样率，或为采样率的整数倍
+- 采样条目中的 samplerate 字段应包含一个左移 16 位的值（与 AudioSampleEntry 相同），该值与媒体时间刻度相匹配，或可以整除媒体时间刻度，或为媒体时间刻度的整数倍
+
+仅在需要时才使用 AudioSampleEntryV1;否则，为了获得最大的兼容性，应使用 AudioSampleEntry。版本设置为 0 的 SampleDescriptionBox 中不得出现 AudioSampleEntryV1。
+
+采样条目中的音频输出格式（samplerate、samplesize 和 channelcount 字段）应仅对未记录其自身输出配置的编解码器视为确定的。如果音频编解码器对于输出格式具有确定信息，则应将其视为确定信息；在这种情况下，尽管应选择合理的值（例如，尽可能高的采样率），但可以忽略采样条目中的 samplerate、samplesize 和 channelcount 字段。
+
+```code
+// Audio Sequences
+class AudioSampleEntry(codingname) extends SampleEntry (codingname){
+  const unsigned int(32)[2] reserved = 0;
+  template unsigned int(16) channelcount = 2;
+  template unsigned int(16) samplesize = 16;
+  unsigned int(16) pre_defined = 0;
+  const unsigned int(16) reserved = 0 ;
+  template unsigned int(32) samplerate = { default samplerate of media}<<16;
+  ChannelLayout();
+  // we permit any number of DownMix or DRC boxes:
+  DownMixInstructions() [];
+  DRCCoefficientsBasic() [];
+  DRCInstructionsBasic() [];
+  DRCCoefficientsUniDRC() [];
+  DRCInstructionsUniDRC() [];
+  Box (); // further boxes as needed
+}
+aligned(8) class SamplingRateBox extends FullBox(‘srat’) {
+  unsigned int(32) sampling_rate;
+}
+class AudioSampleEntryV1(codingname) extends SampleEntry (codingname){
+  unsigned int(16) entry_version; // must be 1,
+  // and must be in an stsd with version ==1
+  const unsigned int(16)[3] reserved = 0;
+  template unsigned int(16) channelcount; // must be correct
+  template unsigned int(16) samplesize = 16;
+  unsigned int(16) pre_defined = 0;
+  const unsigned int(16) reserved = 0 ;
+  template unsigned int(32) samplerate = 1<<16;
+  // optional boxes follow
+  SamplingRateBox();
+  ChannelLayout();
+  // we permit any number of DownMix or DRC boxes:
+  DownMixInstructions() [];
+  DRCCoefficientsBasic() [];
+  DRCInstructionsBasic() [];
+  DRCCoefficientsUniDRC() [];
+  DRCInstructionsUniDRC() [];
+  Box (); // further boxes as needed
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| channelcount | 整数 | 通道数，例如1（单声道）或2（立体声） |
+| samplesize | 整数 | 单位是比特，默认值为 16 |
+| samplerate | 定点数 16.16 | 缺少 SamplingRateBox 时，samplerate 是采样率；如果存在 SamplingRateBox，samplerate 是一个合适的整数，可以整除实际采样率或是其整数倍。此 32 位字段表示为定点数 16.16 的数字（hi.lo） |
+| sampling_rate | 整数 | 音频媒体的实际采样率，以 32 位整数表示 |
+
+#### 12.2.4 Channel Layout Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| chnl | Audio sample entry | N | 0/1 |
+
+此 box 可能会出现在音频采样条目中，以记录音频流中通道的分配。
+
+AudioSampleEntry 中 channelcount 字段必须正确；因此，需要 AudioSampleEntryV1 发送 2 以外的值。通道布局可以是标准布局（来自枚举列表）的全部或部分，也可以是自定义布局（它允许轨道占整体布局的一部分）。
+
+流可能包含通道、对象，或两者都不包含，或两者都包含。既不是通道也不是对象结构化的流可以通过多种方式隐式渲染。
+
+```code
+aligned(8) class ChannelLayout extends FullBox(‘chnl’) {
+  unsigned int(8) stream_structure;
+  if (stream_structure & channelStructured) { // 1
+    unsigned int(8) definedLayout;
+    if (definedLayout==0) {
+      for (i = 1 ; i <= channelCount ; i++) {
+        // channelCount comes from the sample entry
+        unsigned int(8) speaker_position;
+        if (speaker_position == 126) { // explicit position
+          signed int (16) azimuth;
+          signed int (8) elevation;
+        }
+      }
+    } else {
+      unsigned int(64) omittedChannelsMap;
+      // a ‘1’ bit indicates ‘not in this track’
+    }
+  }
+  if (stream_structure & objectStructured) { // 2
+    unsigned int(8) object_count;
+  }
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| stream_structure | 整数 | 标志字段，用于定义流是否具有通道结构或对象结构（或同时具有两者或两者都不具有）；定义了以下标志，保留所有其他值：1-流携带通道；2-流携带对象 |
+| definedLayout | 整数 | ISO/IEC 23001-8 中的 ChannelConfiguration |
+| speaker_position | 整数 | ISO/IEC 23001-8 中的 OutputChannelPosition。如果使用了明确的位置，则 azimuth 和 elevation 的定义与 ISO/IEC 23001-8 中扬声器的定义相同 |
+| azimuth | 有符号整数 | 以度为单位，如 ISO/IEC 23001-8 中为 LoudspeakerAzimuth 定义 |
+| elevation | 有符号整数 | 以度为单位，如 ISO/IEC 23001-8 中为 LoudspeakerElevation 定义 |
+| omittedChannelsMap | - | 忽略通道的位图；通道映射中的位是从最低有效到最高有效的数字，并且顺序对应 ISO/IEC 23001-8 ChannelConfiguration 中记录的配置的通道顺序。通道映射中的 1 位表示没有通道。因此，映射的零值始终表示已完全存在给定的标准布局 |
+
+#### 12.2.5 Downmix Instructions Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| dmix | Audio sample entry | N | 0/1 |
+
+如果需要，缩混可以由生产设备控制。例如，某些内容可能需要在缩混之前对环绕声道进行更多衰减，以保持清晰度。
+
+设计缩混支持使得可以描述任何缩混（例如从 7.1 到四声道以及到立体声）。
+
+可以在缩混之后，以及 DRC 和缩混之后声明信号的响度特性。
+
+如果 targetChannelCount*baseChannelCount 为奇数，则用设置为 0xF 的 4 比特填充该 box。targetChannelCount 必须与 targetLayout（如果给出）一致，并且必须小于或等于 channelcount。
+
+每个缩混由一个 ID 唯一标识。
+
+```code
+aligned(8) class DownMixInstructions extends FullBox(‘dmix’) {
+  unsigned int(8) targetLayout;
+  unsigned int(1) reserved = 0;
+  unsigned int(7) targetChannelCount;
+  bit(1) in_stream;
+  unsigned int(7) downmix_ID;
+  if (in_stream==0) { // downmix coefficients are out of stream and supplied here
+    int i, j;
+    for (i = 1 ; i <= targetChannelCount; i++){
+      for (j=1; j <= baseChannelCount; j++) {
+        bit(4) bs_downmix_coefficient;
+      }
+    }
+  }
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| targetLayout | 整数 | 是 ISO/IEC 23001-8 中的 ChannelConfiguration，定义了缩混后生成的布局 |
+| targetChannelCount | 整数 | 结果流中的通道数，且必须与 targetLayout 相对应 |
+| downmix_ID | 整数 | 标识此缩混的任意值，并且在给定采样条目中的 DownMixInstructions 中必须唯一；有两个保留值，0 和 0x7F，不得使用 |
+| in_stream | 整数 | 当缩混系数在流中时，in_stream 值为 1。否则为 0 |
+| bs_downmix_coefficient | - | 编码如下表所示 |
+
+表 5-非 LFE 通道的缩混系数编码
+
+| 值 | 十六进制编码(4 位) |
+| --- | --- |
+| 0.00 dB | 0x0 |
+| ‐0.50 dB | 0x1 |
+| ‐1.00 dB | 0x2 |
+| ‐1.50 dB | 0x3 |
+| ‐2.00 dB | 0x4 |
+| ‐2.50 dB | 0x5 |
+| ‐3.00 dB | 0x6 |
+| ‐3.50 dB | 0x7 |
+| ‐4.00 dB | 0x8 |
+| ‐4.50 dB | 0x9 |
+| ‐5.00 dB | 0xA |
+| ‐5.50 dB | 0xB |
+| ‐6.00 dB | 0xC |
+| ‐7.50 dB | 0xD |
+| ‐9.00 dB | 0xE |
+| ‐∞ dB | 0xF |
+
+表 6-LFE 通道的缩混系数编码
+
+| 值 | 十六进制编码(4 位) |
+| --- | --- |
+| 10.00 dB | 0x0 |
+| 6.00 dB | 0x1 |
+| 4.5 dB | 0x2 |
+| 3.00 dB | 0x3 |
+| 1.50 dB | 0x4 |
+| 0.00 dB | 0x5 |
+| ‐1.50 dB | 0x6 |
+| ‐3.00 dB | 0x7 |
+| ‐4.50 dB | 0x8 |
+| ‐6.00 dB | 0x9 |
+| ‐10.00 dB | 0xA |
+| ‐15.00 dB | 0xB |
+| ‐20.00 dB | 0xC |
+| ‐30.00 dB | 0xD |
+| ‐40.00 dB | 0xE |
+| ‐∞ dB | 0xF |
+
+#### 12.2.6 DRC 信息
+
+编码器中使用 DRC，以使用 ISO/IEC 23001-8 中定义的预定义 DRC 特性之一生成增益值；系数放置在流内或关联的元数据轨道中。
+
+对于某些内容（例如某些多通道内容），在不同的通道中使用不同的 DRC 特性可能是有利的。例如，如果语音仅在中央通道中出现，则此功能可能非常有用。通过为音频通道分配 DRC 特性来支持它。
+
+可以在 DRC 之后声明信号的响度特性。
+
+DRC 支持包括支持流内 DRC 系数，以及承载它们的单独轨道；后者对于没有提供流内系数的传统编码系统（包括未压缩的音频）特别有用。
+
+在 ISO 基本媒体文件格式中，可以在多个轨道中承载音频内容，其中一个基本轨道包含所有轨道的 DRC 元数据。基本轨道使用类型为 “adda”（附加音频）的轨道引用来引用其他轨道。DRC 处理的通道是基本轨道中的所有通道，加上按引用顺序引用轨道中的所有通道。DRC 通道组适用于所有这些通道（即使它们是已禁用或当前未播放轨道中的通道）。
+
+DRCCoefficientsBasic、DRCCoefficientsUniDRC、DRCInstructionsBasic 和 DRCInstructionsUniDRC box 可能出现在 AudioSampleEntry 中，并在 ISO/IEC 23003-4 中定义。
+
+#### 12.2.7 Audio Stream Loudness Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| ludt | Track user‐data(udta) | N | 0/1 |
+
+响度声明放置在 user data box 中，以使它们在影片片段中存在和更新。特别是在实时场景中，Initial Movie box 中的用户数据可能是“不超过”或“最佳猜测”，然后用户数据更新会提供更好（但仍然有效）的值。因此，例如，在这种情况下，与一组特定 DRC 指令相关的该用户数据中的响度范围构成了一个“承诺”而不是一种度量。
+
+有几个元数据值可用于描述动态范围的各个方面。动态范围的大小可用于调整 DRC 特性，例如如果动态范围较小甚至可以关闭 DRC，则 DRC 的侵略性较小。
+
+真实峰值和最大响度值可用于估计动态余量，例如，当响度归一化导致正增益\[dB\]或需要动态余量以避免缩减缩混时。然后可以调整 DRC 特性以接近动态余量目标。此处以编码独立的方式表示相关内容的峰值。
+
+也可以记内容混合到的音频声压级。（如果以混合级别之外的其他级别收听音频，则这可能会影响感知的音调平衡。）
+
+也可以使用以下措施：
+
+- 从 EBU-Tech 3342 得到的最高响度范围
+- 从 ITU-R BS.1771-1 或 EBU-Tech 3341 得到的最大瞬时响度
+- 从 ITU-R BS.1771-1 或 EBU-Tech 3341 得到的最大短期响度
+- ITU-R BS.1771-1 或 EBU-Tech 3341 中定义的短期响度
+
+在某些情况下，可能希望在专辑包含的每首歌曲中指明专辑的响度特性。为此可以指定一个单独的 box。 TrackLoudnessInfo 和 AlbumLoudnessInfo 分别提供歌曲和包含歌曲的整个专辑的响度信息。
+
+节目响度使用 ITU-R BS.1770-3 标准对相关内容进行测量; “锚定响度”是指锚定内容的响度，其内容由内容作者确定；一个合适的值（尤其是主要内容为语音内容）是“对话正常水平”或 ATSC 文档 A/52：2012 中定义的 DialNorm。ISO/IEC 23003-4规定了测量系统、测量方法以及所有响度和峰值相关值的编码。
+
+```code
+aligned(8) class LoudnessBaseBox extends FullBox(loudnessType) {
+  unsigned int(3) reserved = 0;
+  unsigned int(7) downmix_ID; // matching downmix
+  unsigned int(6) DRC_set_ID; // to match a DRC box
+  signed int(12) bs_sample_peak_level;
+  signed int(12) bs_true_peak_level;
+  unsigned int(4) measurement_system_for_TP;
+  unsigned int(4) reliability_for_TP;
+  unsigned int(8) measurement_count;
+  int i;
+  for (i = 1 ; i <= measurement_count; i++){
+    unsigned int(8) method_definition;
+    unsigned int(8) method_value;
+    unsigned int(4) measurement_system;
+    unsigned int(4) reliability;
+  }
+}
+aligned(8) class TrackLoudnessInfo extends LoudnessBaseBox(‘tlou’) { }
+aligned(8) class AlbumLoudnessInfo extends LoudnessBaseBox (‘alou’) { }
+aligned(8) class LoudnessBox extends Box(‘ludt’) {
+  loudness TrackLoudnessInfo[]; // a set of one or more loudness boxes
+  albumLoudness AlbumLoudnessInfo[]; // if applicable
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| downmix_ID | 整数 | 值为 0 时，声明没有缩混布局的响度特征。如果不为 0，此 box 在应用匹配 downmix_ID 的缩混后声明响度，并且必须匹配该轨道采样条目中仅一个 box 中的值 |
+| DRC_set_ID | 整数 | 值为 0 时，声明未应用 DRC 的特性。如果不为 0，此 box 在应用匹配 DRC_set_ID 的 DRC 后声明响度，并且必须匹配该轨道采样条目中仅一个 box 中的值 |
+| bs_sample_peak_level | 整数 | 采用 ISO/IEC 23003-4 中定义的采样峰值等级的值；保留所有其他值 |
+| bs_true_peak_level | 整数 | 采用 ISO/IEC 23003-4 中定义的真实峰值等级的值；保留所有其他值 |
+| measurement_system_for_TP | 整数 | 采用 ISO/IEC 23003-4 中定义的测量系统索引；保留所有其他值 |
+| method_definition | 整数 | 采用 ISO/IEC 23003-4 中定义的测量方法索引；保留所有其他值 |
+| measurement_system | 整数 | 采用 ISO/IEC 23003-4 中定义的测量系统索引；保留所有其他值 |
+| reliability、reliability_for_TP | 整数 | 分别采用以下值之一（保留所有其他值）：0-可靠性未知；1-值是报告/导入的但未验证；2-值是“不超过”的上限；3-值是测量并准确的 |
+
+### 12.3 元数据媒体
+
+#### 12.3.1 媒体 handler
+
+定时元数据媒体在 Media Box 的 Handler Box 中使用 “meta” handler 类型，如 8.4.3 定义。
+
+注意：MPEG-7 流是一种专用类型的元数据流，已声明其自己的 handler，在 MP4 文件格式\[ISO/IEC 14496-14\] 中记录。
+
+注意：使用 “cdsc” 类型的轨道引用将元数据轨道链接到其描述的轨道。
+
+#### 12.3.2 媒体头部
+
+元数据轨道使用 8.4.5.2 中定义的 Null Media Header（“nmhd”）。
+
+#### 12.3.3 采样条目
+
+定时的元数据轨道使用 MetaDataSampleEntry。
+
+一个可选的 BitRateBox 可以出现在任何 MetaDataSampleEntry 的末尾，以通知流的比特率信息。这可以用于缓冲区配置。对于 XML 元数据，可以用于选择适当的内存表示格式（DOM、STX）。
+
+与往常一样，可以在 URIMetaSampleEntry 条目中使用一个可选的 Bitrate Box。
+
+URIMetaSampleEntry 条目在一个 box 中，包含定义元数据形式的 URI 和可选的初始化数据。采样和初始化数据的格式均由 URI 形式的全部或部分定义。
+
+可能是 URI 标识了一种元数据格式，该格式允许每个采样中包含多个“陈述事实”。但是，此格式的所有元数据采样实际上都是 “I 帧”，为其覆盖的时间间隔定义了整个元数据集。这意味着，对于给定的轨道，任何时刻的完整元数据集都包含在（a）描述该轨道的轨道（如果有）的时间对齐的采样中，以及（b）轨道元数据（如果有）、影片元数据和文件元数据（如果有）。
+
+如果需要增量更改的元数据，MPEG-7 框架将提供该功能。
+
+有关某些元数据系统的 URI 形式的信息可在附录 G 中找到。
+
+```code
+class MetaDataSampleEntry(codingname) extends SampleEntry (codingname) {
+  Box[] other_boxes; // optional
+}
+class XMLMetaDataSampleEntry() extends MetaDataSampleEntry (’metx‘) {
+  string content_encoding; // optional
+  string namespace;
+  string schema_location; // optional
+  BitRateBox (); // optional
+}
+class TextConfigBox() extends Fullbox (‘txtC’, 0, 0) {
+  string text_config;
+}
+class TextMetaDataSampleEntry() extends MetaDataSampleEntry (‘mett’) {
+  string content_encoding; // optional
+  string mime_format;
+  BitRateBox (); // optional
+  TextConfigBox (); // optional
+}
+aligned(8) class URIBox
+  extends FullBox(‘uri ’, version = 0, 0) {
+  string theURI;
+}
+aligned(8) class URIInitBox
+  extends FullBox(‘uriI’, version = 0, 0) {
+  unsigned int(8) uri_initialization_data[];
+}
+class URIMetaSampleEntry() extends MetaDataSampleEntry (’urim‘) {
+  URIbox the_label;
+  URIInitBox init; // optional
+  BitRateBox (); // optional
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| content_encoding | null 结尾的 UTF-8 字符 | 提供 MIME 类型，用于标识定时元数据的内容编码。它的定义与本规范中的 ItemInfoEntry 相同。如果不存在（提供空字符串），则不会编码定时的元数据。此字段的示例是 “application/zip”。请注意，目前不存在BiM \[ISO/IEC 23001-1\] 和 TeM \[ISO/IEC 15938-1\] 的 MIME 类型。因此，应使用实验性 MIME 类型 “application/x-BiM” 和 “text/x-TeM” 来识别这些编码机制 |
+| namespace | null 结尾的 UTF-8 字符 | 包含空格分隔的列表（以UTF-8字符表示），是采样文档遵循的一个或多个 XML 名称空间的列表。当用于元数据时，需要使用它来标识其类型，例如 gBSD 或 AQoS \[MPEG-21-7\]，了解 XML 的编码机制（例如 BiM）需要它进行解码 |
+| schema_location | null 结尾的 UTF-8 字符 | 可选的字段，包含空格分隔的列表（以UTF-8字符表示），是采样文档遵循的 XML 模式的零或多个 URL 的列表。如果有一个名称空间和一个模式，则此字段应为模式的 URL。如果存在多个名称空间，则此字段的语法应遵循 \[XML\] 定义的 xsi：schemaLocation 属性的语法。当用于元数据时，了解 XML 的编码机制（例如 BiM）需要它对定时的元数据进行解码 |
+| mime_format | null 结尾的 UTF-8 字符 | 提供一个 MIME 类型，用于标识采样的内容格式。此字段的示例包括 “text/ html” 和 “text/plain” |
+| text_config | null 结尾的 UTF-8 字符 | 提供每个文档的初始文本，位于每个同步采样的内容之前 |
+| theURI | - | 根据 6.2.4 中的规则格式化的 URI |
+| uri_initialization_data | - | 不透明的数据，其格式在 URI 格式的文档中定义 |
+
+### 12.4 hint 媒体
+
+#### 12.4.1 媒体 handler
+
+hint 媒体在 Media Box 的 Handler Box 中使用 “hint” handler 类型，如 8.4.3 定义。
+
+#### 12.4.2 Hint Media Header Box
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| hmhd | Media Information Box(minf) | Y | 应该仅存在一个特定的媒体头 |
+
+hint 轨道使用 HintMediaHeaderbox，在 8.4.5 节定义的 Media Information Box 中。hint 媒体头部包含 hint 轨道的常规演示信息，与编码无关。(PDU 是协议数据单元)
 
 ```code
 aligned(8) class HintMediaHeaderBox
@@ -5207,6 +5932,134 @@ aligned(8) class HintMediaHeaderBox
 | avgPDUsize | 整数 | 给出整个演示内 PDU 的平均大小 |
 | maxbitrate | 整数 | 给出在任何一秒窗口的最大速率(比特/秒) |
 | avgbitrate | 整数 | 整个演示的平均速率(比特/秒) |
+
+#### 12.4.3 采样条目
+
+hint 轨道使用特定于其协议的条目格式，并带有适当的名称。
+
+对于 hint 轨道，采样描述包含所用流协议的合适的声明性数据以及 hint 轨道的格式。采样描述的定义特定于协议。
+
+“protocol” 和 “codingname” 字段是已注册的标识符，用于唯一标识要使用的流协议或压缩格式解码器。 给定的协议或编码名称可能对采样描述具有可选的或必需的扩展名（例如编解码器初始化参数）。所有这些扩展名应在 box 内；这些 box 出现在必填字段之后。无法识别的 box 将被忽略。
+
+```code
+class HintSampleEntry() extends SampleEntry (protocol) {
+  unsigned int(8) data [];
+}
+```
+
+### 12.5 文本媒体
+
+#### 12.5.1 媒体 handler
+
+定时文本媒体类型指示关联的解码器将仅处理文本数据。定时文本媒体在 Media Box 的 Handler Box 中使用 “text” handler 类型，如 8.4.3 定义。
+
+#### 12.5.2 媒体头部
+
+定时文本轨道使用 8.4.5.2 中定义的 Null Media Header（“nmhd”）。
+
+#### 12.5.3 采样条目
+
+定时文本轨道使用 PlainTextSampleEntry。
+
+```code
+class PlainTextSampleEntry(codingname) extends SampleEntry (codingname) {
+}
+class SimpleTextSampleEntry(codingname) extends PlainTextSampleEntry (‘stxt’) {
+  string content_encoding; // optional
+  string mime_format;
+  BitRateBox (); // optional
+  TextConfigBox (); // optional
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| content_encoding | null 结尾的 UTF-8 字符 | 提供 MIME 类型，用于标识定时文本的内容编码。它的定义与本规范中的 ItemInfoEntry 相同。如果不存在（提供空字符串），则不会编码定时文本。此字段的示例是 “application/zip” |
+| mime_format | null 结尾的 UTF-8 字符 | 提供一个 MIME 类型，用于标识采样的内容格式。此字段的示例包括 “text/ html” 和 “text/plain” |
+
+### 12.6 字幕媒体
+
+#### 12.6.1 媒体 handler
+
+字幕媒体类型指示关联的解码器将处理文本数据和可能的图像。字幕媒体在 Media Box 的 Handler Box 中使用 “subt” handler 类型，如 8.4.3 定义。
+
+#### 12.6.2 Subtitle Media Header Box
+
+字幕轨道使用 8.4.5 中定义的 Media Information Box 中的 SubtitleMediaHeaderbox。字幕媒体标题包含字幕媒体与编解码无关的常规显示信息。此 box 用于所有包含字幕的轨道。
+
+```code
+aligned(8) class SubtitleMediaHeaderBox
+  extends FullBox (‘sthd’, version = 0, flags = 0){
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| version | 整数 | 指定此框的版本 |
+| flags | 整数 | 带有标志的 24 位整数（目前均为 0） |
+
+#### 12.6.3 采样条目
+
+字幕轨道使用 SubtitleSampleEntry。
+
+```code
+class SubtitleSampleEntry(codingname) extends SampleEntry (codingname) {
+}
+class XMLSubtitleSampleEntry() extends SubtitleSampleEntry (’stpp‘) {
+  string namespace;
+  string schema_location; // optional
+  string auxiliary_mime_types; // optional, required if auxiliary resources are present
+  BitRateBox (); // optional
+}
+class TextSubtitleSampleEntry() extends SubtitleSampleEntry (‘sbtt’) {
+  string content_encoding; // optional
+  string mime_format;
+  BitRateBox (); // optional
+  TextConfigBox (); // optional
+}
+```
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| content_encoding | null 结尾的 UTF-8 字符 | 提供 MIME 类型，用于标识字幕的内容编码。它的定义与本规范中的 ItemInfoEntry 相同。如果不存在（提供空字符串），则不会编码字幕。此字段的示例是 “application/zip”。请注意，目前不存在BiM \[ISO/IEC 23001-1\] 和 TeM \[ISO/IEC 15938-1\] 的 MIME 类型。因此，应使用实验性 MIME 类型 “application/x-BiM” 和 “text/x-TeM” 来识别这些编码机制 |
+| namespace | null 结尾的 UTF-8 字符 | 包含空格分隔的列表（以UTF-8字符表示），是采样文档遵循的一个或多个 XML 名称空间的列表。当用于元数据时，需要使用它来标识其类型，例如 gBSD 或 AQoS \[MPEG-21-7\]，了解 XML 的编码机制（例如 BiM）需要它进行解码 |
+| schema_location | null 结尾的 UTF-8 字符 | 可选的字段，包含空格分隔的列表（以UTF-8字符表示），是采样文档遵循的 XML 模式的零或多个 URL 的列表。如果有一个名称空间和一个模式，则此字段应为模式的 URL。如果存在多个名称空间，则此字段的语法应遵循 \[XML\] 定义的 xsi：schemaLocation 属性的语法。当用于元数据时，了解 XML 的编码机制（例如 BiM）需要它对定时的元数据进行解码 |
+| mime_format | null 结尾的 UTF-8 字符 | 提供一个 MIME 类型，用于标识采样的内容格式。此字段的示例包括 “text/ html” 和 “text/plain” |
+| auxiliary_mime_types | null 结尾的 UTF-8 字符 | 指示所有辅助资源的媒体类型，例如图像和字体（如果存在），存储为字幕子采样。如果有多个 mime_type，则此字段应为以空格分隔的列表 |
+
+### 12.7 字体媒体
+
+#### 12.7.1 媒体 handler
+
+字体媒体在 Media Box 的 Handler Box 中使用 “fdsm” handler 类型，如 8.4.3 定义。
+
+#### 12.7.2 媒体头部
+
+字体轨道使用 NullMediaHeader。
+
+#### 12.7.3 采样条目
+
+字体流使用 FontSampleEntry。
+
+### 12.8 转换的媒体
+
+8.12 节描述了受保护的媒体。
+
+8.17 节描述了不完整的媒体。
+
+8.15 节描述了受限媒体。
+
+### unknown
+
+| box 类型 | 容器 | 必要性 | 数量 |
+| --- | --- | --- | --- |
+| vmhd/smhd/hmhd/nmhd | Media Information Box(minf) | Y | 1 |
+
+每个轨道类型(对应媒体的 handler 类型)有一个不同的媒体信息头；匹配的头部应该存在，可以是此处定义的头部之一，也可以是派生规范中定义。
+
+| 字段 | 类型 | 含义 |
+| --- | --- | --- |
+| hSpacing | 整数 | 定义像素的相对宽度和高度 |
 
 ### 8.40 AVC Extensions
 
@@ -5242,69 +6095,6 @@ aligned(8) class SampleScaleBox extends FullBox(‘stsl’, version = 0, 0) {
 | scale_method | 8 位 无符号整数 | 定义要使用的缩放模式。在 256 个可能的值中，0~127 保留给 ISO 使用，而 128~256 是用户定义的，在本国际标准中未指定；可由应用程序确定使用。在保留值中，目前定义了以下模式：1-fill 模式；2-hidden 模式；3-meet 模式；4-X 轴是 slice 模式；5-Y 轴是 slice 模式 |
 | display_center_x | 整数 | 应该优先显示的区域中心相对图像中心的水平偏移量(单位是像素)。默认值是 0。正值表示显示中心在图像中心右侧 |
 | display_center_y | 整数 | 应该优先显示的区域中心相对图像中心的垂直偏移量(单位是像素)。默认值是 0。正值表示显示中心在图像中心下方 |
-
-## 9 可扩展性
-
-### 9.1 对象
-
-此规范中定义的规范对象通过 32 位值标识，该值通常是 ISO 8859-1 字符集中四个可打印字符的集合。
-
-为了允许用户扩展格式、存储新的对象类型，以及允许格式化为此规范的文件和某些分布式计算环境互操作，有一个类型映射和类型扩展机制，二者一起形成一对。
-
-分布式计算中常用的是 16 字节的 UUID(统一唯一标识符)。通过组合 4 字节类型值和 12 字节的 ISO 保留值(0xXXXXXXXX-0011-0010-8000-00AA00389B71)，可以将此处指定的任何规范类型直接映射到 UUID 空间。四字节替换前面数字中的 XXXXXXXX。ISO 将这些类型标识为本规范中使用的对象类型。
-
-用户对象使用转义类型 “uuid”。它们已记录在上面的 6.2 小节。在 size 和 type 字段之后，有一个完整的 16 字节的 UUID。
-
-希望将每个对象视为对象具有 UUID 的系统可以采用以下算法：
-
-```code
-size := read_uint32();
-type := read_uint32();
-if (type==‘uuid’)
-  then uuid := read_uuid()
-  else uuid := form_uuid(type, ISO_12_bytes);
-```
-
-类似地，将一组对象线性化为按此规范格式化的文件时，应用下面的算法：
-
-```code
-write_uint32( object_size(object) );
-uuid := object_uuid_type(object);
-if (is_ISO_uuid(uuid))
-  write_uint32( ISO_type_of(uuid) )
-else {
-  write_uint32(‘uuid’);
-  write_uuid(uuid);
-}
-```
-
-如果文件包含此规范的 box，这些 box 使用 “uuid” 转义和完整的 UUID 编写，则该文件不符合要求；系统不需要识别使用 “uuid” 和 ISO UUID 编写的标准的 box。
-
-### 9.2 存储格式
-
-包含元数据的主文件可能使用其他文件来存储媒体数据。这些其他文件可能包含来自各种标准(包括此标准)的头部声明。
-
-如果此类次要文件设置了元数据声明，则该元数据不属于整个演示的一部分。这允许将小演示文件整合成较大的整个演示，通过构建新的元数据并引用该媒体数据，而不是复制它。
-
-对这些其他文件的引用不必使用这些文件中的所有数据；以这种方式，可以使用媒体数据的子集，或者忽略不需要的头部。
-
-### 9.3 派生的文件格式
-
-出于限制目的，可将此规范用作特定文件格式的基础：比如，MPEG-4 的 MP4 文件格式和 Motion JPEG 2000 文件格式二者都由此规范衍生。编写衍生的规范时，必须制定以下内容：
-
-新格式的名称，以及 File Type Box 的 brand 和兼容性类型。通常会使用新的文件扩展名，以及新的 MIME 类型和 Machintosh 文件类不过这些定义和注册在本规范的范围之外。
-
-必须显式声明所有模板字段；且其使用必须符合此处的规范。
-
-必须定义采样描述内使用的确切 “codingname” 和 “protocol” 标识符。这些代码点标识的采样格式也必须定义。然而，与其在此级别定义新代码点，可能不如将新编码系统适合现有框架(比如 MPEG-4 系统框架)。比如，新的音频格式可以使用新的 codingname，或使用 “mp4a” 并在 MPEG-4 音频框架内注册新的标识符。
-
-尽管不建议，但可以定义新的 box。
-
-如果衍生规范需要除了视频和音频以外的新轨道类型，则必须注册新的 handler-type。必须标识此轨道所需的媒体头。如果是新 box，必须对其定义并注册其 box 类型。通常，期望大多数系统可以使用现有轨道类型。
-
-所有新的轨道引用类型必须注册和定义。
-
-如上定义，可用可选或必需的 box 扩展采样描述格式。这样做的通常语法是定义一个具有特定名称的新 box，扩展 VisualSampleEntry (比如)，并包含新 box。
 
 ## 附录 A (提供信息) 概述和介绍
 
