@@ -347,6 +347,54 @@
     - [E.11 “iso8” brand](#e11-iso8-brand)
     - [E.12 “iso9” brand](#e12-iso9-brand)
   - [附录 G (提供信息) URI 标记的元数据形式](#附录-g-提供信息-uri-标记的元数据形式)
+    - [G.1 UUID 标记的元数据](#g1-uuid-标记的元数据)
+    - [G.2 ISO OID 标记的元数据](#g2-iso-oid-标记的元数据)
+    - [G.3 SMPTE 标记的元数据](#g3-smpte-标记的元数据)
+  - [附录 H (提供信息) RTP 流和接收 hint 轨道的处理](#附录-h-提供信息-rtp-流和接收-hint-轨道的处理)
+    - [H.1 简介](#h1-简介)
+      - [H.1.1 概述](#h11-概述)
+      - [H.1.2 结构](#h12-结构)
+      - [H.1.3 术语和定义](#h13-术语和定义)
+        - [H.1.3.1 播放器](#h131-播放器)
+        - [H.1.3.2 录制单元](#h132-录制单元)
+        - [H.1.3.3 重发单位](#h133-重发单位)
+    - [H.2 RTP 流的同步](#h2-rtp-流的同步)
+    - [H.3 录制 RTP 流](#h3-录制-rtp-流)
+      - [H.3.1 简介](#h31-简介)
+      - [H.3.2 补偿已接收 RTP 流起始位置不相等](#h32-补偿已接收-rtp-流起始位置不相等)
+      - [H.3.3 记录 SDP](#h33-记录-sdp)
+      - [H.3.4 在 RTP 接收 hint 轨道内创建采样](#h34-在-rtp-接收-hint-轨道内创建采样)
+      - [H.3.5 RTP 时间戳的表示](#h35-rtp-时间戳的表示)
+      - [H.3.6 为了促进回放中流间同步的记录操作](#h36-为了促进回放中流间同步的记录操作)
+        - [H.3.6.1 概述](#h361-概述)
+        - [H.3.6.2 促进基于 RTCP 发送者报告的嘴唇同步](#h362-促进基于-rtcp-发送者报告的嘴唇同步)
+        - [H.3.6.3 补偿时间戳中的时钟漂移](#h363-补偿时间戳中的时钟漂移)
+      - [H.3.7 接收时间的表示](#h37-接收时间的表示)
+      - [H.3.8 媒体采样的创建](#h38-媒体采样的创建)
+      - [H.3.9 创建引用媒体采样的 hint 采样](#h39-创建引用媒体采样的-hint-采样)
+    - [H.4 播放录制的RTP流](#h4-播放录制的rtp流)
+      - [H.4.1 简介](#h41-简介)
+      - [H.4.2 播放准备](#h42-播放准备)
+      - [H.4.3 对 RTP 接收 hint 轨道中的采样进行解码](#h43-对-rtp-接收-hint-轨道中的采样进行解码)
+      - [H.4.4 嘴唇同步](#h44-嘴唇同步)
+      - [H.4.5 随机接入](#h45-随机接入)
+    - [H.5 重新发送记录的RTP流](#h5-重新发送记录的rtp流)
+      - [H.5.1 简介](#h51-简介)
+      - [H.5.2 重新发送RTP数据包](#h52-重新发送rtp数据包)
+      - [H.5.3 RTCP处理](#h53-rtcp处理)
+  - [附录 I (提供信息) 流访问点](#附录-i-提供信息-流访问点)
+    - [I.1 简介](#i1-简介)
+    - [I.2 SAP属性](#i2-sap属性)
+      - [I.2.1 总则](#i21-总则)
+      - [I.2.2 图层的SAP属性](#i22-图层的sap属性)
+    - [I.3 SAP类型](#i3-sap类型)
+  - [附录 K (提供信息) 段索引示例](#附录-k-提供信息-段索引示例)
+    - [K.1 简介](#k1-简介)
+    - [K.2 示例](#k2-示例)
+      - [K.2.1 简单的一级索引](#k21-简单的一级索引)
+      - [K.2.2 分层](#k22-分层)
+      - [K.2.3 菊花链](#k23-菊花链)
+      - [K.2.4 组合分层和菊花链](#k24-组合分层和菊花链)
   - [参考](#参考)
 
 ## 缩写
@@ -4700,7 +4748,7 @@ MPEG-2 TS hint 轨道的每个采样都包含一组
 - 预先计算的包：一个或多个带有相关头部和尾部的 MPEG-2 TS 包
 - 构造的包：通过指向另一轨道的数据，将一个或多个带有相关头部和尾部的 MPEG-2 TS 包组合在一起的指令
 
-注意：采样中的每个 MPEG-2 TS 包都可以在 preheader(precedingbytes)之前，或在 posttrailer(trailingbytes)之后，如采样描述格式中所述。preheader 和 posttrailer 的大小分别由采样描述中的 precedingbyteslen 和 trailingbyteslen 指定，以允许使用更少块的紧凑型采样表。
+注意：采样中的每个 MPEG-2 TS 包都可以在 preheader(precedingbytes)之前，或在 posttrailer(trailingbytes)之后，如采样描述格式所述。preheader 和 posttrailer 的大小分别由采样描述中的 precedingbyteslen 和 trailingbyteslen 指定，以允许使用更少块的紧凑型采样表。
 
 预先计算和构造的采样的混合可能出现在同一轨道中。如果需要填充传输流数据包，则可以使用 adaptation_field 实现或通过适当使用 MPEG2TSImmediateConstructor 显式实现。
 
@@ -4922,13 +4970,13 @@ CSRC[] 中的条目数等于收到的 SRTP 包的 CC 值。 CSRC[] 的第 n 个�
 
 ##### 9.4.2.1 介绍
 
-本节为 IETF RFC 3550 中定义的实时控制协议（RTCP）指定接收 hint 轨道格式。
+本节为 IETF RFC 3550 中定义的实时控制协议(RTCP)指定接收 hint 轨道格式。
 
 RTCP 用于通过 Internet 协议实时传输 RTP 会话的控制信息。在流传输期间，每个 RTP 流通常具有一个伴随的 RTCP 流，该 RTCP 流承载了 RTP 流的控制信息。一个 RTCP 接收 hint 轨道携带一个 RTCP 流，并通过轨道引用与对应的 RTP 接收 hint 轨道相关联。
 
 RTCP 接收 hint 轨道的格式允许在 hint 采样中存储 RTCP 发送者报告。
 
-RTCP 发送者报告对于流录制特别感兴趣，因为它们反映了服务器的当前状态，例如，媒体时间（音频/视频包的 RTP 时间戳）与服务器时间（NTP 格式的绝对时间）之间的关系。回放录制的 RTP 接收 hint 轨道必须了解这种关系，才能检测和校正时钟漂移和抖动。
+RTCP 发送者报告对于流录制特别感兴趣，因为它们反映了服务器的当前状态，例如，媒体时间(音频/视频包的 RTP 时间戳)与服务器时间(NTP 格式的绝对时间)之间的关系。回放录制的 RTP 接收 hint 轨道必须了解这种关系，才能检测和校正时钟漂移和抖动。
 
 9.4.1.2 中指定的 Timestamp Synchrony box 可以在播放文件之前校正时钟漂移和抖动，因此，当 timestamp_sync 等于 2 时，RTCP 流的录制是可选的。
 
@@ -4938,7 +4986,7 @@ RTCP 发送者报告对于流录制特别感兴趣，因为它们反映了服务
 
 每个 RTP 接收 hint 轨道应有零或一个 RTCP 接收 hint 轨道。RTCP 接收 hint 轨道应包含一个 Track Reference Box，其中包含相关的 RTP 接收 hint 轨道的 “cdsc” 类型引用。
 
-当 i 是采样的采样号时，8.6.1.2 中指定的采样时间 DT（i） 表示包的接收时间。接收时间的时钟源应与相关的 RTP 接收 hint 轨道相同。RTCP 接收 hint 轨道的 Media Header Box 中的 timescale 值应等于相关的 RTP 接收 hint 轨道的 Media Header Box 中的 timescale 值。
+当 i 是采样的采样号时，8.6.1.2 中指定的采样时间 DT(i) 表示包的接收时间。接收时间的时钟源应与相关的 RTP 接收 hint 轨道相同。RTCP 接收 hint 轨道的 Media Header Box 中的 timescale 值应等于相关的 RTP 接收 hint 轨道的 Media Header Box 中的 timescale 值。
 
 ##### 9.4.2.3 采样描述格式
 
@@ -4946,7 +4994,7 @@ RTCP 接收 hint 轨道的采样描述中的条目格式为 “rtcp”。在其�
 
 ##### 9.4.2.4 采样格式
 
-接收 hint 轨道中的每个采样代表一个或多个接收到的 RTCP 包。每个采样包含两个区域：原始 RTCP 包和所需的任何其他数据。注意，采样大小可从采样大小表中获知，且 RTCP 包的大小在包本身内指示（如 RFC 3550 中记录），其计数比该包内 32 位字数量少一。
+接收 hint 轨道中的每个采样代表一个或多个接收到的 RTCP 包。每个采样包含两个区域：原始 RTCP 包和所需的任何其他数据。注意，采样大小可从采样大小表中获知，且 RTCP 包的大小在包本身内指示(如 RFC 3550 中记录)，其计数比该包内 32 位字数量少一。
 
 ```code
 aligned(8) class receivedRTCPpacket {
@@ -4969,9 +5017,9 @@ aligned(8) class receivedRTCPsample {
 
 ##### 9.4.3.1 介绍
 
-本节为 IETF RFC 3711 中定义的安全实时传输协议（SRTP）指定接收 hint 轨道格式。
+本节为 IETF RFC 3711 中定义的安全实时传输协议(SRTP)指定接收 hint 轨道格式。
 
-SRTP 是 Internet 协议上实时媒体传输（RTP）的安全扩展。每个 SRTP 流携带一种媒体类型，且一个 SRTP 接收 hint 轨道携带一个 SRTP 流。因此，录制视听节目导致至少两个 SRTP 接收 hint 轨道。
+SRTP 是 Internet 协议上实时媒体传输(RTP)的安全扩展。每个 SRTP 流携带一种媒体类型，且一个 SRTP 接收 hint 轨道携带一个 SRTP 流。因此，录制视听节目导致至少两个 SRTP 接收 hint 轨道。
 
 SRTP 接收 hint 轨道格式的设计遵循 RTP 接收 hint 轨道的设计，并重用了 RTP 接收 hint 轨道提供的大多数框架。RTP 和 SRTP 接收 hint 轨道之间的主要区别在于，实际的媒体有效负载以加密形式存储在 SRTP 接收 hint 轨道中，而对于 RTP 接收 hint 轨道则未加密。SRTP 接收 hint 轨道提供其他 box，用于存储回放时解密加密内容所需的信息。另外，SRTP 包头的所有头部字段应与有效载荷一起存储，因为此信息对于检查接收数据的完整性是必需的。SRTP 接收 hint 轨道通常与 SRTCP 接收 hint 轨道一起使用。
 
@@ -4992,9 +5040,9 @@ class ReceivedSrtpHintSampleEntry() extends SampleEntry (‘rsrp‘) {
 }
 ```
 
-字段和 box 与 ReceivedRtpHintSampleEntry（“rrtp”） 的相同。SRTP 接收 hint 轨道中每个采样描述条目的 addtionaldata[] 都应恰好包含一个 ReceivedSsrc Box（“rssr”）。
+字段和 box 与 ReceivedRtpHintSampleEntry(“rrtp”) 的相同。SRTP 接收 hint 轨道中每个采样描述条目的 addtionaldata[] 都应恰好包含一个 ReceivedSsrc Box(“rssr”)。
 
-此外，additionaldata[] 可能包含下面定义的 Received Cryptographic Context ID Box 和 Rollover Counter Box。此外，也应包括 SRTP Process Box 作为 additionaldata box 之一。因为内容以加密方式存储，SRTP Process Box 中的完整性和加密算法字段将指定应用于接收流的算法。四个空格（$20$20$20$20）条目可用于表示该算法的定义在本文档范围以外。
+此外，additionaldata[] 可能包含下面定义的 Received Cryptographic Context ID Box 和 Rollover Counter Box。此外，也应包括 SRTP Process Box 作为 additionaldata box 之一。因为内容以加密方式存储，SRTP Process Box 中的完整性和加密算法字段将指定应用于接收流的算法。四个空格($20$20$20$20)条目可用于表示该算法的定义在本文档范围以外。
 
 ###### 9.4.3.2.2 Received Cryptographic Context ID Box
 
@@ -5015,7 +5063,7 @@ aligned(8) class ReceivedCryptoContextIdBox extends Box (‘ccid’) {
 }
 ```
 
-destPort 和 destIP 参数分别包含 SRTP 会话的端口号和 IP 地址（如接收的 IPv4 或 IPv6 包中所示），通过该端口可以接收录制的 SRTP 包。ip_version 包含 4 或 6，分别代表 IPv4 或 IPv6。
+destPort 和 destIP 参数分别包含 SRTP 会话的端口号和 IP 地址(如接收的 IPv4 或 IPv6 包中所示)，通过该端口可以接收录制的 SRTP 包。ip_version 包含 4 或 6，分别代表 IPv4 或 IPv6。
 
 ###### 9.4.3.2.3 Rollover Counter Box
 
@@ -5029,25 +5077,25 @@ aligned(8) class RolloverCounterBox extends Box (‘sroc’) {
 
 rollover_counter 是一个非零整数，为所有关联的接收到的 SRTP 包提供 ROC 字段的值。
 
-注意：翻转计数器（ROC）是 SRTP 流加密上下文的元素，并且取决于包在 RTP 流中的绝对位置。为了解密接收到的 SRTP 包，必须知道 ROC 值。可选地使用 Rollover Counter Box 作为 RFC 4771 定义的一种可选机制，在 SRTP 包的身份验证标签中显式表示 ROC 值。
+注意：翻转计数器(ROC)是 SRTP 流加密上下文的元素，并且取决于包在 RTP 流中的绝对位置。为了解密接收到的 SRTP 包，必须知道 ROC 值。可选地使用 Rollover Counter Box 作为 RFC 4771 定义的一种可选机制，在 SRTP 包的身份验证标签中显式表示 ROC 值。
 
 ##### 9.4.3.3 采样和包条目格式
 
-SRTP 接收 hint 轨道的采样格式和包条目格式均与 9.4.1.3 和 9.4.1.4 中定义的 RTP 接收 hint 轨道的格式相同。包有效载荷被存储为在 SRTP 包接收到的，即 SRTP 包中接收的所有信息（不包括头部），或者换句话说，加密的有效载荷以及密钥标识符（MKI）和身份验证标签。
+SRTP 接收 hint 轨道的采样格式和包条目格式均与 9.4.1.3 和 9.4.1.4 中定义的 RTP 接收 hint 轨道的格式相同。包有效载荷被存储为在 SRTP 包接收到的，即 SRTP 包中接收的所有信息(不包括头部)，或者换句话说，加密的有效载荷以及密钥标识符(MKI)和身份验证标签。
 
-如果对于接收到的 SRTP 包，CSRC_count 值不等于零，则与此接收到的 SRTP 包对应的 extra_data_tlv 应恰好包含一个 receivedCSRC box（“rcsr”）。
+如果对于接收到的 SRTP 包，CSRC_count 值不等于零，则与此接收到的 SRTP 包对应的 extra_data_tlv 应恰好包含一个 receivedCSRC box(“rcsr”)。
 
 #### 9.4.4 SRTCP 接收 hint 轨道
 
 ##### 9.4.4.1 介绍
 
-本节为 IETF RFC 3711 中定义的安全实时控制协议（SRTCP）指定接收 hint 轨道格式。
+本节为 IETF RFC 3711 中定义的安全实时控制协议(SRTCP)指定接收 hint 轨道格式。
 
 SRTCP 用于通过 Internet 协议实时传输 SRTP 会话的控制信息。SRTCP 在 SRTP 承担的角色和 RTCP 在 RTP 承担的角色相同，参阅 9.4.2。在流传输期间，每个 SRTP 流通常具有一个伴随的 SRTCP 流，该 SRTCP 流携带 SRTP 流的控制信息。一个 SRTCP 接收 hint 轨道携带一个 SRTCP 流，并通过轨道引用关联相应的 SRTP 接收 hint 轨道。
 
 SRTCP 接收 hint 轨道的格式允许在 hint 采样(例如 SRTCP 发送者报告)中存储 SRTCP 包。
 
-SRTCP 发送者报告对于流录制特别感兴趣，因为它们反映了服务器的当前状态，例如，媒体时间（音频/视频包的 SRTP 时间戳）与服务器时间（NTP 格式的绝对时间）之间的关系。为了回放录制的 SRTP 接收 hint 轨道，也需要了解这种关系，以便能够检测和校正时钟漂移和抖动。
+SRTCP 发送者报告对于流录制特别感兴趣，因为它们反映了服务器的当前状态，例如，媒体时间(音频/视频包的 SRTP 时间戳)与服务器时间(NTP 格式的绝对时间)之间的关系。为了回放录制的 SRTP 接收 hint 轨道，也需要了解这种关系，以便能够检测和校正时钟漂移和抖动。
 
 9.4.1.2 中指定的 Timestamp Synchrony box 可以在播放文件之前校正时钟漂移和抖动，因此录制 SRTCP 流是可选的。
 
@@ -5057,7 +5105,7 @@ SRTCP 发送者报告对于流录制特别感兴趣，因为它们反映了服�
 
 每个 SRTP 接收 hint 轨道应有零或一个 SRTCP 接收 hint 轨道。SRTCP 接收 hint 轨道应包含一个 Track Reference Box，其中包含相关的 SRTP 接收 hint 轨道的 “cdsc” 类型引用。
 
-当 i 是采样的采样号时，8.6.1.2 中指定的采样时间 DT（i） 表示包的接收时间。接收时间的时钟源应与相关的 SRTP 接收 hint 轨道相同。SRTCP 接收 hint 轨道的 Media Header Box 中的 timescale 值应等于相关的 SRTP 接收 hint 轨道的 Media Header Box 中的 timescale 值。
+当 i 是采样的采样号时，8.6.1.2 中指定的采样时间 DT(i) 表示包的接收时间。接收时间的时钟源应与相关的 SRTP 接收 hint 轨道相同。SRTCP 接收 hint 轨道的 Media Header Box 中的 timescale 值应等于相关的 SRTP 接收 hint 轨道的 Media Header Box 中的 timescale 值。
 
 ##### 9.4.4.3 采样描述格式
 
@@ -5080,7 +5128,7 @@ Class ProtectedRtpReceptionHintSampleEntry
 }
 ```
 
-SchemeInformation（“sinf”） box 应包含所应用保护方案的详细信息。其中应包括 OriginalFormatBox，该 box 应包含四字符代码 “rrtp”（原始 RTPReceptionHintSampleEntry box 的四字符代码）。
+SchemeInformation(“sinf”) box 应包含所应用保护方案的详细信息。其中应包括 OriginalFormatBox，该 box 应包含四字符代码 “rrtp”(原始 RTPReceptionHintSampleEntry box 的四字符代码)。
 
 #### 9.4.6 录制过程
 
@@ -5102,7 +5150,7 @@ SchemeInformation（“sinf”） box 应包含所应用保护方案的详细信
 
 - VisualRollRecoveryEntry 记录了的采样启用了流中的入口点，这些入口点是同步采样的替代
 - AudioRollRecoveryEntry 记录了音频流中所需的预滚动距离，音频流中每个采样可以独立解码，但是只有在预滚动指定数量的采样后，才能确保解码器输出正确
-- AudioPreRollEntry 与音频流一起使用，音频流中并非每个采样都是同步采样；解码只能从同步采样开始，但是只有在预滚动指定数量的采样后，才能确保解码器输出正确。这意味着在执行随机访问时要获得正确输出，首先必须通过指定的预滚动距离备份，然后（为了使解码开始）在该位置或该位置之前找到最近的同步采样。
+- AudioPreRollEntry 与音频流一起使用，音频流中并非每个采样都是同步采样；解码只能从同步采样开始，但是只有在预滚动指定数量的采样后，才能确保解码器输出正确。这意味着在执行随机访问时要获得正确输出，首先必须通过指定的预滚动距离备份，然后(为了使解码开始)在该位置或该位置之前找到最近的同步采样。
 
 ```code
 class VisualRollRecoveryEntry() extends VisualSampleGroupEntry (’roll’) {
@@ -5128,7 +5176,7 @@ class AudioPreRollEntry() extends AudioSampleGroupEntry (’prol’) {
 
 ![图 5—音频/视频比率共享随时间变化](figure5-audiovideo-rate-share-as-function-of-time.png)
 
-为了适应随可用比特率而变化的比率共享值，可以指定多个操作范围。例如，可能表明音频在可用比特率较低时需要（比视频）更高的百分比。从技术上讲，这是通过指定两个操作点来完成的，如图 6 所示。
+为了适应随可用比特率而变化的比率共享值，可以指定多个操作范围。例如，可能表明音频在可用比特率较低时需要(比视频)更高的百分比。从技术上讲，这是通过指定两个操作点来完成的，如图 6 所示。
 
 ![图 6—音频随可用比特率变化](figure6-audio-rate-share-as-function-of-available-bitrate.png)
 
@@ -5138,11 +5186,11 @@ class AudioPreRollEntry() extends AudioSampleGroupEntry (’prol’) {
 
 #### 10.2.2 比率共享采样组条目
 
-轨道的每个采样可能关联多个采样组描述之一（或零个），每个采样组描述都定义了一个比率共享信息的记录。通常，相同的比率共享信息适用于许多连续的采样，因此定义两个或三个可用于不同时间间隔的采样组描述可能就足够了。
+轨道的每个采样可能关联多个采样组描述之一(或零个)，每个采样组描述都定义了一个比率共享信息的记录。通常，相同的比率共享信息适用于许多连续的采样，因此定义两个或三个可用于不同时间间隔的采样组描述可能就足够了。
 
-分组类型 “rash”（比率共享的缩写）定义为比率共享信息的分组标准。轨道的 Sample Table Box（“stbl”） 中可以包含零或一个分组类型为 “rash” 的 Sample To Group Box（'sbgp'）。如果使用了 hint 轨道，它将驻留在 hint 轨道中，否则应驻留在媒体轨道中。
+分组类型 “rash”(比率共享的缩写)定义为比率共享信息的分组标准。轨道的 Sample Table Box(“stbl”) 中可以包含零或一个分组类型为 “rash” 的 Sample To Group Box('sbgp')。如果使用了 hint 轨道，它将驻留在 hint 轨道中，否则应驻留在媒体轨道中。
 
-可以为根据总可用比特率（即应共享的比特率）定义的几个操作点指定目标比率。如果仅定义一个操作点，则目标比率共享将应用于所有可用的比特率。如果定义了多个操作点，则每个操作点指定一个目标比率共享。为第一个和最后一个操作点指定的目标比率共享值也分别指定可用比特率较低和较高时的目标比率共享值。指定两个操作点之间的目标比率共享在那些操作点的目标比率共享之间的范围内。一种可能性是使用线性插值进行估计。
+可以为根据总可用比特率(即应共享的比特率)定义的几个操作点指定目标比率。如果仅定义一个操作点，则目标比率共享将应用于所有可用的比特率。如果定义了多个操作点，则每个操作点指定一个目标比率共享。为第一个和最后一个操作点指定的目标比率共享值也分别指定可用比特率较低和较高时的目标比率共享值。指定两个操作点之间的目标比率共享在那些操作点的目标比率共享之间的范围内。一种可能性是使用线性插值进行估计。
 
 ```code
 class RateShareEntry() extends SampleGroupDescriptionEntry('rash') {
@@ -5165,10 +5213,10 @@ class RateShareEntry() extends SampleGroupDescriptionEntry('rash') {
 | 字段 | 类型 | 含义 |
 | --- | --- | --- |
 | operation_point_count | 非零整数 | 给出操作点的数量 |
-| available_bitrate | 正整数 | 定义一个操作点（以千比特/秒为单位）。它是可以共享分配给轨道的总可用比特率。每个条目应大于前一个条目 |
-| target_rate_share | 整数 | 非零值表示应为每个操作点分配给媒体的可用带宽的百分比。第一个（最后一个）操作点的值适用于比操作点本身较低（较高）的可用比特率。操作点之间的目标比率共享受限于相应操作点的目标比率共享。零值表示未提供有关优先比率共享百分比的信息 |
-| maximum_bitrate | 整数 | 非零值（以千比特/秒为单位）指示应为媒体分配带宽的上限。仅当会话中的所有其他媒体分别满足目标比率共享和最大比特率的配额时，才应分配高于最大比特率的比特率。零值表示未提供有关最大比特率的信息 |
-| minimum_bitrate | 整数 | 非零值（以千比特/秒为单位）指示应为媒体分配带宽的下限。如果分配的带宽对应于较小的值，则不应分配任何比特率。相反，应优先考虑会话中的其他媒体或同一媒体的备用编码。零最小比特率表示未提供有关最小比特率的信息 |
+| available_bitrate | 正整数 | 定义一个操作点(以千比特/秒为单位)。它是可以共享分配给轨道的总可用比特率。每个条目应大于前一个条目 |
+| target_rate_share | 整数 | 非零值表示应为每个操作点分配给媒体的可用带宽的百分比。第一个(最后一个)操作点的值适用于比操作点本身较低(较高)的可用比特率。操作点之间的目标比率共享受限于相应操作点的目标比率共享。零值表示未提供有关优先比率共享百分比的信息 |
+| maximum_bitrate | 整数 | 非零值(以千比特/秒为单位)指示应为媒体分配带宽的上限。仅当会话中的所有其他媒体分别满足目标比率共享和最大比特率的配额时，才应分配高于最大比特率的比特率。零值表示未提供有关最大比特率的信息 |
+| minimum_bitrate | 整数 | 非零值(以千比特/秒为单位)指示应为媒体分配带宽的下限。如果分配的带宽对应于较小的值，则不应分配任何比特率。相反，应优先考虑会话中的其他媒体或同一媒体的备用编码。零最小比特率表示未提供有关最小比特率的信息 |
 | discard_priority | 整数 | 指示当丢弃轨道以满足 target_rate_share、maximum_bitrate 和 minimum_bitrate 设置的约束时，轨道的优先级。按丢弃优先级顺序丢弃轨道，并且具有最高丢弃优先级值的轨道首先被丢弃 |
 
 #### 10.2.3 轨道之间的关系
@@ -5177,7 +5225,7 @@ class RateShareEntry() extends SampleGroupDescriptionEntry('rash') {
 
 应该为每个轨道提供比率共享信息。不包含比率共享信息的轨道只有一个操作点，且可以将其视为恒定比特率轨道，且丢弃优先级为 128。target_rate_share、maximum_bitrate 和 minimum_bitrate 在这种情况下不适用。
 
-彼此备用的轨道（在每个时间实例上）应以相同的总可用比特率集定义相同数量的操作点，并具有相同的丢弃优先级。请注意，操作点的数量和定义可能取决于时间。备用轨道可能具有不同的 target_rate_share、maximum_bitrate 和 minimum_bitrate。
+彼此备用的轨道(在每个时间实例上)应以相同的总可用比特率集定义相同数量的操作点，并具有相同的丢弃优先级。请注意，操作点的数量和定义可能取决于时间。备用轨道可能具有不同的 target_rate_share、maximum_bitrate 和 minimum_bitrate。
 
 #### 10.2.4 比特率分配
 
@@ -5187,11 +5235,11 @@ class RateShareEntry() extends SampleGroupDescriptionEntry('rash') {
 
 1. 如果所有轨道均具有明确的目目标比率共享值，并且它们的总和未达到 100%，则将其视为权重，即对其进行归一化
 2. 总分配不得超过总可用比特率
-3. 在备用轨道之间进行选择时，所选轨道应该使备用组的分配最接近其目标比率共享，或者是在不丢弃其他轨道的清理下希望最高比特率的轨道（参见下文）
+3. 在备用轨道之间进行选择时，所选轨道应该使备用组的分配最接近其目标比率共享，或者是在不丢弃其他轨道的清理下希望最高比特率的轨道(参见下文)
 4. 轨道必须在其最小和最大比特率之间分配，否则必须丢弃
 5. 轨道应根据其目标比率共享进行分配，但这可能会失真，以使某些轨道达到其最小值，或者在某些轨道达到其最大值
 6. 如果无法从每个备用组中包含一个轨道进行分配，则应按照丢弃优先级顺序丢弃轨道
-7. 每当活动轨道（已从备用组中选择一个）的操作集发生更改或可用比特率发生更改时，都必须重新计算分配
+7. 每当活动轨道(已从备用组中选择一个)的操作集发生更改或可用比特率发生更改时，都必须重新计算分配
 
 ### 10.3 备用启动序列
 
@@ -5229,11 +5277,11 @@ class AlternativeStartupEntry() extends VisualSampleGroupEntry (’alst’) {
 | roll_count | 整数 | 指示备用启动序列中的采样数。如果roll_count 等于0，则关联的采样不属于任何备用启动序列，且 first_output_sample 的语义未指定。映射到每个备用启动序列该采样组条目的采样数应等于 roll_count |
 | first_output_sample | 整数 | 表示备用启动序列采样中要输出的第一个采样的索引。开始备用启动序列的同步初始采样的索引为 1，并且索引按备用启动序列中每个采样的解码顺序递增 1 |
 | sample_offset\[i\] | 整数 | 表示备用启动序列中第 i 个采样的解码时间相对于从 Decoding Time to Sample Box 或 Track Fragment Header Box 得出采样的常规解码时间的增量。开始备用启动序列的同步初始采样是其第一个采样 |
-| num_output_samples\[j\]/num_total_samples\[j\] | 整数 | 表示备用启动序列中的采样输出速率。备用启动顺序分为 k 个连续片段，其中每个片段的采样率恒定，且与相邻片段的采样率不相等。第一个片段从 first_output_sample 指示的采样开始。num_output_samples\[j\] 表示备用启动序列第 j 个片段的输出采样数量。num_total_samples\[j\] 表示采样总数，包括不在备用启动序列中的采样，从第 j 个片段中第一个输出采样到结束该备用启动序列的较早（按合成顺序）采样和第（j+1）个片段的第一个输出采样之前的采样 |
+| num_output_samples\[j\]/num_total_samples\[j\] | 整数 | 表示备用启动序列中的采样输出速率。备用启动顺序分为 k 个连续片段，其中每个片段的采样率恒定，且与相邻片段的采样率不相等。第一个片段从 first_output_sample 指示的采样开始。num_output_samples\[j\] 表示备用启动序列第 j 个片段的输出采样数量。num_total_samples\[j\] 表示采样总数，包括不在备用启动序列中的采样，从第 j 个片段中第一个输出采样到结束该备用启动序列的较早(按合成顺序)采样和第(j+1)个片段的第一个输出采样之前的采样 |
 
 #### 10.3.4 示例
 
-分层时间可伸缩性（例如在 AVC 和 SVC 中）提高了压缩效率，但是由于解码的图像从（解码）顺序到输出顺序的重新排序增加了解码延迟。在某些研究中，已证明深度时间分层在压缩效率方面很有用。当时间层次很深且解码器的操作速度受到限制（不能快于实时处理）时，从解码开始到渲染开始的初始延迟很大，可能会负面影响终端用户的体验。
+分层时间可伸缩性(例如在 AVC 和 SVC 中)提高了压缩效率，但是由于解码的图像从(解码)顺序到输出顺序的重新排序增加了解码延迟。在某些研究中，已证明深度时间分层在压缩效率方面很有用。当时间层次很深且解码器的操作速度受到限制(不能快于实时处理)时，从解码开始到渲染开始的初始延迟很大，可能会负面影响终端用户的体验。
 
 图 7 说明了具有五个时间级别的典型的分层可伸缩比特流。图 7a 以输出顺序显示示例序列。box 中包含的值表示图片的 frame_num 值。斜体字的值表示非引用图片，而其他图片是引用图片。图 7b 以解码顺序显示示例序列。图 7c 显示当假设输出时间线与解码时间线重合并且一个图片的解码持续一个图片间隔时的输出顺序示例序列。可以看出，流的回放比流的解码开始晚五个图片间隔。如果以 25Hz 对图像采样，则图像间隔为 40 毫秒，并且回放延迟 0.2 秒。
 
@@ -5245,15 +5293,15 @@ class AlternativeStartupEntry() extends VisualSampleGroupEntry (’alst’) {
 
 ![figure8-an-example-of-an-alternative-startup-sequence](figure8-an-example-of-an-alternative-startup-sequence.png)
 
-在图 9 的示例中，展示另一种方式选择图片进行解码。解码的图片依赖 frame_num 等于 3 的图片将被忽略，并且第一组图片的后半部分内非引用图片的解码也被忽略。由 frame_num 等于 2 的采样得到的解码图片是第一个输出的图片。结果，第一组图像的输出图像速率是正常图像速率的一半，但是显示过程的开始比图 7 所示的传统解决方案早两个帧间隔（25Hz 图像速率中为 80 毫秒）。
+在图 9 的示例中，展示另一种方式选择图片进行解码。解码的图片依赖 frame_num 等于 3 的图片将被忽略，并且第一组图片的后半部分内非引用图片的解码也被忽略。由 frame_num 等于 2 的采样得到的解码图片是第一个输出的图片。结果，第一组图像的输出图像速率是正常图像速率的一半，但是显示过程的开始比图 7 所示的传统解决方案早两个帧间隔(25Hz 图像速率中为 80 毫秒)。
 
 ![figure9-another-example-of-an-alternative-startup-sequence](figure9-another-example-of-an-alternative-startup-sequence.png)
 
 ### 10.4 随机访问点(RAP)采样分组
 
-同步采样被指定为随机访问点，该点之后可以正确解码所有解码顺序的采样。但是，可以编码“开放式”随机访问点，该点之后所有输出顺序的采样可以正确解码，但是随机访问点之后按解码顺序以及随机访问点之前按输出顺序的一些采样不需要正确可解码。例如，开始一个开放图片组的一个帧内图片可以按解码顺序跟随（双向）预测图片，但是这些（双向）预测图片按照输出顺序位于该内部图片之前；尽管如果从帧内图片开始解码，则可能无法正确解码这些（双向）预测图片，不需要它们。
+同步采样被指定为随机访问点，该点之后可以正确解码所有解码顺序的采样。但是，可以编码“开放式”随机访问点，该点之后所有输出顺序的采样可以正确解码，但是随机访问点之后按解码顺序以及随机访问点之前按输出顺序的一些采样不需要正确可解码。例如，开始一个开放图片组的一个帧内图片可以按解码顺序跟随(双向)预测图片，但是这些(双向)预测图片按照输出顺序位于该内部图片之前；尽管如果从帧内图片开始解码，则可能无法正确解码这些(双向)预测图片，不需要它们。
 
-可以通过成为该组成员来标记此类“开放式”随机访问采样。此组标记的采样必须是随机访问点，也可以是同步点（即，不要求排除由同步采样表标记的采样）。
+可以通过成为该组成员来标记此类“开放式”随机访问采样。此组标记的采样必须是随机访问点，也可以是同步点(即，不要求排除由同步采样表标记的采样)。
 
 ```code
 class VisualRandomAccessEntry() extends VisualSampleGroupEntry (’rap ’) {
@@ -5264,14 +5312,14 @@ class VisualRandomAccessEntry() extends VisualSampleGroupEntry (’rap ’) {
 
 | 字段 | 类型 | 含义 |
 | --- | --- | --- |
-| num_leading_samples_known | 整数 | 等于 1 表示该组中每个采样的前导采样数是已知的，并且该数目由 num_leading_samples 指定。前导采样是与“开放式”随机访问点（RAP）相关的采样。它在显示顺序上位于 RAP 之前，并在解码顺序上紧跟 RAP 或另一个前导采样，并且当从 RAP 开始解码时，无法正确解码该采样 |
+| num_leading_samples_known | 整数 | 等于 1 表示该组中每个采样的前导采样数是已知的，并且该数目由 num_leading_samples 指定。前导采样是与“开放式”随机访问点(RAP)相关的采样。它在显示顺序上位于 RAP 之前，并在解码顺序上紧跟 RAP 或另一个前导采样，并且当从 RAP 开始解码时，无法正确解码该采样 |
 | num_leading_samples | 整数 | 指定该组中每个采样的前导采样数。当 num_leading_samples_known 等于 0 时，应忽略此字段 |
 
 ### 10.5 时间级别的采样分组
 
-许多视频编解码器支持时间可扩展性，其中可以提取一个或多个可独立解码的帧子集。一种简单的情况是，以定期的 I 帧间隔（例如 IPPPIPPP…）提取比特流的 I 帧，其中每第 4 张图片是一个 I 帧。同样，也可以提取这些 I 帧的子集，以获得更低的帧速率。可以使用分层的 B 或 P 帧构造具有多个时间级别的更复杂的情况。
+许多视频编解码器支持时间可扩展性，其中可以提取一个或多个可独立解码的帧子集。一种简单的情况是，以定期的 I 帧间隔(例如 IPPPIPPP…)提取比特流的 I 帧，其中每第 4 张图片是一个 I 帧。同样，也可以提取这些 I 帧的子集，以获得更低的帧速率。可以使用分层的 B 或 P 帧构造具有多个时间级别的更复杂的情况。
 
-时间级别采样分组（“tele”）提供了独立于编解码器的采样分组，可用于根据时间级别对轨道（和潜在的轨道片段）中的采样（访问单元）进行分组，其中一个时间级别的采样对更高时间级别的采样没有编码依赖。时间级别等于采样组描述索引（取值 1、2、3 等）。仅包含从第一时间级别到较高时间级别的访问单元的比特流保持符合编码标准。
+时间级别采样分组(“tele”)提供了独立于编解码器的采样分组，可用于根据时间级别对轨道(和潜在的轨道片段)中的采样(访问单元)进行分组，其中一个时间级别的采样对更高时间级别的采样没有编码依赖。时间级别等于采样组描述索引(取值 1、2、3 等)。仅包含从第一时间级别到较高时间级别的访问单元的比特流保持符合编码标准。
 
 根据时间级别进行分组有助于轻松提取时间子序列，例如使用 0 中的 Subsegment Indexing box。
 
@@ -5288,7 +5336,7 @@ level_independently_decodable 是一个标志。1 表示此级别的所有采样
 
 ### 10.6 流访问点采样组
 
-如附录 I 定义，流访问点允许随机访问媒体流的容器。SAP 采样分组将采样（其第一个字节是附录 I 中为 SAP 指定的位置 Isau）标识为指示的 SAP 类型。
+如附录 I 定义，流访问点允许随机访问媒体流的容器。SAP 采样分组将采样(其第一个字节是附录 I 中为 SAP 指定的位置 Isau)标识为指示的 SAP 类型。
 
 grouping_type_parameter 的语法和语义如下指定。
 
@@ -5315,10 +5363,10 @@ class SAPEntry() extends SampleGroupDescriptionEntry('sap ') {
 | 字段 | 类型 | 含义 |
 | --- | --- | --- |
 | reserved | 整数 | 应等于 0。解析器应允许和忽略所有 reserved 值 |
-| dependent_flag | 整数 | 对于非分层媒体，dependent_flag 应为0。dependent_flag 等于 1，指定用于预测目标层的引用层（如果有）可能必须解码，才能访问此采样组的采样。dependent_flag等于 0 表示，用于预测目标层的引用层（如果有）无需解码即可访问此采样组的任何 SAP |
+| dependent_flag | 整数 | 对于非分层媒体，dependent_flag 应为0。dependent_flag 等于 1，指定用于预测目标层的引用层(如果有)可能必须解码，才能访问此采样组的采样。dependent_flag等于 0 表示，用于预测目标层的引用层(如果有)无需解码即可访问此采样组的任何 SAP |
 | SAP_type | 整数 | 根据附 |
 
-保留等于 0 和 7 的 SAP_type 值；SAP_type 值在 1-6（含1和6） 的范围，用于指定相关采样（对于该采样，此组中采样的第一个字节位于位置 Isau）的 SAP 类型（附录 I 中指定）。
+保留等于 0 和 7 的 SAP_type 值；SAP_type 值在 1-6(含1和6) 的范围，用于指定相关采样(对于该采样，此组中采样的第一个字节位于位置 Isau)的 SAP 类型(附录 I 中指定)。
 
 ## 11 可扩展性
 
@@ -5393,7 +5441,7 @@ else {
 
 辅助视频媒体在 Media Box 的 Handler Box 中使用 “auxv” handler 类型，如 8.4.3 定义。
 
-辅助视频轨道的编码方式与视频轨道相同，但是使用的是不同的 handler 类型，并且不希望在视觉上显示（例如，它包含深度信息，或其他单色或彩色二维信息）。通常通过适当的轨道引用将辅助视频轨道链接到视频轨道。
+辅助视频轨道的编码方式与视频轨道相同，但是使用的是不同的 handler 类型，并且不希望在视觉上显示(例如，它包含深度信息，或其他单色或彩色二维信息)。通常通过适当的轨道引用将辅助视频轨道链接到视频轨道。
 
 #### 12.1.2 Video Media Header Box
 
@@ -5421,7 +5469,7 @@ aligned(8) class VideoMediaHeaderBox
 
 视频轨道使用 VisualSampleEntry。
 
-在视频轨道中，除非媒体格式的规范明确记录了此模板字段且允许更大的值，否则 frame_count 字段必须为 1。该规范必须记录如何找到视频的各个帧（它们的大小信息）以及如何确定它们的时间。该时间可能就像将采样时长除以帧计数以建立帧时长一样简单。
+在视频轨道中，除非媒体格式的规范明确记录了此模板字段且允许更大的值，否则 frame_count 字段必须为 1。该规范必须记录如何找到视频的各个帧(它们的大小信息)以及如何确定它们的时间。该时间可能就像将采样时长除以帧计数以建立帧时长一样简单。
 
 视频采样条目中的 width 和 height 记录编解码器将分发的像素数；这样可以分配缓冲区。由于这些是计数，因此不考虑像素长宽比。
 
@@ -5457,15 +5505,15 @@ class VisualSampleEntry(codingname) extends SampleEntry (codingname){
 
 ##### 12.1.4.1 定义
 
-可以分别使用 “pasp” 和 “clap” Sample Entry Box 指定视频的像素长宽比和纯净光圈。二者都是可选的；如果存在，它们会覆盖视频编解码器特有结构中的声明（如果有），如果不存在这些 box，则应检查该结构。为了获得最大的兼容性，这些 box 应紧随派生规范中定义或要求的任何 box 之后，而不是之前。
+可以分别使用 “pasp” 和 “clap” Sample Entry Box 指定视频的像素长宽比和纯净光圈。二者都是可选的；如果存在，它们会覆盖视频编解码器特有结构中的声明(如果有)，如果不存在这些 box，则应检查该结构。为了获得最大的兼容性，这些 box 应紧随派生规范中定义或要求的任何 box 之后，而不是之前。
 
 在 PixelAspectRatioBox 中，hSpacing 和 vSpacing 具有相同的单位，但未指定这些单位：只有比率很重要。hSpacing 和 vSpacing 可能会也可能不会简化，它们可能会简化到 1/1。它们二者都必须为正。
 
 将它们定义为像素的长宽比，以任意单位表示。如果像素出现 H 宽和 V 高，则 hSpacing/vSpacing 等于 H/V。这意味着显示上的一个 n 像素高的正方形必须为 n*vSpacing/hSpacing 像素宽才能显示正方形。
 
-注意：调整像素长宽比时，通常会根据需要（即，如果最终显示系统的像素长宽比与视频源不同）缩放视频的水平尺寸。
+注意：调整像素长宽比时，通常会根据需要(即，如果最终显示系统的像素长宽比与视频源不同)缩放视频的水平尺寸。
 
-注意：建议尽可能通过流水线携带原始像素和合成的变换。如果“校正”像素宽高比为正方形网格、归一化到轨道尺寸、合成或放置（例如，轨道和/或影片矩阵）以及归一化显示特性所导致的变换是单位矩阵，则不需要进行重采样。特别是，如果可能的话，在渲染过程中不应多次对视频进行重采样。
+注意：建议尽可能通过流水线携带原始像素和合成的变换。如果“校正”像素宽高比为正方形网格、归一化到轨道尺寸、合成或放置(例如，轨道和/或影片矩阵)以及归一化显示特性所导致的变换是单位矩阵，则不需要进行重采样。特别是，如果可能的话，在渲染过程中不应多次对视频进行重采样。
 
 CleanApertureBox 中理论上有四个值。这些参数表示为 N/D 分数。分数可以也可以不简化。我们将参数对 fooN 和 fooD 称为 foo。对于 horizOff 和 vertOff，D 必须为正，而 N 可以为正或负。对于cleanApertureWidth 和 cleanApertureHeight，N 和 D 都必须为正。
 
@@ -5512,14 +5560,14 @@ class CleanApertureBox extends Box(‘clap’){
 | 字段 | 类型 | 含义 |
 | --- | --- | --- |
 | hSpacing/vSpacing | 整数 | 定义像素的相对宽度和高度 |
-| cleanApertureWidthN/cleanApertureWidthD | 整数 | 一个分数，定义视频图像的确切纯净光圈宽度（以像素为单位） |
-| cleanApertureHeightN/cleanApertureHeightD | 整数 | 一个分数，定义视频图像的确切纯净光圈高度（以像素为单位） |
-| horizOffN/horizOffD | 整数 | 一个分数，定义了纯净光圈中心的水平偏移量减去（width-1）/2。 通常为 0 |
-| vertOffN/vertOffD | 整数 | 一个分数，定义了纯净光圈中心的垂直偏移量减去（height-1）/2。 通常为 0 |
+| cleanApertureWidthN/cleanApertureWidthD | 整数 | 一个分数，定义视频图像的确切纯净光圈宽度(以像素为单位) |
+| cleanApertureHeightN/cleanApertureHeightD | 整数 | 一个分数，定义视频图像的确切纯净光圈高度(以像素为单位) |
+| horizOffN/horizOffD | 整数 | 一个分数，定义了纯净光圈中心的水平偏移量减去(width-1)/2。 通常为 0 |
+| vertOffN/vertOffD | 整数 | 一个分数，定义了纯净光圈中心的垂直偏移量减去(height-1)/2。 通常为 0 |
 
 #### 12.1.5 Colour Information Box
 
-可以在 VisualSampleEntry 中放置一或多个 ColourInformationBox 提供色彩信息。在采样条目中按顺序放置这些 box 应从最准确（并且可能是最难处理）开始，逐步发展到最小。这些是建议性的，涉及渲染和色彩转换，并且没有与之相关的规范性行为；读者可以选择最合适的使用。可忽略色彩类型未知的 ColourInformationBox。
+可以在 VisualSampleEntry 中放置一或多个 ColourInformationBox 提供色彩信息。在采样条目中按顺序放置这些 box 应从最准确(并且可能是最难处理)开始，逐步发展到最小。这些是建议性的，涉及渲染和色彩转换，并且没有与之相关的规范性行为；读者可以选择最合适的使用。可忽略色彩类型未知的 ColourInformationBox。
 
 如果使用 ICC 配置，则其可能是受限的，使用代码 “rICC”，允许更简单的处理。该配置应为输入配置的单色或三成分基于矩阵的类别，在 ISO 15076-1 定义。如果配置是其他类别，则必须使用 “prof” 指示器。
 
@@ -5548,7 +5596,7 @@ class ColourInformationBox extends Box(‘colr’){
 
 | 字段 | 类型 | 含义 |
 | --- | --- | --- |
-| colour_type | 整数 | 指示提供的色彩信息的类型。对于 colour_type “nclx”：这些字段正是 ISO/IEC 29199-2 的 A.7.2 节为 PTM_COLOR_INFO（） 定义的四字节，但请注意，这里的整个范围标志处于不同的比特位置 |
+| colour_type | 整数 | 指示提供的色彩信息的类型。对于 colour_type “nclx”：这些字段正是 ISO/IEC 29199-2 的 A.7.2 节为 PTM_COLOR_INFO() 定义的四字节，但请注意，这里的整个范围标志处于不同的比特位置 |
 | ICC_profile | - | 提供了 ISO 15076-1 或 ICC.1：2010 中定义的 ICC 配置 |
 
 ### 12.2 音频媒体
@@ -5582,18 +5630,18 @@ aligned(8) class SoundMediaHeaderBox
 
 音频轨道使用 AudioSampleEntry 或 AudioSampleEntryV1。
 
-samplerate/samplesize 和 channelcount 字段记录此媒体的默认音频输出回放格式。应选择音频轨道的时间刻度与采样率匹配，或为采样率的整数倍，以实现采样准确的时间。当 channelcount 值大于零时，它指示音频流中扬声器声道的预期数量。channelcount 为 1 表示单声道音频，而 2 表示立体声（左/右）。当使用大于 2 的值时，编解码器配置应识别通道分配。
+samplerate/samplesize 和 channelcount 字段记录此媒体的默认音频输出回放格式。应选择音频轨道的时间刻度与采样率匹配，或为采样率的整数倍，以实现采样准确的时间。当 channelcount 值大于零时，它指示音频流中扬声器声道的预期数量。channelcount 为 1 表示单声道音频，而 2 表示立体声(左/右)。当使用大于 2 的值时，编解码器配置应识别通道分配。
 
 当希望指示音频采样率大于 samplerate 字段可以表示的值时，可以使用以下方法：
 
 - 使用 AudioSampleEntryV1，它要求包含的 Sample Description Box 也采用版本 1
 - Sample Rate Box 可能仅出现在 AudioSampleEntryV1 中，并且当其存在时，它会覆盖 samplerate 字段并记录实际的采样率
 - 当出现 Sample Rate Box 时，媒体时间刻度应与采样率相同，或可以整除采样率，或为采样率的整数倍
-- 采样条目中的 samplerate 字段应包含一个左移 16 位的值（与 AudioSampleEntry 相同），该值与媒体时间刻度相匹配，或可以整除媒体时间刻度，或为媒体时间刻度的整数倍
+- 采样条目中的 samplerate 字段应包含一个左移 16 位的值(与 AudioSampleEntry 相同)，该值与媒体时间刻度相匹配，或可以整除媒体时间刻度，或为媒体时间刻度的整数倍
 
 仅在需要时才使用 AudioSampleEntryV1;否则，为了获得最大的兼容性，应使用 AudioSampleEntry。版本设置为 0 的 SampleDescriptionBox 中不得出现 AudioSampleEntryV1。
 
-采样条目中的音频输出格式（samplerate、samplesize 和 channelcount 字段）应仅对未记录其自身输出配置的编解码器视为确定的。如果音频编解码器对于输出格式具有确定信息，则应将其视为确定信息；在这种情况下，尽管应选择合理的值（例如，尽可能高的采样率），但可以忽略采样条目中的 samplerate、samplesize 和 channelcount 字段。
+采样条目中的音频输出格式(samplerate、samplesize 和 channelcount 字段)应仅对未记录其自身输出配置的编解码器视为确定的。如果音频编解码器对于输出格式具有确定信息，则应将其视为确定信息；在这种情况下，尽管应选择合理的值(例如，尽可能高的采样率)，但可以忽略采样条目中的 samplerate、samplesize 和 channelcount 字段。
 
 ```code
 // Audio Sequences
@@ -5640,9 +5688,9 @@ class AudioSampleEntryV1(codingname) extends SampleEntry (codingname){
 
 | 字段 | 类型 | 含义 |
 | --- | --- | --- |
-| channelcount | 整数 | 通道数，例如1（单声道）或2（立体声） |
+| channelcount | 整数 | 通道数，例如1(单声道)或2(立体声) |
 | samplesize | 整数 | 单位是比特，默认值为 16 |
-| samplerate | 定点数 16.16 | 缺少 SamplingRateBox 时，samplerate 是采样率；如果存在 SamplingRateBox，samplerate 是一个合适的整数，可以整除实际采样率或是其整数倍。此 32 位字段表示为定点数 16.16 的数字（hi.lo） |
+| samplerate | 定点数 16.16 | 缺少 SamplingRateBox 时，samplerate 是采样率；如果存在 SamplingRateBox，samplerate 是一个合适的整数，可以整除实际采样率或是其整数倍。此 32 位字段表示为定点数 16.16 的数字(hi.lo) |
 | sampling_rate | 整数 | 音频媒体的实际采样率，以 32 位整数表示 |
 
 #### 12.2.4 Channel Layout Box
@@ -5653,7 +5701,7 @@ class AudioSampleEntryV1(codingname) extends SampleEntry (codingname){
 
 此 box 可能会出现在音频采样条目中，以记录音频流中通道的分配。
 
-AudioSampleEntry 中 channelcount 字段必须正确；因此，需要 AudioSampleEntryV1 发送 2 以外的值。通道布局可以是标准布局（来自枚举列表）的全部或部分，也可以是自定义布局（它允许轨道占整体布局的一部分）。
+AudioSampleEntry 中 channelcount 字段必须正确；因此，需要 AudioSampleEntryV1 发送 2 以外的值。通道布局可以是标准布局(来自枚举列表)的全部或部分，也可以是自定义布局(它允许轨道占整体布局的一部分)。
 
 流可能包含通道、对象，或两者都不包含，或两者都包含。既不是通道也不是对象结构化的流可以通过多种方式隐式渲染。
 
@@ -5684,7 +5732,7 @@ aligned(8) class ChannelLayout extends FullBox(‘chnl’) {
 
 | 字段 | 类型 | 含义 |
 | --- | --- | --- |
-| stream_structure | 整数 | 标志字段，用于定义流是否具有通道结构或对象结构（或同时具有两者或两者都不具有）；定义了以下标志，保留所有其他值：1-流携带通道；2-流携带对象 |
+| stream_structure | 整数 | 标志字段，用于定义流是否具有通道结构或对象结构(或同时具有两者或两者都不具有)；定义了以下标志，保留所有其他值：1-流携带通道；2-流携带对象 |
 | definedLayout | 整数 | ISO/IEC 23001-8 中的 ChannelConfiguration |
 | speaker_position | 整数 | ISO/IEC 23001-8 中的 OutputChannelPosition。如果使用了明确的位置，则 azimuth 和 elevation 的定义与 ISO/IEC 23001-8 中扬声器的定义相同 |
 | azimuth | 有符号整数 | 以度为单位，如 ISO/IEC 23001-8 中为 LoudspeakerAzimuth 定义 |
@@ -5699,11 +5747,11 @@ aligned(8) class ChannelLayout extends FullBox(‘chnl’) {
 
 如果需要，缩混可以由生产设备控制。例如，某些内容可能需要在缩混之前对环绕声道进行更多衰减，以保持清晰度。
 
-设计缩混支持使得可以描述任何缩混（例如从 7.1 到四声道以及到立体声）。
+设计缩混支持使得可以描述任何缩混(例如从 7.1 到四声道以及到立体声)。
 
 可以在缩混之后，以及 DRC 和缩混之后声明信号的响度特性。
 
-如果 targetChannelCount*baseChannelCount 为奇数，则用设置为 0xF 的 4 比特填充该 box。targetChannelCount 必须与 targetLayout（如果给出）一致，并且必须小于或等于 channelcount。
+如果 targetChannelCount*baseChannelCount 为奇数，则用设置为 0xF 的 4 比特填充该 box。targetChannelCount 必须与 targetLayout(如果给出)一致，并且必须小于或等于 channelcount。
 
 每个缩混由一个 ID 唯一标识。
 
@@ -5779,13 +5827,13 @@ aligned(8) class DownMixInstructions extends FullBox(‘dmix’) {
 
 编码器中使用 DRC，以使用 ISO/IEC 23001-8 中定义的预定义 DRC 特性之一生成增益值；系数放置在流内或关联的元数据轨道中。
 
-对于某些内容（例如某些多通道内容），在不同的通道中使用不同的 DRC 特性可能是有利的。例如，如果语音仅在中央通道中出现，则此功能可能非常有用。通过为音频通道分配 DRC 特性来支持它。
+对于某些内容(例如某些多通道内容)，在不同的通道中使用不同的 DRC 特性可能是有利的。例如，如果语音仅在中央通道中出现，则此功能可能非常有用。通过为音频通道分配 DRC 特性来支持它。
 
 可以在 DRC 之后声明信号的响度特性。
 
-DRC 支持包括支持流内 DRC 系数，以及承载它们的单独轨道；后者对于没有提供流内系数的传统编码系统（包括未压缩的音频）特别有用。
+DRC 支持包括支持流内 DRC 系数，以及承载它们的单独轨道；后者对于没有提供流内系数的传统编码系统(包括未压缩的音频)特别有用。
 
-在 ISO 基本媒体文件格式中，可以在多个轨道中承载音频内容，其中一个基本轨道包含所有轨道的 DRC 元数据。基本轨道使用类型为 “adda”（附加音频）的轨道引用来引用其他轨道。DRC 处理的通道是基本轨道中的所有通道，加上按引用顺序引用轨道中的所有通道。DRC 通道组适用于所有这些通道（即使它们是已禁用或当前未播放轨道中的通道）。
+在 ISO 基本媒体文件格式中，可以在多个轨道中承载音频内容，其中一个基本轨道包含所有轨道的 DRC 元数据。基本轨道使用类型为 “adda”(附加音频)的轨道引用来引用其他轨道。DRC 处理的通道是基本轨道中的所有通道，加上按引用顺序引用轨道中的所有通道。DRC 通道组适用于所有这些通道(即使它们是已禁用或当前未播放轨道中的通道)。
 
 DRCCoefficientsBasic、DRCCoefficientsUniDRC、DRCInstructionsBasic 和 DRCInstructionsUniDRC box 可能出现在 AudioSampleEntry 中，并在 ISO/IEC 23003-4 中定义。
 
@@ -5795,13 +5843,13 @@ DRCCoefficientsBasic、DRCCoefficientsUniDRC、DRCInstructionsBasic 和 DRCInstr
 | --- | --- | --- | --- |
 | ludt | Track user‐data(udta) | N | 0/1 |
 
-响度声明放置在 user data box 中，以使它们在影片片段中存在和更新。特别是在实时场景中，Initial Movie box 中的用户数据可能是“不超过”或“最佳猜测”，然后用户数据更新会提供更好（但仍然有效）的值。因此，例如，在这种情况下，与一组特定 DRC 指令相关的该用户数据中的响度范围构成了一个“承诺”而不是一种度量。
+响度声明放置在 user data box 中，以使它们在影片片段中存在和更新。特别是在实时场景中，Initial Movie box 中的用户数据可能是“不超过”或“最佳猜测”，然后用户数据更新会提供更好(但仍然有效)的值。因此，例如，在这种情况下，与一组特定 DRC 指令相关的该用户数据中的响度范围构成了一个“承诺”而不是一种度量。
 
 有几个元数据值可用于描述动态范围的各个方面。动态范围的大小可用于调整 DRC 特性，例如如果动态范围较小甚至可以关闭 DRC，则 DRC 的侵略性较小。
 
 真实峰值和最大响度值可用于估计动态余量，例如，当响度归一化导致正增益\[dB\]或需要动态余量以避免缩减缩混时。然后可以调整 DRC 特性以接近动态余量目标。此处以编码独立的方式表示相关内容的峰值。
 
-也可以记内容混合到的音频声压级。（如果以混合级别之外的其他级别收听音频，则这可能会影响感知的音调平衡。）
+也可以记内容混合到的音频声压级。(如果以混合级别之外的其他级别收听音频，则这可能会影响感知的音调平衡。)
 
 也可以使用以下措施：
 
@@ -5812,7 +5860,7 @@ DRCCoefficientsBasic、DRCCoefficientsUniDRC、DRCInstructionsBasic 和 DRCInstr
 
 在某些情况下，可能希望在专辑包含的每首歌曲中指明专辑的响度特性。为此可以指定一个单独的 box。 TrackLoudnessInfo 和 AlbumLoudnessInfo 分别提供歌曲和包含歌曲的整个专辑的响度信息。
 
-节目响度使用 ITU-R BS.1770-3 标准对相关内容进行测量; “锚定响度”是指锚定内容的响度，其内容由内容作者确定；一个合适的值（尤其是主要内容为语音内容）是“对话正常水平”或 ATSC 文档 A/52：2012 中定义的 DialNorm。ISO/IEC 23003-4规定了测量系统、测量方法以及所有响度和峰值相关值的编码。
+节目响度使用 ITU-R BS.1770-3 标准对相关内容进行测量; “锚定响度”是指锚定内容的响度，其内容由内容作者确定；一个合适的值(尤其是主要内容为语音内容)是“对话正常水平”或 ATSC 文档 A/52：2012 中定义的 DialNorm。ISO/IEC 23003-4规定了测量系统、测量方法以及所有响度和峰值相关值的编码。
 
 ```code
 aligned(8) class LoudnessBaseBox extends FullBox(loudnessType) {
@@ -5849,7 +5897,7 @@ aligned(8) class LoudnessBox extends Box(‘ludt’) {
 | measurement_system_for_TP | 整数 | 采用 ISO/IEC 23003-4 中定义的测量系统索引；保留所有其他值 |
 | method_definition | 整数 | 采用 ISO/IEC 23003-4 中定义的测量方法索引；保留所有其他值 |
 | measurement_system | 整数 | 采用 ISO/IEC 23003-4 中定义的测量系统索引；保留所有其他值 |
-| reliability、reliability_for_TP | 整数 | 分别采用以下值之一（保留所有其他值）：0-可靠性未知；1-值是报告/导入的但未验证；2-值是“不超过”的上限；3-值是测量并准确的 |
+| reliability、reliability_for_TP | 整数 | 分别采用以下值之一(保留所有其他值)：0-可靠性未知；1-值是报告/导入的但未验证；2-值是“不超过”的上限；3-值是测量并准确的 |
 
 ### 12.3 元数据媒体
 
@@ -5863,19 +5911,19 @@ aligned(8) class LoudnessBox extends Box(‘ludt’) {
 
 #### 12.3.2 媒体头部
 
-元数据轨道使用 8.4.5.2 中定义的 Null Media Header（“nmhd”）。
+元数据轨道使用 8.4.5.2 中定义的 Null Media Header(“nmhd”)。
 
 #### 12.3.3 采样条目
 
 定时的元数据轨道使用 MetaDataSampleEntry。
 
-一个可选的 BitRateBox 可以出现在任何 MetaDataSampleEntry 的末尾，以通知流的比特率信息。这可以用于缓冲区配置。对于 XML 元数据，可以用于选择适当的内存表示格式（DOM、STX）。
+一个可选的 BitRateBox 可以出现在任何 MetaDataSampleEntry 的末尾，以通知流的比特率信息。这可以用于缓冲区配置。对于 XML 元数据，可以用于选择适当的内存表示格式(DOM、STX)。
 
 与往常一样，可以在 URIMetaSampleEntry 条目中使用一个可选的 Bitrate Box。
 
 URIMetaSampleEntry 条目在一个 box 中，包含定义元数据形式的 URI 和可选的初始化数据。采样和初始化数据的格式均由 URI 形式的全部或部分定义。
 
-可能是 URI 标识了一种元数据格式，该格式允许每个采样中包含多个“陈述事实”。但是，此格式的所有元数据采样实际上都是 “I 帧”，为其覆盖的时间间隔定义了整个元数据集。这意味着，对于给定的轨道，任何时刻的完整元数据集都包含在（a）描述该轨道的轨道（如果有）的时间对齐的采样中，以及（b）轨道元数据（如果有）、影片元数据和文件元数据（如果有）。
+可能是 URI 标识了一种元数据格式，该格式允许每个采样中包含多个“陈述事实”。但是，此格式的所有元数据采样实际上都是 “I 帧”，为其覆盖的时间间隔定义了整个元数据集。这意味着，对于给定的轨道，任何时刻的完整元数据集都包含在(a)描述该轨道的轨道(如果有)的时间对齐的采样中，以及(b)轨道元数据(如果有)、影片元数据和文件元数据(如果有)。
 
 如果需要增量更改的元数据，MPEG-7 框架将提供该功能。
 
@@ -5917,9 +5965,9 @@ class URIMetaSampleEntry() extends MetaDataSampleEntry (’urim‘) {
 
 | 字段 | 类型 | 含义 |
 | --- | --- | --- |
-| content_encoding | null 结尾的 UTF-8 字符 | 提供 MIME 类型，用于标识定时元数据的内容编码。它的定义与本规范中的 ItemInfoEntry 相同。如果不存在（提供空字符串），则不会编码定时的元数据。此字段的示例是 “application/zip”。请注意，目前不存在BiM \[ISO/IEC 23001-1\] 和 TeM \[ISO/IEC 15938-1\] 的 MIME 类型。因此，应使用实验性 MIME 类型 “application/x-BiM” 和 “text/x-TeM” 来识别这些编码机制 |
-| namespace | null 结尾的 UTF-8 字符 | 包含空格分隔的列表（以UTF-8字符表示），是采样文档遵循的一个或多个 XML 名称空间的列表。当用于元数据时，需要使用它来标识其类型，例如 gBSD 或 AQoS \[MPEG-21-7\]，了解 XML 的编码机制（例如 BiM）需要它进行解码 |
-| schema_location | null 结尾的 UTF-8 字符 | 可选的字段，包含空格分隔的列表（以UTF-8字符表示），是采样文档遵循的 XML 模式的零或多个 URL 的列表。如果有一个名称空间和一个模式，则此字段应为模式的 URL。如果存在多个名称空间，则此字段的语法应遵循 \[XML\] 定义的 xsi：schemaLocation 属性的语法。当用于元数据时，了解 XML 的编码机制（例如 BiM）需要它对定时的元数据进行解码 |
+| content_encoding | null 结尾的 UTF-8 字符 | 提供 MIME 类型，用于标识定时元数据的内容编码。它的定义与本规范中的 ItemInfoEntry 相同。如果不存在(提供空字符串)，则不会编码定时的元数据。此字段的示例是 “application/zip”。请注意，目前不存在BiM \[ISO/IEC 23001-1\] 和 TeM \[ISO/IEC 15938-1\] 的 MIME 类型。因此，应使用实验性 MIME 类型 “application/x-BiM” 和 “text/x-TeM” 来识别这些编码机制 |
+| namespace | null 结尾的 UTF-8 字符 | 包含空格分隔的列表(以UTF-8字符表示)，是采样文档遵循的一个或多个 XML 名称空间的列表。当用于元数据时，需要使用它来标识其类型，例如 gBSD 或 AQoS \[MPEG-21-7\]，了解 XML 的编码机制(例如 BiM)需要它进行解码 |
+| schema_location | null 结尾的 UTF-8 字符 | 可选的字段，包含空格分隔的列表(以UTF-8字符表示)，是采样文档遵循的 XML 模式的零或多个 URL 的列表。如果有一个名称空间和一个模式，则此字段应为模式的 URL。如果存在多个名称空间，则此字段的语法应遵循 \[XML\] 定义的 xsi：schemaLocation 属性的语法。当用于元数据时，了解 XML 的编码机制(例如 BiM)需要它对定时的元数据进行解码 |
 | mime_format | null 结尾的 UTF-8 字符 | 提供一个 MIME 类型，用于标识采样的内容格式。此字段的示例包括 “text/ html” 和 “text/plain” |
 | text_config | null 结尾的 UTF-8 字符 | 提供每个文档的初始文本，位于每个同步采样的内容之前 |
 | theURI | - | 根据 6.2.4 中的规则格式化的 URI |
@@ -5964,7 +6012,7 @@ hint 轨道使用特定于其协议的条目格式，并带有适当的名称。
 
 对于 hint 轨道，采样描述包含所用流协议的合适的声明性数据以及 hint 轨道的格式。采样描述的定义特定于协议。
 
-“protocol” 和 “codingname” 字段是已注册的标识符，用于唯一标识要使用的流协议或压缩格式解码器。 给定的协议或编码名称可能对采样描述具有可选的或必需的扩展名（例如编解码器初始化参数）。所有这些扩展名应在 box 内；这些 box 出现在必填字段之后。无法识别的 box 将被忽略。
+“protocol” 和 “codingname” 字段是已注册的标识符，用于唯一标识要使用的流协议或压缩格式解码器。 给定的协议或编码名称可能对采样描述具有可选的或必需的扩展名(例如编解码器初始化参数)。所有这些扩展名应在 box 内；这些 box 出现在必填字段之后。无法识别的 box 将被忽略。
 
 ```code
 class HintSampleEntry() extends SampleEntry (protocol) {
@@ -5980,7 +6028,7 @@ class HintSampleEntry() extends SampleEntry (protocol) {
 
 #### 12.5.2 媒体头部
 
-定时文本轨道使用 8.4.5.2 中定义的 Null Media Header（“nmhd”）。
+定时文本轨道使用 8.4.5.2 中定义的 Null Media Header(“nmhd”)。
 
 #### 12.5.3 采样条目
 
@@ -5999,7 +6047,7 @@ class SimpleTextSampleEntry(codingname) extends PlainTextSampleEntry (‘stxt’
 
 | 字段 | 类型 | 含义 |
 | --- | --- | --- |
-| content_encoding | null 结尾的 UTF-8 字符 | 提供 MIME 类型，用于标识定时文本的内容编码。它的定义与本规范中的 ItemInfoEntry 相同。如果不存在（提供空字符串），则不会编码定时文本。此字段的示例是 “application/zip” |
+| content_encoding | null 结尾的 UTF-8 字符 | 提供 MIME 类型，用于标识定时文本的内容编码。它的定义与本规范中的 ItemInfoEntry 相同。如果不存在(提供空字符串)，则不会编码定时文本。此字段的示例是 “application/zip” |
 | mime_format | null 结尾的 UTF-8 字符 | 提供一个 MIME 类型，用于标识采样的内容格式。此字段的示例包括 “text/ html” 和 “text/plain” |
 
 ### 12.6 字幕媒体
@@ -6021,7 +6069,7 @@ aligned(8) class SubtitleMediaHeaderBox
 | 字段 | 类型 | 含义 |
 | --- | --- | --- |
 | version | 整数 | 指定此 box 的版本 |
-| flags | 整数 | 带有标志的 24 位整数（目前均为 0） |
+| flags | 整数 | 带有标志的 24 位整数(目前均为 0) |
 
 #### 12.6.3 采样条目
 
@@ -6046,11 +6094,11 @@ class TextSubtitleSampleEntry() extends SubtitleSampleEntry (‘sbtt’) {
 
 | 字段 | 类型 | 含义 |
 | --- | --- | --- |
-| content_encoding | null 结尾的 UTF-8 字符 | 提供 MIME 类型，用于标识字幕的内容编码。它的定义与本规范中的 ItemInfoEntry 相同。如果不存在（提供空字符串），则不会编码字幕。此字段的示例是 “application/zip”。请注意，目前不存在BiM \[ISO/IEC 23001-1\] 和 TeM \[ISO/IEC 15938-1\] 的 MIME 类型。因此，应使用实验性 MIME 类型 “application/x-BiM” 和 “text/x-TeM” 来识别这些编码机制 |
-| namespace | null 结尾的 UTF-8 字符 | 包含空格分隔的列表（以UTF-8字符表示），是采样文档遵循的一个或多个 XML 名称空间的列表。当用于元数据时，需要使用它来标识其类型，例如 gBSD 或 AQoS \[MPEG-21-7\]，了解 XML 的编码机制（例如 BiM）需要它进行解码 |
-| schema_location | null 结尾的 UTF-8 字符 | 可选的字段，包含空格分隔的列表（以UTF-8字符表示），是采样文档遵循的 XML 模式的零或多个 URL 的列表。如果有一个名称空间和一个模式，则此字段应为模式的 URL。如果存在多个名称空间，则此字段的语法应遵循 \[XML\] 定义的 xsi：schemaLocation 属性的语法。当用于元数据时，了解 XML 的编码机制（例如 BiM）需要它对定时的元数据进行解码 |
+| content_encoding | null 结尾的 UTF-8 字符 | 提供 MIME 类型，用于标识字幕的内容编码。它的定义与本规范中的 ItemInfoEntry 相同。如果不存在(提供空字符串)，则不会编码字幕。此字段的示例是 “application/zip”。请注意，目前不存在BiM \[ISO/IEC 23001-1\] 和 TeM \[ISO/IEC 15938-1\] 的 MIME 类型。因此，应使用实验性 MIME 类型 “application/x-BiM” 和 “text/x-TeM” 来识别这些编码机制 |
+| namespace | null 结尾的 UTF-8 字符 | 包含空格分隔的列表(以UTF-8字符表示)，是采样文档遵循的一个或多个 XML 名称空间的列表。当用于元数据时，需要使用它来标识其类型，例如 gBSD 或 AQoS \[MPEG-21-7\]，了解 XML 的编码机制(例如 BiM)需要它进行解码 |
+| schema_location | null 结尾的 UTF-8 字符 | 可选的字段，包含空格分隔的列表(以UTF-8字符表示)，是采样文档遵循的 XML 模式的零或多个 URL 的列表。如果有一个名称空间和一个模式，则此字段应为模式的 URL。如果存在多个名称空间，则此字段的语法应遵循 \[XML\] 定义的 xsi：schemaLocation 属性的语法。当用于元数据时，了解 XML 的编码机制(例如 BiM)需要它对定时的元数据进行解码 |
 | mime_format | null 结尾的 UTF-8 字符 | 提供一个 MIME 类型，用于标识采样的内容格式。此字段的示例包括 “text/ html” 和 “text/plain” |
-| auxiliary_mime_types | null 结尾的 UTF-8 字符 | 指示所有辅助资源的媒体类型，例如图像和字体（如果存在），存储为字幕子采样。如果有多个 mime_type，则此字段应为以空格分隔的列表 |
+| auxiliary_mime_types | null 结尾的 UTF-8 字符 | 指示所有辅助资源的媒体类型，例如图像和字体(如果存在)，存储为字幕子采样。如果有多个 mime_type，则此字段应为以空格分隔的列表 |
 
 ### 12.7 字体媒体
 
@@ -6181,9 +6229,9 @@ ISO/IEC 14496-12 | 15444-12 ISO 基本媒体文件格式定义文件格式的基
 
 对于文件中是否存在其他信息，应尽可能宽容；指示可以忽略无法识别的 box 和媒体(不是“应该忽略”)。这允许创建来自多个规范的混合文件，以及创建可以处理多个规范的多格式播放器。
 
-当在此规范上分层时，值得观察的是，有一些特性故意为较低（第 12 部分）规范的“参数”，需要特意指定这些特性。同样，第 12 部分文件格式规范具有一些内部特征，其他规范应很少讨论这些特征。当然，二者之间的灰色区域也有一些特征。
+当在此规范上分层时，值得观察的是，有一些特性故意为较低(第 12 部分)规范的“参数”，需要特意指定这些特性。同样，第 12 部分文件格式规范具有一些内部特征，其他规范应很少讨论这些特征。当然，二者之间的灰色区域也有一些特征。
 
-理想情况下，派生规范仅根据第 12 部分文件格式的参数来编写；采样是什么、时间戳的含义等等。除了有限的情况下（例如，添加 user data box 或扩展 box），在派生的规范中提及特定的现有 box 通常可能会成为错误。
+理想情况下，派生规范仅根据第 12 部分文件格式的参数来编写；采样是什么、时间戳的含义等等。除了有限的情况下(例如，添加 user data box 或扩展 box)，在派生的规范中提及特定的现有 box 通常可能会成为错误。
 
 #### C.2.2 基本分层操作
 
@@ -6197,7 +6245,7 @@ c) 移除 Free Space atom 并压实 atom 结构
 d) 从 “mdat” atom 中删除似乎未被轨道或 meta data atom 引用的数据
 e) 删除没有关联采样的采样条目
 f) 删除没有关联采样的采样组
-g) 提取一些轨道，并仅使用这些（例如音频/视频演示中的音频轨道）制作一个新文件
+g) 提取一些轨道，并仅使用这些(例如音频/视频演示中的音频轨道)制作一个新文件
 h) 插入或删除影片片段，或对电影重新分段
 
 当然，此列表并不详尽。
@@ -6206,9 +6254,9 @@ h) 插入或删除影片片段，或对电影重新分段
 
 你可以将 box 添加到文件格式，但是要注意它们如何与其他 box 交互。特别是，如果它们“交叉链接”到现有 box 中，则可能无法将此类文件标记为符合第 12 部分。
 
-你必须注册所有新 box，但使用 “uuid” 类型的 box 除外。同样，你应该注册编解码器（采样条目）名称、brand、轨道引用类型、handler（媒体类型）、组类型和保护方案类型。使用这些未注册的确实是一个坏主意，因为可能会发生冲突-或其他人可能会注册具有不同含义的相同标识符。
+你必须注册所有新 box，但使用 “uuid” 类型的 box 除外。同样，你应该注册编解码器(采样条目)名称、brand、轨道引用类型、handler(媒体类型)、组类型和保护方案类型。使用这些未注册的确实是一个坏主意，因为可能会发生冲突-或其他人可能会注册具有不同含义的相同标识符。
 
-如果可以使用简单的四字符代码，则不应使用 “UUID 转义”（保留的 ISO UUID 模式0xXXXXXXXX-0011-0010-8000-00AA00389B71，用四字符代码代替 X）写一个 box，且理想情况下，不应设计使用 UUID box；最好尽可能将数据放在文件格式的已知“扩展点”中，或者确实需要时注册新的 box 类型。
+如果可以使用简单的四字符代码，则不应使用 “UUID 转义”(保留的 ISO UUID 模式0xXXXXXXXX-0011-0010-8000-00AA00389B71，用四字符代码代替 X)写一个 box，且理想情况下，不应设计使用 UUID box；最好尽可能将数据放在文件格式的已知“扩展点”中，或者确实需要时注册新的 box 类型。
 
 不要忘记，ISO 文件中的所有数据都必须是或包含在 box 中。你可以引入签名，但其必须“看起来像” box。
 
@@ -6216,7 +6264,7 @@ h) 插入或删除影片片段，或对电影重新分段
 
 必须可以通过查找 box 长度来“遍历”文件的顶层。不要忘记在文件级别允许使用“隐含长度”。
 
-除非绝对不可避免，否则 box 应包含数据（例如字段中）或其他 box，但不能同时包含两者。所有包含数据的 box 应为完整 box，以允许以后更改语法和语义。包含其他 box 的 box 称为容器 box，通常是普通（非完整） box，因为如果将其记录为仅包含 box，它们的语义就不会改变。
+除非绝对不可避免，否则 box 应包含数据(例如字段中)或其他 box，但不能同时包含两者。所有包含数据的 box 应为完整 box，以允许以后更改语法和语义。包含其他 box 的 box 称为容器 box，通常是普通(非完整) box，因为如果将其记录为仅包含 box，它们的语义就不会改变。
 
 ### C.4 brand 标识符
 
@@ -6234,7 +6282,7 @@ a) 文件符合标识规范的所有要求
 b) 文件中没有任何内容与标识规范相反的
 c) 潜在地实现该单一规范的阅读器，可以读取、解释并可能显示文件，忽略其无法识别的数据
 
-因此，规范应说明（如果需要 brand）“识别符合该规范的文件的 brand 为XXXX”，并注册该 brand。
+因此，规范应说明(如果需要 brand)“识别符合该规范的文件的 brand 为XXXX”，并注册该 brand。
 
 #### C.4.2 brand 的使用
 
@@ -6250,7 +6298,7 @@ c) 潜在地实现该单一规范的阅读器，可以读取、解释并可能�
 
 brand 不可附加；他们是独立的。你不能说：“该 brand 表示还需要支持 Y”，因为没有引用。
 
-重新写入文件的系统应删除他们无法识别的 brand ，因为他们不知道文件是否仍然符合该 brand 的要求（例如，重新交织文件可能会使它不符合需要某种交织样式的规范）。
+重新写入文件的系统应删除他们无法识别的 brand ，因为他们不知道文件是否仍然符合该 brand 的要求(例如，重新交织文件可能会使它不符合需要某种交织样式的规范)。
 
 请注意，主要 brand 通常隐含文件扩展，而文件扩展名又隐含 MIME 类型。但这不是规则。此外，在以 MIME 类型提供服务时，请不要忘记 MIME 类型可以接受参数，并且兼容 brand 列表通常对接收系统很有用。
 
@@ -6262,9 +6310,9 @@ brand 不可附加；他们是独立的。你不能说：“该 brand 表示还�
 2. 任何现有 brand 不支持使用的多个编解码器的组合。此外，仅当播放器支持文件中所有媒体的解码时，才允许回放文件
 3. 使用特定用户的限制和/或扩展(box、模板字段等)
 
-但是，文件格式同时包含 major_brand 和 compatible_brands 数组。这些字段归文件作者和第 12 部分规范所有。不要编写规范讨论这些字段，以及仅讨论 brand 及其含义。特别是，请勿声明 major_brand 字段（“符合此规范的文件必须将 major_brand 设置为 XXXX”），因为文件永远不会符合以这种方式编写的两个这样的规范，并且你还会阻止某人从你的规范进行派生。但是，可以定义 brand 仅允许作为兼容 brand。
+但是，文件格式同时包含 major_brand 和 compatible_brands 数组。这些字段归文件作者和第 12 部分规范所有。不要编写规范讨论这些字段，以及仅讨论 brand 及其含义。特别是，请勿声明 major_brand 字段(“符合此规范的文件必须将 major_brand 设置为 XXXX”)，因为文件永远不会符合以这种方式编写的两个这样的规范，并且你还会阻止某人从你的规范进行派生。但是，可以定义 brand 仅允许作为兼容 brand。
 
-但是，brand 可以用作跟踪器。拥有一个没有任何要求的 brand 是完全合法的，并且放置在文件中作为“我在那儿”点（或者严格地说，“该 brand 要求文件最后由ZZZZ编写”）。
+但是，brand 可以用作跟踪器。拥有一个没有任何要求的 brand 是完全合法的，并且放置在文件中作为“我在那儿”点(或者严格地说，“该 brand 要求文件最后由ZZZZ编写”)。
 
 #### C.4.4 播放器指南
 
@@ -6314,21 +6362,21 @@ brand 不可附加；他们是独立的。你不能说：“该 brand 表示还�
 
 #### C.7.1 数据位置
 
-轨道是采样的定时序列；每个采样都由其数据（包含的字节）、数据长度和位置定义。采样的长度和数据对于文件格式是外部参数；字节的位置不是。
+轨道是采样的定时序列；每个采样都由其数据(包含的字节)、数据长度和位置定义。采样的长度和数据对于文件格式是外部参数；字节的位置不是。
 
 数据存储的确切方式对于第 12 部分文件格式是内部的。在定义格式的采样时，应定义采样的长度和数据。
 
-但是，你不应提及以下 box，因为它们的结构方式可以更改，并且它们存储的信息可能以其他方式存储（例如，采样大小信息可能位于 stsz box、stz2 box，或影片片段）：
+但是，你不应提及以下 box，因为它们的结构方式可以更改，并且它们存储的信息可能以其他方式存储(例如，采样大小信息可能位于 stsz box、stz2 box，或影片片段)：
 
-  sample size（stsz），compact sample size（stz2）
+  sample size(stsz)，compact sample size(stz2)
 
 实际上，一个轨道采样存储连续的采样组；这些组称为块，并且是来自不同被交织的轨道的块。但是文件可能会被重新交织或重新分块；以下 box 介绍了如何进行分块：
 
-  chunk offsets（stco 或 co64），sample‐to‐chunk（stsc）
+  chunk offsets(stco 或 co64)，sample‐to‐chunk(stsc)
 
-最关键的是，必须通过这些 box（或其在影片片段中的等效 box）定位第 12 部分文件中的数据。Media Data Box（“mdat”） 只是一个可能的位置，它本身就被视为一个无法识别比特的无序包。无法保证 Media Data Box 中所需材料是该 box 中唯一数据或以任何特定顺序排列的数据，尤其是如果使用了数据引用，则不能保证 Media Data Box 中甚至有任何特定采样。在派生规范中提及 Media Data Box（“mdat”） 几乎可以肯定是一个错误，并且试图定义（或假设）其结构将在篡改第 12 部分规范，这是一个错误。
+最关键的是，必须通过这些 box(或其在影片片段中的等效 box)定位第 12 部分文件中的数据。Media Data Box(“mdat”) 只是一个可能的位置，它本身就被视为一个无法识别比特的无序包。无法保证 Media Data Box 中所需材料是该 box 中唯一数据或以任何特定顺序排列的数据，尤其是如果使用了数据引用，则不能保证 Media Data Box 中甚至有任何特定采样。在派生规范中提及 Media Data Box(“mdat”) 几乎可以肯定是一个错误，并且试图定义(或假设)其结构将在篡改第 12 部分规范，这是一个错误。
 
-完全允许在集成规范中要求某种风格、时长或交织大小（“此规范要求文件是独立的，媒体数据应按解码时间顺序，交织粒度不超过一秒钟”）。
+完全允许在集成规范中要求某种风格、时长或交织大小(“此规范要求文件是独立的，媒体数据应按解码时间顺序，交织粒度不超过一秒钟”)。
 
 #### C.7.2 时间
 
@@ -6338,15 +6386,15 @@ brand 不可附加；他们是独立的。你不能说：“该 brand 表示还�
 
   time‐to‐sample box (stts)，composition offsets (ctts)
 
-同样，编辑的时间结构效果应通过文件格式保留，但是第 12 部分的文件简化器可以例如合并两个相邻实际属于同一类的编辑（例如，两个空的编辑，或者选择时间 A-B 的编辑，且其之后跟着一个编辑选择时间 B-C ）。
+同样，编辑的时间结构效果应通过文件格式保留，但是第 12 部分的文件简化器可以例如合并两个相邻实际属于同一类的编辑(例如，两个空的编辑，或者选择时间 A-B 的编辑，且其之后跟着一个编辑选择时间 B-C )。
 
 #### C.7.3 媒体类型
 
-第 12 部分规范中有多种媒体类型：视频、音频、元数据等。这些通过轨道 handler 类型和特定媒体的媒体头表示。可以注册新的媒体 handler，但这很少需要。例如，如果需要某种轨道类型（例如，实验室仪器轨道或“定时香气”轨道），则可能需要新的媒体 handler。还应检查注册机构；所需的 handler 可能已在另一个派生规范中定义。
+第 12 部分规范中有多种媒体类型：视频、音频、元数据等。这些通过轨道 handler 类型和特定媒体的媒体头表示。可以注册新的媒体 handler，但这很少需要。例如，如果需要某种轨道类型(例如，实验室仪器轨道或“定时香气”轨道)，则可能需要新的媒体 handler。还应检查注册机构；所需的 handler 可能已在另一个派生规范中定义。
 
 #### C.7.4 编解码类型
 
-采样条目的名称标识了使用的编码格式。这是对 Part 12 规范进行参数化的主要方法之一；比如 AVC（MPEG-4 Part 10）使用 “avc1” 作为采样条目类型。为编解码器定义此名称，然后进行注册，然后定义该编解码器的采样条目中的其他 box 是使用第 12 部分格式的主要方式。你应该为你的编码系统定义这些。请注意，从技术上讲，编码类型是由媒体类型“限定”的（尽管为了避免混淆，我们尝试不将相同的四字符代码定义为两种媒体类型（例如视频和音频）中两个不同的编解码器）。
+采样条目的名称标识了使用的编码格式。这是对 Part 12 规范进行参数化的主要方法之一；比如 AVC(MPEG-4 Part 10)使用 “avc1” 作为采样条目类型。为编解码器定义此名称，然后进行注册，然后定义该编解码器的采样条目中的其他 box 是使用第 12 部分格式的主要方式。你应该为你的编码系统定义这些。请注意，从技术上讲，编码类型是由媒体类型“限定”的(尽管为了避免混淆，我们尝试不将相同的四字符代码定义为两种媒体类型(例如视频和音频)中两个不同的编解码器)。
 
 #### C.7.5 子采样信息
 
@@ -6354,27 +6402,27 @@ brand 不可附加；他们是独立的。你不能说：“该 brand 表示还�
 
 #### C.7.6 采样依赖
 
-第 12 部分格式允许你识别编码系统的某些解码依赖性信息。特别是，你应该确定什么构成有效的“同步”或随机访问点（可以从其开始解码的点）。可以在文件格式中标记它们（在同步采样表中，或影片片段中的标记）。应该较少关注如何标记同步采样。
+第 12 部分格式允许你识别编码系统的某些解码依赖性信息。特别是，你应该确定什么构成有效的“同步”或随机访问点(可以从其开始解码的点)。可以在文件格式中标记它们(在同步采样表中，或影片片段中的标记)。应该较少关注如何标记同步采样。
 
 同样，可以指出哪些采样：
 
 - 依赖其它采样，或者可以独立解码
 - 被其它采样依赖，或者可以被丢弃而不影响解码
-- 包含相同信息的多种编码，可能具有不同的依赖（进行了冗余编码）
+- 包含相同信息的多种编码，可能具有不同的依赖(进行了冗余编码)
 
 对于大多数编码系统，这些含义是不言而喻的，不需要指出；但是，对于某些编码系统，它们可能需要明确的声明。
 
 #### C.7.7 采样组
 
-采样组提供另一种方法描述采样及其特征。要使用采样组，你可以定义组类型，然后定义组的定义方式（组描述）。然后，文件格式可以将给定采样映射到任何给定类型组的单个定义。定义新的分组类型及其参数化方法是参数化文件格式的重要方法。
+采样组提供另一种方法描述采样及其特征。要使用采样组，你可以定义组类型，然后定义组的定义方式(组描述)。然后，文件格式可以将给定采样映射到任何给定类型组的单个定义。定义新的分组类型及其参数化方法是参数化文件格式的重要方法。
 
 #### C.7.8 轨道级别
 
-可以通过两种重要方式将文件格式中的轨道相互关联。轨道引用是一种类型化的链接，指示一个轨道对另一轨道的引用或依赖关系（例如，描述媒体轨道的元数据轨道依赖该媒体轨道，因为没有它就没有意义）。可以在派生规范中注册并使用新的轨道引用类型。
+可以通过两种重要方式将文件格式中的轨道相互关联。轨道引用是一种类型化的链接，指示一个轨道对另一轨道的引用或依赖关系(例如，描述媒体轨道的元数据轨道依赖该媒体轨道，因为没有它就没有意义)。可以在派生规范中注册并使用新的轨道引用类型。
 
-类似地，轨道可能会分为几组备用组，希望阅读器能够从中选择一个适合的轨道（例如，基于受支持的编解码器、比特率、屏幕尺寸等）。3GPP 26.234 采纳了这一概念，并包含了用户数据（允许的扩展名），以 hint 轨道为何是组的成员（“我包含不同的编解码器”）。
+类似地，轨道可能会分为几组备用组，希望阅读器能够从中选择一个适合的轨道(例如，基于受支持的编解码器、比特率、屏幕尺寸等)。3GPP 26.234 采纳了这一概念，并包含了用户数据(允许的扩展名)，以 hint 轨道为何是组的成员(“我包含不同的编解码器”)。
 
-最后，可以在文件格式中启用或禁用轨道。例如，禁用的轨道可用于可选功能（例如隐藏式字幕）。
+最后，可以在文件格式中启用或禁用轨道。例如，禁用的轨道可用于可选功能(例如隐藏式字幕)。
 
 #### C.7.9 保护
 
@@ -6408,11 +6456,11 @@ brand 不可附加；他们是独立的。你不能说：“该 brand 表示还�
 
 ### C.9 元数据
 
-上面关于轨道及其数据的大部分论述都适用于元数据项，当然，除了元数据项没有时间结构。特别是，将项目划分为多个区间（允许它们交织）也是文件格式的属性。根据区间结构设计一些新的支持将是一个错误。
+上面关于轨道及其数据的大部分论述都适用于元数据项，当然，除了元数据项没有时间结构。特别是，将项目划分为多个区间(允许它们交织)也是文件格式的属性。根据区间结构设计一些新的支持将是一个错误。
 
 ### C.10 注册
 
-注册！如有疑问，请联系 <http://www.mp4ra.org> 的注册机构。注册是免费的，建议和帮助也是免费的。不注册意味着您的使用可能会与其他人冲突，并且您的使用也是不可追溯的，因此实际上是没有记录的。注册机构知道很多 brand （至少）被发明和使用，但尚未注册。这些人在“危险地飞行”；不要加入他们。
+注册！如有疑问，请联系 <http://www.mp4ra.org> 的注册机构。注册是免费的，建议和帮助也是免费的。不注册意味着您的使用可能会与其他人冲突，并且您的使用也是不可追溯的，因此实际上是没有记录的。注册机构知道很多 brand (至少)被发明和使用，但尚未注册。这些人在“危险地飞行”；不要加入他们。
 
 ### C.11 采样组、定时元数据轨道和采样辅助信息的使用指导
 
@@ -6438,7 +6486,7 @@ ISO 基本媒体文件格式包含三种定时元数据的机制，可将元数�
 采样辅助信息在以下情况可能有用。
 
 - 与采样关联的数据变化足够频繁，因此从存储空间的角度来看，指定采样组可能不合理
-- 与采样关联的数据量非常大，以至于其在 Movie box 或 Movie Fragment box 中的传送（根据采样分组的要求）会造成不利影响。例如，在渐进式下载中，减小 Movie box 的大小可能是有益的，以保持初始缓冲时间较小
+- 与采样关联的数据量非常大，以至于其在 Movie box 或 Movie Fragment box 中的传送(根据采样分组的要求)会造成不利影响。例如，在渐进式下载中，减小 Movie box 的大小可能是有益的，以保持初始缓冲时间较小
 - 当每个采样都与元数据关联时，与具有定时元数据轨道的相同功能相比，采样辅助信息会为采样提供辅助信息与采样的更直接关联，定时元数据轨道通常需要解析采样解码时间来建立定时元数据采样与媒体/ hint 采样的联系。
 
 ## 附录 E (提供信息) 文件格式 brand
@@ -6450,21 +6498,21 @@ ISO 基本媒体文件格式包含三种定时元数据的机制，可将元数�
 通常，除非满足以下条件之一，否则要求阅读器实现 brand 记录的所有功能：
 
 - 它们使用的媒体不使用或不需要功能：例如，I 帧视频不需要同步采样表，并且如果不使用合成重新排序，则不需要合成时间偏移表；同样，如果不需要内容保护，则不需要支持内容保护的结构
-- 文件符合的另一个规范禁止使用功能（例如，某些派生规范明确禁止使用影片片段）
-- 产品运行的环境意味着某些结构不相关；例如，hint 轨道结构仅与为该 hint 轨道中的协议准备内容或执行文件分发（例如流式传输）的产品有关。
+- 文件符合的另一个规范禁止使用功能(例如，某些派生规范明确禁止使用影片片段)
+- 产品运行的环境意味着某些结构不相关；例如，hint 轨道结构仅与为该 hint 轨道中的协议准备内容或执行文件分发(例如流式传输)的产品有关。
 
-以下各节列出了本规范中定义的 brand；节的顺序不暗含任何继承——发生继承时会特别说明。其他 brand 可能在其他规范中定义。请注意，如果一个 brand 是另一个 brand 的子集（例如，“isom” 的要求是 “iso2” 要求的子集），则：
+以下各节列出了本规范中定义的 brand；节的顺序不暗含任何继承——发生继承时会特别说明。其他 brand 可能在其他规范中定义。请注意，如果一个 brand 是另一个 brand 的子集(例如，“isom” 的要求是 “iso2” 要求的子集)，则：
 
 - 标记为兼容子集的文件始终可以标记为兼容超集；始终可以将兼容 “isom” 的文件标记为兼容 “iso2”
 - 支持超集的产品可以自动支持其子集；支持 “iso2” 的产品也必须支持 “isom”
 
-此处定义的 brand 均不需要支持任何特定的媒体类型（例如视频、音频、元数据）或媒体编码（例如特定的编解码器），也不需要支持特定媒体类型的结构（例如，可视采样条目或包含在特定类型采样条目中的 box）。
+此处定义的 brand 均不需要支持任何特定的媒体类型(例如视频、音频、元数据)或媒体编码(例如特定的编解码器)，也不需要支持特定媒体类型的结构(例如，可视采样条目或包含在特定类型采样条目中的 box)。
 
-更具体的标识符可用于识别规范的精确版本提供更多细节。不应将这些 brand 用作主要 brand；此基本文件格式应派生为要使用的另一个规范。因此，没有定义的常规文件扩展，或分配给这些 brand 的 mime 类型，也没有定义次要版本（当这些 brand 之一是主要 brand 时）。
+更具体的标识符可用于识别规范的精确版本提供更多细节。不应将这些 brand 用作主要 brand；此基本文件格式应派生为要使用的另一个规范。因此，没有定义的常规文件扩展，或分配给这些 brand 的 mime 类型，也没有定义次要版本(当这些 brand 之一是主要 brand 时)。
 
 ### E.2 “isom” brand
 
-在本规范此部分中，定义 “isom”（ISO 基本媒体文件）类型，识别符合 ISO 基本媒体文件格式第一版的文件。
+在本规范此部分中，定义 “isom”(ISO 基本媒体文件)类型，识别符合 ISO 基本媒体文件格式第一版的文件。
 
 需要以下结构 box 的支持：
 
@@ -6525,7 +6573,7 @@ ISO 基本媒体文件格式包含三种定时元数据的机制，可将元数�
 
 这里仅需要支持 “trun” box 的版本 0；不需要支持版本 1。
 
-注意：使用此 brand 标记的文件，无法设置 default‐base‐is‐moof 标志（8.8.7.1）。
+注意：使用此 brand 标记的文件，无法设置 default‐base‐is‐moof 标志(8.8.7.1)。
 
 ### E.3 “avc1” brand
 
@@ -6539,9 +6587,9 @@ ISO 基本媒体文件格式包含三种定时元数据的机制，可将元数�
 |   |   |   |   |   | sbgp | sample-to-group |
 |   |   |   |   |   | sgpd | sample group description |
 
-在采样组中，要求支持卷组（分组类型 “roll”）。
+在采样组中，要求支持卷组(分组类型 “roll”)。
 
-注意：使用此 brand 标记的文件，无法设置 default‐base‐is‐moof 标志（8.8.7.1）。
+注意：使用此 brand 标记的文件，无法设置 default‐base‐is‐moof 标志(8.8.7.1)。
 
 请注意，Track Header Box 的某些要求不适用于此 brand；参阅 8.3.2.1。
 
@@ -6587,7 +6635,7 @@ ISO 基本媒体文件格式包含三种定时元数据的机制，可将元数�
 
 影片片段中不需要支持 SampleGroupDescription box。
 
-注意：使用此 brand 标记的文件，无法设置 default‐base‐is‐moof 标志（8.8.7.1）。
+注意：使用此 brand 标记的文件，无法设置 default‐base‐is‐moof 标志(8.8.7.1)。
 
 - 这里仅需要支持 “meta” box 中的 16 位 item_ID 和 item_count 值；不需要支持 “meta” box 中的 32 位 item_ID 和 item_count 值
 - 不需要在影片片段中支持 “meta” box
@@ -6614,7 +6662,7 @@ ISO 基本媒体文件格式包含三种定时元数据的机制，可将元数�
 | meco |   |   |   |   |   | additional metadata container |
 |   | mere |   |   |   |   | metabox relation |
 
-需要支持 item information box 的版本 0 和版本 1。在采样组中，需要支持比率共享信息（分组类型为 “rash”）。必须识别文件分发 hint 轨道（采样条目 “fdp”）。
+需要支持 item information box 的版本 0 和版本 1。在采样组中，需要支持比率共享信息(分组类型为 “rash”)。必须识别文件分发 hint 轨道(采样条目 “fdp”)。
 
 这里仅需要支持 “ctts” box 的版本 0；不需要支持版本 1。
 
@@ -6624,7 +6672,7 @@ ISO 基本媒体文件格式包含三种定时元数据的机制，可将元数�
 
 仅需要支持 item location box 的版本 0。
 
-注意：使用此 brand 标记的文件，无法设置 default‐base‐is‐moof 标志（8.8.7.1）。
+注意：使用此 brand 标记的文件，无法设置 default‐base‐is‐moof 标志(8.8.7.1)。
 
 - 这里仅需要支持 “meta” box 中的 16 位 item_ID 和 item_count 值；不需要支持 “meta” box 中的 32 位 item_ID 和 item_count 值
 - 不需要在影片片段中支持 “meta” box
@@ -6634,9 +6682,9 @@ ISO 基本媒体文件格式包含三种定时元数据的机制，可将元数�
 
 “iso4” brand 需要支持 “iso3” brand 的所有功能。
 
-此 brand 需要支持合成偏移量（“ctts” 和 “iloc”）版本 1。
+此 brand 需要支持合成偏移量(“ctts” 和 “iloc”)版本 1。
 
-需要支持 item location box 的版本 1、item information box 的版本 2，以及新的 item data（“idat”）和 item reference（“iref”） box。
+需要支持 item location box 的版本 1、item information box 的版本 2，以及新的 item data(“idat”)和 item reference(“iref”) box。
 
 另外，需要以下支持：
 
@@ -6651,7 +6699,7 @@ ISO 基本媒体文件格式包含三种定时元数据的机制，可将元数�
 
 影片片段中不需要支持 SampleGroupDescription box。
 
-注意：使用此 brand 标记的文件，无法设置 default‐base‐is‐moof 标志（8.8.7.1）。
+注意：使用此 brand 标记的文件，无法设置 default‐base‐is‐moof 标志(8.8.7.1)。
 
 - 这里仅需要支持 “meta” box 中的 16 位 item_ID 和 item_count 值；不需要支持 “meta” box 中的 32 位 item_ID 和 item_count 值
 - 不需要在影片片段中支持 “meta” box
@@ -6664,7 +6712,7 @@ ISO 基本媒体文件格式包含三种定时元数据的机制，可将元数�
 
 此 brand 需要支持 default‐base‐is‐moof 标志。
 
-此 brand 需要处理受限的采样条目（即 “resv”）。
+此 brand 需要处理受限的采样条目(即 “resv”)。
 
 这里仅需要支持 “trun” box 的版本 0；不需要支持版本 1。
 
@@ -6693,8 +6741,8 @@ ISO 基本媒体文件格式包含三种定时元数据的机制，可将元数�
 此 brand 需要以下支持：
 
 - 影片片段中的 SampleGroupDescription box
-- Track Run box（即 Track Run box 版本 1）中的带符号合成偏移
-- 在采样组中，需要支持随机访问点信息（分组类型为 “rap”）
+- Track Run box(即 Track Run box 版本 1)中的带符号合成偏移
+- 在采样组中，需要支持随机访问点信息(分组类型为 “rap”)
 - 这里仅需要支持 “meta” box 中的 16 位 item_ID 和 item_count 值；不需要支持 “meta” box 中的 32 位 item_ID 和 item_count 值
 - 这里仅需要支持每个轨道的 “subs” box
 - 这里仅需要在 “cslg” box 中支持 32 位值;不需要在 “cslg” box 中支持 64 位值
@@ -6749,6 +6797,486 @@ ISO 基本媒体文件格式包含三种定时元数据的机制，可将元数�
 - 在 “cslg” box 中支持 64 位值
 
 ## 附录 G (提供信息) URI 标记的元数据形式
+
+### G.1 UUID 标记的元数据
+
+在 IETF RFC 4122：通用唯一标识符(UUID)URN 命名空间(2005 年 7 月)中为 UUID 标记的元数据定义了 URI 格式。
+
+没有关于主元数据的形式、时间元数据的初始化数据，或时间元数据本身的一般说明。所有这些形式取决于精确的 UUID 及其定义。
+
+请注意，UUID 不能轻易地追溯到其原始点，因此，如果希望元数据的接收者能够在需要时找到元数据关联的文档，则可能不合适。
+
+如果需要可追溯性，则应使用标准化的元数据框架(例如 MPEG-7)，或注册的框架(例如 SMPTE)，或可解引用的 URL。
+
+### G.2 ISO OID 标记的元数据
+
+在 RFC 3061：对象标识符的 URN 命名空间(2001 年 2 月)为 OID 标记的元数据定义了 URI 格式。
+
+没有关于主元数据的形式、时间元数据的初始化数据，或时间元数据本身的一般说明。所有这些形式取决于精确的对象标识符及其定义。
+
+许多更具体的标记系统也可以表示为对象标识符。应该使用更具体的 UUID 形式。
+
+不应使用以 {joint-iso-itu(2) uuid(25)}开头(即以 urn：oid：2.25 开头)的对象标识符；应该直接使用 UUID URI。
+
+不得使用以 {iso(1) Identification-organizations(3) SMPTE(52) metadata‐dictionary(1)} (即 urn：oid：1.3.52.1)开头的对象标识符，根据 SMPTE 298M 或 336M 也不应使用任何其他 OID 作为标签；应该使用更具体的 SMPTE URI 形式。
+
+对象标识符是注册到特定组织的，因此可以标识拥有特定标识符的组织。但是，对象标识符树的某些部分代理了未注册的用途(例如，上述的 UUID)，然后就失去了可追溯性。
+
+如果需要可追溯性，则应使用标准化的元数据框架(例如 MPEG-7)，或注册的框架(例如 SMPTE)，或可解引用的 URL。
+
+### G.3 SMPTE 标记的元数据
+
+在 RFC 5119 中为 SMPTE 标记的元数据定义 URI 格式；电影和电视工程师协会(SMPTE)的统一资源名称(URN)命名空间。
+
+主要元数据正好是 SMPTE 336M 中定义的 KLV(键，长度，值)三元组的值(V)部分，键是 URN 中给出的标签，而长度(L)是从 item 长度得到。
+
+同样，每个时间元数据采样都是 KLV 的值(V)部分，其中键是匹配采样条目中给定的 URN 标签，长度(L)从采样大小(如采样大小或紧凑采样大小表给出)中得到。
+
+可能存在初始化数据。它包含 KLV 的键(K)和值(V)，该 KLV 为从采样形成的 KLV 提供初始化上下文，而长度(L)从 DataBox 大小得到。前 16 个字节是初始化数据的 SMPTE 标签，按照 SMPTE 336M 中的定义存储，后跟数据。
+
+如 SMPTE 377M 中所定义，这些字节的典型值是“primer pack”(以十六进制表示)：06 0E 2B 34  02 05 01 01  0D 01 02 01  01 05 01 00。如果实际上，初始化数据的标签未识别提供上下文信息的结构(例如 primer pack)，其行为是不确定的。这使每个采样成为本地集。必须遵循 SMPTE 377M 中定义的构造本地集的规则。
+
+SMPTE 377M 使用定位器来定位元数据本身之外的其他资源。对于静态元数据，这些应使用 meta box 中的 item location box。对于时间元数据，可以直接使用外部指针。
+
+可能不存在初始化数据，然后标签标识不需要上下文的特定元数据项(例如地理定位符)。
+
+## 附录 H (提供信息) RTP 流和接收 hint 轨道的处理
+
+### H.1 简介
+
+#### H.1.1 概述
+
+此附录提供了有关录制 RTP 流以及将录制的 RTP 流用于回放和重新发送的建议。
+
+#### H.1.2 结构
+
+此附录的组织如下：
+
+- H.2 介绍 RTP 流回放可能不同步的潜在原因，并概述了如何在录制和回放中促进适当的同步。它在其他小节之前，因为录制单元和播放器都必须采取措施实现正确的同步
+- H.3 提供有关存储 RTP 流的建议
+- H.4 提供有关如何播放包含录制 RTP 流的文件的建议
+- H.5 提供有关重新发送存储在文件中已接收 RTP 流的建议，如 H.3 所述
+
+#### H.1.3 术语和定义
+
+就此附录而言，以下术语和定义适用。
+
+##### H.1.3.1 播放器
+
+实体，它解析文件，对文件中轨道的至少一个子集解码，并渲染解码的轨道。
+
+##### H.1.3.2 录制单元
+
+实体，它接收封装和压缩媒体的一个或多个数据包流，并将接收到的媒体存储到文件中。
+
+##### H.1.3.3 重发单位
+
+实体，它解析包含媒体的文件，该媒体源自一个或多个接收到的封装和压缩媒体的数据包流，并传输存储在文件中媒体的至少一个子集。
+
+### H.2 RTP 流的同步
+
+接收到的 RTP 流有几种可能的非同步回放原因。当将 RTP 流录制为 RTP 接收 hint 轨道时，还将记录用于保证同步回放的必要信息。当将 RTP 流录制为媒体轨道时，必须通过适当创建媒体采样的合成时间，以确保媒体轨道的回放同步。下表描述了接收到的 RTP 流的非同步回放原因，总结了建议的同步方式，并指出相关小节以进一步获取信息。
+
+1. 流的第一个数据包的 RTP 时间戳具有随机偏移量。因此，即使补偿了不同流 RTP 时间戳可能不同的时钟速率，两个流的 RTP 时间戳也通过它们的初始随机偏移之差而移位。如 H.3.5 所述，应在引用的接收 hint 采样条目的 “tsro” box 的 offset 字段值中反映随机偏移。
+2. 不同流的第一个接收和记录的包可能不具有 H.3.2 讨论的相同的回放时间。通过解析一个或多个 RTCP 发送者报告，将回放时间作为发送者的挂钟时间，并使用如 H.3.2 所述的 Edit List Box 创建回放的初始偏移，可以补偿不同录制流不相等的开始时间。播放器将解释 Edit List Box，如 0 所述。
+3. 不能保证用于生成特定 RTP 流的 RTP 时间戳的时钟与发送方用于创建 RTCP 发送者报告的挂钟时间的运行速度相同。例如，可以基于恒定的采样频率生成 RTP 时间戳，例如，音频为 44.1kHz，因此受音频捕获硬件的时钟速率控制。但是，可以根据系统时钟生成 RTCP 发送者报告，而系统时钟运行的速度与音频捕获硬件的时钟不同。此外，用于生成音频 RTP 时间戳的时钟的运行速度可能和用于生成视频 RTP 时间戳的时钟不同（当两者都归一化为相同的时钟滴答频率时）。
+如果解码流输出时钟的速度与播放器的挂钟不同，或者不同解码流的渲染时钟未同步，则播放器中也会出现类似的问题。
+对于这些以不同速度运行的时钟的所有潜在问题，建议的方法是使用 RTCP 发送者报告将不同流的 RTP 时间戳对齐到同一挂钟时间线，该挂钟时间线用于流间同步。可以通过修改记录 RTP 时间戳的表示在录制流时，或者使用如 H.3.6 所述记录的 RTCP 发送者报告在播放录制流时，进行此对齐。此外，建议根据音频播放率调整播放速度，如 0 所述。
+4. 发送者挂钟的运行速度可能与播放器的钟不同。
+建议以播放器挂钟速度播放录制的节目，并使用音频播放时钟作为播放器的挂钟。因此，通常无需修改音频时间刻度。即使播放器挂钟与发送者挂钟的运行速度不同，通常也不会被注意到。
+解码媒体采样的输出节奏在 0 中描述。
+
+### H.3 录制 RTP 流
+
+#### H.3.1 简介
+
+RTP 流的录制可以导致三个基本文件结构。
+
+1. 仅包含 RTP 接收 hint 轨道的文件。不包括媒体轨道。这种文件结构使能有效处理丢包，但是只有能够解析 RTP 接收 hint 轨道的播放器才能播放此文件。
+2. 仅包含媒体轨道的文件。不包括 RTP 接收 hint 轨道。此文件结构允许符合 ISO 基本媒体文件格式早期版本的现有播放器处理录制的文件，只要支持媒体格式。但是，由于后续小节所述的原因，无法对传输错误进行复杂的处理。
+3. 包含 RTP 接收 hint 轨道和媒体轨道的文件。该文件结构具有上述两个优点，并且为了达到从 ISO 基本媒体文件格式派生的其他文件格式尽可能好的互操作性，应使用此文件结构。
+
+如果正在录制的 RTP 流受到保护，则使用受保护的 RTP 接收 hint 轨道代替 RTP 接收 hint 轨道，否则录制单元的操作保持不变。回放时，包括在受保护的 RTP 接收 hint 轨道中的数据首先被取消保护，然后类似常规未受保护的 RTP 流进行处理。或者，在将 RTP 流存储为 RTP 接收 hint 轨道之前，可以不对其进行保护，但是必须注意遵守在受保护的 RTP 流中使用内容的权利。
+
+某些录制操作对这三种文件结构都是通用的，而其他操作则有所不同。表 H.1 列出了基本文件结构所需的录制操作。
+
+表 H.1
+
+| # | 只包含 RTP 接收 hint 轨道的文件 | 只包含媒体轨道的文件 | 同时包含 RTP 接收 hint 轨道和媒体轨道的文件 |
+| --- | --- | --- | --- |
+| 补偿已接收 RTP 流起始位置不相等 (H.3.2) | 存储 RTCP 接收 hint 轨道时不用；否则需要 | 需要 | 存储 RTCP 接收 hint 轨道时不用；否则需要 |
+| 记录 SDP (H.3.3) | 需要 | 不需要 | 只有 RTP 接收 hint 轨道需要 |
+| 在 RTP 接收 hint 轨道内创建采样 (H.3.4) | 需要 | 不需要 | 只有 RTP 接收 hint 轨道需要 |
+| RTP 时间戳的表示 (H.3.5) | 需要 | 不需要 | 只有 RTP 接收 hint 轨道需要 |
+| 为了促进回放中流间同步的记录操作 (H.3.6) | 需要 | 需要，应补偿媒体轨道的合成时间，如 H.3.6.3 所述 | 需要 |
+| 接收时间的表示 (H.3.7) | 需要 | 不需要 | 只有 RTP 接收 hint 轨道需要 |
+| 媒体采样的创建 (H.3.8) | 不需要 | 需要 | 只有媒体轨道需要 |
+| 创建引用媒体采样的 hint 采样 (H.3.9) | 不需要 | 不需要 | 需要 |
+
+某些实现可能首先仅录制到 RTP 接收 hint 轨道，然后离线创建组合媒体轨道和 RTP 接收 hint 轨道的文件。
+
+#### H.3.2 补偿已接收 RTP 流起始位置不相等
+
+开始录制 RTP 流时，可能发生一个 RTP 流中第一个媒体采样的显示时间不等于另一个 RTP 流中第一个媒体采样的显示时间，至少由于以下原因：
+
+- 音频和视频的采样频率通常不同
+- 就传输顺序的显示时间而言，音频和视频流的呈现时间可能不完美交织
+
+如果存储了 RTCP 接收 hint 轨道，则应在回放时对已接收 RTP 流起始位置不相等进行补偿，并且不应创建有关 RTP 接收 hint 轨道的 Edit List Box。如果未存储 RTCP 接收 hint 轨道或存储了媒体轨道，则至关重要的是，录制单元指示流的相对初始延迟，以便在流的回放开始时正确地同步音频和视频，如本小节下面所述。录制单元应执行以下操作。
+
+1. “RTCP 发送者报告”指示哪个 RTP 时间戳对应报告发送时刻的挂钟时间。为了建立每个 RTP 流的 RTP 时间戳和发送者挂钟时间的等价关系，至少应解析每个 RTP 流的第一个 RTCP 发送者报告。按照显示顺序，通过简单的线性外推为每个 RTP 流得到最早接收到的 RTP 包的挂钟时间戳。
+2. 在所有接收的 RTP 流中，将上面得到的最小挂钟时间戳映射到影片时间线中的显示时间戳零，即，在回放录制文件开始时立即显示该时间。影片时间线是文件回放的主时间轴。
+3. 每个轨道的媒体时间线从 0 开始。为了将媒体时间线移到影片时间线中的正确开始位置，将为每个其他 RTP 轨道（不包含最早挂钟时间戳的包）创建一个 Edit Box 和 Edit List Box，如下所示：
+Edit List Box 包含两个条目：
+
+- 第一个条目是一个空编辑（通过 media_time 为 -1 指示），且其时长（segment_duration）等于所有 RTP 流中最早媒体采样的显示时间与该轨道最早媒体采样的显示时间之差。图 H.1 展示一个示例，说明如何得到 Edit List Box 中第一个条目的 segment_duration。
+- 第二个条目的 media_time 值等于按显示顺序排列的最早采样的合成时间，且第二个条目的 segment_duration 的值跨越整个轨道。由于创建 Edit List Box 时可能不知道轨道的实际时长，因此建议将 segment_duration 设置为最大可能值（最大 32 位无符号整数或最大 64 位无符号整数，取决于使用哪个版本的 box）。
+
+Edit List Box 的两个条目中，media_rate_integer 值均等于 1。
+
+![图 H.1-Edit List Box 的示例，用于补偿已接收 RTP 流起始位置不相等，segment_duration 被复制到 Edit List Box 的第一个条目](figureh1.png)
+
+某些录制单元可能会检测可以从其开始解码的包，例如 H.264/AVC 流的 IDR 图片，在此称为随机访问点。如果流中包含数据包具有所有已接收流中最早的时钟时间戳，并且同一流中包含数据包按解码顺序位于该流的第一个随机访问点之前，则建议不要存储该流第一个随机访问之前的该包，且在确定所有已接收流中最早的时钟时间戳时不要考虑它们。
+
+#### H.3.3 记录 SDP
+
+SDP 应该如下存储。会话级 SDP，即第一条媒体特定的行（“m=” 行）之前的所有行，应作为影片 SDP 信息存储在 User Data box 中，如 9.1.​​4.1 指定。SDP 描述中每个媒体级别部分均以 “m=” 行开头，并继续知道下一个媒体级别部分或整个会话描述的结尾。每个媒体级别部分应作为轨道 SDP 信息存储在相应 RTP 接收 hint 轨道的 User Data box。
+
+#### H.3.4 在 RTP 接收 hint 轨道内创建采样
+
+建议每个采样代表所有接收到具有相同 RTP 时间戳的 RTP 包，即具有相同 RTP 时间戳按 RTP 序列号顺序的连续包。设置 RTPsample 结构包含一个 RTPpacket 结构，每个接收到具有相同 RTP 时间戳的 RTP 包。建议每个 RTPpacket 包含一个类型为 2 的包构造器（RTPsampleconstructor）。RTPsampleconstructor 将特定采样（由构造器的 samplenumber 字段指示）的特定字节范围（由构造器的 sampleoffset 和 length 字段指示），通过引用复制到正在构造的包的有效载荷中。具有相同 RTP 时间戳的每个接收到的 RTP 包的有效负载都被复制到采样的 extradata 部分。设置每个构造器的轨道引用指向 hint 轨道本身，即设置等于 -1，并设置 sampleoffset 和 length 为与采样内包有效负载的位置和大小相匹配。
+
+图 H.2 给出了一个 RTP 接收 hint 采样的伪代码示例，该 hint 采样 RTP 包。
+
+![图 H.2-包含两个包（其头部和有效载荷）的 RTP 接收 hint 采样的示例](figureh2.png)
+
+不建议使用错误发生索引事件来指示 RTP 包丢失，因为 RTPsequenceseed 字段可用于检测包丢失，而不会增加存储空间。此外，错误发生事件可以引用的最小单位是一个采样（在 RTP 接收 hint 轨道中）。由于采样可以包含许多包，因此错误发生索引事件涉及这些数据包中的哪些是模棱两可的。
+
+#### H.3.5 RTP 时间戳的表示
+
+todo
+
+RTP时间戳在 RTP 接收 hint 轨道中由三个值的总和表示，其中三个值是轨道媒体时间轴中的解码时间DT。如果采样驻留在电影片段中，则解码时间会按照行程长度编码到“采样的解码时间”框中，此外还会编码到一个或多个“音轨片段运行”框中。 “解码到采样的时间”框包含许多sample_count和sample_delta对，其中sample_delta是一组连续采样中每个采样的解码时间增量（即，以解码时间为单位的采样时长），其数量等于sample_count。 Track Fragment Run框指示一对sample_count和sample_duration，其中sample_duration是一组连续采样中每个采样的解码时间增量（即采样时长），其数量等于sample_count。每个“跟踪片段”框可以包含许多“跟踪片段运行”框。采样编号i的解码时间DT（i）是通过对“解码时间到采样”框中的所有采样i之前的采样的采样时长求和得出的，并在需要时引用“采样片段i”中的任何采样的“跟踪片段运行”框求和。
+
+采样i的RTP时间戳RTPTS（i）由以下三个值的总和表示：
+
+其中tsro.offset是引用的接收 hint 采样条目的“tsro”框中的offset值，而offset是RTPpacket结构中rtpoffsetTLV框中包含的值，而mod是模运算。
+
+ RTP 接收 hint 采样条目中应出现“tsro”框。轨道的任何“tsro”框中的offset值应等于以RTP序列号顺序排列的相应流的第一个数据包的RTP时间戳。
+
+假设在采样i-1和i之间没有在最大32位无符号整数上发生RTP时间戳值的折回，以RTP序列号顺序排列的连续不相等RTP时间戳之间的差为
+
+RTPTS_DIFF（i）保持不变，当帧速率恒定时，任何数据包中的帧数恒定，并且传输顺序与显示顺序相同。音频流和时间不可缩放的视频流通常会满足这些约束。如果RTPTS_DIFF（i）是表示为RTPTS_DIFF的常数，则建议使用以下内容。 “解码到采样的时间”框中的sample_delta值，如果使用了影片片段，则将“跟踪片段运行”框中的sample_duration值设置为RTPTS_DIFF，这将导致紧凑的“解码采样时间”和“跟踪片段运行”框。如果使用了 RTCP 接收 hint 轨道，则不应在 RTP 接收 hint 采样中使用rtpoffsetTLV框（请参阅H.3.6）。否则（如果不使用 RTCP 接收 hint 轨道），则应将rtpoffsetTLV框中的offset设置为0。
+
+当在视频流中使用时间可伸缩性时，数据包的传输顺序和播放顺序不相同，RTP时间戳不随RTP序列号而增加，并且RTPTS_DIFF（i）不恒定。但是，RTP时间戳通常在由GOP_size确定的时间段内具有恒定的行为，该时间是GTP_size的一个加上两个在RTP顺序编号顺序中最低时间级别的两个连续图片之间的图片数量。例如，如果为每对参考图片编码了两个非参考图片，如图H.3所示，则GOP_size等于3。图H.4给出了GOP_size等于
+
+图H.3 — GOP_size等于3的时间可伸缩比特流的示例
+（RTP序列号（SN）归一化为从0开始，并且假设每帧一个数据包。
+RTP时间戳（TS）标准化为从0开始，并表示为持续一帧间隔的时钟滴答。帧间预测箭头仅针对第一个GOP指示，而其他GOP中的图片也进行类似的预测。）
+
+图H.4 — GOP_size等于4的分层时间可分级比特流的示例
+
+（RTP序列号（SN）归一化为从0开始，并且假设每帧一个数据包。
+
+RTP时间戳（TS）标准化为从0开始，并表示为持续一帧间隔的时钟滴答。）
+
+由一个GOP引起的RTP时间戳增量如下推导，当采样i和i + GOP_size（包括两个端点）之间没有发生最大32位无符号整数上的RTP时间戳值的折回时：
+
+如果RTPTS_GOP_DIFF（i）是等于RTPTS_GOP_DIFF的常数，则当没有采样i，i + 1，…，i + GOP_size是从所谓的封闭图片组开始的图片时，例如H.264/AVC的IDR图片流，建议以下。 “解码到采样的时间”框中的sample_delta值，如果使用了影片片段，则在“一个或多个片段运行”框中的sample_duration值设置为RTPTS_GOP_DIFF/GOP_size。如果使用 RTCP 接收 hint 轨道，则rtpoffsetTLV框不应用于最低时间级别的图片（请参阅H.3.6）。否则（如果未使用 RTCP 接收 hint 轨道），则应将rtpoffsetTLV框中的offset设置为0。对于其他时间级别的图片，应将rtpoffsetTLV框中的offset值设置为使得公式H.（1）为实现。图H.5指示了如何为图H.4中呈现的分层时间可伸缩视频比特流设置解码时间和偏移。
+
+图H.5－在GOP_size等于4的分层时间可分级比特流的rtpoffsetTLV框中设置解码时间（DT）和offset值的示例。
+ （在此示例中，采样之间的解码时间增量设置为等于RTPTS_GOP_DIFF/GOP_size，以实现紧凑的编码解码时间。针对每个采样调整rtpoffsetTLV框中的offset值，以存储RTP时间戳的表示形式。为此如图所示，RTP时间戳和解码时间归一化为从0开始，并表示为持续一帧间隔的时钟滴答。）
+
+如果从接收到的数据包中未检测到RTP时间戳的线性和周期性行为，并且没有两个接收到不同采样的数据包具有相同的接收时间，则建议在“解码时间到采样框”中设置sample_delta的值；使用片段时，“一个或多个片段运行”框中的sample_duration值表示采样的第一个数据包的接收时间。即，导出的解码时间DT（i）应等于采样的第一分组的接收时间减去流的第一接收采样的第一分组的接收时间。
+
+注意，在文件中没有为任何 hint 轨道中的采样明确指出合成时间戳。因此，对于 RTP 接收 hint 轨道，从存储的数据包流中指示的与RTP时间戳有关的信息中推断出合成时间戳。对于与 RTCP 接收 hint 轨道不相关的 RTP 接收 hint 轨道，将接收到的RTP数据包的合成时间推断为采样时间DT（i）与rtpoffsetTLV框中的offset字段的值之和。包括采样。对于与 RTCP 接收 hint 轨道相关联的 RTP 接收 hint 轨道，合成时间如下推断。让收到的RTP包
+
+具有相同轨道内最早的RTP时间戳的合成时间等于0。任何剩余的RTP数据包的合成时间等于当前RTP数据包和最早的RTP数据包的RTP时间戳差（按表示顺序，其时钟漂移校正类似于H） .3.6.3。
+
+创作时间是指曲目的媒体时间线。
+
+#### H.3.6 为了促进回放中流间同步的记录操作
+
+##### H.3.6.1 概述
+
+至少可以通过以下两种方式促进口述同步，即在回放过程中记录的RTP流之间的正确同步：
+
+1.为每个 RTP 接收 hint 轨道生成 RTCP 接收 hint 轨道。在解析文件并对文件中包含的媒体流进行解码和播放时，将纠正不同流的RTP时间戳时钟之间的潜在时钟漂移。时钟漂移校正的完成方式与同时接收和播放的RTP流的处理方式类似。对于录制单元，这种操作模式是简单的。但是，从精确的播放位置访问文件可能会比较麻烦，因为访问时需要补偿所有记录流的时钟漂移。
+2.通过修改一个或多个记录流的RTP时间戳，可以纠正记录的RTP流之间的潜在时钟漂移。这种操作模式在记录时需要处理 RTCP 发送者报告，因此，与创建 RTCP 接收 hint 轨道相比，对于录制单元而言更加繁琐。但是，播放器的操作很简单。
+录制单元应使用时间戳同步框[9.4.1.2]指示已使用哪种口型同步方法。时间戳同步框包含timestamp_sync字段。
+timestamp_sync等于1表示玩家应使用 RTCP 接收 hint 音轨进行口形同步。 timestamp_sync等于2表示玩家应使用合成时间戳记进行口形同步。
+某些实现可能会先在实时记录操作期间创建 RTCP 接收 hint 轨道，然后通过将RTP时间戳修改为离线后处理步骤来补偿时钟漂移。
+
+以下小节提供了有关这两种方法的更多详细信息。
+
+##### H.3.6.2 促进基于 RTCP 发送者报告的嘴唇同步
+
+录制单元将特定RTP流的所有 RTCP 发送者报告存储为相应 RTCP 接收 hint 轨道中的采样。
+
+##### H.3.6.3 补偿时间戳中的时钟漂移
+
+不建议修改录制的音频流的RTP时间戳。这样的修改将导致播放器中的音频时标修改，这是不平凡的操作。
+
+视频和其他非音频流的RTP时间戳的记录表示形式应使用以下过程进行修改。
+
+1.首先，从与视频帧相对应的RTP时间戳导出视频帧的壁钟时间戳a，作为前一视频帧的壁钟时间戳与当前视频帧的RTP时间戳之差。挂钟时间轴的单位。
+2.其次，根据 RTCP 发送者报告得出视频时钟在挂钟时间的播放时间b。如果没有可准确指示视频帧的挂钟时间的RTCP发送器报告可用，则可假定RTCP发送器报告中RTP时间戳时钟和发送者挂钟的偏离速率保持不变，从而推断挂钟时间。
+3.第三，基于音频的“RTCP 发送者报告”，得出在挂钟时间轴的时间b与视频帧同时播放的音频RTP时间戳。不需要具有确切地具有导出的音频RTP时间戳的音频帧。从派生的音频RTP时间戳计算音频采样的挂钟时间戳c，作为前一个音频帧的挂钟时间戳与派生音频RTP时间戳的RTP时间戳和前一个音频帧的RTP时间戳之和。 。
+a和c之间的差异（如果有的话）应在代表文件中视频RTP时间戳的字段中进行补偿。实际上，最简单的方法可能是将差异添加到rtpoffsetTLV框中的offset字段中，如图H.6所示。另一种方法是重写“解码时间到采样时间”框和“跟踪片段运行”框（如果有的话），这可能会比较麻烦，这是因为通过结合采样数和时长对采样时间进行编码的特定方式，可能需要还有更多的存储空间。
+
+图H.6 —纠正RTP时间戳表示中的口形同步的示例
+
+#### H.3.7 接收时间的表示
+
+如9.4.1.4所规定，数据包的接收时间由包含数据包的采样的解码时间与数据包的RTPpacket结构的relative_time值之和表示。
+
+最早接收的RTP数据包的接收时间应为零，所有后续数据包的接收时间应相对于最早接收的RTP数据包的接收时间。
+
+接收时间的时钟源是不确定的，例如可以是接收器的挂钟。 如果一个接收 hint 轨道的接收时间范围与另一个接收 hint 轨道的接收时间范围全部或部分重叠，则这些 hint 轨道的时钟源应相同。
+
+数据包的接收时间应对应于RTP下的协议堆栈层（通常为UDP）输出数据包的时间。
+
+#### H.3.8 媒体采样的创建
+
+根据相关的RTP有效负载规范和RTP本身的指示，从接收到的RTP数据包中创建媒体采样。但是，大多数媒体编码标准仅指定无错误流的解码，因此应确保任何符合标准的媒体解码器都能正确解码媒体轨道中的内容。因此，处理传输错误需要两个步骤：检测传输错误和推断可以正确解码的采样。
+
+这些步骤在后续段落中进行描述。
+
+可以从RTP序列号值的间隙中检测到丢失的RTP数据包。包含位错误的RTP数据包通常不转发到应用程序，因为它们的UDP校验和失败，并且数据包在接收器的协议栈中被丢弃。因此，误比特的数据包通常被视为接收器中的数据包丢失。
+
+可以正确解码的媒体采样的推断取决于媒体编码格式，因此在此不再详细描述。通常，采样间预测在音频编码格式中比较弱或不存在，而大多数视频编码格式都大量利用帧间预测。因此，许多音频格式中丢失的采样通常可以用无声或错误隐藏的音频采样代替。
+
+应该分析视频数据包的丢失是否与非参考图片或参考图片有关，或更普遍地说，是在时间可伸缩性层次的哪个级别上发生了丢失。然后应该得出结论，哪些图片可能无法正确解码。例如，非参考图片的丢失不会影响任何其他图片的解码，而基本时间级别的参考图片的丢失通常会影响所有图片，直到下一个图片用于随机访问为止，例如IDR图片在H.264/AVC中。视频轨道不得包含任何取决于丢失的视频采样的采样。
+
+#### H.3.9 创建引用媒体采样的 hint 采样
+
+如H.3.8所述，根据接收到的RTP数据包创建媒体采样。如H.3.4所述创建了 RTP 接收 hint 轨道，但是RTPpacket结构的内容取决于相应媒体采样的存在，如下所示。
+
+如果在媒体轨道中表示接收到的RTP数据包的数据包有效载荷，则将相关数据包构造器的轨道参考设置为指向媒体轨道，并通过引用包括数据包有效载荷。不建议在收到的RTP采样的extradata部分中复制数据包有效负载，以节省存储空间并使文件编辑操作更易于实现。
+
+如果接收到的RTP数据包的数据包有效载荷未在媒体轨道中表示，则如H.3.4所述创建RTPpacket结构的实例。
+
+### H.4 播放录制的RTP流
+
+#### H.4.1 简介
+
+本小节描述了播放包含记录的RTP流的文件所需的操作。它的组织如下：
+
+-在播放RTP流之前，应先分析文件的内容。特别是，表示相同的媒体流替代轨迹应该被识别，并且这些轨道中的一个应选择用于解码和回放。为了预先推断出可以被播放器解码，应该检测编码格式。这些准备操作在H.4.2中有更详细的描述。
+-如果正在处理 RTP 接收 hint 轨道，则应考虑0所述的一些事项。例如，应检测并适当处理数据包丢失。
+-解码媒体采样的同步应按照0所述正确处理。
+-如果从流的开头以外的位置访问文件中存储的RTP流，则需要进行适当的流间同步和解码器初始化，如H.4.5所述。
+
+#### H.4.2 播放准备
+
+在准备播放的阶段，播放器选择播放哪些曲目。首先解析文件的基本轨道结构。根据轨道所属的替代组对轨道进行分组。属于相同备用组的轨道在轨道标题框中由alternate_group的相同值指示。从每个备用组中选择一个曲目进行播放，如下所示。
+
+如果备用组中有 RTP 接收 hint 轨道，则首选回放，因为它包含接收到的RTP流的完整表示，这不同于从接收到的RTP流派生的媒体轨道，后者可能会使用接收到的RTP的这种子集数据包可以由任何符合标准的解码器解码，而无法处理数据包丢失。
+
+应确保播放器与所选曲目的兼容性。例如，应该检查编解码器，配置文件和轨道中使用的级别是否使播放器能够支持。
+
+可以从RTP流的SDP描述中得出用于 RTP 接收 hint 轨道中已编码比特流的编解码器，配置文件和级别。 SDP描述存储在电影级索引轨道中。如果整个文件中的SDP不变，则可以在用户数据框中将其另存为电影SDP信息和跟踪SDP信息。如果存在Track SDP信息，则可以对其进行解析以找出用于 RTP 接收 hint 轨道中包含的比特流的编解码器，配置文件和级别。如果不存在Movie SDP信息或Track SDP信息，则遍历移动级索引轨道以查找和解析每个SDP索引，并因此解析和解析 RTP 接收 hint 轨道中包含的比特流所使用的编解码器，配置文件和级别。
+
+如果备用组中不存在 RTP 接收 hint 轨道，则应检查备用组中一个或多个媒体轨道的采样条目，以找出播放器能够支持的媒体。
+
+#### H.4.3 对 RTP 接收 hint 轨道中的采样进行解码
+
+可以通过从RTPpacket结构创建RTP数据包头并解析RTPpacket结构的构造器，从 RTP 接收 hint 采样中重建原始RTP数据包。因此，文件播放器处理 RTP 接收 hint 轨道的一种方法是重新创建接收到的数据包流，并像重新接收到的那样处理重新创建的数据包流。
+
+RTPpacket结构中包含的relative_time字段可用于安排将数据包插入 RTP 接收器的缓冲区。但是，更可取的做法是，修改记录的RTP流的解码过程，以使解码器输出缓冲区保持尽可能满，以避免由于后期数据包或实时解码中偶尔出现的问题而造成的中断或跳动在运行除播放器之外的其他进程的系统中。
+
+应当从RTP序列号的间隙中检测出数据包丢失。对数据包丢失的反应取决于特定的媒体解码器实现，也可能取决于用户的偏好。
+
+#### H.4.4 嘴唇同步
+
+需要以下步骤来实现流之间的正确同步：
+
+1.播放开始时音轨间同步。轨道的媒体时间线的起始位置可以在文件的影片时间线中移动，如以下两段所述。
+对于媒体轨道和与 RTCP 接收 hint 轨道不相关的 RTP 接收 hint 轨道，应使用 Edit List Box 在H.3.2中描述的移动时间轴内移动媒体时间轴的起始位置。通过分析轨道的 Edit List Box （如果存在），将选定要播放的轨道的媒体时间线映射到影片时间线。与 RTCP 接收 hint 轨道不相关的每个媒体轨道和每个 RTP 接收 hint 轨道的回放均从该轨道的 Edit List Box 中指示的影片时间线位置开始，或者从影片时间线的开头开始（如果没有“编辑列表”轨道存在框。
+对于与各个 RTCP 接收 hint 轨道相关联的 RTP 接收 hint 轨道，影片时间线内媒体时间线的起始位置的偏移如下推断。在所有 RTP 接收 hint 轨道中包含最早的RTP数据包（在发送方挂钟时间轴上的显示时间）的 RTP 接收 hint 轨道的媒体时间线不会在影片时间线内移动（即，在影片时间线上的时间0开始）。任何其他 RTP 接收 hint 轨道的媒体时间线的开始时间等于当前轨道的最早RTP数据包与所有 RTP 接收 hint 轨道中包含最早RTP数据包的轨道的时间戳差。
+2.在媒体时间线上重构RTP时间戳和合成时间（H.3.5）。
+3.如果使用 RTCP 接收 hint 轨道，则根据 RTCP 发送者报告校正RTP时间戳和合成时间。
+校正与H.3.6.3中描述的类似。但是，不是将时间a和c之间的时间差添加到文件中RTP时间戳的表示中，而是在回放过程中将时间差添加到影片时间轴上视频帧的显示时间。
+4.对解码的媒体采样的输出进行步调。
+建议以播放器的壁钟速度播放录制的节目，并使用音频播放时钟作为播放器的壁钟。音频回放被安排为在音频信号的原始采样频率下是连续的。播放器的演示时钟以音频播放的速度运行，即其值始终等于（（播放的最频繁的未压缩音频采样的数量）×（音频信号的采样频率）。视频轨道（和其他潜在的连续媒体轨道）的回放与播放器的演示时钟同步。换句话说，当播放器的演示时钟在影片时间线上满足视频采样的合成时间时，将播放视频采样。
+仅当同时记录和播放文件并且接收器壁钟的运行速度比发送器壁钟的运行速度快时，才可能不建议根据接收器壁钟的速率调整播放速度并将接收器壁钟的速率与接收器壁钟的速率同步发件人挂钟可以按以下步骤进行。
+通过在接收时间（根据接收方时钟）与发送者的各个挂钟时间戳之间建立关系来恢复发送方时钟的速度，这些关系是从 RTCP 发送者报告中重建的。建议使用音频播放时钟作为接收器时钟。由于网络和接收器中的延迟可能会发生变化，因此应在大量接收到的数据包上平均接收时间与发送者的各个时间戳之间的关系。通过平均接收时间与发送者的各个时间戳之间的关系，可以得出时间比例系数。
+对于每个采样，得出接收器时钟的时间轴上的呈现时间。如果正在使用 RTCP 接收 hint 轨道，则显示时间是影片时间线上的采样合成时间，还包括上面步骤3所述的时钟漂移校正。如果未使用 RTCP 接收 hint 轨道，则演示时间直接是影片时间线上采样的合成时间。然后，仅出于回放目的，应将所有正在播放的轨道中的采样的呈现时间乘以时间标度乘数。
+信号的时间延长应相应地进行。采样在演示时播放。
+实际上，时间尺度乘法因子和从RTP时间线到发送者的挂钟的映射（上述步骤3）可以实现为单个操作。
+
+#### H.4.5 随机接入
+
+随机访问是指对文件中表示的媒体流的非线性访问。换句话说，在随机访问操作中，从不是先前播放的文件的另一个采样访问文件，或者从不是影片时间线开始的位置初始访问文件。
+
+建议为用户提供相对于文件的影片时间线的随机访问功能，而不是向其他时间线（例如发件人壁钟时间线）提供随机访问功能。通过以影片时间线为基础，将随机访问操作的步骤数保持为低水平。
+
+首先，导出哪些媒体帧在期望的随机访问位置处（或者，如果没有媒体帧恰好在期望的随机访问位置处，则最接近它）。对于媒体轨道，音频的 RTP 接收 hint 轨道以及timestamp_sync字段等于2（指示预补偿的嘴唇同步）的任何 RTP 接收 hint 轨道，可以直接得出最接近所需随机访问位置的媒体帧根据合成时间戳记（在媒体时间轴上），并以 Edit List Box 中指示的初始开始位置偏移（如果有）。对于timestamp_sync字段等于1的非音频 RTP 接收 hint 轨道（指示使用 RTCP 接收 hint 轨道），应按照0中的描述得出采样的表示时间，直到最接近所需的表示时间为止。找到随机访问位置。
+
+其次，许多媒体比特流的解码只能从特定类型的帧开始，例如H.264/AVC的IDR图片。因此，播放器实现可能具有不同的方法，包括以下方法：
+
+1.发现可以从其开始解码的所需随机访问位置处或之前的最近帧，从该帧开始解码，然后仅从所需随机访问点开始渲染。此方法可能暗示开始渲染之前有一些处理延迟。
+2.使用可从其开始解码的最早帧，在所需的随机访问点处或之后开始解码和渲染。通常，音频回放将比视频回放更早开始，但是开始渲染之前的处理延迟小于前一个选项中的延迟。
+
+### H.5 重新发送记录的RTP流
+
+#### H.5.1 简介
+
+将先前记录的RTP流重新发送到文件可能是理想的操作。例如，如果RTP流通过广播或流服务接收并记录到文件中，则可能需要使用WLAN连接将它们从家庭环境中的一个设备重新发送到另一设备。本小节为重新发送已记录的RTP流提供了建议。
+
+基于RTP的通信系统包括源端点（也称为发送者）和目的端点（也称为接收者），并且可以包含一个或多个混合器和翻译器。发送者和接收者是RTP和RTCP会话的端点。 RTP转换器和混合器的行为在RFC 3550中进行了规定，并在RFC 5117中得到了澄清。通常，接收RTP流并将其存储到文件中的录制单元充当目标端点，而重新发送单元则从其中读取存储的RTP流。文件并发送它们作为源。通常，重新发送的RTP流的有效载荷不会被修改，这使得录制单元和重新发送单元的组合类似于RFC 5117所述的传输转换器。但是，转换器的本质特征是：接收者无法检测到它的存在。因此，除非重新发送与原始流的记录同时发生，否则录制单元和重新发送单元的组合不能充当传输转换器。由于这种情况很少见，因此本小节中的讨论将录制单元视为终止原始RTP和RTCP会话的目的地，并将重新发送单元视为新的RTP和RTCP会话的源。
+
+本小节的组织如下：
+
+-H.5.2包括有关如何从 RTP 接收 hint 轨道组成RTP数据包以及如何安排RTP数据包传输的建议。
+-H.5.3讨论了如何生成RTCP数据包以及如何处理接收到的RTCP数据包。
+
+#### H.5.2 重新发送RTP数据包
+
+建议按照以下方式构造和传输数据包。
+
+建议根据接收 hint 轨道中存储的构造器构造数据包有效载荷，即，建议数据包有效载荷与接收到的有效载荷相同，除非不同的数据包大小对于将数据包转发到的网络至关重要发送。
+
+-除以下情况外，由 RTP 接收 hint 轨道建议的RTP包头字段的值应与各自的RTPpacket结构保持相同：
+-应该随机选择初始RTP时间戳偏移和RTP序列号偏移，而不管存储在所引用接收 hint 采样条目的“tsro”框的偏移字段中的值或RTPpacket结构的RTP序列种子字段的值如何。对于相应 RTP 接收 hint 轨道的任何数据包，则为any。
+-RTP时间戳字段的值应为随机初始偏移量，RTPpacket结构中的偏移量值以及各个RTP采样的解码时间之和。如果总和超过最大的无符号32位整数，则应将其包装。
+-RTP序列号的相对增量应与RTPsequenceseed字段值中记录的相对增量相同。因此，如果记录的流中有数据包丢失，则重新发送的流在RTP序列号中也有各自的间隔，并且接收器能够推断出数据包丢失。
+-CSRC计数字段的值应始终为零，因为记录的前一个RTP会话的贡献源都没有为要重发的流主动修改RTP会话的流。源标识符空间（用于SSRC和CSRC）是特定于会话的。因此，RTP头的CSRC列表应该为空，而不考虑潜在存储的接收流的CSRC值，这些值包括在RTPpacket结构的receiveCSRC TLV框中。
+-可以根据使用中的信令方案来动态选择有效载荷类型字段的值。
+-应该随机选择SSRC字段的值，并应按照RFC 3550中的规定处理潜在的冲突。接收到的流的SSRC值可以存储在所引用的接收 hint 采样条目的ReceivedSsrcBox中，但是当流已重新发送。
+-仅在重新发送单元可以验证它们对重新发送的流有效时，才应重新发送存储在RTPpacket结构中rtphdrextTLV中的已记录RTP标头扩展。如果重新发送单元无法解析所记录的RTP头扩展名的语义，则不应重新发送它们。
+
+数据包的接收时间，由包含该数据包的 RTP 接收 hint 采样的解码时间与RTPpacket结构的relative_time值的总和表示，等于该数据包的传输时间，该数据包具有因传输而引起的偏斜延迟和接收器协议栈中的处理延迟。由于传输延迟抖动和变化的处理延迟，相邻数据包的时滞可能不相等。此外，接收流时使用的协议栈可能与用于重新发送流的协议栈不同。由于这些原因，接收时间通常不适用于加快已发送数据包的传输速度。在所有情况下，重新发送单元都应验证重新发送的数据包流是否符合使用中的缓冲模型（如果有）。如果重新发送单元可以断定在接收流和重新发送记录的流时使用的网络环境和协议栈是相似的，则接收时间可以用作安排数据包传输的基础。重发单元应努力消除或隐藏记录流中的传输延迟抖动。如果重新发送单元无法断定接收流和重新发送记录的流时使用的网络环境和协议栈相似或不确定哪种数据包调度合适，则可以将解码时间用作计划的基础。
+
+#### H.5.3 RTCP处理
+
+ RTCP 发送者报告和其他RTCP消息是按照RFC 3550中指定的约束重新生成的，而不是直接使用记录在 RTCP 接收 hint 轨道中的RTCP消息（如果有）。
+
+ RTCP 发送者报告包含发送报告时的挂钟时间和与指示的挂钟时间相同的时间所对应的RTP时间戳。  RTCP 发送者报告的RTP时间戳生成如下。针对与 RTCP 发送者报告中指示的挂钟时间相对应的采样，得出参考时钟时间线上的显示时间。参考时钟可能是会话开始时初始化为0的重发单元的挂钟。由于在 RTP 接收 hint 轨道中的采样的采样时刻可能与 RTCP 发送者报告的传输时刻不匹配，因此与指示的壁钟时间相对应的采样可能不存在于相应的 RTP 接收 hint 轨道中。但是，按照RFC 3550的指示，RTP时间戳的推导就像在RTP流中存在一个与指示的壁钟时间相对应的采样一样。  RTCP 发送者报告的RTP时间戳应从 RTCP 发送者报告中指示的挂钟时间之前和之后的采样的RTP时间戳进行线性插值。为了得出 RTCP 发送者报告中指示的挂钟时间之前和之后的采样，应该导出参考时钟时间线上的显示时间，直到发现最接近的采样为止。如果存在针对重新发送的 RTP 接收 hint 轨道的 RTCP 接收 hint 轨道，则演示时间是影片时间线上采样的合成时间，还包括步骤3的0所述的时钟漂移校正。如果 RTCP 接收 hint ，轨道不存在，呈现时间直接是影片时间线上采样的合成时间。
+
+在处理接收到的 RTCP 接收器报告时，应注意，报告的丢失数据包累积数量还包括未发送的数据包，这些未发送的数据包最初从未接收过，并且对应于 RTP 接收 hint 轨道中RTP序列号的间隔。 任何拥塞管理，重传或其他丢包恢复方法都应考虑到这一点。
+
+## 附录 I (提供信息) 流访问点
+
+### I.1 简介
+
+此附录定义了流访问点（SAP）并指定了六种类型的SAP。
+
+流访问点（SAP）允许随机访问媒体流容器。一个容器可以包含多个媒体流，每个媒体流都是某些媒体类型的连续媒体的编码版本。 SAP是容器中的一个位置，该位置允许仅使用以下内容开始播放标识的媒体流：（a）从该位置开始包含在容器中的信息，以及（b）来自其他部分的可能的初始化数据容器或外部可用。
+
+派生的规范应指定是否需要初始化数据来访问SAP处的容器，以及如何访问初始化数据。
+
+分层媒体的SAP可以应用于媒体流中的所有层，特定的一组层或仅单个层。当SAP应用于使用来自非集合成员的层的帧间预测的一组层时，可能会指示SAP是否需要对参考层进行正确解码。
+
+当SAP与分层媒体一起使用时，派生的规范应指定或提供指示SAP适用于哪些层以及SAP是否需要对参考层进行正确解码的方法。
+
+### I.2 SAP属性
+
+#### I.2.1 总则
+
+对于每个SAP，将ISAP，TSAP，ISAU，TDEC，TEPT和TPTF的属性标识为：
+
+SAP TSAP是媒体流中任何访问单元的最早显示时间，因此，可以使用从ISAP开始的比特流中的数据正确地解码呈现时间大于或等于TSAP的媒体流中的所有访问单元，而在ISAP之前不使用任何数据。
+ISAP是比特流中的最高位置，因此，可以使用从ISAP开始的比特流数据，而不使用ISAP之前的数据，对呈现时间大于或等于TSAP的媒体流的所有访问单元进行正确解码。
+AU ISAU是最新访问单元的比特流在媒体流中按解码顺序的开始位置，以便可以使用此最新访问单元和访问正确解码呈现时间大于或等于TSAP的媒体流的所有访问单元解码顺序后面的单元，解码顺序前面没有访问单元。
+
+注意ISAU始终大于或等于ISAP。
+TDEC是媒体流任何访问单元的最早显示时间，可以使用从ISAU开始的位流中的数据正确解码，而在ISAU之前不使用任何数据，可以正确解码该时间。
+TEPT是媒体流中任何访问单元从位流中的ISAU开始的最早显示时间。
+TPTF是从ISAU开始在比特流中按解码顺序的媒体流的第一个访问单元的显示时间。
+
+为了这些定义的目的，SAP是被描述为位于ISAU和/或ISAP的访问单元。
+注–仅需要在ISAU和ISAP之间进行区分才能区分直接引用访问单元和引用其包含结构。
+
+#### I.2.2 图层的SAP属性
+
+以下属性适用于分层媒体流，针对该分层媒体流指示了针对一个或多个层（称为目标层）的SAP。在以下属性中，访问单元分区是指包含目标层的单个时间实例的编码数据的单元，媒体流分区是指按解码顺序对目标层的访问单元分区的序列。
+
+当目标层覆盖媒体流的所有层时，以下属性与I.2.1中的属性相同。
+
+对于每个SAP，将ISAP，TSAP，ISAU，TDEC，TEPT和TPTF的属性标识为：
+TSAP是目标层的任何访问单元分区的最早表示时间，因此可以使用从ISAP开始的媒体流分区中的数据正确解码呈现时间大于或等于TSAP的目标层的所有访问单元分区并且在ISAP之前没有数据。
+ISAP是媒体流分区的容器中的最高位置，因此可以使用从ISAP开始的媒体流分区的数据正确解码呈现时间大于或等于TSAP的目标层的所有访问单元分区ISAP之前的数据。
+ISAU按解码顺序是最新访问单元分区在媒体流分区中的起始位置，以便使用此最新消息可以正确解码呈现时间大于或等于TSAP的目标层的所有访问单元分区访问单元分区和访问单元分区按解码顺序排列，没有访问单元分区按解码顺序排列较早。
+注意ISAU始终大于或等于ISAP。
+TDEC是目标层的任何访问单元分区的最早表示时间，可以使用从ISAU开始的媒体流分区中的数据正确解码，而在ISAU之前不进行数据解码。
+TEPT是从媒体流分区中的ISAU开始的目标层的任何访问单元分区的最早表示时间。
+TPTF是从ISAU开始的媒体流分区中按解码顺序排列的目标层第一个访问单元分区的显示时间。
+
+### I.3 SAP类型
+
+定义了六种类型的SAP，其属性如下：
+类型1：TEPT = TDEC = TSAP = TPTF
+类型2：TEPT = TDEC = TSAP <TPTF
+类型3：TEPT <TDEC = TSAP <= TPTF
+类型4：TEPT <= TPTF <TDEC = TSAP
+类型5：TEPT = TDEC <TSAP
+类型6：TEPT <TDEC <TSAP
+注意SAP的类型仅取决于可正确解码的访问单元及其在显示顺序中的排列方式。这些类型非正式地与一些通用术语相对应：
+类型1对应于某些编码方案中所谓的“封闭式GoP随机接入点”（其中，从ISAP开始，按照解码顺序，所有访问单元都可以正确解码，从而导致正确解码访问的连续时间序列）没有间隙的单元），此外，解码顺序的访问单元也是显示顺序的第一个访问单元。
+类型2对应于某些编码方案中称为“封闭GoP随机接入点”的类型，对于该类型，从ISAU开始的媒体流中按解码顺序排列的第一个访问单元不是按显示顺序排列的第一个访问单元。
+类型3对应于某些编码方案中所谓的“开放GoP随机接入点”，其中在ISAU之后的解码顺序中有一些访问单元无法正确解码，并且显示时间少于TSAP。
+类型4对应于某些编码方案中称为“逐步解码刷新（GDR）随机访问点”的类型，其中某些访问单元在ISAU的前后以解码顺序进行解码，无法正确解码并具有显示时间少于TSAP。
+类型5对应于以下情况：从ISAP开始，至少有一个按解码顺序的访问单元无法正确解码，并且显示时间大于TDEC，并且TDEC是任何访问单元从ISAU开始的最早显示时间。
+类型6对应于以下情况：从ISAP开始，至少有一个按解码顺序的访问单元无法正确解码，并且显示时间大于TDEC，并且TDEC不是任何从ISAU开始的访问单元的最早显示时间。
+
+## 附录 K (提供信息) 段索引示例
+
+### K.1 简介
+
+此附录提供了一些使用 segment index box 的示例，以及以各种不同的“样式”或配置使用时会插入哪些值。
+
+在以下示例中，第 i 个 “sidx” box 的大小定义为 $$S_{i,index}$$，第 i 个子段的大小(例如第 i 个 “moof” 和 “mdat” box)定义为 $$S_{i,media}$$，第 i 个子段的时长定义为 $$D_i$$，最后一个子段的数目定义为 N，且段的时长定义为 $$S_{segment}$$。
+
+### K.2 示例
+
+#### K.2.1 简单的一级索引
+
+此示例显示了一个简单的段索引（图 K.1）。顶层 sidx 的所有条目均指向媒体内容（包括一个或多个影片片段的段），即 reference_type 等于 0。每个条目的 referenced_size 和 subsegment_duration 值均按表 K.1 计算。
+
+图 K.1：简单段索引
+
+![图 K.1：简单段索引](figurek1.png)
+
+表 K.1：简单段索引
+
+![表 K.1：简单段索引](tablek1.png)
+
+#### K.2.2 分层
+
+此示例显示了分层的段索引（图 K.2）。顶层 sidx 的所有条目都指向另一个 “sidx” box，即 reference_type 等于 1，第二层 sidx 的所有条目均指向媒体内容，即 reference_type 等于 0。每个条目的 referenced_size 和 subsegment_duration 值均按表 K.2 计算。
+
+图 K.2：分层段索引
+
+![图 K.2：分层段索引](figurek2.png)
+
+表 K.2：分层段索引
+
+![表 K.2：分层段索引](tablek2.png)
+
+#### K.2.3 菊花链
+
+此示例显示了菊花链的段索引（图 K.3）。每个 “sidx” box 都有两个条目，第一个条目指向媒体内容，即 reference_type 等于 0，第二个（最后一个）条目指向下一个 “sidx” box，即 reference_type 等于 1。每个条目的 referenced_size 和 subsegment_duration 值均按表 K.3 计算。
+
+图 K.3：菊花链段索引
+
+![图 K.2：分层段索引](figurek3.png)
+
+表 K.3：菊花链段索引
+
+![表 K.3：菊花链段索引](tablek3.png)
+
+#### K.2.4 组合分层和菊花链
+
+此示例显示分层和菊花链式段索引（图 K.4），它是 A.2.3 和 A.2.4 的组合。每个条目的 referenced_size 和 subsegment_duration 值均按表 K.4 计算。
+
+图 K.4：组合段索引
+
+![图 K.4：组合段索引](figurek3.png)
+
+表 K.4：组合段索引
+
+![表 K.4：组合段索引](tablek3.png)
 
 ## 参考
 
