@@ -333,6 +333,20 @@
     - [C.9 元数据](#c9-元数据)
     - [C.10 注册](#c10-注册)
     - [C.11 采样组、定时元数据轨道和采样辅助信息的使用指导](#c11-采样组定时元数据轨道和采样辅助信息的使用指导)
+  - [附录 E (提供信息) 文件格式 brand](#附录-e-提供信息-文件格式-brand)
+    - [E.1 介绍](#e1-介绍)
+    - [E.2 “isom” brand](#e2-isom-brand)
+    - [E.3 “avc1” brand](#e3-avc1-brand)
+    - [E.4 “iso2” brand](#e4-iso2-brand)
+    - [E.5 “mp71” brand](#e5-mp71-brand)
+    - [E.6 “iso3” brand](#e6-iso3-brand)
+    - [E.7 “iso4” brand](#e7-iso4-brand)
+    - [E.8 “iso5” brand](#e8-iso5-brand)
+    - [E.9 “iso6” brand](#e9-iso6-brand)
+    - [E.10 “iso7” brand](#e10-iso7-brand)
+    - [E.11 “iso8” brand](#e11-iso8-brand)
+    - [E.12 “iso9” brand](#e12-iso9-brand)
+  - [附录 G (提供信息) URI 标记的元数据形式](#附录-g-提供信息-uri-标记的元数据形式)
   - [参考](#参考)
 
 ## 缩写
@@ -544,10 +558,10 @@ aligned(8) class FileTypeBox
 
 在内容创建阶段，可对格式的多个区域进行有效使用，特别是：
 
-- 能够分别存储每个基本流(不交错)，可能存储在单独的文件
+- 能够分别存储每个基本流(不交织)，可能存储在单独的文件
 - 能够在包含媒体数据和其他流的单个演示中工作(比如，以未压缩格式编辑音频轨道，使其与已经准备好的视频轨道对齐)
 
-这些特征意味着可以准备演示、进行编辑、开发和集成内容，而无需反复将演示重新写在磁盘上——如果需要交错且必须删除未使用数据，重写是必要的；且无需反复解码和重新编码数据——如果必须以编码状态存储数据，编解码是必要的。
+这些特征意味着可以准备演示、进行编辑、开发和集成内容，而无需反复将演示重新写在磁盘上——如果需要交织且必须删除未使用数据，重写是必要的；且无需反复解码和重新编码数据——如果必须以编码状态存储数据，编解码是必要的。
 
 下图显示了内容创建过程中使用的一组文件：
 
@@ -559,7 +573,7 @@ aligned(8) class FileTypeBox
 
 #### 5.1.5 本地演示
 
-“本地”查看演示(即直接从文件而不是通过流式互联)是一个重要应用；将其用于分发演示时(比如在 CD 或 DVD ROM 上)、开发过程中，以及在流媒体服务器上验证内容。必须支持这种本地查看，并可完全随机访问。如果演示在 CD 或 DVD ROM 上，那么交错很重要，因为搜索可能会很慢。
+“本地”查看演示(即直接从文件而不是通过流式互联)是一个重要应用；将其用于分发演示时(比如在 CD 或 DVD ROM 上)、开发过程中，以及在流媒体服务器上验证内容。必须支持这种本地查看，并可完全随机访问。如果演示在 CD 或 DVD ROM 上，那么交织很重要，因为搜索可能会很慢。
 
 #### 5.1.6 流式演示
 
@@ -3771,7 +3785,7 @@ aligned(8) class StereoVideoBox extends extends FullBox(‘stvi’, version = 0,
 
 媒体演示可以分为多个段进行传递，例如，有可能(例如在 HTTP 流中)形成包含一个段(或串联的段)的文件，这些文件不一定形成符合 ISO 基本媒体文件格式的文件(例如，它们不包含 Movie Box)。
 
-本节定义了可在此类段中使用的特定框。
+本节定义了可在此类段中使用的特定 box。
 
 #### 8.16.2 Segment Type Box
 
@@ -3913,7 +3927,7 @@ Subsegment Index Box(“ssix”)提供从级别(由 Level Assignment box 指定)
 - 当以这种方式访问部分子段时，对于除 3 之外的任何 assignment_type，最终的 Media Data box 可能不完整，也就是说，所访问的数据少于 Media Data box 的长度指示所表示的数量。Media Data box 的长度可能需要调整或使用填充。Level Assignment Box 中的 padding_flag 指示是否可以用零代替此丢失的数据。如果不是，则对于分配给未访问级别的采样，不存在采样数据，并且应注意不要尝试处理此类采样
 - 与部分子段对应的数据范围包括 Movie Fragment Box 和 Media Data box。第一个部分子片段(即最低级别)将对应  Movie Fragment Box 以及(部分)Media Data box，而随后的部分子段(较高级别)可能仅对应(部分)Media Data box
 
-注意：例如，当视频比特流的帧在子段内按时间顺序排序时，可以将等于 0 的 assignment_type(在 Subsegment Index Box “leva” 中指定)与时间级别采样分组(“tele”)一起使用；例如，当多视图视频比特流的每个视图包含在单独的轨道中并且所有视图的轨道片段包含在单个影片片段中时，可以使用等于 2 的 assignment_type。例如，当音频和视频电影片段(包括相应的 Media Data box)交错时，可以使用等于 3 的 assignment_type。可以指定第一级别包含音频电影片段(包括相应的 Media Data box)，而可以指定第二级包含音频和视频电影片段(包括所有 Media Data box)。
+注意：例如，当视频比特流的帧在子段内按时间顺序排序时，可以将等于 0 的 assignment_type(在 Subsegment Index Box “leva” 中指定)与时间级别采样分组(“tele”)一起使用；例如，当多视图视频比特流的每个视图包含在单独的轨道中并且所有视图的轨道片段包含在单个影片片段中时，可以使用等于 2 的 assignment_type。例如，当音频和视频电影片段(包括相应的 Media Data box)交织时，可以使用等于 3 的 assignment_type。可以指定第一级别包含音频电影片段(包括相应的 Media Data box)，而可以指定第二级包含音频和视频电影片段(包括所有 Media Data box)。
 
 ```code
 aligned(8) class SubsegmentIndexBox extends FullBox(‘ssix’, 0, 0) {
@@ -5225,7 +5239,7 @@ class AlternativeStartupEntry() extends VisualSampleGroupEntry (’alst’) {
 
 ![图 7-具有 5 个时间级别示例序列的的解码图片缓冲延时](figure7-decoded-picture-buffering-delay-of-an-example-sequence-with-five-temporal-levels.png)
 
-由于时间分层，可以仅解码序列开始的图片子集。因此，可以更快地开始渲染，但是开始时显示图片的速率较低。换句话说，播放器可以在初始启动延迟的持续时间和初始显示图像速率之间进行权衡。图 8 和图 9 显示了两个备用启动序列的示例，其中解码了图 7 的比特流子集。
+由于时间分层，可以仅解码序列开始的图片子集。因此，可以更快地开始渲染，但是开始时显示图片的速率较低。换句话说，播放器可以在初始启动延迟的时长和初始显示图像速率之间进行权衡。图 8 和图 9 显示了两个备用启动序列的示例，其中解码了图 7 的比特流子集。
 
 选择用于解码的采样和解码器输出分别在图 8a 和图 8b 中显示。frame_num 等于 4 的引用图片和 frame_num 等于 5 的非引用图片未解码。在此示例中，图片渲染的开始比图 7 早四个图片间隔。当图片速率为 25Hz 时，启动延迟节省 160 毫秒。节省启动延迟的缺点是在比特流开始时显示图像速率较低。
 
@@ -5353,7 +5367,7 @@ else {
 
 ### 11.3 派生的文件格式
 
-出于限制目的，可将此规范用作特定文件格式的基础：比如，MPEG-4 的 MP4 文件格式和 Motion JPEG 2000 文件格式二者都由此规范衍生。编写衍生的规范时，必须制定以下内容：
+出于限制目的，可将此规范用作特定文件格式的基础：比如，MPEG-4 的 MP4 文件格式和 Motion JPEG 2000 文件格式二者都由此规范派生。编写派生的规范时，必须制定以下内容：
 
 新格式的名称，以及 File Type Box 的 brand 和兼容性类型。通常会使用新的文件扩展名，以及新的 MIME 类型和 Machintosh 文件类不过这些定义和注册在本规范的范围之外。
 
@@ -5363,7 +5377,7 @@ else {
 
 尽管不建议，但可以定义新的 box。
 
-如果衍生规范需要除了视频和音频以外的新轨道类型，则必须注册新的 handler-type。必须标识此轨道所需的媒体头。如果是新 box，必须对其定义并注册其 box 类型。通常，期望大多数系统可以使用现有轨道类型。
+如果派生规范需要除了视频和音频以外的新轨道类型，则必须注册新的 handler-type。必须标识此轨道所需的媒体头。如果是新 box，必须对其定义并注册其 box 类型。通常，期望大多数系统可以使用现有轨道类型。
 
 所有新的轨道引用类型必须注册和定义。
 
@@ -6006,7 +6020,7 @@ aligned(8) class SubtitleMediaHeaderBox
 
 | 字段 | 类型 | 含义 |
 | --- | --- | --- |
-| version | 整数 | 指定此框的版本 |
+| version | 整数 | 指定此 box 的版本 |
 | flags | 整数 | 带有标志的 24 位整数（目前均为 0） |
 
 #### 12.6.3 采样条目
@@ -6153,7 +6167,7 @@ class TextSubtitleSampleEntry() extends SubtitleSampleEntry (‘sbtt’) {
 
 ### C.1 介绍
 
-此附录提供了信息文本，解释如何从 ISO 基本媒体文件格式衍生特定文件格式。
+此附录提供了信息文本，解释如何从 ISO 基本媒体文件格式派生特定文件格式。
 
 ISO/IEC 14496-12 | 15444-12 ISO 基本媒体文件格式定义文件格式的基础结构。从 ISO 基本媒体文件格式派生的其他规范中，可以提供特定媒体的扩展和用户定义的扩展。
 
@@ -6173,11 +6187,11 @@ ISO/IEC 14496-12 | 15444-12 ISO 基本媒体文件格式定义文件格式的基
 
 #### C.2.2 基本分层操作
 
-在不了解任何潜在衍生规范的情况下，应该有可能对第 12 部分文件执行某些操作。这些操作可能包括明显的读取轨迹、查找采样的数据和时间，以及它们的采样描述和轨迹类型，等等。例如，这可以通过文件格式检查器或参考软件之类的通用库来完成。
+在不了解任何潜在派生规范的情况下，应该有可能对第 12 部分文件执行某些操作。这些操作可能包括明显的读取轨迹、查找采样的数据和时间，以及它们的采样描述和轨迹类型，等等。例如，这可以通过文件格式检查器或参考软件之类的通用库来完成。
 
 不太明显的是文件一类的操作：
 
-a) 重新交织数据；按时间顺序制作媒体数据，将各种磁道的采样分组为合理大小的块，并将块进行交错
+a) 重新交织数据；按时间顺序制作媒体数据，将各种轨道的采样分组为合理大小的块，并将块进行交织
 b) 通过从外部文件复制数据到新文件中，制作独立的使用数据引用的文件
 c) 移除 Free Space atom 并压实 atom 结构
 d) 从 “mdat” atom 中删除似乎未被轨道或 meta data atom 引用的数据
@@ -6190,13 +6204,13 @@ h) 插入或删除影片片段，或对电影重新分段
 
 ### C.3 box
 
-您可以将 box 添加到文件格式，但是要注意它们如何与其他 box 交互。特别是，如果它们“交叉链接”到现有 box 中，则可能无法将此类文件标记为符合第 12 部分。
+你可以将 box 添加到文件格式，但是要注意它们如何与其他 box 交互。特别是，如果它们“交叉链接”到现有 box 中，则可能无法将此类文件标记为符合第 12 部分。
 
-您必须注册所有新 box，但使用 “uuid” 类型的 box 除外。同样，您应该注册编解码器（样本条目）名称、brand、轨道引用类型、handler（媒体类型）、组类型和保护方案类型。使用这些未注册的确实是一个坏主意，因为可能会发生冲突-或其他人可能会注册具有不同含义的相同标识符。
+你必须注册所有新 box，但使用 “uuid” 类型的 box 除外。同样，你应该注册编解码器（采样条目）名称、brand、轨道引用类型、handler（媒体类型）、组类型和保护方案类型。使用这些未注册的确实是一个坏主意，因为可能会发生冲突-或其他人可能会注册具有不同含义的相同标识符。
 
 如果可以使用简单的四字符代码，则不应使用 “UUID 转义”（保留的 ISO UUID 模式0xXXXXXXXX-0011-0010-8000-00AA00389B71，用四字符代码代替 X）写一个 box，且理想情况下，不应设计使用 UUID box；最好尽可能将数据放在文件格式的已知“扩展点”中，或者确实需要时注册新的 box 类型。
 
-不要忘记，ISO 文件中的所有数据都必须是或包含在 box 中。您可以引入签名，但其必须“看起来像” box。
+不要忘记，ISO 文件中的所有数据都必须是或包含在 box 中。你可以引入签名，但其必须“看起来像” box。
 
 尽可能避免要求任何现有的或你定义的新 box 放在特定位置。比如，现有的 JPEG 2000 规范需要一个签名 box，且该签名 box 应位于文件开头。如果另一个规范也定义一个签名 box，并且也要求在文件开头，那么不能构造同时符合这两个规范的文件。
 
@@ -6234,7 +6248,7 @@ c) 潜在地实现该单一规范的阅读器，可以读取、解释并可能�
 
 如果需要制定不完全符合现有标准的新规范，可以注册新 brand。比如，3GPP 允许在文件格式中使用 AMR 和 H.263。因为当时任何标准都不支持这些编解码器，因此 3GPP 在 ISO 基本媒体文件格式中了 SampleENtry 和模板字段的用法，并定义了这些编解码器引用的新 box。考虑到将来文件格式使用更加广泛，因此预计需要更多 brand。
 
-brand 不可附加；他们是独立的。您不能说：“该 brand 表示还需要支持 Y”，因为没有引用。
+brand 不可附加；他们是独立的。你不能说：“该 brand 表示还需要支持 Y”，因为没有引用。
 
 重新写入文件的系统应删除他们无法识别的 brand ，因为他们不知道文件是否仍然符合该 brand 的要求（例如，重新交织文件可能会使它不符合需要某种交织样式的规范）。
 
@@ -6248,7 +6262,7 @@ brand 不可附加；他们是独立的。您不能说：“该 brand 表示还�
 2. 任何现有 brand 不支持使用的多个编解码器的组合。此外，仅当播放器支持文件中所有媒体的解码时，才允许回放文件
 3. 使用特定用户的限制和/或扩展(box、模板字段等)
 
-但是，文件格式同时包含 major_brand 和 compatible_brands 数组。这些字段归文件作者和第 12 部分规范所有。不要编写规范讨论这些字段，以及仅讨论 brand 及其含义。特别是，请勿声明 major_brand 字段（“符合此规范的文件必须将 major_brand 设置为 XXXX”），因为文件永远不会符合以这种方式编写的两个这样的规范，并且您还会阻止某人从你的规范进行派生。但是，可以定义 brand 仅允许作为兼容 brand。
+但是，文件格式同时包含 major_brand 和 compatible_brands 数组。这些字段归文件作者和第 12 部分规范所有。不要编写规范讨论这些字段，以及仅讨论 brand 及其含义。特别是，请勿声明 major_brand 字段（“符合此规范的文件必须将 major_brand 设置为 XXXX”），因为文件永远不会符合以这种方式编写的两个这样的规范，并且你还会阻止某人从你的规范进行派生。但是，可以定义 brand 仅允许作为兼容 brand。
 
 但是，brand 可以用作跟踪器。拥有一个没有任何要求的 brand 是完全合法的，并且放置在文件中作为“我在那儿”点（或者严格地说，“该 brand 要求文件最后由ZZZZ编写”）。
 
@@ -6300,31 +6314,75 @@ brand 不可附加；他们是独立的。您不能说：“该 brand 表示还�
 
 #### C.7.1 数据位置
 
-todo。。。。。
+轨道是采样的定时序列；每个采样都由其数据（包含的字节）、数据长度和位置定义。采样的长度和数据对于文件格式是外部参数；字节的位置不是。
+
+数据存储的确切方式对于第 12 部分文件格式是内部的。在定义格式的采样时，应定义采样的长度和数据。
+
+但是，你不应提及以下 box，因为它们的结构方式可以更改，并且它们存储的信息可能以其他方式存储（例如，采样大小信息可能位于 stsz box、stz2 box，或影片片段）：
+
+  sample size（stsz），compact sample size（stz2）
+
+实际上，一个轨道采样存储连续的采样组；这些组称为块，并且是来自不同被交织的轨道的块。但是文件可能会被重新交织或重新分块；以下 box 介绍了如何进行分块：
+
+  chunk offsets（stco 或 co64），sample‐to‐chunk（stsc）
+
+最关键的是，必须通过这些 box（或其在影片片段中的等效 box）定位第 12 部分文件中的数据。Media Data Box（“mdat”） 只是一个可能的位置，它本身就被视为一个无法识别比特的无序包。无法保证 Media Data Box 中所需材料是该 box 中唯一数据或以任何特定顺序排列的数据，尤其是如果使用了数据引用，则不能保证 Media Data Box 中甚至有任何特定采样。在派生规范中提及 Media Data Box（“mdat”） 几乎可以肯定是一个错误，并且试图定义（或假设）其结构将在篡改第 12 部分规范，这是一个错误。
+
+完全允许在集成规范中要求某种风格、时长或交织大小（“此规范要求文件是独立的，媒体数据应按解码时间顺序，交织粒度不超过一秒钟”）。
 
 #### C.7.2 时间
 
-。。。。。。。。
+类似地，按照采样的解码时间戳和可选的合成时间戳，在文件格式中将其按时间参数化。你应该定义这些对你的媒体意味着什么。但是，这些文件的存储方式仍然是第 12 部分文件格式的内部。
+
+但是，你不应提及以下 box，因为它们的结构方式可以更改，并且它们存储的信息可能以其他方式存储：
+
+  time‐to‐sample box (stts)，composition offsets (ctts)
+
+同样，编辑的时间结构效果应通过文件格式保留，但是第 12 部分的文件简化器可以例如合并两个相邻实际属于同一类的编辑（例如，两个空的编辑，或者选择时间 A-B 的编辑，且其之后跟着一个编辑选择时间 B-C ）。
 
 #### C.7.3 媒体类型
 
-。。。。。。。。。。
+第 12 部分规范中有多种媒体类型：视频、音频、元数据等。这些通过轨道 handler 类型和特定媒体的媒体头表示。可以注册新的媒体 handler，但这很少需要。例如，如果需要某种轨道类型（例如，实验室仪器轨道或“定时香气”轨道），则可能需要新的媒体 handler。还应检查注册机构；所需的 handler 可能已在另一个派生规范中定义。
 
 #### C.7.4 编解码类型
 
-。。。。。。。。。。。。。
+采样条目的名称标识了使用的编码格式。这是对 Part 12 规范进行参数化的主要方法之一；比如 AVC（MPEG-4 Part 10）使用 “avc1” 作为采样条目类型。为编解码器定义此名称，然后进行注册，然后定义该编解码器的采样条目中的其他 box 是使用第 12 部分格式的主要方式。你应该为你的编码系统定义这些。请注意，从技术上讲，编码类型是由媒体类型“限定”的（尽管为了避免混淆，我们尝试不将相同的四字符代码定义为两种媒体类型（例如视频和音频）中两个不同的编解码器）。
 
 #### C.7.5 子采样信息
 
-。。。。。。。。。。。。。
+第 12 部分规范可以携带每个采样的“子采样”边界的信息。但是，子采样的定义是特定于编码系统的。你可能希望在定义编码系统的存储方式时定义子采样。
 
 #### C.7.6 采样依赖
 
+第 12 部分格式允许你识别编码系统的某些解码依赖性信息。特别是，你应该确定什么构成有效的“同步”或随机访问点（可以从其开始解码的点）。可以在文件格式中标记它们（在同步采样表中，或影片片段中的标记）。应该较少关注如何标记同步采样。
+
+同样，可以指出哪些采样：
+
+- 依赖其它采样，或者可以独立解码
+- 被其它采样依赖，或者可以被丢弃而不影响解码
+- 包含相同信息的多种编码，可能具有不同的依赖（进行了冗余编码）
+
+对于大多数编码系统，这些含义是不言而喻的，不需要指出；但是，对于某些编码系统，它们可能需要明确的声明。
+
 #### C.7.7 采样组
+
+采样组提供另一种方法描述采样及其特征。要使用采样组，你可以定义组类型，然后定义组的定义方式（组描述）。然后，文件格式可以将给定采样映射到任何给定类型组的单个定义。定义新的分组类型及其参数化方法是参数化文件格式的重要方法。
 
 #### C.7.8 轨道级别
 
+可以通过两种重要方式将文件格式中的轨道相互关联。轨道引用是一种类型化的链接，指示一个轨道对另一轨道的引用或依赖关系（例如，描述媒体轨道的元数据轨道依赖该媒体轨道，因为没有它就没有意义）。可以在派生规范中注册并使用新的轨道引用类型。
+
+类似地，轨道可能会分为几组备用组，希望阅读器能够从中选择一个适合的轨道（例如，基于受支持的编解码器、比特率、屏幕尺寸等）。3GPP 26.234 采纳了这一概念，并包含了用户数据（允许的扩展名），以 hint 轨道为何是组的成员（“我包含不同的编解码器”）。
+
+最后，可以在文件格式中启用或禁用轨道。例如，禁用的轨道可用于可选功能（例如隐藏式字幕）。
+
 #### C.7.9 保护
+
+类似于通过使用相同的条目类型，以及采样条目中的额外 box 对编码方案进行参数化，第 12 部分格式允许对轨道应用保护，通过方案类型和 Scheme Information Box 内容进行参数化。Scheme Information Box 由方案类型“拥有”——其中包含的 box 不需要注册，因为它们已由方案类型确定范围。
+
+保护可能是微妙的；例如许多加密系统“链接”在一起。试图加密 “mdat box 的内容”是很诱人的，但这对文件的微小更改非常不利。保护数据块也很诱人——它们似乎代表了一个轨道的连续媒体数据组。但是同样，对文件重新分块可能会破坏解除保护的能力。
+
+相反，可以考虑修改采样，或引入时间并行的元数据，或使用采样组，以引入足够的上下文来启用基于文件的操作和解密。时间并行元数据将在轨道中，并且应该使用轨道引用指示受保护的数据取决于并行加密上下文轨道。
 
 ### C.8 分段影片的构造
 
@@ -6338,7 +6396,7 @@ todo。。。。。
 - 对于每个媒体，“moof” box 至多包含一个“traf”。当文件包含单个视频轨道和单个音频轨道时，“moof” 将包含两个 “traf”，分别用于视频和音频
 - 对于视频，将随机可访问的采样存储为每个 “traf” 的第一个采样。在逐步解码器刷新的情况下，随机可访问采样和对应的恢复点存储在同一影片片段。对于音频，和每个视频随机可访问采样显示时间最接近的采样存储为每个 “traf” 的第一个采样。因此，“moof” 中每个媒体的第一个采样有近似相等的显示时间
 - 对于视频和音频，第一个(随机可访问)采样记录在 “mfra”
-- “mdat” 内的所有采样均以适当的交错深度进行交错
+- “mdat” 内的所有采样均以适当的交织深度进行交织
 
 对于音频和视频，每个 “moof” 的偏移量和初始显示时间在 “mfra” 给出。
 
@@ -6350,9 +6408,347 @@ todo。。。。。
 
 ### C.9 元数据
 
+上面关于轨道及其数据的大部分论述都适用于元数据项，当然，除了元数据项没有时间结构。特别是，将项目划分为多个区间（允许它们交织）也是文件格式的属性。根据区间结构设计一些新的支持将是一个错误。
+
 ### C.10 注册
 
+注册！如有疑问，请联系 <http://www.mp4ra.org> 的注册机构。注册是免费的，建议和帮助也是免费的。不注册意味着您的使用可能会与其他人冲突，并且您的使用也是不可追溯的，因此实际上是没有记录的。注册机构知道很多 brand （至少）被发明和使用，但尚未注册。这些人在“危险地飞行”；不要加入他们。
+
 ### C.11 采样组、定时元数据轨道和采样辅助信息的使用指导
+
+ISO 基本媒体文件格式包含三种定时元数据的机制，可将元数据与特定采样关联：采样组、定时元数据轨道和采样辅助信息。
+
+派生规范可以通过这三种机制中的一种或多种提供类似的功能。本节为派生规范提供指导用于在三种机制之间选择。
+
+采样组和定时元数据与媒体数据的联系不太紧密，通常是“描述性的”，而解码可能需要采样辅助信息。
+
+采样辅助信息仅适用于一对一与采样直接相关的信息，并且是媒体采样处理和显示所必需的。对于一般内容，应使用现有的其他轨道解决方案。采样辅助信息和采样媒体数据都使用字节指针和大小信息进行寻址，因此当同一字节构成多个采样的数据时，可以通过重用同一字节指针来共享该数据。
+
+采样组在以下情况可能有用。
+
+- 当多个采样共享相同的元数据值时，在 Sample Group Description box 中指定元数据以及在 Sample To Group box 中指定采样与元数据的关联会节省空间
+- 由于采样组信息存储在 Movie box 和 Movie Fragment box 中，它们提供 Media Data box 中数据的索引。与定时元数据轨道和采样辅助信息相比，不需要从 Media Data box 中获取任何数据，因此可以减少磁盘访问。
+
+定时元数据轨道在以下情况可能有用。
+
+- 同一定时元数据轨道可能与多个轨道关联。换句话说，定时元数据轨道可能比采样组和采样辅助信息更独立于关联轨道的内容
+- 在文件中追加定时元数据轨道可能比追加采样辅助信息或采样组更容易，因为采样辅助信息和 Sample To Group box 必须与关联的采样位于同一 Track Fragment Box 中，而定时元数据可能驻留在自己的 Movie Fragment box 中。例如，与使用采样辅助信息相比，提供额外的字幕轨道作为定时元数据可能更容易
+- 定时元数据采样的时长不必匹配关联媒体或 hint 采样的时长。在定时元数据采样的时长跨越多个关联媒体或 hint 采样的情况下，定时元数据轨道可能比采样辅助信息更具空间效率。
+
+采样辅助信息在以下情况可能有用。
+
+- 与采样关联的数据变化足够频繁，因此从存储空间的角度来看，指定采样组可能不合理
+- 与采样关联的数据量非常大，以至于其在 Movie box 或 Movie Fragment box 中的传送（根据采样分组的要求）会造成不利影响。例如，在渐进式下载中，减小 Movie box 的大小可能是有益的，以保持初始缓冲时间较小
+- 当每个采样都与元数据关联时，与具有定时元数据轨道的相同功能相比，采样辅助信息会为采样提供辅助信息与采样的更直接关联，定时元数据轨道通常需要解析采样解码时间来建立定时元数据采样与媒体/ hint 采样的联系。
+
+## 附录 E (提供信息) 文件格式 brand
+
+### E.1 介绍
+
+在 ftyp box 的 compatible_brands 列表中，brand 的存在是声明和许可。声明该文件符合该 brand 的所有要求，并允许潜在地仅实现该 brand 的阅读器读取该文件。
+
+通常，除非满足以下条件之一，否则要求阅读器实现 brand 记录的所有功能：
+
+- 它们使用的媒体不使用或不需要功能：例如，I 帧视频不需要同步采样表，并且如果不使用合成重新排序，则不需要合成时间偏移表；同样，如果不需要内容保护，则不需要支持内容保护的结构
+- 文件符合的另一个规范禁止使用功能（例如，某些派生规范明确禁止使用影片片段）
+- 产品运行的环境意味着某些结构不相关；例如，hint 轨道结构仅与为该 hint 轨道中的协议准备内容或执行文件分发（例如流式传输）的产品有关。
+
+以下各节列出了本规范中定义的 brand；节的顺序不暗含任何继承——发生继承时会特别说明。其他 brand 可能在其他规范中定义。请注意，如果一个 brand 是另一个 brand 的子集（例如，“isom” 的要求是 “iso2” 要求的子集），则：
+
+- 标记为兼容子集的文件始终可以标记为兼容超集；始终可以将兼容 “isom” 的文件标记为兼容 “iso2”
+- 支持超集的产品可以自动支持其子集；支持 “iso2” 的产品也必须支持 “isom”
+
+此处定义的 brand 均不需要支持任何特定的媒体类型（例如视频、音频、元数据）或媒体编码（例如特定的编解码器），也不需要支持特定媒体类型的结构（例如，可视采样条目或包含在特定类型采样条目中的 box）。
+
+更具体的标识符可用于识别规范的精确版本提供更多细节。不应将这些 brand 用作主要 brand；此基本文件格式应派生为要使用的另一个规范。因此，没有定义的常规文件扩展，或分配给这些 brand 的 mime 类型，也没有定义次要版本（当这些 brand 之一是主要 brand 时）。
+
+### E.2 “isom” brand
+
+在本规范此部分中，定义 “isom”（ISO 基本媒体文件）类型，识别符合 ISO 基本媒体文件格式第一版的文件。
+
+需要以下结构 box 的支持：
+
+| # | # | # | # | # | # | 描述 |
+| --- | --- | --- | --- | --- | --- | --- |
+| moov |   |   |   |   |   | container for all the metadata |
+|   | mvhd |   |   |   |   | movie header, overall declarations |
+|   | trak |   |   |   |   | container for an individual track or stream |
+|   |   | tkhd |   |   |   | track header, overall information about the track |
+|   |   | tref |   |   |   | track reference container |
+|   |   | edts |   |   |   | edit list container |
+|   |   |   | elst |   |   | an edit list |
+|   |   | mdia |   |   |   | container for the media information in a track |
+|   |   |   | mdhd |   |   | media header, overall information about the media |
+|   |   |   | hdlr |   |   | handler, at this level, the media (handler) type |
+|   |   |   | minf |   |   | media information container |
+|   |   |   |   | vmhd |   | video media header, overall information (video track only) |
+|   |   |   |   | smhd |   | sound media header, overall information (sound track only) |
+|   |   |   |   | hmhd |   | hint media header, overall information (hint track only) |
+|   |   |   |   | \<mpeg\> |   | mpeg stream headers |
+|   |   |   |   | dinf |   | data information box, container |
+|   |   |   |   |   | dref | data reference box, declares source(s) of media data in track |
+|   |   |   |   | stbl |   | sample table atom, container for the time/space map |
+|   |   |   |   |   | stts | (decoding) time-to-sample |
+|   |   |   |   |   | ctts | composition time-to-sample table |
+|   |   |   |   |   | stss | sync (key, I-frame) sample map |
+|   |   |   |   |   | stsd | sample descriptions (codec types, initialization etc.) |
+|   |   |   |   |   | stsz | sample sizes (framing) |
+|   |   |   |   |   | stsc | sample-to-chunk, partial data-offset information |
+|   |   |   |   |   | stco | chunk offset, partial data-offset information |
+|   |   |   |   |   | co64 | 64-bit chunk offset |
+|   |   |   |   |   | stsh | shadow sync |
+|   |   |   |   |   | stdp | degradation priority |
+| mdat |   |   |   |   |   | media data container |
+| free |   |   |   |   |   | free space |
+| skip |   |   |   |   |   | free space |
+| udta |   |   |   |   |   | user-data, copyright etc |
+| ftyp |   |   |   |   |   | file type and compatibility |
+|   |   |   |   |   | stz2 | compact sample sizes (framing) |
+|   |   |   |   |   | padb | sample padding bits |
+|   | mvex |   |   |   |   | movie extends box |
+|   |   | mehd |   |   |   | movie extends header box |
+|   |   | trex |   |   |   | track extends defaults |
+| moof |   |   |   |   |   | movie fragment |
+|   | mfhd |   |   |   |   | movie fragment header |
+|   | traf |   |   |   |   | track fragment |
+|   |   | tfhd |   |   |   | track fragment header |
+|   |   | trun |   |   |   | track fragment run |
+| mfra |   |   |   |   |   | movie fragment random access |
+|   | tfra |   |   |   |   | track fragment random access |
+|   | mfro |   |   |   |   | movie fragment random access offset |
+
+必须识别 hint 轨道，并且在 hint 轨道中必须识别 RTP 协议。
+
+请注意，Track Header Box 的某些要求不适用于此 brand；参阅 8.3.2.1。
+
+这里仅需要支持 “ctts” box 的版本 0；不需要支持版本 1。
+
+这里仅需要支持 “trun” box 的版本 0；不需要支持版本 1。
+
+注意：使用此 brand 标记的文件，无法设置 default‐base‐is‐moof 标志（8.8.7.1）。
+
+### E.3 “avc1” brand
+
+应使用 brand “avc1” 表示该文件符合 8.6.4 和 8.9 节中的 “AVC 扩展”。如果未与其他 brand 一起使用，则意味着需要支持这些扩展。规范可能允许将 “avc1” 用作主要 brand；在这种情况下，该规范定义了文件扩展名和所需的行为。
+
+“avc1”  brand 要求支持 “isom” brand。另外，需要支持以下 box：
+
+| # | # | # | # | # | # | 描述 |
+| --- | --- | --- | --- | --- | --- | --- |
+|   |   |   |   |   | sdtp | independent and disposable samples |
+|   |   |   |   |   | sbgp | sample-to-group |
+|   |   |   |   |   | sgpd | sample group description |
+
+在采样组中，要求支持卷组（分组类型 “roll”）。
+
+注意：使用此 brand 标记的文件，无法设置 default‐base‐is‐moof 标志（8.8.7.1）。
+
+请注意，Track Header Box 的某些要求不适用于此 brand；参阅 8.3.2.1。
+
+这里仅需要支持 “ctts” box 的版本 0；不需要支持版本 1。
+
+这里仅需要支持 “trun” box 的版本 0；不需要支持版本 1。
+
+影片片段中不需要支持 SampleGroupDescription box。
+
+### E.4 “iso2” brand
+
+“iso2” brand 应用于表示兼容 ISO 基本媒体文件格式的第二版；它可以作为 “isom” brand 的补充或替代，并且适用相同的使用规则。如果在未与标识该规范的第一版的 “isom” brand 一起使用，则表示支持第 8.6.4、8.8.15、8.11.1 至 8.11.7、8.11.10、0，或 9.1 中 SRTP 支持中的部分或全部技术。
+
+“iso2” brand 需要支持 “avc1” brand 的所有功能。
+
+此外，需要支持以下 box：
+
+| # | # | # | # | # | # | 描述 |
+| --- | --- | --- | --- | --- | --- | --- |
+| pdin |   |   |   |   |   | progressive download information |
+|   |   |   |   |   | subs | sub-sample information |
+| meta |   |   |   |   |   | metadata |
+|   | iloc |   |   |   |   | item location |
+|   | ipro |   |   |   |   | item protection |
+|   |   | sinf |   |   |   | protection scheme information box |
+|   |   |   | frma |   |   | original format box |
+|   |   |   | schm |   |   | scheme type box |
+|   |   |   | schi |   |   | scheme information box |
+|   | iinf |   |   |   |   | item information |
+|   | xml  |   |   |   |   | XML container |
+|   | bxml |   |   |   |   | binary XML container |
+|   | pitm |   |   |   |   | primary item reference |
+
+在 RTP hint 轨道的上下文中，现在必须识别 SRTP hint 轨道。需要支持内容保护和通用元数据 box。
+
+仅需要支持 item information box 的版本 0 和 item location box 的版本 0。
+
+请注意，Track Header Box 的某些要求不适用于此 brand；参阅 8.3.2.1。
+
+这里仅需要支持 “ctts” box 的版本 0；不需要支持版本 1。
+
+这里仅需要支持 “trun” box 的版本 0；不需要支持版本 1。
+
+影片片段中不需要支持 SampleGroupDescription box。
+
+注意：使用此 brand 标记的文件，无法设置 default‐base‐is‐moof 标志（8.8.7.1）。
+
+- 这里仅需要支持 “meta” box 中的 16 位 item_ID 和 item_count 值；不需要支持 “meta” box 中的 32 位 item_ID 和 item_count 值
+- 不需要在影片片段中支持 “meta” box
+- 这里仅需要支持每个轨道的 “subs” box
+
+### E.5 “mp71” brand
+
+如果在文件级别使用了具有 MPEG-7 handler 类型的 Meta-box，则 “mp71” brand 应该是 file‐type box 中 compatible‐brands 列表的成员。
+
+### E.6 “iso3” brand
+
+“iso3” brand 需要支持 “iso2” brand 的所有功能。
+
+另外，需要以下支持：
+
+| # | # | # | # | # | # | 描述 |
+| --- | --- | --- | --- | --- | --- | --- |
+|   | fiin |   |   |   |   | file delivery item information |
+|   |   | paen |   |   |   | partition entry |
+|   |   |   | fpar |   |   | file partition |
+|   |   |   | fecr |   |   | FEC reservoir  |
+|   |   | segr |   |   |   | file delivery session group  |
+|   |   | gitn |   |   |   | group id to name  |
+| meco |   |   |   |   |   | additional metadata container |
+|   | mere |   |   |   |   | metabox relation |
+
+需要支持 item information box 的版本 0 和版本 1。在采样组中，需要支持比率共享信息（分组类型为 “rash”）。必须识别文件分发 hint 轨道（采样条目 “fdp”）。
+
+这里仅需要支持 “ctts” box 的版本 0；不需要支持版本 1。
+
+这里仅需要支持 “trun” box 的版本 0；不需要支持版本 1。
+
+影片片段中不需要支持 SampleGroupDescription box。
+
+仅需要支持 item location box 的版本 0。
+
+注意：使用此 brand 标记的文件，无法设置 default‐base‐is‐moof 标志（8.8.7.1）。
+
+- 这里仅需要支持 “meta” box 中的 16 位 item_ID 和 item_count 值；不需要支持 “meta” box 中的 32 位 item_ID 和 item_count 值
+- 不需要在影片片段中支持 “meta” box
+- 这里仅需要支持每个轨道的 “subs” box
+
+### E.7 “iso4” brand
+
+“iso4” brand 需要支持 “iso3” brand 的所有功能。
+
+此 brand 需要支持合成偏移量（“ctts” 和 “iloc”）版本 1。
+
+需要支持 item location box 的版本 1、item information box 的版本 2，以及新的 item data（“idat”）和 item reference（“iref”） box。
+
+另外，需要以下支持：
+
+| # | # | # | # | # | # | 描述 |
+| --- | --- | --- | --- | --- | --- | --- |
+|   |   | trgr |   |   |   | track grouping indication |
+|   |   |   |   |   | cslg | composition to decode timeline mapping |
+|   | idat |   |   |   |   | item data |
+|   | iref |   |   |   |   | item reference |
+
+这里仅需要支持 “trun” box 的版本 0；不需要支持版本 1。
+
+影片片段中不需要支持 SampleGroupDescription box。
+
+注意：使用此 brand 标记的文件，无法设置 default‐base‐is‐moof 标志（8.8.7.1）。
+
+- 这里仅需要支持 “meta” box 中的 16 位 item_ID 和 item_count 值；不需要支持 “meta” box 中的 32 位 item_ID 和 item_count 值
+- 不需要在影片片段中支持 “meta” box
+- 这里仅需要支持每个轨道的 “subs” box
+- 这里仅需要在 “cslg” box 中支持 32 位值;不需要在 “cslg” box 中支持 64 位值
+
+### E.8 “iso5” brand
+
+“iso5” brand 需要支持 “iso4” brand 的所有功能。
+
+此 brand 需要支持 default‐base‐is‐moof 标志。
+
+此 brand 需要处理受限的采样条目（即 “resv”）。
+
+这里仅需要支持 “trun” box 的版本 0；不需要支持版本 1。
+
+影片片段中不需要支持 SampleGroupDescription box。
+
+- 这里仅需要支持 “meta” box 中的 16 位 item_ID 和 item_count 值；不需要支持 “meta” box 中的 32 位 item_ID 和 item_count 值
+- 不需要在影片片段中支持 “meta” box
+- 这里仅需要支持每个轨道的 “subs” box
+- 这里仅需要在 “cslg” box 中支持 32 位值;不需要在 “cslg” box 中支持 64 位值
+
+### E.9 “iso6” brand
+
+“iso6” brand 需要支持 “iso5” brand 的所有功能。
+
+此 brand 需要支持以下 box：
+
+| # | # | # | # | # | # | 描述 |
+| --- | --- | --- | --- | --- | --- | --- |
+|   |   | saiz |   |   |   | sample auxiliary information sizes |
+|   |   | saio |   |   |   | sample auxiliary information offsets |
+|   |   | tfdt |   |   |   | track fragment decode time |
+| sidx |   |   |   |   |   | segment index |
+| ssix |   |   |   |   |   | subsegment index |
+| prft |   |   |   |   |   | producer reference time |
+
+此 brand 需要以下支持：
+
+- 影片片段中的 SampleGroupDescription box
+- Track Run box（即 Track Run box 版本 1）中的带符号合成偏移
+- 在采样组中，需要支持随机访问点信息（分组类型为 “rap”）
+- 这里仅需要支持 “meta” box 中的 16 位 item_ID 和 item_count 值；不需要支持 “meta” box 中的 32 位 item_ID 和 item_count 值
+- 这里仅需要支持每个轨道的 “subs” box
+- 这里仅需要在 “cslg” box 中支持 32 位值;不需要在 “cslg” box 中支持 64 位值
+
+### E.10 “iso7” brand
+
+“iso7” brand 需要支持 “iso6” brand 的所有功能。
+
+此 brand 需要支持以下 box：
+
+| # | # | # | # | # | # | 描述 |
+| --- | --- | --- | --- | --- | --- | --- |
+|   |   | trep |   |   |   | track extension properties  |
+|   |   |   | assp |   |   | alternative startup sequence properties  |
+
+此 brand 需要以下支持：
+
+- 支持 “meta” box 中的 32 位 item_ID 和 item_count 值
+- 识别不完整的轨道
+- 不需要在影片片段中支持 “meta” box
+- 这里仅需要支持每个轨道的 “subs” box
+- 这里仅需要在 “cslg” box 中支持 32 位值;不需要在 “cslg” box 中支持 64 位值
+
+### E.11 “iso8” brand
+
+“iso8” brand 需要支持 “iso7” brand 的所有功能。
+
+此 brand 需要支持以下 box：
+
+| # | # | # | # | # | # | 描述 |
+| --- | --- | --- | --- | --- | --- | --- |
+|   |   |   |   | sthd |   | subtitle media header, overall information (subtitle track only) |
+
+此 brand 需要以下支持：
+
+- 在影片片段中支持 “meta” box
+- 支持每个轨道的一个或多个 “subs” box
+- 这里仅需要在 “cslg” box 中支持 32 位值;不需要在 “cslg” box 中支持 64 位值
+
+### E.12 “iso9” brand
+
+“iso9” brand 需要支持 “iso8” brand 的所有功能。
+
+此 brand 需要支持以下 box：
+
+| # | # | # | # | # | # | 描述 |
+| --- | --- | --- | --- | --- | --- | --- |
+|   |   |   | elng |   |   | extended language tag |
+
+此 brand 需要以下支持：
+
+- 在 “cslg” box 中支持 64 位值
+
+## 附录 G (提供信息) URI 标记的元数据形式
 
 ## 参考
 
