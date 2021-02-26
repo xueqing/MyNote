@@ -157,7 +157,7 @@ aligned(8) class FileTypeBox
 
 ### 3.2 Movie Box
 
-根据接下来的 8 个字节找到一个 Movie Box。
+Movie Box 包含演示的元数据。
 
 ```code
 aligned(8) class MovieBox extends Box(‘moov’){
@@ -173,7 +173,7 @@ aligned(8) class MovieBox extends Box(‘moov’){
 
 ### 3.3 Meta Box
 
-Movie Box  中有一个 Meta Box。
+Meta box 包含描述性或注释性元数据，“meta” box 需要包含一个 “hdlr” box，指示 “meta” box 内容的结构或格式。
 
 ```code
 aligned(8) class MetaBox (handler_type)
@@ -202,7 +202,7 @@ aligned(8) class MetaBox (handler_type)
 
 ### 3.4 Media Data Box
 
-0x00076a11 处存在一个 Media Data Box。
+Media Data Box 包含媒体数据
 
 ```code
 aligned(8) class MediaDataBox extends Box(‘mdat’) {
@@ -216,12 +216,13 @@ aligned(8) class MediaDataBox extends Box(‘mdat’) {
 
 - 32bit size: `0x026e7e75`，即 40,795,765 字节(起始地址 0x00076a11)
 - 32bit type: `0x6d646174`，即 `mdat`
-
-之后都是 data 数据，结束地址在 0x0275e885，即文件末尾，一共有 40,795,757 个 data。
+- 8bit data: 结束地址在 0x0275e885，即文件末尾，data 一共有 40,795,757 个数组元素
 
 ## 4 Movie Box 容器
 
 ### 4.1 Movie Header Box
+
+Movie Header Box 定义了和媒体无关的整体信息，并且与整个演示相关。
 
 ```code
 aligned(8) class MovieHeaderBox extends FullBox(‘mvhd’, version, 0) {
@@ -270,7 +271,7 @@ aligned(8) class MovieHeaderBox extends FullBox(‘mvhd’, version, 0) {
 
 ### 4.2 Track Box
 
-之后是一个 Track Box。
+这是一个容器 box，用于演示的单个轨道。每个演示包含一个或多个轨道。每个轨道都独立于演示中的其他轨道，并携带自己的时间和空间信息。每个轨道将包含其关联的 Media Box。
 
 ```code
 aligned(8) class TrackBox extends Box(‘trak’) {
@@ -295,7 +296,7 @@ aligned(8) class TrackBox extends Box(‘trak’) {
 
 ### 4.3 User Data Box
 
-Movie Box  中有一个 User Data Box。
+User Data Box 是容器 box，用于提供用户数据信息。
 
 ```code
 aligned(8) class UserDataBox extends Box(‘udta’) {
@@ -313,7 +314,7 @@ aligned(8) class UserDataBox extends Box(‘udta’) {
 
 ### 5.1 Track Header Box
 
-Track Box 中首先包含一个 Track Header Box。
+Track Header Box 指定单个轨道的特征。每个轨道中仅包含一个 Track Header Box。
 
 ```code
 aligned(8) class TrackHeaderBox
@@ -392,7 +393,7 @@ aligned(8) class TrackHeaderBox
 
 ### 5.2 Edit Box
 
-Track Header Box 中包含一个 Edit Box。
+Edit Box 将演示时间线映射到存储在文件中的媒体时间线。
 
 ```code
 aligned(8) class EditBox extends Box(‘edts’) {
@@ -408,7 +409,7 @@ aligned(8) class EditBox extends Box(‘edts’) {
 
 #### 5.2.1 Edit List Box
 
-Edit Box 中包含一个 Edit List Box。
+Edit List Box 包含一个显式的时间线映射。每个条目定义轨道时间线的一部分：通过映射媒体时间线的一部分，或通过指示“空”时间，或通过定义 “dwell”，对应媒体内的单个时间点将保持一段时间。
 
 ```code
 aligned(8) class EditListBox extends FullBox(‘elst’, version, 0) {
@@ -444,7 +445,7 @@ aligned(8) class EditListBox extends FullBox(‘elst’, version, 0) {
 
 ### 5.3 Media Box
 
-接下来在 Track Box 中找到一个 Media Box。
+Media Box 声明容器包含所有对象，声明了轨道内媒体数据的信息。
 
 ```code
 aligned(8) class MediaBox extends Box(‘mdia’) {
@@ -471,7 +472,7 @@ aligned(8) class MediaBox extends Box(‘mdia’) {
 
 ### 6.1 Media Header Box
 
-Media Box 首先包含一个 Media Header Box。
+Media Header Box 声明了与媒体无关，且与轨道中的媒体特征相关的整体信息。
 
 ```code
 aligned(8) class MediaHeaderBox extends FullBox(‘mdhd’, version, 0) {
@@ -528,7 +529,7 @@ aligned(8) class MediaHeaderBox extends FullBox(‘mdhd’, version, 0) {
 
 ### 6.2 Handler Reference Box
 
-Media Header Box 后面有一个 Handler Reference Box。
+Handler Reference Box 声明展示轨道中媒体数据的过程，从而声明轨道中媒体的性质。例如，视频轨道将由视频 handler 处理。
 
 ```code
 aligned(8) class HandlerBox extends FullBox(‘hdlr’, version = 0, 0) {
@@ -584,7 +585,7 @@ aligned(8) class HandlerBox extends FullBox(‘hdlr’, version = 0, 0) {
 
 ### 6.3 Media Information Box
 
-Handler Reference Box 后面有一个 Media Information Box。
+Media Information Box 声明轨道中媒体的特征信息。
 
 ```code
 aligned(8) class MediaInformationBox extends Box(‘minf’) {
@@ -611,7 +612,7 @@ aligned(8) class MediaInformationBox extends Box(‘minf’) {
 
 ### 7.1 Data Information Box
 
-Media Information Box 中包含一个 Data Information Box。
+Data Information Box 声明轨道内媒体信息位置。
 
 ```code
 aligned(8) class DataInformationBox extends Box(‘dinf’) {
@@ -687,7 +688,7 @@ aligned(8) class DataReferenceBox
 
 ### 7.2 Sample Table Box
 
-Media Information Box 中又找到一个 Sample Table Box。
+Sample Table Box 包含轨道内媒体采样的所有时间和数据索引。使用这里的表格，可以及时定位采样、确定采样类型(例如是否是 I 帧)，并确定采样的大小、容器以及到该容器的偏移。
 
 ```code
 aligned(8) class SampleTableBox extends Box(‘stbl’) {
@@ -712,7 +713,7 @@ aligned(8) class SampleTableBox extends Box(‘stbl’) {
 
 ### 7.3 Video Media Header Box
 
-Media Information Box 中有一个 Video Media Header Box。
+Video Media Header Box 包含视频媒体的常规演示信息，与编码无关。请注意 flags 字段值为 1。
 
 ```code
 aligned(8) class VideoMediaHeaderBox
@@ -735,7 +736,7 @@ aligned(8) class VideoMediaHeaderBox
 
 ### 7.4 Sound Media Header Box
 
-0x0007698c 处有一个 Sound Media Header Box。
+Sound Media Header Box 包含音频媒体的常规演示信息，与编码无关。此头部用于所有包含音频的轨道。
 
 ```code
 aligned(8) class SoundMediaHeaderBox
@@ -760,7 +761,7 @@ aligned(8) class SoundMediaHeaderBox
 
 ### 8.1 Sample Description Box
 
-Sample Table Box 中找到一个 Sample Description Box。
+Sample Description Box。 提供了有关使用的编码类型的详细信息，以及该编码所需的任何初始化信息。
 
 ```code
 aligned(8) abstract class SampleEntry (unsigned int(32) format)
@@ -897,7 +898,9 @@ aligned(8) class TimeToSampleBox
 
 ### 8.3 Sample To Chunk Box
 
-Sample Table Box 中找到一个 Sample To Chunk Box。
+媒体内的采样分分组成块。块大小可以不同，且同一块中的采样大小可以不同。Sample To Chunk Box 可用于查找包含采样的块，块的位置和相关的采样描述。
+
+每个条目给出一组块的第一个块的索引，这些块具有相同特征。通过从上一个条目减去一个条目，可以计算该组有多少块。你可以将其乘以合适的“采样数/块”从而转换为采样数。
 
 ```code
 aligned(8) class SampleToChunkBox
@@ -964,7 +967,7 @@ aligned(8) class SampleToChunkBox
 
 ### 8.4 Chunk Offset Box
 
-Sample Table Box 中找到一个 Chunk Offset Box。
+Chunk Offset Box 给出每个块到包含文件的索引。有两种表。允许使用 32 位或 64 位偏移。后者在管理非常大的演示时非常有用。在采样表的任何单个实例中，至多有其中一种表。
 
 ```code
 aligned(8) class ChunkOffsetBox
@@ -1018,7 +1021,7 @@ aligned(8) class ChunkOffsetBox
 
 ### 8.5 Sample Size Box
 
-Sample Table Box 中找到一个 Sample Size Box。
+Sample Size Box 包含采样计数和一个表格，该表给出每个采样的字节数。这允许媒体数据本身未分帧。媒体中的采样总数使用显示在采样技术中。
 
 ```code
 aligned(8) class SampleSizeBox extends FullBox(‘stsz’, version = 0, 0) {
@@ -1076,7 +1079,7 @@ aligned(8) class SampleSizeBox extends FullBox(‘stsz’, version = 0, 0) {
 
 ### 8.6 Sync Sample Box
 
-Sample Table Box 中找到一个 Sync Sample Box。
+Sync Sample Box 提供了流内随机访问点的紧凑标记。该表按采样编号的严格递增顺序排序。
 
 ```code
 aligned(8) class SyncSampleBox
@@ -1110,7 +1113,7 @@ aligned(8) class SyncSampleBox
 
 ### 8.7 Composition Time to Sample Box
 
-Sample Table Box 中找到一个 Composition Time to Sample Box。
+Composition Time to Sample Box 提供解码时间和合成时间的偏移量。因为解码时间必须小于合成时间，偏移表示为无符号数，以使 CT(n)=DT(n)+CTTS(n)，其中 CTTS(n) 是采样 n 的(未压缩)表条目。
 
 ```code
 aligned(8) class CompositionOffsetBox
