@@ -8,27 +8,32 @@
     - [3.2 Movie Box](#32-movie-box)
     - [3.3 Meta Box](#33-meta-box)
     - [3.4 Media Data Box](#34-media-data-box)
-  - [Movie Header Box](#movie-header-box)
-  - [Track Box](#track-box)
-  - [Track Header Box](#track-header-box)
-  - [Edit Box](#edit-box)
-  - [Edit List Box](#edit-list-box)
-  - [Media Box](#media-box)
-  - [Media Header Box](#media-header-box)
-  - [Handler Reference Box](#handler-reference-box)
-  - [Media Information Box](#media-information-box)
-  - [Data Information Box](#data-information-box)
-  - [Sample Table Box](#sample-table-box)
-  - [Sample Description Box](#sample-description-box)
-  - [Decoding Time to Sample Box](#decoding-time-to-sample-box)
-  - [Sample To Chunk Box](#sample-to-chunk-box)
-  - [Chunk Offset Box](#chunk-offset-box)
-  - [Sample Size Box](#sample-size-box)
-  - [Sync Sample Box](#sync-sample-box)
-  - [Composition Time to Sample Box](#composition-time-to-sample-box)
-  - [Video Media Header Box](#video-media-header-box)
-  - [Sound Media Header Box](#sound-media-header-box)
-  - [User Data Box](#user-data-box)
+  - [4 Movie Box 容器](#4-movie-box-容器)
+    - [4.1 Movie Header Box](#41-movie-header-box)
+    - [4.2 Track Box](#42-track-box)
+    - [4.3 User Data Box](#43-user-data-box)
+  - [5 Track Box 容器](#5-track-box-容器)
+    - [5.1 Track Header Box](#51-track-header-box)
+    - [5.2 Edit Box](#52-edit-box)
+      - [5.2.1 Edit List Box](#521-edit-list-box)
+    - [5.3 Media Box](#53-media-box)
+  - [6 Media Box 容器](#6-media-box-容器)
+    - [6.1 Media Header Box](#61-media-header-box)
+    - [6.2 Handler Reference Box](#62-handler-reference-box)
+    - [6.3 Media Information Box](#63-media-information-box)
+  - [7 Media Information Box 容器](#7-media-information-box-容器)
+    - [7.1 Data Information Box](#71-data-information-box)
+    - [7.2 Sample Table Box](#72-sample-table-box)
+    - [7.3 Video Media Header Box](#73-video-media-header-box)
+    - [7.4 Sound Media Header Box](#74-sound-media-header-box)
+  - [8 Sample Table Box 容器](#8-sample-table-box-容器)
+    - [8.1 Sample Description Box](#81-sample-description-box)
+    - [8.2 Decoding Time to Sample Box](#82-decoding-time-to-sample-box)
+    - [8.3 Sample To Chunk Box](#83-sample-to-chunk-box)
+    - [8.4 Chunk Offset Box](#84-chunk-offset-box)
+    - [8.5 Sample Size Box](#85-sample-size-box)
+    - [8.6 Sync Sample Box](#86-sync-sample-box)
+    - [8.7 Composition Time to Sample Box](#87-composition-time-to-sample-box)
 
 ## 1 文件结构
 
@@ -214,9 +219,9 @@ aligned(8) class MediaDataBox extends Box(‘mdat’) {
 
 之后都是 data 数据，结束地址在 0x0275e885，即文件末尾，一共有 40,795,757 个 data。
 
-## Movie Header Box
+## 4 Movie Box 容器
 
-Movie Box 首先包含一个 Movie Header Box。
+### 4.1 Movie Header Box
 
 ```code
 aligned(8) class MovieHeaderBox extends FullBox(‘mvhd’, version, 0) {
@@ -263,7 +268,7 @@ aligned(8) class MovieHeaderBox extends FullBox(‘mvhd’, version, 0) {
 - 32bit[6] pre_defined: `0x00000000` x6
 - 32bit next_track_ID: `0x00000003`
 
-## Track Box
+### 4.2 Track Box
 
 之后是一个 Track Box。
 
@@ -288,7 +293,25 @@ aligned(8) class TrackBox extends Box(‘trak’) {
 - 32bit size: `0x00031e48`，即 204360 字节
 - 32bit type: `0x7472616b`，即 `trak`
 
-## Track Header Box
+### 4.3 User Data Box
+
+Movie Box  中有一个 User Data Box。
+
+```code
+aligned(8) class UserDataBox extends Box(‘udta’) {
+}
+```
+
+在二进制文件文件内对应：
+
+![udta box](udta-box.png)
+
+- 32bit size: `0x00000075`，即 117 字节(起始地址 0x00002898)
+- 32bit type: `0x75647461`，即 `udta`
+
+## 5 Track Box 容器
+
+### 5.1 Track Header Box
 
 Track Box 中首先包含一个 Track Header Box。
 
@@ -367,7 +390,7 @@ aligned(8) class TrackHeaderBox
 - 32bit width: `0x00000000`
 - 32bit height: `0x00000000`
 
-## Edit Box
+### 5.2 Edit Box
 
 Track Header Box 中包含一个 Edit Box。
 
@@ -383,7 +406,7 @@ aligned(8) class EditBox extends Box(‘edts’) {
 - 32bit size: `0x00000024`，即 36 字节
 - 32bit type: `0x65647473`，即 `edts`
 
-## Edit List Box
+#### 5.2.1 Edit List Box
 
 Edit Box 中包含一个 Edit List Box。
 
@@ -419,7 +442,7 @@ aligned(8) class EditListBox extends FullBox(‘elst’, version, 0) {
 - 16bit media_rate_integer: `0x0001`
 - 16bit media_rate_fraction: `0x0000`
 
-## Media Box
+### 5.3 Media Box
 
 接下来在 Track Box 中找到一个 Media Box。
 
@@ -444,7 +467,9 @@ aligned(8) class MediaBox extends Box(‘mdia’) {
 - 32bit size: `0x00031de4`，即 204260 字节
 - 32bit type: `0x6d646961`，即 `mdia`
 
-## Media Header Box
+## 6 Media Box 容器
+
+### 6.1 Media Header Box
 
 Media Box 首先包含一个 Media Header Box。
 
@@ -501,7 +526,7 @@ aligned(8) class MediaHeaderBox extends FullBox(‘mdhd’, version, 0) {
 - 5bit[3] language: `0x5 0xe 0x7`
 - 16bit pre_defined: `0x0000`
 
-## Handler Reference Box
+### 6.2 Handler Reference Box
 
 Media Header Box 后面有一个 Handler Reference Box。
 
@@ -557,7 +582,7 @@ aligned(8) class HandlerBox extends FullBox(‘hdlr’, version = 0, 0) {
 - 32bit[3] reserved: `0x6170706c, 0x00000000, 0x00000000`
 - string name: 剩余 1 字节，为 0x00
 
-## Media Information Box
+### 6.3 Media Information Box
 
 Handler Reference Box 后面有一个 Media Information Box。
 
@@ -582,7 +607,9 @@ aligned(8) class MediaInformationBox extends Box(‘minf’) {
 - 32bit size: `0x00031d5d`，即 204,125 字节
 - 32bit type: `0x6d696e66`，即 `minf`
 
-## Data Information Box
+## 7 Media Information Box 容器
+
+### 7.1 Data Information Box
 
 Media Information Box 中包含一个 Data Information Box。
 
@@ -658,7 +685,7 @@ aligned(8) class DataReferenceBox
     - 24bit flags: `0x000001`
     - string location: 剩余 0 个字节
 
-## Sample Table Box
+### 7.2 Sample Table Box
 
 Media Information Box 中又找到一个 Sample Table Box。
 
@@ -683,7 +710,55 @@ aligned(8) class SampleTableBox extends Box(‘stbl’) {
 - 32bit size: `0x00031d21`，即 204,065 字节
 - 32bit type: `0x7374626c`，即 `stbl`
 
-## Sample Description Box
+### 7.3 Video Media Header Box
+
+Media Information Box 中有一个 Video Media Header Box。
+
+```code
+aligned(8) class VideoMediaHeaderBox
+  extends FullBox(‘vmhd’, version = 0, 1) {
+  template unsigned int(16) graphicsmode = 0; // copy, see below
+  template unsigned int(16)[3] opcolor = {0, 0, 0};
+}
+```
+
+在二进制文件文件内对应：
+
+![vmhd box](vmhd-box.png)
+
+- 32bit size: `0x00000014`，即 20 字节(起始地址 0x00044B40)
+- 32bit type: `0x766d6864`，即 `vmhd`
+- 8bit version: `0x00`，即对应版本 0
+- 24bit flags: `0x000001`
+- 16bit graphicsmode: `0x0000`
+- 16bit[3] opcolor: `0x0000` x3
+
+### 7.4 Sound Media Header Box
+
+0x0007698c 处有一个 Sound Media Header Box。
+
+```code
+aligned(8) class SoundMediaHeaderBox
+  extends FullBox(‘smhd’, version = 0, 0) {
+  template int(16) balance = 0;
+  const unsigned int(16) reserved = 0;
+}
+```
+
+在二进制文件文件内对应：
+
+![smhd box](smhd-box.png)
+
+- 32bit size: `0x00000010`，即 16 字节(起始地址 0x0007698c)
+- 32bit type: `0x766d6864`，即 `smhd`
+- 8bit version: `0x00`，即对应版本 0
+- 24bit flags: `0x0000`
+- 16bit balance: `0x0000`
+- 16bit reserved: `0x0000`
+
+## 8 Sample Table Box 容器
+
+### 8.1 Sample Description Box
 
 Sample Table Box 中找到一个 Sample Description Box。
 
@@ -776,7 +851,7 @@ box 结束地址是 0x00000267。
 
 box 结束地址是 0x00044cdb。
 
-## Decoding Time to Sample Box
+### 8.2 Decoding Time to Sample Box
 
 Sample Table Box 中找到一个 Decoding Time to Sample Box。
 
@@ -820,7 +895,7 @@ aligned(8) class TimeToSampleBox
     - 32bit sample_count: `0x0000baa7`，表示有 47,783 个采样
     - 32bit sample_delta: `0x00000400`
 
-## Sample To Chunk Box
+### 8.3 Sample To Chunk Box
 
 Sample Table Box 中找到一个 Sample To Chunk Box。
 
@@ -887,7 +962,7 @@ aligned(8) class SampleToChunkBox
     - 32bit samples_per_chunk: `0x00000003`，表示每个块有 3 个采样
     - 32bit sample_description_index: `0x00000001` (地址 0x000458f7)
 
-## Chunk Offset Box
+### 8.4 Chunk Offset Box
 
 Sample Table Box 中找到一个 Chunk Offset Box。
 
@@ -941,7 +1016,7 @@ aligned(8) class ChunkOffsetBox
   - 条目 2421
     - 32bit chunk_offset: `0x0275e42b` (地址 0x000047edb)
 
-## Sample Size Box
+### 8.5 Sample Size Box
 
 Sample Table Box 中找到一个 Sample Size Box。
 
@@ -999,7 +1074,7 @@ aligned(8) class SampleSizeBox extends FullBox(‘stsz’, version = 0, 0) {
   - 条目 1
     - 32bit entry_size: `0x00000174`，即 372 字节 (地址 0x0007698b)
 
-## Sync Sample Box
+### 8.6 Sync Sample Box
 
 Sample Table Box 中找到一个 Sync Sample Box。
 
@@ -1033,7 +1108,7 @@ aligned(8) class SyncSampleBox
   - 条目 1
     - 32bit sample_number: `0x00006801`，即采样编号为 26625 (地址 0x0001cc27)
 
-## Composition Time to Sample Box
+### 8.7 Composition Time to Sample Box
 
 Sample Table Box 中找到一个 Composition Time to Sample Box。
 
@@ -1071,67 +1146,3 @@ aligned(8) class CompositionOffsetBox
   - 条目 1
     - 32bit sample_count: `0x00000001`，即采样数为 1
     - 32bit sample_offset: `0x00000600`，即 CT 和 DT 的偏移量为 1536 (地址 0x00044B3f)
-
-## Video Media Header Box
-
-Media Information Box 中有一个 Video Media Header Box。
-
-```code
-aligned(8) class VideoMediaHeaderBox
-  extends FullBox(‘vmhd’, version = 0, 1) {
-  template unsigned int(16) graphicsmode = 0; // copy, see below
-  template unsigned int(16)[3] opcolor = {0, 0, 0};
-}
-```
-
-在二进制文件文件内对应：
-
-![vmhd box](vmhd-box.png)
-
-- 32bit size: `0x00000014`，即 20 字节(起始地址 0x00044B40)
-- 32bit type: `0x766d6864`，即 `vmhd`
-- 8bit version: `0x00`，即对应版本 0
-- 24bit flags: `0x000001`
-- 16bit graphicsmode: `0x0000`
-- 16bit[3] opcolor: `0x0000` x3
-
-## Sound Media Header Box
-
-0x0007698c 处有一个 Sound Media Header Box。
-
-```code
-aligned(8) class SoundMediaHeaderBox
-  extends FullBox(‘smhd’, version = 0, 0) {
-  template int(16) balance = 0;
-  const unsigned int(16) reserved = 0;
-}
-```
-
-在二进制文件文件内对应：
-
-![smhd box](smhd-box.png)
-
-- 32bit size: `0x00000010`，即 16 字节(起始地址 0x0007698c)
-- 32bit type: `0x766d6864`，即 `smhd`
-- 8bit version: `0x00`，即对应版本 0
-- 24bit flags: `0x0000`
-- 16bit balance: `0x0000`
-- 16bit reserved: `0x0000`
-
-## User Data Box
-
-Movie Box  中有一个 User Data Box。
-
-```code
-aligned(8) class UserDataBox extends Box(‘udta’) {
-}
-```
-
-在二进制文件文件内对应：
-
-![udta box](udta-box.png)
-
-- 32bit size: `0x00000075`，即 117 字节(起始地址 0x00002898)
-- 32bit type: `0x75647461`，即 `udta`
-
-
