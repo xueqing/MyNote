@@ -1759,15 +1759,15 @@ media_rate = 1
 aligned(8) class EditListBox extends FullBox(‘elst’, version, 0) {
   unsigned int(32) entry_count;
   for (i=1; i <= entry_count; i++) {
-  if (version==1) {
-    unsigned int(64) segment_duration;
-    int(64) media_time;
-  } else { // version==0
-    unsigned int(32) segment_duration;
-    int(32) media_time;
-  }
-  int(16) media_rate_integer;
-  int(16) media_rate_fraction = 0;
+    if (version==1) {
+      unsigned int(64) segment_duration;
+      int(64) media_time;
+    } else { // version==0
+      unsigned int(32) segment_duration;
+      int(32) media_time;
+    }
+    int(16) media_rate_integer;
+    int(16) media_rate_fraction = 0;
   }
 }
 ```
