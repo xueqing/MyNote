@@ -93,7 +93,7 @@
     - [8.42 Sub-Sample Information Box](#842-sub-sample-information-box)
     - [8.43 Progressive Download Information Box](#843-progressive-download-information-box)
     - [8.44 元数据支持](#844-元数据支持)
-      - [8.44.1 The Meta Box](#8441-the-meta-box)
+      - [8.44.1 Meta Box](#8441-meta-box)
       - [8.44.2 XML Box](#8442-xml-box)
       - [8.44.3 The Item Location Box](#8443-the-item-location-box)
       - [8.44.4 Primary Item Box](#8444-primary-item-box)
@@ -860,7 +860,7 @@ aligned(8) class MediaInformationBox extends Box(‘minf’) {
 
 #### 8.11.2 Video Media Header Box
 
-视频媒体头部包含视频媒体的常规演示信息，与编码无关。请注意 flags 字段值为 1.
+视频媒体头部包含视频媒体的常规演示信息，与编码无关。请注意 flags 字段值为 1。
 
 ```code
 aligned(8) class VideoMediaHeaderBox
@@ -1236,7 +1236,7 @@ aligned(8) class SampleSizeBox extends FullBox(‘stsz’, version = 0, 0) {
 
 媒体内的采样分分组成块。块大小可以不同，且同一块中的采样大小可以不同。此表可用于查找包含采样的块，块的位置和相关的采样描述。
 
-此表示紧凑编码的。每个条目给出一组块的第一个块的索引，这些块具有相同特征。通过从上一个条目减去一个条目，可以计算该组有多少块。你可以将其乘以合适的“采样数/块”从而转换为采样数。
+此表是紧凑编码的。每个条目给出一组块的第一个块的索引，这些块具有相同特征。通过从上一个条目减去一个条目，可以计算该组有多少块。你可以将其乘以合适的“采样数/块”从而转换为采样数。
 
 ```code
 aligned(8) class SampleToChunkBox
@@ -2100,7 +2100,7 @@ aligned(8) class ProgressiveDownloadInfoBox
 
 使用一个通用的基本结构包含一般的元数据，该结构称为 Meta Box。
 
-#### 8.44.1 The Meta Box
+#### 8.44.1 Meta Box
 
 | box 类型 | 容器 | 必要性 | 数量 |
 | --- | --- | --- | --- |
