@@ -1057,7 +1057,7 @@ aligned(8) class ChunkOffsetBox
 
 ### 8.5 Sample Size Box
 
-Sample Size Box 包含采样计数和一个表格，该表给出每个采样的字节数。这允许媒体数据本身未分帧。媒体中的采样总数使用显示在采样技术中。
+Sample Size Box 包含采样计数和一个表格，该表给出每个采样的字节数。这允许媒体数据本身未分帧。媒体中的采样总数始终显示在采样计数中。
 
 ```code
 aligned(8) class SampleSizeBox extends FullBox(‘stsz’, version = 0, 0) {
@@ -1149,7 +1149,7 @@ aligned(8) class SyncSampleBox
 
 ### 8.7 Composition Time to Sample Box
 
-Composition Time to Sample Box 提供解码时间和合成时间的偏移量。因为解码时间必须小于合成时间，偏移表示为无符号数，以使 CT(n)=DT(n)+CTTS(n)，其中 CTTS(n) 是采样 n 的(未压缩)表条目。
+Composition Time to Sample Box 提供解码时间和合成时间的偏移量。因为解码时间必须小于合成时间，偏移表示为无符号数，以使 CT(n)=DT(n)+CTTS(n)，其中 CTTS(n) 是采样 n 的(未压缩)表条目。sample_count 表示具有给定偏移量的连续采样的数目。
 
 ```code
 aligned(8) class CompositionOffsetBox
