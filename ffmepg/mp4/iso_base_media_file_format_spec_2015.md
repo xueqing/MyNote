@@ -1236,7 +1236,7 @@ aligned(8) class MediaHeaderBox extends FullBox(‘mdhd’, version, 0) {
 
 此 box 在 Media Box 内，声明轨道中媒体的性质，从而声明展示轨道中媒体数据的过程。例如，视频轨道将由视频 handler 处理。比如，剑气分发视频的格式将存储在视频轨道中，标识由视频 handler 处理。媒体格式的存储文档标识该格式使用的媒体类型。
 
-此 box 存在 Meta Box 内时，声明“元” box 内容的结构或格式。
+此 box 存在 Meta Box 内时，声明 meta box 内容的结构或格式。
 
 对于任何类型的元数据流都有一个通用的 handler；比如，对于视频或音频，通过采样条目标识特定的格式。
 
@@ -1457,7 +1457,7 @@ Time to Sample Box 必须为所有采样提供非零的时长，最后一个采�
 | --- | --- | --- | --- |
 | stts | Sample Table Box(stbl) | Y | 1 |
 
-此 box 包含表格的紧凑版本，该表允许从解码时间到采样编号的索引。其他表格则根据采样编号给出采样大小和指针。表中的每个条目给出具有相同时间增量的连续采样的数目，以及这些采样的增量。通过添加增量可以构建完整的采样时间图。
+此 box 包含表格的紧凑版本，该表允许从解码时间到采样编号的索引。其他表格则根据采样编号给出采样大小和指针。表中的每个条目给出具有相同时间增量的连续采样的数目，以及这些采样的增量。通过累加这些增量可以构建完整的采样时间图。
 
 Decoding Time to Sample Box 包含解码时间增量：DT(n+1)=DT(n)+STTS(n)，其中 STTS(n) 是采样 n 的(未压缩)表条目。
 
@@ -1899,7 +1899,7 @@ aligned(8) class CompactSampleSizeBox extends FullBox(‘stz2’, version = 0, 0
 | --- | --- | --- | --- |
 | stsc | Sample Table Box(stbl) | Y | 1 |
 
-媒体内的采样分分组成块。块大小可以不同，且同一块中的采样大小可以不同。此表可用于查找包含采样的块，块的位置和相关的采样描述。
+媒体内的采样被分组成块。块大小可以不同，且同一块中的采样大小可以不同。此表可用于查找包含采样的块，块的位置和相关的采样描述。
 
 此表示紧凑编码的。每个条目给出一组块的第一个块的索引，这些块具有相同特征。通过从上一个条目减去一个条目，可以计算该组有多少块。你可以将其乘以合适的“采样数/块”从而转换为采样数。
 
@@ -1937,14 +1937,14 @@ aligned(8) class SampleToChunkBox
 aligned(8) class ChunkOffsetBox
   extends FullBox(‘stco’, version = 0, 0) {
   unsigned int(32) entry_count;
-  for (i=1; i u entry_count; i++) {
+  for (i=1; i <= entry_count; i++) {
     unsigned int(32) chunk_offset;
   }
 }
 aligned(8) class ChunkLargeOffsetBox
   extends FullBox(‘co64’, version = 0, 0) {
   unsigned int(32) entry_count;
-  for (i=1; i u entry_count; i++) {
+  for (i=1; i <= entry_count; i++) {
     unsigned int(64) chunk_offset;
   }
 } 
@@ -1954,7 +1954,7 @@ aligned(8) class ChunkLargeOffsetBox
 | --- | --- | --- |
 | version | 整数 | 指定此 box 的版本 |
 | entry_count | 整数 | 给出下表的条目数 |
-| chunk_offset | 32/64 位证书 | 给出块的开始到其包含的媒体文件内的偏移量 |
+| chunk_offset | 32/64 位整数 | 给出块的开始到其包含的媒体文件内的偏移量 |
 
 #### 8.7.6 Padding Bits Box
 
