@@ -655,7 +655,7 @@ aligned(8) class MovieHeaderBox extends FullBox(‘mvhd’, version, 0) {
 | modification_time | 整数 | 声明演示最近一次修改时间(从 1904-1-1 午夜起的秒数，UTC 时间) |
 | timescale | 整数 | 指定整个演示的时间刻度；是经过一秒的时间单位数。比如，以 1/60 秒为单位测量时间的时间坐标系的时间刻度是 60 |
 | duration | 整数 | 声明演示的长度(以指定的 timescale 为单位)。此属性源自演示的轨道：此字段的值对应演示最长轨道的时长 |
-| rate | 定点数 16.16 | 指示播放演示的首选速率；1.0(0x00010000) 是正常的正向回放 |
+| rate | 定点数 16.16 | 指示播放演示的首选速率；1.0(0x00010000) 是正常的前向回放 |
 | volume | 定点数 8.8 | 指示首选的回放音量。1.0(0x0100) 是全音量 |
 | matrix | - | 为视频提供转化矩阵；(u,v,w) 在这里限制为 (0,0,1)，16 进制值(0,0,0x40000000) |
 | next_track_ID | 非 0 整数 | 指示要添加到演示的下一个轨道所用的轨道 ID 值。零不是有效的轨道 ID 值。next_track_ID 值应大于在用的最大轨道 ID。如果此值大于等于全 1(32 位 maxint)，且要增加新的媒体轨道，必须在文件中搜索未使用的轨道 ID |
@@ -818,7 +818,7 @@ aligned(8) class MediaHeaderBox extends FullBox(‘mdhd’, version, 0) {
 
 此 box 在 Media Box 内，声明展示轨道中媒体数据的过程，从而声明轨道中媒体的性质。例如，视频轨道将由视频 handler 处理。
 
-此 box 存在 Meta Box 内时，声明“元” box 内容的结构或格式。
+此 box 存在 Meta Box 内时，声明 meta box 内容的结构或格式。
 
 ```code
 aligned(8) class HandlerBox extends FullBox(‘hdlr’, version = 0, 0) {
@@ -1234,7 +1234,7 @@ aligned(8) class SampleSizeBox extends FullBox(‘stsz’, version = 0, 0) {
 | --- | --- | --- | --- |
 | stsc | Sample Table Box(stbl) | Y | 1 |
 
-媒体内的采样分分组成块。块大小可以不同，且同一块中的采样大小可以不同。此表可用于查找包含采样的块，块的位置和相关的采样描述。
+媒体内的采样被分组成块。块大小可以不同，且同一块中的采样大小可以不同。此表可用于查找包含采样的块，块的位置和相关的采样描述。
 
 此表是紧凑编码的。每个条目给出一组块的第一个块的索引，这些块具有相同特征。通过从上一个条目减去一个条目，可以计算该组有多少块。你可以将其乘以合适的“采样数/块”从而转换为采样数。
 
@@ -1272,14 +1272,14 @@ aligned(8) class SampleToChunkBox
 aligned(8) class ChunkOffsetBox
   extends FullBox(‘stco’, version = 0, 0) {
   unsigned int(32) entry_count;
-  for (i=1; i u entry_count; i++) {
+  for (i=1; i <= entry_count; i++) {
     unsigned int(32) chunk_offset;
   }
 }
 aligned(8) class ChunkLargeOffsetBox
   extends FullBox(‘co64’, version = 0, 0) {
   unsigned int(32) entry_count;
-  for (i=1; i u entry_count; i++) {
+  for (i=1; i <= entry_count; i++) {
     unsigned int(64) chunk_offset;
   }
 } 
@@ -1289,7 +1289,7 @@ aligned(8) class ChunkLargeOffsetBox
 | --- | --- | --- |
 | version | 整数 | 指定此 box 的版本 |
 | entry_count | 整数 | 给出下表的条目数 |
-| chunk_offset | 32/64 位证书 | 给出块的开始到其包含的媒体文件内的偏移量 |
+| chunk_offset | 32/64 位整数 | 给出块的开始到其包含的媒体文件内的偏移量 |
 
 ### 8.20 Sync Sample Box
 
