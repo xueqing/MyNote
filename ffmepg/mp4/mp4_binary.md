@@ -7,6 +7,7 @@
     - [3.1 File Type Box, ftyp](#31-file-type-box-ftyp)
     - [3.2 Movie Box](#32-movie-box)
     - [3.3 Meta Box](#33-meta-box)
+      - [3.3.1 Handler Reference Box](#331-handler-reference-box)
     - [3.4 Media Data Box](#34-media-data-box)
   - [4 Movie Box 容器](#4-movie-box-容器)
     - [4.1 Movie Header Box](#41-movie-header-box)
@@ -23,6 +24,7 @@
     - [6.3 Media Information Box](#63-media-information-box)
   - [7 Media Information Box 容器](#7-media-information-box-容器)
     - [7.1 Data Information Box](#71-data-information-box)
+      - [7.1.1 Data Reference Box](#711-data-reference-box)
     - [7.2 Sample Table Box](#72-sample-table-box)
     - [7.3 Video Media Header Box](#73-video-media-header-box)
     - [7.4 Sound Media Header Box](#74-sound-media-header-box)
@@ -34,6 +36,7 @@
     - [8.5 Sample Size Box](#85-sample-size-box)
     - [8.6 Sync Sample Box](#86-sync-sample-box)
     - [8.7 Composition Time to Sample Box](#87-composition-time-to-sample-box)
+  - [9 MP4 的时间结构](#9-mp4-的时间结构)
 
 ## 1 文件结构
 
@@ -134,7 +137,7 @@ $$ size(stbl) = size(stsd) + size(stts) + size(stsc) + size(stco) + size(stsz) +
 
 ### 3.1 File Type Box, ftyp
 
-文件开头，即地址 `0x00000000` 处，是一个 File Type Box，主要标识文件规范。
+File Type Box一般位于文件开头(即地址 `0x00000000`)，有且只有一个，主要标识文件规范。
 
 ```code
 aligned(8) class FileTypeBox
@@ -157,7 +160,7 @@ aligned(8) class FileTypeBox
 
 ### 3.2 Movie Box
 
-Movie Box 包含演示的元数据。
+Movie Box 包含演示的元数据。一般紧随 “ftyp” 出现，同样有且只有一个。其中包含一个 “mvhd” 和若干个 “trak”。“mvhd” 一般作为 “moov” 的第一个子 box。
 
 ```code
 aligned(8) class MovieBox extends Box(‘moov’){
@@ -200,6 +203,30 @@ aligned(8) class MetaBox (handler_type)
 - 33 字节的 Handler Reference Box
 - 64 字节的的 “ilst” box ????
 
+#### 3.3.1 Handler Reference Box
+
+```code
+aligned(8) class HandlerBox extends FullBox(‘hdlr’, version = 0, 0) {
+  unsigned int(32) pre_defined = 0;
+  unsigned int(32) handler_type;
+  const unsigned int(32)[3] reserved = 0;
+  string name;
+}
+```
+
+在二进制文件文件内对应：
+
+![hdlr box3](hdlr-box3.png)
+
+- 32bit size: `000000021`，即 33 字节
+- 32bit type: `0x68646c72`，即 `hdlr`
+- 8bit version: `0x00`，即对应版本 0
+- 24bit flags: `0x000000`
+- 32bit pre_defined: `0x00000000`
+- 32bit handler_type: `0x6d646972`，即 `mdir`
+- 32bit[3] reserved: `0x6170706c, 0x00000000, 0x00000000`
+- string name: 剩余 1 字节，为 0x00
+
 ### 3.4 Media Data Box
 
 Media Data Box 包含媒体数据
@@ -222,7 +249,7 @@ aligned(8) class MediaDataBox extends Box(‘mdat’) {
 
 ### 4.1 Movie Header Box
 
-Movie Header Box 定义了和媒体无关的整体信息，并且与整个演示相关。
+Movie Header Box 定义了和媒体无关的整体信息，并且与整个演示相关。一般作为 “moov” 的第一个子 box 出现。
 
 ```code
 aligned(8) class MovieHeaderBox extends FullBox(‘mvhd’, version, 0) {
@@ -261,13 +288,13 @@ aligned(8) class MovieHeaderBox extends FullBox(‘mvhd’, version, 0) {
 - 32bit modification_time: `0xd8a8fc08`
 - 32bit timescale: `0x00003000`
 - 32bit duration: `0x00d008ea`
-- 32bit rate: `0x00010000`
-- 16bit volume: `0x0100`
+- 32bit rate: `0x00010000`，表示播放影片的首选速率是 1.0，即正常前向播放
+- 16bit volume: `0x0100`，表示首选的回放音量是 1.0，即全音量
 - 16bit reserved: `0x0000`
 - 32bit[2] reserved: `0x00000000` x2
-- 32bit[9] matrix: `0x00010000, 0x00000000, 0x00000000, 0x00000000, 0x00010000, 0x00000000, 0x00000000, 0x00000000,0x40000000`
+- 32bit[9] matrix: `0x00010000, 0x00000000, 0x00000000, 0x00000000, 0x00010000, 0x00000000, 0x00000000, 0x00000000,0x40000000`，表示视频转化矩阵
 - 32bit[6] pre_defined: `0x00000000` x6
-- 32bit next_track_ID: `0x00000003`
+- 32bit next_track_ID: `0x00000003`，指示要添加到影片的下一个轨道所用的轨道 ID 值。本影片已经包含两个轨道
 
 ### 4.2 Track Box
 
@@ -312,9 +339,11 @@ aligned(8) class UserDataBox extends Box(‘udta’) {
 
 ## 5 Track Box 容器
 
+每个 “trak” 必须有一个 “tkhd” 和 “mdia”，分别表示整个轨道的演示信息和整个媒体的演示信息。
+
 ### 5.1 Track Header Box
 
-Track Header Box 指定单个轨道的特征。每个轨道中仅包含一个 Track Header Box。
+Track Header Box 指定单个轨道的特征。每个轨道中仅有且只有一个 Track Header Box。
 
 ```code
 aligned(8) class TrackHeaderBox
@@ -364,8 +393,8 @@ aligned(8) class TrackHeaderBox
 - 16bit volume: `0x0000`，表示非音频轨道
 - 16bit reserved: `0x0000`
 - 32bit[9] matrix: `0x00010000, 0x00000000, 0x00000000, 0x00000000, 0x00010000, 0x00000000, 0x00000000, 0x00000000,0x40000000`
-- 32bit width: `0x05000000`
-- 32bit height: `0x02d00000`
+- 32bit width: `0x05000000`，即 1280
+- 32bit height: `0x02d00000`，即 720
 
 在 0x00044b5c 处又有一个 Track Header Box。
 
@@ -470,6 +499,8 @@ aligned(8) class MediaBox extends Box(‘mdia’) {
 
 ## 6 Media Box 容器
 
+“mdia” 通常包含一个 “mdhd”、一个 “hdlr” 和一个 “minf”。
+
 ### 6.1 Media Header Box
 
 Media Header Box 声明了与媒体无关，且与轨道中的媒体特征相关的整体信息。
@@ -568,24 +599,9 @@ aligned(8) class HandlerBox extends FullBox(‘hdlr’, version = 0, 0) {
 - 32bit[3] reserved: `0x00000000` x3
 - string name: 剩余 63 字节
 
-在 0x000769b0 处又有一个 Handler Reference Box。
-
-在二进制文件文件内对应：
-
-![hdlr box3](hdlr-box3.png)
-
-- 32bit size: `000000021`，即 33 字节
-- 32bit type: `0x68646c72`，即 `hdlr`
-- 8bit version: `0x00`，即对应版本 0
-- 24bit flags: `0x000000`
-- 32bit pre_defined: `0x00000000`
-- 32bit handler_type: `0x6d646972`，即 `mdir`
-- 32bit[3] reserved: `0x6170706c, 0x00000000, 0x00000000`
-- string name: 剩余 1 字节，为 0x00
-
 ### 6.3 Media Information Box
 
-Media Information Box 声明轨道中媒体的特征信息。
+Media Information Box 声明轨道中媒体的特征信息。一般包含一个 “dinf”、“stbl”，并包含一个 header box，这取决于媒体类型，可能是 vmhd/smhd/hmhd/nmhd。
 
 ```code
 aligned(8) class MediaInformationBox extends Box(‘minf’) {
@@ -626,7 +642,9 @@ aligned(8) class DataInformationBox extends Box(‘dinf’) {
 - 32bit size: `0x00000024`，即 36 字节
 - 32bit type: `0x64696e66`，即 `dinf`
 
-Data Information Box 中包含一个 Data Reference Box。
+#### 7.1.1 Data Reference Box
+
+“dinf” 一般包含一个 “dref”。“dref” 中会包含若干个 “url” 或 “urn”，这些 box 组成一个表，用于定位轨道数据。也就是说，将轨道分成若干段，每一段都可以根据 “url” 或 “urn” 指向的地址获取数据。一般情况下，当数据完全包含在文件中时，“url” 或 “urn” 的 location 字符串为空。
 
 ```code
 aligned(8) class DataEntryUrlBox (bit(24) flags)
@@ -761,7 +779,7 @@ aligned(8) class SoundMediaHeaderBox
 
 ### 8.1 Sample Description Box
 
-Sample Description Box。 提供了有关使用的编码类型的详细信息，以及该编码所需的任何初始化信息。
+Sample Description Box 提供了有关使用的编码类型的详细信息，以及该编码所需的任何初始化信息。必须存在一个 “stsd”，且其中至少包含一个条目。
 
 ```code
 aligned(8) abstract class SampleEntry (unsigned int(32) format)
@@ -825,11 +843,23 @@ aligned(8) class SampleDescriptionBox (unsigned int(32) handler_type)
 - 8bit version: `0x00`，即对应版本 0
 - 24bit flags: `0x000000`
 - 32bit entry_count: `0x00000001`，表示下表有一个条目
-  - 条目 1
+  - 条目 1，根据之前的 “hdlr” 值为 “vide”，对应 VisualSampleEntry
     - 32bit size: `0x00000089`，即 137 字节
     - 32bit type: `0x61766331`，即 `avc1` (起始地址)
-
-- avc1???
+    - 8bit[6] reserved: `0x00` x6
+    - 16bit data_reference_index: `0x0001`
+    - 16bit pre_defined: `0x0000`
+    - 16bit reserved: `0x0000`
+    - 32bit[3] pre_defined: `0x00000000` x3
+    - 16bit width: `0x0500`，即 1280
+    - 16bit height: `0x02d0`，即 720
+    - 32bit horizresolution: `0x00480000`，水平分辨率
+    - 32bit vertresolution: `0x00480000`，垂直分辨率
+    - 32bit reserved: `0x00000000`
+    - 16bit frame_count: `0x0001`，表示每个采样包含一帧
+    - 8bit[32] compressorname: `0x00` x32
+    - 16bit depth: `0x0018`，视频的色深，表示 24 位色
+    - 16bit pre_defined: `0xffff`
 
 box 结束地址是 0x00000267。
 
@@ -844,17 +874,23 @@ box 结束地址是 0x00000267。
 - 8bit version: `0x00`，即对应版本 0
 - 24bit flags: `0x000000`
 - 32bit entry_count: `0x00000001`，表示下表有一个条目
-  - 条目 1
+  - 条目 1，根据之前的 “hdlr” 值为 “soun”，对应 AudioSampleEntry
     - 32bit size: `0x00000059`，即 89 字节
     - 32bit type: `0x6d703461`，即 `mp4a`
-
-- mp4a???
+    - 8bit[6] reserved: `0x00` x6
+    - 16bit data_reference_index: `0x0001`
+    - 32bit[2] reserved: `0x00000000` x2
+    - 16bit channelcount: `0x0002`，声道数为 2
+    - 16bit samplesize: `0x0010`，采样宽度为 16bit
+    - 16bit pre_defined: `0x0000`
+    - 16bit reserved: `0x0000`
+    - 32bit samplerate: `0xac440000`，即 `{timescale of media}<<16`
 
 box 结束地址是 0x00044cdb。
 
 ### 8.2 Decoding Time to Sample Box
 
-Sample Table Box 中找到一个 Decoding Time to Sample Box。
+Decoding Time to Sample Box 包含解码时间到采样编号的索引，是一个压缩的表。在其他表格中提供每个采样的大小和指针。此表中的每个条目给出具有相同时间增量的连续采样的数目，以及这些采样的增量。通过累加这些增量可以构建完整的采样时间图。
 
 ```code
 aligned(8) class TimeToSampleBox
@@ -876,10 +912,10 @@ aligned(8) class TimeToSampleBox
 - 32bit type: `0x73747473`，即 `stts`
 - 8bit version: `0x00`，即对应版本 0
 - 24bit flags: `0x000000`
-- 32bit entry_count: `0x00000001`，表示下表只有一个条目
+- 32bit entry_count: `0x00000001`，表示下表只有一个条目（视频帧率不变）
   - 条目 1
-    - 32bit sample_count: `0x00006804`，表示有 26628 个采样
-    - 32bit sample_delta: `0x00000200`
+    - 32bit sample_count: `0x00006804`，表示有 26628 帧视频
+    - 32bit sample_delta: `0x00000200`，“mdhd” 中 timescale 是 0x3000，相除得到帧率是 24
 
 在 0x00044cdc 处又有一个 Decoding Time to Sample Box。
 
@@ -891,14 +927,14 @@ aligned(8) class TimeToSampleBox
 - 32bit type: `0x73747473`，即 `stts`
 - 8bit version: `0x00`，即对应版本 0
 - 24bit flags: `0x000000`
-- 32bit entry_count: `0x00000001`，表示下表只有一个条目
+- 32bit entry_count: `0x00000001`，表示下表只有一个条目（音频采样率不变）
   - 条目 1
-    - 32bit sample_count: `0x0000baa7`，表示有 47,783 个采样
-    - 32bit sample_delta: `0x00000400`
+    - 32bit sample_count: `0x0000baa7`，表示有 47,783 个音频采样
+    - 32bit sample_delta: `0x00000400`，“mdhd” 中 timescale 是 0xac44，相除得到帧率是 43.066
 
 ### 8.3 Sample To Chunk Box
 
-媒体内的采样分分组成块。块大小可以不同，且同一块中的采样大小可以不同。Sample To Chunk Box 可用于查找包含采样的块，块的位置和相关的采样描述。
+媒体内的采样被分组成块。块大小可以不同，且同一块中的采样大小可以不同。Sample To Chunk Box 可用于查找包含采样的块，块的位置和相关的采样描述。
 
 每个条目给出一组块的第一个块的索引，这些块具有相同特征。通过从上一个条目减去一个条目，可以计算该组有多少块。你可以将其乘以合适的“采样数/块”从而转换为采样数。
 
@@ -924,7 +960,7 @@ aligned(8) class SampleToChunkBox
 - 24bit flags: `0x000000`
 - 32bit entry_count: `0x00000003`，表示下表有 3 个条目
   - 条目 1
-    - 32bit first_chunk: `0x00000001`
+    - 32bit first_chunk: `0x00000001`，对应第一个块
     - 32bit samples_per_chunk: `0x0000000c`，表示每个块有 12 个采样
     - 32bit sample_description_index: `0x00000001`
   - 条目 2
@@ -967,13 +1003,13 @@ aligned(8) class SampleToChunkBox
 
 ### 8.4 Chunk Offset Box
 
-Chunk Offset Box 给出每个块到包含文件的索引。有两种表。允许使用 32 位或 64 位偏移。后者在管理非常大的演示时非常有用。在采样表的任何单个实例中，至多有其中一种表。
+Chunk Offset Box 给出每个块到包含该块的文件的索引。
 
 ```code
 aligned(8) class ChunkOffsetBox
   extends FullBox(‘stco’, version = 0, 0) {
   unsigned int(32) entry_count;
-  for (i=1; i u entry_count; i++) {
+  for (i=1; i <= entry_count; i++) {
     unsigned int(32) chunk_offset;
   }
 }
@@ -989,7 +1025,7 @@ aligned(8) class ChunkOffsetBox
 - 24bit flags: `0x000000`
 - 32bit entry_count: `0x00000975`，表示下表有 2421 个条目
   - 条目 1
-    - 32bit chunk_offset: `0x00076a19`
+    - 32bit chunk_offset: `0x00076a19`，对应 “mdat” 中第一个 data 的位置
   - 条目 2
     - 32bit chunk_offset: `0x00078b5e`
   - 条目 3
@@ -1149,3 +1185,22 @@ aligned(8) class CompositionOffsetBox
   - 条目 1
     - 32bit sample_count: `0x00000001`，即采样数为 1
     - 32bit sample_offset: `0x00000600`，即 CT 和 DT 的偏移量为 1536 (地址 0x00044B3f)
+
+## 9 MP4 的时间结构
+
+文件中的影片和每个轨道都有一个时间刻度，即 timescale。它定义了一个时间轴来说明每秒的滴答(tick)数。上述示例中，有 3 个时间刻度：
+
+- Movie Header Box 中 timescale 为 0x3000
+- Media Header Box 中 timescale 指定对应媒体的时间刻度
+  - 第一个 timescale 为 0x3000，对应视频媒体
+  - 第二个 timescale 为 0xac44，对应音频媒体的采样率，即 44.1 kHz
+
+另外，在三处分别定义了对应的时长，即 duration
+
+- Movie Header Box 中 duration 为 0xd008ea，除以对应 timescale(0x3000)，得到 0x455，即 1109 秒，即 18 分 29 秒，表示整个影片的时长，对应演示最长轨道的时长
+- Track Header Box 中 duration 以 Movie Header Box 中的 timescale 为单位，表示对应轨道的时长
+  - 第一个 duration 为 0xd00800，对应视频轨道时长(0x455)
+  - 第二个 duration 为 0xd008ea，对应音频轨道时长(0x455)
+- Media Header Box 中 duration 以 Media Header Box 中的 timescale 为单位，表示对应媒体的时长
+  - 第一个 duration 为 0xd00800，对应视频媒体时长(0x455)
+  - 第二个 duration 为 0x2ea9c00，对应音频媒体时长(0x455)
