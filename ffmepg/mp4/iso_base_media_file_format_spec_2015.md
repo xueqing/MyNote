@@ -600,7 +600,7 @@ aligned(8) class FileTypeBox
 
 下图给出了一个简单的交换文件的示例，其中包含两个流：
 
-![简单的交换文件](simple_interchange_file.png)
+![简单的交换文件](ref/simple_interchange_file.png)
 
 #### 5.1.3 内容创建
 
@@ -613,7 +613,7 @@ aligned(8) class FileTypeBox
 
 下图显示了内容创建过程中使用的一组文件：
 
-![内容创建文件](content_creation_file.png)
+![内容创建文件](ref/content_creation_file.png)
 
 #### 5.1.4 流传输的准备
 
@@ -629,7 +629,7 @@ aligned(8) class FileTypeBox
 
 下图显示了通过多路复用协议准备流式传输演示，只需要一个 hint 轨道。
 
-![用于流传输的带提示的演示](hinted_Presentation_for_streaming.png)
+![用于流传输的带提示的演示](ref/hinted_Presentation_for_streaming.png)
 
 ### 5.2 设计原则
 
@@ -1445,11 +1445,11 @@ Time to Sample Box 必须为所有采样提供非零的时长，最后一个采�
 
 表 2——闭合的 GOP 示例
 
-![闭合的 GOP 示例](closed_gop_example.png)
+![闭合的 GOP 示例](ref/closed_gop_example.png)
 
 表 3——开放的 GOP 示例
 
-![开放的 GOP 示例](open_gop_example.png)
+![开放的 GOP 示例](ref/open_gop_example.png)
 
 ##### 8.6.1.2 Decoding Time to Sample Box
 
@@ -4418,7 +4418,7 @@ FLUTE 定义了文件分发表(FDT)，该表携带 ALC/LCT 会话中分发的文
 
 图 6 提供了一个文件的示意图，该文件包含三个替代 hint 轨道，它们具有与源文件不同的 FEC 开销。在此示例中，每个源块仅包含一个子块。
 
-![图 4-替代轨道提供的源文件的不同 FEC 开销](figure4-different-fec-overheads-of-a-source-file-provided-by-alternative-hint-tracks.png)
+![图 4-替代轨道提供的源文件的不同 FEC 开销](ref/figure4-different-fec-overheads-of-a-source-file-provided-by-alternative-hint-tracks.png)
 
 上图中的源文件分为两个包含固定大小符号的源块。为两个源块都计算 FEC 冗余符号，并将其存储为 FEC 存储库项。由于 hint 轨道引用了文件中的相同项目，因此不会有重复信息。不使用 hint 轨道的修复服务器也可以使用原始的源符号和 FEC 储存库。
 
@@ -5174,11 +5174,11 @@ class AudioPreRollEntry() extends AudioSampleGroupEntry (’prol’) {
 
 在多个流共享一个公共带宽资源时，播放器和流服务器使用比率共享指令帮助动态分配比特率。指令以采样组条目的形式存储在文件中，并在组合不同比特率的可伸缩或替代媒体流与其他可伸缩或替代轨道时应用。指令是时间相关的，因为轨道中的采样可能与不同的采样组条目关联。在最简单的情况下，每个媒体和时间范围仅指定一个目标比率共享值，如图 5 所示。
 
-![图 5—音频/视频比率共享随时间变化](figure5-audiovideo-rate-share-as-function-of-time.png)
+![图 5—音频/视频比率共享随时间变化](ref/figure5-audiovideo-rate-share-as-function-of-time.png)
 
 为了适应随可用比特率而变化的比率共享值，可以指定多个操作范围。例如，可能表明音频在可用比特率较低时需要(比视频)更高的百分比。从技术上讲，这是通过指定两个操作点来完成的，如图 6 所示。
 
-![图 6—音频随可用比特率变化](figure6-audio-rate-share-as-function-of-available-bitrate.png)
+![图 6—音频随可用比特率变化](ref/figure6-audio-rate-share-as-function-of-available-bitrate.png)
 
 操作点是根据总可用带宽定义的。对于更复杂的情况，可以指定更多的操作点。
 
@@ -5285,17 +5285,17 @@ class AlternativeStartupEntry() extends VisualSampleGroupEntry (’alst’) {
 
 图 7 说明了具有五个时间级别的典型的分层可伸缩比特流。图 7a 以输出顺序显示示例序列。box 中包含的值表示图片的 frame_num 值。斜体字的值表示非引用图片，而其他图片是引用图片。图 7b 以解码顺序显示示例序列。图 7c 显示当假设输出时间线与解码时间线重合并且一个图片的解码持续一个图片间隔时的输出顺序示例序列。可以看出，流的回放比流的解码开始晚五个图片间隔。如果以 25Hz 对图像采样，则图像间隔为 40 毫秒，并且回放延迟 0.2 秒。
 
-![图 7-具有 5 个时间级别示例序列的的解码图片缓冲延时](figure7-decoded-picture-buffering-delay-of-an-example-sequence-with-five-temporal-levels.png)
+![图 7-具有 5 个时间级别示例序列的的解码图片缓冲延时](ref/figure7-decoded-picture-buffering-delay-of-an-example-sequence-with-five-temporal-levels.png)
 
 由于时间分层，可以仅解码序列开始的图片子集。因此，可以更快地开始渲染，但是开始时显示图片的速率较低。换句话说，播放器可以在初始启动延迟的时长和初始显示图像速率之间进行权衡。图 8 和图 9 显示了两个备用启动序列的示例，其中解码了图 7 的比特流子集。
 
 选择用于解码的采样和解码器输出分别在图 8a 和图 8b 中显示。frame_num 等于 4 的引用图片和 frame_num 等于 5 的非引用图片未解码。在此示例中，图片渲染的开始比图 7 早四个图片间隔。当图片速率为 25Hz 时，启动延迟节省 160 毫秒。节省启动延迟的缺点是在比特流开始时显示图像速率较低。
 
-![figure8-an-example-of-an-alternative-startup-sequence](figure8-an-example-of-an-alternative-startup-sequence.png)
+![figure8-an-example-of-an-alternative-startup-sequence](ref/figure8-an-example-of-an-alternative-startup-sequence.png)
 
 在图 9 的示例中，展示另一种方式选择图片进行解码。解码的图片依赖 frame_num 等于 3 的图片将被忽略，并且第一组图片的后半部分内非引用图片的解码也被忽略。由 frame_num 等于 2 的采样得到的解码图片是第一个输出的图片。结果，第一组图像的输出图像速率是正常图像速率的一半，但是显示过程的开始比图 7 所示的传统解决方案早两个帧间隔(25Hz 图像速率中为 80 毫秒)。
 
-![figure9-another-example-of-an-alternative-startup-sequence](figure9-another-example-of-an-alternative-startup-sequence.png)
+![figure9-another-example-of-an-alternative-startup-sequence](ref/figure9-another-example-of-an-alternative-startup-sequence.png)
 
 ### 10.4 随机访问点(RAP)采样分组
 
@@ -6934,7 +6934,7 @@ Edit List Box 包含两个条目：
 
 Edit List Box 的两个条目中，media_rate_integer 值均等于 1。
 
-![图 H.1-Edit List Box 的示例，用于补偿已接收 RTP 流起始位置不相等，segment_duration 被复制到 Edit List Box 的第一个条目](figureh1.png)
+![图 H.1-Edit List Box 的示例，用于补偿已接收 RTP 流起始位置不相等，segment_duration 被复制到 Edit List Box 的第一个条目](ref/figureh1.png)
 
 某些录制单元可能会检测可以从其开始解码的包，例如 H.264/AVC 流的 IDR 图片，在此称为随机访问点。如果流中包含数据包具有所有已接收流中最早的时钟时间戳，并且同一流中包含数据包按解码顺序位于该流的第一个随机访问点之前，则建议不要存储该流第一个随机访问之前的该包，且在确定所有已接收流中最早的时钟时间戳时不要考虑它们。
 
@@ -6948,7 +6948,7 @@ SDP 应该如下存储。会话级 SDP，即第一条媒体特定的行(“m=”
 
 图 H.2 给出了一个 RTP 接收 hint 采样的伪代码示例，该 hint 采样 RTP 包。
 
-![图 H.2-包含两个包(其头部和有效载荷)的 RTP 接收 hint 采样的示例](figureh2.png)
+![图 H.2-包含两个包(其头部和有效载荷)的 RTP 接收 hint 采样的示例](ref/figureh2.png)
 
 不建议使用错误发生索引事件来指示 RTP 包丢失，因为 RTPsequenceseed 字段可用于检测包丢失，而不会增加存储空间。此外，错误发生事件可以引用的最小单位是一个采样(在 RTP 接收 hint 轨道中)。由于采样可以包含许多包，因此错误发生索引事件涉及这些数据包中的哪些是模棱两可的。
 
@@ -6972,14 +6972,14 @@ RTPTS_DIFF(i) 保持不变，当帧速率恒定时，任何数据包中的帧数
 
 当在视频流中使用时间可伸缩性时，包的传输顺序和播放顺序不相同，RTP 时间戳不随 RTP 序列号而增加，且 RTPTS_DIFF(i) 不恒定。但是，RTP 时间戳通常在由 GOP_size 确定的时间段内具有恒定行为，GOP_size 是按 RTP 序列号顺序中最低时间级别的两个连续图片之间的图片数量加 1。例如，如图 H.3 所示，如果为每对参考图片编码了两个非参考图片，则 GOP_size 等于 3。图 H.4 给出了 GOP_size 等于 4 的分层时间可伸缩比特流的示例。
 
-![图 H.3-GOP_size 等于 3 的时间可伸缩比特流的示例](figureh3.png)
+![图 H.3-GOP_size 等于 3 的时间可伸缩比特流的示例](ref/figureh3.png)
 
 图 H.3-GOP_size 等于 3 的时间可伸缩比特流的示例
 
 (RTP 序列号(SN)归一化为从 0 开始，并且假设每帧一个数据包。
 RTP 时间戳(TS)归一化为从 0 开始，并表示为持续一帧间隔的时钟滴答。帧间预测箭头仅指示第一个 GOP，其他 GOP 中的图片也进行类似的预测。)
 
-![图 H.4-GOP_size 等于 4 的分层时间可伸缩比特流的示例](figureh4.png)
+![图 H.4-GOP_size 等于 4 的分层时间可伸缩比特流的示例](ref/figureh4.png)
 
 图 H.4-GOP_size 等于 4 的分层时间可伸缩比特流的示例
 
@@ -7031,7 +7031,7 @@ $$RTPTS\_GOP\_DIFF(i) = RTPTS(i + GOP\_size) - RTPTS(i)$$
 
 a 和 c 之间的差异(如果有的话)应在代表文件中视频 RTP 时间戳的字段中进行补偿。实际上，最简单的方法可能是将差值添加到 rtpoffsetTLV box 中的 offset 字段，如图 H.6 所示。另一种方法是重写 Decoding Time to Sample Box 和 Track Fragment Run Box (如果有的话)，这可能会比较麻烦，因为通过结合采样数和时长对采样时间进行编码的特定方式，可能还需要更多存储空间。
 
-![图 H.6-在 RTP 时间戳表示中校正口型同步的示例](figureh6.png)
+![图 H.6-在 RTP 时间戳表示中校正口型同步的示例](ref/figureh6.png)
 
 图 H.6-在 RTP 时间戳表示中校正口型同步的示例
 
@@ -7244,11 +7244,11 @@ RTCP 发送者报告包含发送报告的挂钟时间，以及与指示的挂钟
 
 图 K.1：简单段索引
 
-![图 K.1：简单段索引](figurek1.png)
+![图 K.1：简单段索引](ref/figurek1.png)
 
 表 K.1：简单段索引
 
-![表 K.1：简单段索引](tablek1.png)
+![表 K.1：简单段索引](ref/tablek1.png)
 
 #### K.2.2 分层
 
@@ -7256,11 +7256,11 @@ RTCP 发送者报告包含发送报告的挂钟时间，以及与指示的挂钟
 
 图 K.2：分层段索引
 
-![图 K.2：分层段索引](figurek2.png)
+![图 K.2：分层段索引](ref/figurek2.png)
 
 表 K.2：分层段索引
 
-![表 K.2：分层段索引](tablek2.png)
+![表 K.2：分层段索引](ref/tablek2.png)
 
 #### K.2.3 菊花链
 
@@ -7268,11 +7268,11 @@ RTCP 发送者报告包含发送报告的挂钟时间，以及与指示的挂钟
 
 图 K.3：菊花链段索引
 
-![图 K.2：分层段索引](figurek3.png)
+![图 K.2：分层段索引](ref/figurek3.png)
 
 表 K.3：菊花链段索引
 
-![表 K.3：菊花链段索引](tablek3.png)
+![表 K.3：菊花链段索引](ref/tablek3.png)
 
 #### K.2.4 组合分层和菊花链
 
@@ -7280,11 +7280,11 @@ RTCP 发送者报告包含发送报告的挂钟时间，以及与指示的挂钟
 
 图 K.4：组合段索引
 
-![图 K.4：组合段索引](figurek3.png)
+![图 K.4：组合段索引](ref/figurek3.png)
 
 表 K.4：组合段索引
 
-![表 K.4：组合段索引](tablek3.png)
+![表 K.4：组合段索引](ref/tablek3.png)
 
 ## 参考
 

@@ -319,7 +319,7 @@ aligned(8) class FileTypeBox
 
 下图给出了一个简单的交换文件的示例，其中包含两个流：
 
-![简单的交换文件](simple_interchange_file.png)
+![简单的交换文件](ref/simple_interchange_file.png)
 
 #### 5.1.3 内容创建
 
@@ -332,7 +332,7 @@ aligned(8) class FileTypeBox
 
 下图显示了内容创建过程中使用的一组文件：
 
-![内容创建文件](content_creation_file.png)
+![内容创建文件](ref/content_creation_file.png)
 
 #### 5.1.4 流传输的准备
 
@@ -348,7 +348,7 @@ aligned(8) class FileTypeBox
 
 下图显示了通过多路复用协议准备流式传输演示，只需要一个 hint 轨道。
 
-![用于流传输的带提示的演示](hinted_Presentation_for_streaming.png)
+![用于流传输的带提示的演示](ref/hinted_Presentation_for_streaming.png)
 
 ### 5.2 设计原则
 
@@ -1014,11 +1014,11 @@ Time to Sample Box 必须为所有采样提供非零的时长，最后一个采�
 
 表 2——闭合的 GOP 示例
 
-![闭合的 GOP 示例](closed_gop_example.png)
+![闭合的 GOP 示例](ref/closed_gop_example.png)
 
 表 3——开放的 GOP 示例
 
-![开放的 GOP 示例](open_gop_example.png)
+![开放的 GOP 示例](ref/open_gop_example.png)
 
 #### 8.15.2 Decoding Time to Sample Box
 

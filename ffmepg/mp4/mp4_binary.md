@@ -42,7 +42,7 @@
 
 使用 UE 打开一个 MP4 文件，得到下面的二进制：
 
-![mp4 文件二进制代码](mp4-bin.png)
+![mp4 文件二进制代码](ref/mp4-bin.png)
 
 ```code
 aligned(8) class Box (unsigned int(32) boxtype,
@@ -150,7 +150,7 @@ aligned(8) class FileTypeBox
 
 在二进制文件文件内对应：
 
-![ftyp box](ftyp-box.png)
+![ftyp box](ref/ftyp-box.png)
 
 - 32bit size: `0x18`，即 24 字节
 - 32bit type: `0x66747970`，即 `ftyp`
@@ -169,7 +169,7 @@ aligned(8) class MovieBox extends Box(‘moov’){
 
 在二进制文件文件内对应：
 
-![moov box](moov-box.png)
+![moov box](ref/moov-box.png)
 
 - 32bit size: `0x000769f9`，即 485881 字节
 - 32bit type: `0x6d6f6f76`，即 `moov`
@@ -194,7 +194,7 @@ aligned(8) class MetaBox (handler_type)
 
 在二进制文件文件内对应：
 
-![meta box](meta-box.png)
+![meta box](ref/meta-box.png)
 
 - 32bit size: `0x0000006d`，即 109 字节(起始地址 0x00002898)
 - 32bit type: `0x6d657461`，即 `meta`
@@ -216,7 +216,7 @@ aligned(8) class HandlerBox extends FullBox(‘hdlr’, version = 0, 0) {
 
 在二进制文件文件内对应：
 
-![hdlr box3](hdlr-box3.png)
+![hdlr box3](ref/hdlr-box3.png)
 
 - 32bit size: `000000021`，即 33 字节
 - 32bit type: `0x68646c72`，即 `hdlr`
@@ -239,7 +239,7 @@ aligned(8) class MediaDataBox extends Box(‘mdat’) {
 
 在二进制文件文件内对应：
 
-![mdat box](mdat-box.png)
+![mdat box](ref/mdat-box.png)
 
 - 32bit size: `0x026e7e75`，即 40,795,765 字节(起始地址 0x00076a11)
 - 32bit type: `0x6d646174`，即 `mdat`
@@ -278,7 +278,7 @@ aligned(8) class MovieHeaderBox extends FullBox(‘mvhd’, version, 0) {
 
 在二进制文件文件内对应：
 
-![mvhd box](mvhd-box.png)
+![mvhd box](ref/mvhd-box.png)
 
 - 32bit size: `0x0000006c`，即 108 字节
 - 32bit type: `0x6d766864`，即 `mvhd`
@@ -307,7 +307,7 @@ aligned(8) class TrackBox extends Box(‘trak’) {
 
 在二进制文件文件内对应：
 
-![trak box](trak-box.png)
+![trak box](ref/trak-box.png)
 
 - 32bit size: `0x00044ac8`，即 108 字节
 - 32bit type: `0x7472616b`，即 `trak`
@@ -316,7 +316,7 @@ aligned(8) class TrackBox extends Box(‘trak’) {
 
 在二进制文件文件内对应：
 
-![trak box2](trak-box2.png)
+![trak box2](ref/trak-box2.png)
 
 - 32bit size: `0x00031e48`，即 204360 字节
 - 32bit type: `0x7472616b`，即 `trak`
@@ -332,7 +332,7 @@ aligned(8) class UserDataBox extends Box(‘udta’) {
 
 在二进制文件文件内对应：
 
-![udta box](udta-box.png)
+![udta box](ref/udta-box.png)
 
 - 32bit size: `0x00000075`，即 117 字节(起始地址 0x00002898)
 - 32bit type: `0x75647461`，即 `udta`
@@ -376,7 +376,7 @@ aligned(8) class TrackHeaderBox
 
 在二进制文件文件内对应：
 
-![tkhd box](tkhd-box.png)
+![tkhd box](ref/tkhd-box.png)
 
 - 32bit size: `0x0000005c`，即 92 字节
 - 32bit type: `0x746b6864`，即 `tkhd`
@@ -400,7 +400,7 @@ aligned(8) class TrackHeaderBox
 
 在二进制文件文件内对应：
 
-![tkhd box2](tkhd-box2.png)
+![tkhd box2](ref/tkhd-box2.png)
 
 - 32bit size: `0x0000005c`，即 92 字节
 - 32bit type: `0x746b6864`，即 `tkhd`
@@ -431,7 +431,7 @@ aligned(8) class EditBox extends Box(‘edts’) {
 
 在二进制文件文件内对应：
 
-![edts box](edts-box.png)
+![edts box](ref/edts-box.png)
 
 - 32bit size: `0x00000024`，即 36 字节
 - 32bit type: `0x65647473`，即 `edts`
@@ -459,7 +459,7 @@ aligned(8) class EditListBox extends FullBox(‘elst’, version, 0) {
 
 在二进制文件文件内对应：
 
-![elst box](elst-box.png)
+![elst box](ref/elst-box.png)
 
 - 32bit size: `0x0000001c`，即 28 字节
 - 32bit type: `0x656c7374`，即 `elst`
@@ -483,7 +483,7 @@ aligned(8) class MediaBox extends Box(‘mdia’) {
 
 在二进制文件文件内对应：
 
-![mdia box](mdia-box.png)
+![mdia box](ref/mdia-box.png)
 
 - 32bit size: `0x00044a40`，即 281152 字节
 - 32bit type: `0x6d646961`，即 `mdia`
@@ -492,7 +492,7 @@ aligned(8) class MediaBox extends Box(‘mdia’) {
 
 在二进制文件文件内对应：
 
-![mdia box2](mdia-box2.png)
+![mdia box2](ref/mdia-box2.png)
 
 - 32bit size: `0x00031de4`，即 204260 字节
 - 32bit type: `0x6d646961`，即 `mdia`
@@ -526,7 +526,7 @@ aligned(8) class MediaHeaderBox extends FullBox(‘mdhd’, version, 0) {
 
 在二进制文件文件内对应：
 
-![mdhd box](mdhd-box.png)
+![mdhd box](ref/mdhd-box.png)
 
 - 32bit size: `0x00000020`，即 32 字节
 - 32bit type: `0x6d646864`，即 `mdhd`
@@ -544,7 +544,7 @@ aligned(8) class MediaHeaderBox extends FullBox(‘mdhd’, version, 0) {
 
 在二进制文件文件内对应：
 
-![mdhd box2](mdhd-box2.png)
+![mdhd box2](ref/mdhd-box2.png)
 
 - 32bit size: `0x00000020`，即 32 字节
 - 32bit type: `0x6d646864`，即 `mdhd`
@@ -573,7 +573,7 @@ aligned(8) class HandlerBox extends FullBox(‘hdlr’, version = 0, 0) {
 
 在二进制文件文件内对应：
 
-![hdlr box](hdlr-box.png)
+![hdlr box](ref/hdlr-box.png)
 
 - 32bit size: `00000005f`，即 95 字节
 - 32bit type: `0x68646c72`，即 `hdlr`
@@ -588,7 +588,7 @@ aligned(8) class HandlerBox extends FullBox(‘hdlr’, version = 0, 0) {
 
 在二进制文件文件内对应：
 
-![hdlr box2](hdlr-box2.png)
+![hdlr box2](ref/hdlr-box2.png)
 
 - 32bit size: `00000005f`，即 95 字节
 - 32bit type: `0x68646c72`，即 `hdlr`
@@ -610,7 +610,7 @@ aligned(8) class MediaInformationBox extends Box(‘minf’) {
 
 在二进制文件文件内对应：
 
-![minf box](minf-box.png)
+![minf box](ref/minf-box.png)
 
 - 32bit size: `0x000449b9`，即 281017 字节
 - 32bit type: `0x6d696e66`，即 `minf`
@@ -619,7 +619,7 @@ aligned(8) class MediaInformationBox extends Box(‘minf’) {
 
 在二进制文件文件内对应：
 
-![minf box2](minf-box2.png)
+![minf box2](ref/minf-box2.png)
 
 - 32bit size: `0x00031d5d`，即 204,125 字节
 - 32bit type: `0x6d696e66`，即 `minf`
@@ -637,7 +637,7 @@ aligned(8) class DataInformationBox extends Box(‘dinf’) {
 
 在二进制文件文件内对应：
 
-![dinf box](dinf-box.png)
+![dinf box](ref/dinf-box.png)
 
 - 32bit size: `0x00000024`，即 36 字节
 - 32bit type: `0x64696e66`，即 `dinf`
@@ -667,7 +667,7 @@ aligned(8) class DataReferenceBox
 
 在二进制文件文件内对应：
 
-![dref box](dref-box.png)
+![dref box](ref/dref-box.png)
 
 - 32bit size: `0x0000001c`，即 28 字节
 - 32bit type: `0x64726566`，即 `dref`
@@ -685,12 +685,12 @@ aligned(8) class DataReferenceBox
 
 在二进制文件文件内对应：
 
-![dinf box2](dinf-box2.png)
+![dinf box2](ref/dinf-box2.png)
 
 - 32bit size: `0x00000024`，即 36 字节
 - 32bit type: `0x64696e66`，即 `dinf`
 
-![dref box2](dref-box2.png)
+![dref box2](ref/dref-box2.png)
 
 - 32bit size: `0x0000001c`，即 28 字节
 - 32bit type: `0x64726566`，即 `dref`
@@ -715,7 +715,7 @@ aligned(8) class SampleTableBox extends Box(‘stbl’) {
 
 在二进制文件文件内对应：
 
-![stbl box](stbl-box.png)
+![stbl box](ref/stbl-box.png)
 
 - 32bit size: `0x00044979`，即 281017 字节
 - 32bit type: `0x7374626c`，即 `stbl`
@@ -724,7 +724,7 @@ aligned(8) class SampleTableBox extends Box(‘stbl’) {
 
 在二进制文件文件内对应：
 
-![stbl box2](stbl-box2.png)
+![stbl box2](ref/stbl-box2.png)
 
 - 32bit size: `0x00031d21`，即 204,065 字节
 - 32bit type: `0x7374626c`，即 `stbl`
@@ -743,7 +743,7 @@ aligned(8) class VideoMediaHeaderBox
 
 在二进制文件文件内对应：
 
-![vmhd box](vmhd-box.png)
+![vmhd box](ref/vmhd-box.png)
 
 - 32bit size: `0x00000014`，即 20 字节(起始地址 0x00044B40)
 - 32bit type: `0x766d6864`，即 `vmhd`
@@ -766,7 +766,7 @@ aligned(8) class SoundMediaHeaderBox
 
 在二进制文件文件内对应：
 
-![smhd box](smhd-box.png)
+![smhd box](ref/smhd-box.png)
 
 - 32bit size: `0x00000010`，即 16 字节(起始地址 0x0007698c)
 - 32bit type: `0x766d6864`，即 `smhd`
@@ -836,7 +836,7 @@ aligned(8) class SampleDescriptionBox (unsigned int(32) handler_type)
 
 在二进制文件文件内对应：
 
-![stsd box](stsd-box.png)
+![stsd box](ref/stsd-box.png)
 
 - 32bit size: `0x00000099`，即 153 字节 (起始地址 0x000001cf)
 - 32bit type: `0x73747364`，即 `stsd`
@@ -867,7 +867,7 @@ box 结束地址是 0x00000267。
 
 在二进制文件文件内对应：
 
-![stsd box2](stsd-box2.png)
+![stsd box2](ref/stsd-box2.png)
 
 - 32bit size: `0x00000069`，即 105 字节
 - 32bit type: `0x73747364`，即 `stsd`
@@ -906,7 +906,7 @@ aligned(8) class TimeToSampleBox
 
 在二进制文件文件内对应：
 
-![stts box](stts-box.png)
+![stts box](ref/stts-box.png)
 
 - 32bit size: `0x00000018`，即 24 字节
 - 32bit type: `0x73747473`，即 `stts`
@@ -921,7 +921,7 @@ aligned(8) class TimeToSampleBox
 
 在二进制文件文件内对应：
 
-![stts box2](stts-box2.png)
+![stts box2](ref/stts-box2.png)
 
 - 32bit size: `0x00000018`，即 24 字节
 - 32bit type: `0x73747473`，即 `stts`
@@ -952,7 +952,7 @@ aligned(8) class SampleToChunkBox
 
 在二进制文件文件内对应：
 
-![stsc box](stsc-box.png)
+![stsc box](ref/stsc-box.png)
 
 - 32bit size: `0x00000034`，即 52 字节
 - 32bit type: `0x73747363`，即 `stsc`
@@ -976,7 +976,7 @@ aligned(8) class SampleToChunkBox
 
 在二进制文件文件内对应：
 
-![stsc box2](stsc-box2.png)
+![stsc box2](ref/stsc-box2.png)
 
 - 32bit size: `0x00000c04`，即 3076 字节
 - 32bit type: `0x73747363`，即 `stsc`
@@ -1017,7 +1017,7 @@ aligned(8) class ChunkOffsetBox
 
 在二进制文件文件内对应：
 
-![stco box](stco-box.png)
+![stco box](ref/stco-box.png)
 
 - 32bit size: `0x000025e4`，即 9700 字节(起始地址 0x000002b4)
 - 32bit type: `0x7374636f`，即 `stco`
@@ -1038,7 +1038,7 @@ aligned(8) class ChunkOffsetBox
 
 在二进制文件文件内对应：
 
-![stco box2](stco-box2.png)
+![stco box2](ref/stco-box2.png)
 
 - 32bit size: `0x000025e4`，即 9700 字节(起始地址 0x000458f8)
 - 32bit type: `0x7374636f`，即 `stco`
@@ -1073,7 +1073,7 @@ aligned(8) class SampleSizeBox extends FullBox(‘stsz’, version = 0, 0) {
 
 在二进制文件文件内对应：
 
-![stsz box](stsz-box.png)
+![stsz box](ref/stsz-box.png)
 
 - 32bit size: `0x0001a024`，即 106532 字节(起始地址 0x00002898)
 - 32bit type: `0x7374737a`，即 `stsz`
@@ -1095,7 +1095,7 @@ aligned(8) class SampleSizeBox extends FullBox(‘stsz’, version = 0, 0) {
 
 在二进制文件文件内对应：
 
-![stsz box2](stsz-box2.png)
+![stsz box2](ref/stsz-box2.png)
 
 - 32bit size: `0x0002eab0`，即 191,152 字节(起始地址 0x00002898)
 - 32bit type: `0x7374737a`，即 `stsz`
@@ -1130,7 +1130,7 @@ aligned(8) class SyncSampleBox
 
 在二进制文件文件内对应：
 
-![stss box](stss-box.png)
+![stss box](ref/stss-box.png)
 
 - 32bit size: `0x0000036c`，即 876 字节(起始地址 0x0001c8bc)
 - 32bit type: `0x73747373`，即 `stss`
@@ -1165,7 +1165,7 @@ aligned(8) class CompositionOffsetBox
 
 在二进制文件文件内对应：
 
-![ctts box](ctts-box.png)
+![ctts box](ref/ctts-box.png)
 
 - 32bit size: `0x00027f18`，即 163608 字节(起始地址 0x0001cc28)
 - 32bit type: `0x63747473`，即 `ctts`
