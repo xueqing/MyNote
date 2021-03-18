@@ -140,4 +140,3 @@ static int get_video_frame(VideoState *is, AVFrame *frame)
 static int audio_decode_frame(VideoState *is)
   解码一个音频帧并返回解压的数据大小。  
 ```
-
