@@ -286,8 +286,8 @@ aligned(8) class MovieHeaderBox extends FullBox(‘mvhd’, version, 0) {
 - 24bit flags: `0x000000`
 - 32bit creation_time: `0xd8a8fc08`
 - 32bit modification_time: `0xd8a8fc08`
-- 32bit timescale: `0x00003000`
-- 32bit duration: `0x00d008ea`
+- 32bit timescale: `0x00003000`，即 12288
+- 32bit duration: `0x00d008ea`，即 13633770
 - 32bit rate: `0x00010000`，表示播放影片的首选速率是 1.0，即正常前向播放
 - 16bit volume: `0x0100`，表示首选的回放音量是 1.0，即全音量
 - 16bit reserved: `0x0000`
@@ -444,15 +444,15 @@ Edit List Box 包含一个显式的时间线映射。每个条目定义轨道时
 aligned(8) class EditListBox extends FullBox(‘elst’, version, 0) {
   unsigned int(32) entry_count;
   for (i=1; i <= entry_count; i++) {
-  if (version==1) {
-    unsigned int(64) segment_duration;
-    int(64) media_time;
-  } else { // version==0
-    unsigned int(32) segment_duration;
-    int(32) media_time;
-  }
-  int(16) media_rate_integer;
-  int(16) media_rate_fraction = 0;
+    if (version==1) {
+      unsigned int(64) segment_duration;
+      int(64) media_time;
+    } else { // version==0
+      unsigned int(32) segment_duration;
+      int(32) media_time;
+    }
+    int(16) media_rate_integer;
+    int(16) media_rate_fraction = 0;
   }
 }
 ```
@@ -467,8 +467,9 @@ aligned(8) class EditListBox extends FullBox(‘elst’, version, 0) {
 - 24bit flags: `0x000000`
 - 32bit entry_count: `0x00000001`，表示列表中只有一个条目
   - 条目 1
-    - 32bit segment_duration: `0xd0080000`
-    - 32bit media_time: `0x00000200`
+    - 32bit segment_duration: `0x00d00800`，即 13633536
+      - 单位是 Movie Header Box 的 timescale，计算 `0x00d00800/0x00003000=1109`
+    - 32bit media_time: `0x00000200`，即 512
 - 16bit media_rate_integer: `0x0001`
 - 16bit media_rate_fraction: `0x0000`
 
@@ -535,7 +536,7 @@ aligned(8) class MediaHeaderBox extends FullBox(‘mdhd’, version, 0) {
 - 32bit creation_time: `0xd8a8fc08`
 - 32bit modification_time: `0xd8a8fc08`
 - 32bit timescale: `0x00003000`
-- 32bit duration: `0x00d00800`
+- 32bit duration: `0x00d00800`，计算 `0x00d00800/0x00003000=12288`
 - 1bit pad: `0x0`
 - 5bit[3] language: `0x15 0xe 0x4`
 - 16bit pre_defined: `0x0000`
@@ -915,7 +916,7 @@ aligned(8) class TimeToSampleBox
 - 32bit entry_count: `0x00000001`，表示下表只有一个条目（视频帧率不变）
   - 条目 1
     - 32bit sample_count: `0x00006804`，表示有 26628 帧视频
-    - 32bit sample_delta: `0x00000200`，“mdhd” 中 timescale 是 0x3000，相除得到帧率是 24
+    - 32bit sample_delta: `0x00000200`，即采样时长为 512，“mdhd” 中 timescale 是 0x3000，相除得到帧率是 24
 
 在 0x00044cdc 处又有一个 Decoding Time to Sample Box。
 
@@ -930,7 +931,7 @@ aligned(8) class TimeToSampleBox
 - 32bit entry_count: `0x00000001`，表示下表只有一个条目（音频采样率不变）
   - 条目 1
     - 32bit sample_count: `0x0000baa7`，表示有 47,783 个音频采样
-    - 32bit sample_delta: `0x00000400`，“mdhd” 中 timescale 是 0xac44，相除得到帧率是 43.066
+    - 32bit sample_delta: `0x00000400`，即采样时长为 1024，“mdhd” 中 timescale 是 0xac44，相除得到帧率是 43.066
 
 ### 8.3 Sample To Chunk Box
 
