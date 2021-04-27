@@ -134,7 +134,7 @@ graph TD
 const char *iURL = "file:in.mp3";
 AVFormatContext *pIFmtCtx = NULL;
 if (avformat_open_input(&pIFmtCtx, iURL, NULL, NULL) < 0 ) {
-    fprintf(stderr, "Could not open source file %s\n", src_filename);
+    fprintf(stderr, "Could not open source file %s\n", iURL);
     exit(1);
 }
 
@@ -148,7 +148,7 @@ if (avformat_find_stream_info(pIFmtCtx, NULL) < 0) {
 AVPacket *pPkt = av_packet_alloc();
 while (av_read_frame(pIFmtCtx, pPkt) >= 0) {
     // mux or decode packet
-    av_packet_unref(&pPkt);
+    av_packet_unref(pPkt);
 }
 
 // close input
