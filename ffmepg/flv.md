@@ -38,7 +38,7 @@ FLV 文件头包含 9 个字节：
 
 | 字段 | 长度 | 默认值 | 描述 |
 | --- | --- | --- | --- |
-| 签名(Signature) | UI32 | FLV | 文件格式标识，总是 `FLV`，即 `0x46 0x4c 0x56` |
+| 签名(Signature) | UI24 | FLV | 文件格式标识，总是 `FLV`，即 `0x46 0x4c 0x56` |
 | 版本(Version) | UI8 | 1 | 只有 `0x01` 是有效的 |
 | 保留标记(TypeFlagsReserved) | UB[5] | 0 | 必须是 0 |
 | 音频标记(TypeFlagsAudio) | UB[1] | 1 | 1 表示存在音频 |
