@@ -21,6 +21,7 @@
   - [四. 编译 FFmpeg](#四-编译-ffmpeg)
     - [1.配置 FFmpeg](#1配置-ffmpeg)
     - [2 编译和安装 FFmpeg](#2-编译和安装-ffmpeg)
+    - [3 编译示例代码](#3-编译示例代码)
 
 ## 一. 编译准备
 
@@ -122,3 +123,12 @@ sudo apt-get install -y libsdl2-dev
 ### 2 编译和安装 FFmpeg
 
 `make -j4 && make install`
+
+### 3 编译示例代码
+
+```sh
+# 在 ffmpeg 主目录执行下面命令
+# xxx_example_deps 可以查看示例代码的依赖库，根据依赖库是否存在判断是否可以编译该示例
+./configure
+make examples
+```
