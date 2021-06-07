@@ -113,7 +113,7 @@ QTSS_Error SendPackets(QTSS_RTPSendPackets_Params* inParams)
       // 获取要发送的包，theTransmitTime 是发送时间
       Float64 theTransmitTime = (*theFile)->fFile.GetNextPacket((UInt8**)&(*theFile)->fPacketStruct.packetData, &(*theFile)->fNextPacketLen, &theCookie);
 
-      // 判断基于用户指定的停止时间是否应该停止播放
+      //断基于用户请求的 Range 头域的停止时间，判断是否应该停止播放
       if (((*theFile)->fStopTime != -1) && (theTransmitTime > (*theFile)->fStopTime))
       {
         (void)QTSS_Pause(inParams->inClientSession);
@@ -128,7 +128,7 @@ QTSS_Error SendPackets(QTSS_RTPSendPackets_Params* inParams)
       theTransmitTime = (*theFile)->fStartTime + (theOffsetFromStartTime / (*theFile)->fSpeed);
 
       (*theFile)->fStream = (QTSS_RTPStreamObject)theCookie;
-      // RTPSession 在 DoPlay 时调用 RTPSession::Play 设置 fAdjustedPlayTime，等于开始播放的时间减去收到播放请求的时间
+      // RTPSession 在 DoPlay 时调用 RTPSession::Play 设置 fAdjustedPlayTime，等于开始播放的系统时间减去播放请求 Range 域的开始时间
       // fAdjustedPlayTime 在 DoPlay 时设置为 RTPSessionInterface 的 fAdjustedPlayTime，单位毫秒
       (*theFile)->fPacketStruct.packetTransmitTime = (*theFile)->fAdjustedPlayTime + ((SInt64)(theTransmitTime * 1000));
     }
