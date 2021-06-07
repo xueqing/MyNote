@@ -124,12 +124,14 @@ QTSS_Error SendPackets(QTSS_RTPSendPackets_Params* inParams)
       // 基于速度调整发送时间，倍速播放时，发送时间间隔变小
       // RTSPRequest 在解析 Range 头域的时候设置 fStartTime
       // fStartTime 在 DoPlay 设置为 RTSPRequest(RTSPRequestInterface) 的 fStartTime，默认为 0
+      // theTransmitTime 相对于 Range 头域的开始时间
       Float64 theOffsetFromStartTime = theTransmitTime - (*theFile)->fStartTime;
       theTransmitTime = (*theFile)->fStartTime + (theOffsetFromStartTime / (*theFile)->fSpeed);
 
       (*theFile)->fStream = (QTSS_RTPStreamObject)theCookie;
       // RTPSession 在 DoPlay 时调用 RTPSession::Play 设置 fAdjustedPlayTime，等于开始播放的系统时间减去播放请求 Range 域的开始时间
       // fAdjustedPlayTime 在 DoPlay 时设置为 RTPSessionInterface 的 fAdjustedPlayTime，单位毫秒
+      // packetTransmitTime 相对于开始播放的系统时间
       (*theFile)->fPacketStruct.packetTransmitTime = (*theFile)->fAdjustedPlayTime + ((SInt64)(theTransmitTime * 1000));
     }
 
