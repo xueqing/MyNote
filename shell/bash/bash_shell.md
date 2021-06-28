@@ -9,18 +9,18 @@
   - [arguments](#arguments)
   - [invocation](#invocation)
   - [definitions](#definitions)
-  - [reserverd_words](#reserverdwords)
+  - [reserverd_words](#reserverd_words)
   - [shell grammar](#shell-grammar)
     - [simple commands](#simple-commands)
     - [pipelines](#pipelines)
     - [lists](#lists)
     - [compound commands](#compound-commands)
     - [coprocesses](#coprocesses)
-    - [函数定义](#%E5%87%BD%E6%95%B0%E5%AE%9A%E4%B9%89)
+    - [函数定义](#函数定义)
   - [comments](#comments)
   - [quoting](#quoting)
   - [parameters](#parameters)
-    - [positional parameters](#positional-parameters)
+    - [positional  parameters](#positional--parameters)
     - [special parameters](#special-parameters)
     - [shell variables](#shell-variables)
     - [array](#array)
@@ -279,6 +279,16 @@
 ### command substitution
 
 ### arithmetic expansion
+
+算术扩展支持对算术表达式求值并替换结果。算术扩展的格式为：
+
+```txt
+$(( expression ))
+```
+
+`expression` 被视为在双引号内，但括号内的双引号不会被特殊处理。对 `expression` 中的所有符号进行参数和变量扩展、命令替换和引号删除。结果被视为要计算的算术表达式。算术扩展可以嵌套。
+
+根据下面列出的[规则]进行求值。如果表达式无效，Bash 会向标准错误打印一条消息指示错误，并且不会发生替换。
 
 ### process substitution
 
