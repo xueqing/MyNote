@@ -21,6 +21,7 @@
       - [avformat_init_output](#avformat_init_output)
     - [写入数据包 av_write_frame](#写入数据包-av_write_frame)
     - [完成文件 av_write_trailer](#完成文件-av_write_trailer)
+  - [添加解复用器或复用器](#添加解复用器或复用器)
 
 ## 封装格式
 
@@ -427,3 +428,9 @@ avformat_free_context(pOFmtCtx);
 - 返回值：成功返回 0，错误返回 `AVERROR_xxx`
 
 一旦写入所有数据，调用者必须调用 `av_write_trailer()` 来清空所有缓存的包，并完成输出文件，然后关闭 IO 上下文(如果有的话)，并最终使用 `avformat_free_context()` 释放复用上下文。
+
+## 添加解复用器或复用器
+
+- 在 `libavformat` 目录中添加解复用器/复用器实现相关的的源码文件
+- 在 `libavformat/Makefile` 中添加编译新增源码文件的依赖关系
+- 在 `libavformat/Makefile` 中添加新增加解复用器/复用器类的名称
