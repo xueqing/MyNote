@@ -15,12 +15,12 @@
 ES
   elementary stream, 基本流。
 PES
-  packetized elementary stream, 分组化基本流。PES 承载 ES，或 非 MPEG 的编码流。
+  packetized elementary stream, 分组化基本流。PES 承载 ES，或非 MPEG 的编码流。
 ```
 
 ## 概述
 
-在 MPEG-2 Part 1 (Systems) (ISO/IEC 13818-1) 和 ITU-T H.222.0 中定义 PES 规范，即在 MPEG PS 和MPEG TS 中携带分包的 ES (通常是一个音频或视频编码器的输出)。通过从 ES 封装有序的的数据字节到 PES 包头，而将 ES 分组。
+在 MPEG-2 Part 1 (Systems) (ISO/IEC 13818-1) 和 ITU-T H.222.0 中定义 PES 规范，即在 MPEG PS 和 MPEG TS 中携带分包的 ES (通常是一个音频或视频编码器的输出)。通过从 ES 封装有序的的数据字节到 PES 包头，而将 ES 分组。
 
 传递视频或音频编码器的 ES 数据的一个典型方法是先从 ES 数据创建一个 PES 包，然后封装这些 PES 包到 TS 包或 PS 包。TS 包又可以被多路复用然后使用广播技术传输，比如 QTSC 和 DVB 使用的。
 
@@ -58,8 +58,8 @@ TS 和 PS 逻辑上都是从 PES 包构造的。应使用 PES 包在 TS 和 PS �
 | ES 速率标记 | 1 | - |
 | DSM trick 模式标记 | 1 | - |
 | 其他的拷贝信息标记 | 1 | - |
-| PES CRC 标记 | 1 | - |
-| PES 扩展标记 | 1 | - |
+| CRC 标记 | 1 | - |
+| 扩展标记 | 1 | - |
 | PES 头长度 | 8 | 给出 PES 头的剩余字节数 |
 | 可选域 | 可变长度 | 通过上述标记位确定 |
 | 填充字节 | 可变长度 | 0xff |
