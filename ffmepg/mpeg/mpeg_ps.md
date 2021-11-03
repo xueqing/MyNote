@@ -1,11 +1,11 @@
 # MPEG PS
 
 - [MPEG PS](#mpeg-ps)
-  - [缩略词](#%e7%bc%a9%e7%95%a5%e8%af%8d)
-  - [概述](#%e6%a6%82%e8%bf%b0)
-  - [编码结构](#%e7%bc%96%e7%a0%81%e7%bb%93%e6%9e%84)
-  - [编码细节](#%e7%bc%96%e7%a0%81%e7%bb%86%e8%8a%82)
-  - [参考](#%e5%8f%82%e8%80%83)
+  - [缩略词](#缩略词)
+  - [概述](#概述)
+  - [编码结构](#编码结构)
+  - [编码细节](#编码细节)
+  - [参考](#参考)
 
 原文 [MPEG program stream](https://en.wikipedia.org/wiki/MPEG_program_stream)
 
@@ -13,7 +13,7 @@
 
 ```text
 PES
-  packetized elementary stream, 分组化基本流。PES 承载 ES，或 非 MPEG 的编码流。
+  packetized elementary stream, 分组化基本流。PES 承载 ES，或非 MPEG 的编码流。
 PCR
   program clock reference, 节目时钟参考。
 SCR
@@ -28,9 +28,9 @@ PS 用于 DVD-视频磁盘和 HD DVD 视频磁盘，但是包括一些约束和�
 
 ## 编码结构
 
-通过组合一个或多个 PES (有一个公共时间基准)到一个流，创建一个 PS。相对 MPEG TS 用于可能丢失数据的数据传输，PS 被设计用于相对可靠的媒介，比如磁盘。PS 有可变大小的记录和极少的使用起始码，使得通过空气传输困难，但是负载更少。PS 编码层只支持一个或多个的 ES 的一个节目，节目被分包到一个流中，而 TS 支持多个节目。
+通过组合一个或多个 PES (有一个公共时间基准)到一个流，创建一个 PS。相对 MPEG TS 用于可能丢失数据的数据传输，PS 被设计用于相对可靠的媒介，比如磁盘。PS 有可变大小的记录和极少的使用起始码，使得通过空气传输困难，但是负载更少。PS 编码层只支持一个或多个 ES 的节目，节目被分包到一个流中，而 TS 支持多个节目。
 
-MPEG-2 PS 可以包含 MPEG-1 Part 2 视频、MPEG-2 Part 2 视频、MPEG-1 Part 3 音频(MP3/MP2/MP1)或 MPEG-2 Part 3 音频。它也可以包含 MPEG-4 Part 2 视频、MPEG-2 Part 7 音频(AAC) 或 MPEG-4 Part 3(AAC) 音频，但是它们很少被使用。MPEG-2 PS 规定了非标准数据(比如 AC-3 音频或字母)私有流的形式。国际标准化组织授权 SMPTE 注册机构，LLC 作为 MPEG-2 格式标识符的注册机构。它发布了压缩格式的列表，这些格式可被封装进 MPEG-2 TS 和 PS。
+MPEG-2 PS 可以包含 MPEG-1 Part 2 视频、MPEG-2 Part 2 视频、MPEG-1 Part 3 音频(MP3/MP2/MP1)或 MPEG-2 Part 3 音频。它也可以包含 MPEG-4 Part 2 视频、MPEG-2 Part 7 音频(AAC) 或 MPEG-4 Part 3(AAC) 音频，但是它们很少被使用。MPEG-2 PS 规定了非标准数据(比如 AC-3 音频或字幕)私有流的形式。国际标准化组织授权 SMPTE 注册机构，LLC 作为 MPEG-2 格式标识符的注册机构。它发布了压缩格式的列表，这些格式可被封装进 MPEG-2 TS 和 PS。
 
 ## 编码细节
 
