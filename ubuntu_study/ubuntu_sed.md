@@ -1,5 +1,24 @@
 # sed
 
+- [sed](#sed)
+  - [描述](#描述)
+  - [s 命令中的分隔符](#s-命令中的分隔符)
+  - [批量替换](#批量替换)
+  - [按行删除](#按行删除)
+  - [参考](#参考)
+
+## 描述
+
+sed(stream editor)是流编辑器。是一个面向行处理的工具，处理单位是行，处理后的结果会输出到标准输出，而不会修改读取的文件。
+
+## s 命令中的分隔符
+
+s(substitute) 命令表示替换，语法为 `s/regexp/replacement/flags`。s 命令内的 `/` 字符可被统一替换成任何其他单字符。`/` 字符(或者使用的其他字符)只有使用 `\` 字符转义之后才可以出现在 `regexp` 或 `replacement`。
+
+比如，`sed -i "s/regexp/replacement/g" filename` 或者 `sed -i "s|regexp|replacement|g" filename` 或 `sed -i "s@regexp@replacement@g" filename` 都是有效的。当 `regexp` 或 `replacement` 中出现 `/` 时，比如表示文件路径，建议使用其他单字符可使表达式更加清晰。即使用 `regexp` 或 `replacement` 中不存在的单字符当做分隔符。
+
+如果 `regexp` 或 `replacement` 中存在使用的分隔符，但是没有使用 `\` 进行转移，比如使用 `$` 引用的变量，会报错 ```sed fails with "unknown option to `s'" error```。
+
 ## 批量替换
 
 - 在一个文件中替换字符串
@@ -34,4 +53,12 @@
     - `sed '/pattern/'d filename`
   - `sed '/pattern/,+2d' filename`删除匹配`pattern`所在行和之后`m`行
     - `sed '/pattern/,+2'd filename`
-  - `sed '/^$/d' filename`删除空行
+  - `sed '/^[[:space:]]*$/d' filename` 或者 `sed '/^\s*$/d' filename`删除空行，`\s` 用于匹配任何空白字符，包括空格、制表符和换页符等。为了符合 POSIX，使用字符类 `[[:space:]]` 代替 `\s`，因为后者是 GNU sed 扩展
+  - `sed -e 's/\s\{3,\}/  /g' filename`把三个以上的连续空格字符(制表符和空格)替换为两个空格
+
+## 参考
+
+- [sed 命令](http://c.biancheng.net/linux/sed.html)
+- [sed 基础教程](https://www.twle.cn/c/yufei/sed/sed-basic-index.html)
+- [sed s Command](http://www.manpagez.com/info/sed/sed-4.2.2/sed_8.php#The-_0022s_0022-Command)
+- [sed tutorial](https://www.grymoire.com/Unix/Sed.html)
