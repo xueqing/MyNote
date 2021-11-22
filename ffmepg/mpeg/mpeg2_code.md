@@ -1,7 +1,7 @@
 # 阅读 ffmpeg mpeg2-ts 源码
 
-- [阅读 ffmpeg mpeg2-ts 源码](#%e9%98%85%e8%af%bb-ffmpeg-mpeg2-ts-%e6%ba%90%e7%a0%81)
-  - [相关文件](#%e7%9b%b8%e5%85%b3%e6%96%87%e4%bb%b6)
+- [阅读 ffmpeg mpeg2-ts 源码](#阅读-ffmpeg-mpeg2-ts-源码)
+  - [相关文件](#相关文件)
   - [mpegts.h](#mpegtsh)
   - [mpegts.c](#mpegtsc)
   - [mpegtsenc.c](#mpegtsencc)
@@ -299,7 +299,7 @@ static int read_packet(AVFormatContext *s, uint8_t *buf, int raw_packet_size,
         }
     }
 }
-// 处理一个 TS 包，参数 packet 就是 TS 包。之前先调用 read_packet 获得一个 TS 包（通常是 188 bytes）
+// 处理一个 TS 包，参数 packet 就是 TS 包。之前先调用 read_packet 获得一个 TS 包(通常是 188 bytes)
 static int handle_packet(MpegTSContext *ts, const uint8_t *packet) {
 
     // 根据iso13818-1 TS 包的格式描述，可以从 TS 包获取 PID、载荷单元开始指示位(start_indicator)
