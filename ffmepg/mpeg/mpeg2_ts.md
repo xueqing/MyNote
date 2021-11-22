@@ -46,7 +46,7 @@ SPTS
   single-program transport stream, 单一节目传输流。
 PSI
   program specific information, 节目专用信息。是一种有关节目程序与 M2T 的元数据，在数位电视系统中，指出节目的特别信息，终端机器(如机顶盒)只有通过这些信息才能搜索出节目来。
-  一般包括：PAT(program association table, 节目关联表)、PMT(program map table, 节目映射表)、NIT(network information table, 网络信息表)、CAT(condition access table, 条件接收表)。
+  一般包括：PAT(program association table, 节目关联表)、PMT(program map table, 节目映射表)、NIT(network information table, 网络信息表)、CAT(condition access table, 条件访问表)。
 PAT
   program association table, 节目关联表。是数字电视系统中节目指示的根节点。其包标识符 (PID) 为 0。终端设备(如机顶盒)搜索节目时最先都是从这张表开始搜索的。从 PAT 中解析出  PMT，再从 PMT 解析出基本元素(如视频、音频、数据等)的 PID 及节目号、再根据节目从节目业务描述表(service description table, SDT)中搜索出节目名称。CAT 相关表是从 PMT 中得到。
 PMT
@@ -54,13 +54,13 @@ PMT
 NIT
   network information table, 网络信息表。是数字电视系统中用于传送网络名称、传送节目的通道(频点、符号率、调制方式、纠错编码等)等网信息的一张表格。最重要的功能就是终端设备(如机顶盒)可以通过这张表自动搜索出网络中的所有节目来，而不用一个一个地输入所有节目的参数，对于有一、二个节目的网络来说这特别有用。节目有变化时也可以通过这张表的版本变化加以通知终端设备(如机顶盒)自动更新节目列表。
 CAT
-  condition access table, 条件接收表。用于节目的加密与解密。对应 PID 为 0x0001。
+  condition access table, 条件访问表。用于节目的加密与解密。对应 PID 为 0x0001。
 PCR
   program clock reference, 节目时钟参考。
 STC
   system time clock, 系统校时时钟。
 PTS
-  presentation time stamp, 显示时间戳。
+  presentation time stamp, 演示时间戳。
 TDM
   time-division multiplexing, 时分多路复用。是一种数字或者模拟(较罕见)的多路复用技术。使用这种技术，两个以上的信号或数据流可以同时在一条通信线路上传输，其表现为同一通信信道的子信道。但在物理上来看，信号还是轮流占用物理信道的。
   时间域被分成周期循环的一些小段，每段时间长度是固定的，每个时段用来传输一个子信道。例如子信道 1 的采样(可能是字节或者是数据块)使用时间段 1，子信道 2 使用时间段 2 等等。一个 TDM 的帧包含了一个子信道的一个时间段，当最后一个子信道传输完毕，这样的过程将会再重复来传输新的帧，也就是下个信号片段。
@@ -255,7 +255,7 @@ TS 有一个节目概念。每个节目使用一个 PMT 描述。和节目关联
 - PAT(program association table, 节目关联表)
 - PMT(program map table, 节目映射表)
 - NIT(network information table, 网络信息表)
-- CAT(condition access table, 条件接收表)
+- CAT(condition access table, 条件访问表)
 
 #### 表的分节 table section
 
