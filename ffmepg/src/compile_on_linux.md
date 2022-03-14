@@ -46,7 +46,7 @@ hg clone http://hg.videolan.org/x265
 
 #### 1 配置 libx264
 
-`./configure --prefix=/home/kiki/ffmpeg/libx264 --disable-asm`
+`./configure --prefix=/home/kiki/ffmpeg/libx264 --disable-asm --enable-shared`
 
 #### 2 编译和安装 libx264
 
@@ -73,7 +73,7 @@ ccmake ../../source
 ```
 
 ```txt
-CMAKE_INSTALL_PREFIX: /usr/local - /home/kiki/ffmpeg/libx265
+CMAKE_INSTALL_PREFIX: /usr/local 替换为 /home/kiki/ffmpeg/libx265
 ```
 
 #### 4 完成配置
@@ -116,8 +116,8 @@ sudo apt-get install -y libsdl2-dev
 --enable-gpl \
 --enable-libx264 \
 --enable-libx265 \
---extra-cflags='`pkg-config --cflags --libs x264 x265`'
---pkg-config="pkg-config --static" \
+--extra-cflags='`pkg-config --cflags --libs x264 x265`' \
+--pkg-config="pkg-config --static"
 ```
 
 ### 2 编译和安装 FFmpeg
@@ -131,4 +131,6 @@ sudo apt-get install -y libsdl2-dev
 # xxx_example_deps 可以查看示例代码的依赖库，根据依赖库是否存在判断是否可以编译该示例
 ./configure
 make examples
+# 在 .bashrc 添加 ffmpeg 库路径
+# export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/kiki/ffmpeg/libx264/lib:/home/kiki/ffmpeg/libx265/lib:/home/kiki/ffmpeg/ffmpeg-4.1/lib
 ```
