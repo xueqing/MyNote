@@ -5,6 +5,8 @@
   - [查看 ffmpeg 支持的封装格式](#查看-ffmpeg-支持的封装格式)
   - [libavformat 库](#libavformat-库)
     - [主要的 API](#主要的-api)
+    - [数据结构](#数据结构)
+      - [AVStream](#avstream)
   - [转封装流程](#转封装流程)
   - [解复用](#解复用)
     - [解复用流程](#解复用流程)
@@ -81,6 +83,100 @@ int av_interleaved_write_frame(AVFormatContext *s, AVPacket *pkt);
 
 // 向输出文件写入文件尾信息
 int av_write_trailer(AVFormatContext *s);
+```
+
+### 数据结构
+
+#### AVStream
+
+- 在 `libavformat/avformat.h` 定义
+- 功能：存储音视频流的相关数据，比如 AVCodecContext/AVCodecParameters 指示该流使用的编解码器方式
+
+```c
+typedef struct AVStream {
+    int index;// AVFormatContext 中的流索引
+    int id;// 格式特定的流 ID
+
+    AVCodecContext *codec;// 已弃用，使用 AVCodecParameters 取而代之
+
+    void *priv_data;// 保存和具体编解码流相关的数据
+
+    AVRational time_base;// 时间(秒)的基本单位，和表示帧的时间戳相关
+    int64_t start_time;// 流中按演示顺序的第一帧的 pts，单位是流的时间基
+    int64_t duration;// 解码：对应流的时长，单位是流的时间基。如果源文件未指定时长，但是指定了比特率，则根据比特率和文件大小估计此值
+    int64_t nb_frames;// 如果已知对应此流的帧数，否则为 0
+
+    int disposition;// AV_DISPOSITION_* 位字段
+
+    enum AVDiscard discard;// 选择哪些数据包可以随意丢弃，不需要解复用
+
+    AVRational sample_aspect_ratio;// 采样纵横比(0 表示未知)
+
+    AVDictionary *metadata;
+
+    AVRational avg_frame_rate;// 平均帧率
+
+    AVPacket attached_pic;
+
+    AVPacketSideData *side_data;// 应用于整个流的辅助数据(即容器不允许包中间修改此值)。此数组和包中的辅助数据可能没有重叠
+    int            nb_side_data;// AVStream.side_data 数组中元素数目
+
+    int event_flags;// AVSTREAM_EVENT_FLAG_* 的组合。用于检测流中发生的事件。一旦处理该事件之后必须清空标识
+
+    AVRational r_frame_rate;// 流的真实基本帧率。这是最低的帧率，所有时间戳都可以正确标识(是流中所有帧率的最小公倍数)。请注意，此值只是猜测
+
+    AVCodecParameters *codecpar;// 与此流相关的编解码参数。在 avformat_new_stream() 和 avformat_free_context() 中分别申请和释放
+
+    int pts_wrap_bits;// pts 的位数
+
+    /**
+     * 时间戳对应最后一个 dts 同步点。
+     * 当 AVCodecParserContext.dts_sync_point >= 0 时进行初始化，其从底层容器接收到一个 DTS。否则默认设置为 AV_NOPTS_VALUE
+     */
+    int64_t first_dts;
+    int64_t cur_dts;
+    int64_t last_IP_pts;
+    int last_IP_duration;
+
+    int probe_packets;// 编解码探测缓存的包数
+
+    int codec_info_nb_frames;// avformat_find_stream_info() 期间已经解复用的帧数
+
+    enum AVStreamParseType need_parsing;// av_read_frame() 支持
+    struct AVCodecParserContext *parser;
+
+    struct AVPacketList *last_in_packet_buffer;// 复用时，此流的包缓存中的最后一包
+    AVProbeData probe_data;
+#define MAX_REORDER_DELAY 16
+    int64_t pts_buffer[MAX_REORDER_DELAY+1];
+
+    AVIndexEntry *index_entries;// 仅在格式不支持原生 seek 时使用
+    int nb_index_entries;
+    unsigned int index_entries_allocated_size;
+
+    int stream_identifier;// 流标识符。这是 MPEG-TS 流标识符+1，0 表示未知
+
+    int program_num;// 创建此流的 MPEG-TS 节目的详细信息
+    int pmt_version;
+    int pmt_stream_idx;
+
+    int64_t interleaver_chunk_size;
+    int64_t interleaver_chunk_duration;
+I
+    int request_probe;// 流探测状态：-1 表示探测结束；0 表示没有探测请求；其他值表示执行探测，且此值是接收的最小 score
+
+    int skip_to_keyframe;// 指示直到下一个关键帧之前的所有东西都应丢弃
+    int skip_samples;// 从下一包解码帧的开头应跳过的帧数
+    int64_t start_skip_samples;// 如果非 0，表示从流开头应跳过的采样数(从 pts=0 的包中移除采样，也假定不会发生负的时间戳)
+    int64_t first_discard_sample;// 如果非 0，表示流中的第一个音频采样应丢弃
+    int64_t last_discard_sample;// 在 first_discard_sample 之后，打算丢弃的最后一个采样之后的采样。仅用于帧边界。如果无缝信息被破坏，用于防止早期 EOF(考虑连接的 mp3)
+
+    int nb_decoded_frames;// 内部解码的帧数，libavformat 内部使用
+
+    int64_t mux_ts_offset;// 复用之前，增加到时间戳的时间戳偏移
+
+    AVRational display_aspect_ratio;// 显示纵横比(未知则为 0)
+} AVStream;
 ```
 
 ## 转封装流程
