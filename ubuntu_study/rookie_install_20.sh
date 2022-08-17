@@ -110,8 +110,8 @@ export GOROOT_BOOTSTRAP=$GOROOT
 ## install other versions for golang
 gvm install go1.15
 gvm install go1.17
-## choose golang version
-gvm use go1.17 [--default]
+## choose golang version(use --default to set default golang version for all terminals)
+gvm use go1.17 --default
 ## list go versions
 gvm list
 ## list all go versions available for download
