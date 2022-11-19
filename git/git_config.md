@@ -85,14 +85,14 @@ git config user.name
 
 ```sh
 # 方法 1：使用 git 命令配置
-git config --global url."git@gitlab.bmi".insteadOf https://gitlab.bmi
+git config --global url."git@gitlab.bmi:".insteadOf "https://gitlab.bmi/"
 ## 或者
-git config --global url."ssh://git@gitlab.bmi".insteadOf https://gitlab.bmi
+git config --global url."ssh://git@gitlab.bmi/".insteadOf "https://gitlab.bmi/"
 # 方法 2：修改 git 配置文件
 vim ~/.gitconfig
 ## 加入下面的内容
 [url "git@gitlab.bmi:"]
-  insteadOf = https://gitlab.bmi
+  insteadOf = https://gitlab.bmi/
 ## 或
 [url "ssh://git@gitlab.bmi/"]
   insteadOf = https://gitlab.bmi/
