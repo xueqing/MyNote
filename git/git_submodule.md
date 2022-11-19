@@ -1,9 +1,9 @@
 # git submodule
 
 - [git submodule](#git-submodule)
-  - [应用场景](#%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF)
-  - [问题](#%E9%97%AE%E9%A2%98)
-  - [高级命令](#%E9%AB%98%E7%BA%A7%E5%91%BD%E4%BB%A4)
+  - [应用场景](#应用场景)
+  - [问题](#问题)
+  - [高级命令](#高级命令)
 
 - `git`将`submodule`有关的信息保存在两个地方：
   - `.gitmodules`在仓库中，有版本控制，修改之后会同步到其他仓库，使用`submodule`相关命令的时候会自动更新
@@ -74,6 +74,7 @@
   - 遍历子模块新建工作分支`git submodule foreach 'git checkout -b featureA'`
   - 在主项目查看所有子模块的修改内容`git diff; git submodule foreach 'git diff'`
   - 删除所有子模块本地的修改`git submodule foreach --recursive 'git checkout .'`
+  - **如果某个子模块出错，需要跳过错误继续执行**，例如执行`git submodule foreach 'git stash pop'`，有的子模块没有暂存的修改，会出错停止，可以修改命令为`git submodule foreach 'git stash pop || git status'`，总之添加一个一定可以成功执行的命令就好了，例如`git submodule foreach 'git stash pop || echo 1'`
 - 在主项目修改子模块
   - `git submodule update`更新子模块的文件时，会将子仓库留在一个`游离的HEAD`状态，本地没有工作分支跟踪改到
   - 首先进入子模块检出一个分支，修改之后提交到本地
