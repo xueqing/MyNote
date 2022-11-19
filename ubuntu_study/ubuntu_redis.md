@@ -1,12 +1,12 @@
 # redis 环境搭建
 
-- [redis 环境搭建](#redis-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA)
-  - [1 安装 redis-server](#1-%E5%AE%89%E8%A3%85-redis-server)
-  - [2 命令](#2-%E5%91%BD%E4%BB%A4)
-    - [2.1.1 关于 key 的命令](#211-%E5%85%B3%E4%BA%8E-key-%E7%9A%84%E5%91%BD%E4%BB%A4)
-    - [2.1.2 关于 hash 的命令](#212-%E5%85%B3%E4%BA%8E-hash-%E7%9A%84%E5%91%BD%E4%BB%A4)
-  - [3 开启远程访问并加密访问](#3-%E5%BC%80%E5%90%AF%E8%BF%9C%E7%A8%8B%E8%AE%BF%E9%97%AE%E5%B9%B6%E5%8A%A0%E5%AF%86%E8%AE%BF%E9%97%AE)
-  - [4 参考](#4-%E5%8F%82%E8%80%83)
+- [redis 环境搭建](#redis-环境搭建)
+  - [1 安装 redis-server](#1-安装-redis-server)
+  - [2 命令](#2-命令)
+    - [2.1.1 关于 key 的命令](#211-关于-key-的命令)
+    - [2.1.2 关于 hash 的命令](#212-关于-hash-的命令)
+  - [3 开启远程访问并加密访问](#3-开启远程访问并加密访问)
+  - [4 参考](#4-参考)
 
 ## 1 安装 redis-server
 
@@ -56,7 +56,7 @@ hget key_name field_name
 ```sh
 sudo vim /etc/redis/redis.conf
 # 开启远程访问
-# 注释掉 bind 127.0.0.1
+# 注释掉 bind 127.0.0.1，改为 bind 0.0.0.0
 # 如果有其他 bind 语句也注释
 
 ## 配置外网访问需要修改 Linux 防火墙(iptables)，开启 redis 端口
@@ -67,6 +67,7 @@ sudo vim /etc/redis/redis.conf
 
 # 加密访问
 # 打开注释 requirepass xxxxx，并且把密码 xxxx 改为 admin
+sudo systemctl restart redis-server.service 
 ```
 
 - 不建议在公网访问 redis，因为 redis 处理速度非常快。所以如果密码简单，外部用户可通过暴力破解密码
