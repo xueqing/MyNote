@@ -1,7 +1,7 @@
 # env: ubuntu 20.04
 
 # install pre-requisite
-sudo apt-get install -y vim git gitk git-gui curl net-tools
+sudo apt-get install -y vim git gitk git-gui curl net-tools cmake cmake-curses-gui
 
 # config git account
 ## generate ssh key
@@ -27,6 +27,7 @@ git config --global alias.sp 'stash pop'
 git config --global alias.unstage 'reset HEAD --'
 git config --global alias.pullo 'pull origin'
 git config --global alias.pusho 'push origin'
+git config --global url.git@github.com:.insteadOf https://github.com/
 
 # install ssh-server for remote access
 sudo apt-get install -y openssh-server
@@ -51,6 +52,10 @@ sudo ln -s /usr/share/phpmyadmin /var/www/html/phpmyadmin
 
 # install redis server
 sudo apt-get install -y redis-server
+## sudo vim /etc/redis/redis.conf
+### requirepass admin
+### bind 0.0.0.0
+## sudo systemctl restart redis-server.service 
 
 # install RabbitMQ
 ## 1. Install RabbitMQ Server
@@ -78,6 +83,12 @@ sudo rabbitmqctl list_user_permissions admin
 
 # install gcc/g++
 sudo apt-get install -y gcc g++
+# install gcc-5/g++-5
+## sudo vim /etc/apt/sources.list
+## deb http://dk.archive.ubuntu.com/ubuntu/ xenial main
+## deb http://dk.archive.ubuntu.com/ubuntu/ xenial universe
+## sudo apt update
+## sudo apt-get install -y g++-5 gcc-5
 ## switch version
 # sudo update-alternatives --config gcc
 ## delete version options
@@ -118,3 +129,7 @@ gvm list
 gvm listall
 ## completely remove gvm and all installed Go versions and packages
 # gvm implode
+
+# make Tab auto-completion case-insensitive in Bash
+echo set completion-ignore-case on | sudo tee -a /etc/inputrc
+## enter password, and restart terminal
