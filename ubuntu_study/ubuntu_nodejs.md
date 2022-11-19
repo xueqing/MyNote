@@ -89,3 +89,43 @@ node -v
 ```sh
 npm -v
 ```
+
+## 5 npm 问题
+
+### npm install 卡住
+
+ubuntu 22.04 使用 apt 安装 npm 之后，执行 `npm install` 卡住。
+
+```sh
+# 方法 1：使用代理 registry
+## 配置 npm 代理提速，可设置为淘宝镜像
+npm config set registry https://registry.npm.taobao.org
+## 查看配置是否成功使用 npm config get registry
+## 删除代理使用 npm config delete registry
+## 成功之后继续使用 npm install 安装
+npm install xxx
+# 方法 2：安装 cnpm 镜像，使用 cnpm 安装
+npm install -g cnpm
+cnpm instal
+# 方法 3：安装 nrm，用来管理 npm 镜像源
+## 全局安装 nrm
+npm install -g nrm
+## 查看可配置的源列表
+nrm ls
+## 使用配置列表中的源
+nrm use taobao
+# 方法 4：安装 yarn 镜像，使用 yarn 安装
+npm install -g yarn
+yarn install
+```
+
+### npm install 报错 “npm ERR! Cannot read property 'insert' of undefined”
+
+类似 issue 描述[参考](https://github.com/npm/cli/issues/4876)。
+
+```sh
+npm cache clear --force
+npm config set registry https://registry.npmmirror.com
+# 结合上面的方法 4 使用 nrm 切换镜像源
+## npm install -g nrm --registry=https://registry.npmmirror.com
+```
