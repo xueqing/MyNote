@@ -145,6 +145,8 @@ ffplay rtsp://admin:xxxxxx@192.168.10.100:554
 #### 推流
 
 ```sh
+# 推 RTSP (文件循环推流)
+ffmpeg -stream_loop -1 -re -i 265.mp4 -c copy -f rtsp -rtsp_transport tcp rtsp://192.168.1.205:554/live/kiki
 # 推 RTMP
 ffmpeg -re -i source.flv -vcodec copy -acodec copy -f flv -y rtmp://127.0.0.1:1935/live/livestream
 # 推 RTP
