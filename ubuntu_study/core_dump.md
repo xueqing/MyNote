@@ -127,7 +127,7 @@ Saved corefile core.18332
 ## 核心转储文件的位置
 
 - 默认生成的文件保存在可执行文件所在目录，文件名为 `core`
-- 通过修改 `/pro/sys/kernel/core_uses_pid` 可让生成的文件名自动加上 PID。例如 `echo 1 > /pro/sys/kernel/core_uses_pid`，生成的文件名会变成 `core.pid`
+- 通过修改 `/proc/sys/kernel/core_uses_pid` 可让生成的文件名自动加上 PID。例如 `echo 1 > /proc/sys/kernel/core_uses_pid`，生成的文件名会变成 `core.pid`
 - 通过修改 `/proc/sys/kernel/core_pattern` 控制生成文件的保存位置和文件名格式。例如 `echo "/tmp/core-file-%e-%p-%t" > /proc/sys/kernel/core_pattern` 设置生成的文件保存在 `/tmp/core-file` 目录，文件名格式为 `core-command-pid-timestamp`
 
 ## 分析核心转储文件
