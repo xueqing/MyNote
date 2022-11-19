@@ -25,6 +25,7 @@ git config --global alias.sp 'stash pop'
 git config --global alias.unstage 'reset HEAD --'
 git config --global alias.pullo 'pull origin'
 git config --global alias.pusho 'push origin'
+git config --global url.git@github.com:.insteadOf https://github.com/
 
 # install ssh-server for remote access
 sudo apt-get install -y openssh-server
@@ -87,3 +88,7 @@ sudo gpasswd -a kiki docker
 newgrp docker
 # test
 docker version
+
+# make Tab auto-completion case-insensitive in Bash
+echo set completion-ignore-case on | sudo tee -a /etc/inputrc
+## enter password, and restart terminal
