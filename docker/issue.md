@@ -4,6 +4,7 @@
   - [镜像的导入和导出](#镜像的导入和导出)
   - [启动 docker 失败 Got permission denied while trying to connect to the Docker daemon socket](#启动-docker-失败-got-permission-denied-while-trying-to-connect-to-the-docker-daemon-socket)
   - [从 docker 私有仓库拉取镜像失败 http: server gave HTTP response to HTTPS client](#从-docker-私有仓库拉取镜像失败-http-server-gave-http-response-to-https-client)
+  - [拉取镜像失败 docker: Error response from daemon: manifest for xxx not found: manifest unknown: manifest unknown](#拉取镜像失败-docker-error-response-from-daemon-manifest-for-xxx-not-found-manifest-unknown-manifest-unknown)
 
 ## 镜像的导入和导出
 
@@ -82,3 +83,14 @@ kiki@ubuntu:~$ sudo service docker restart
 kiki@ubuntu:~$ docker pull myregistrydomain.com:5000/image_name
 # ok
 ```
+
+## 拉取镜像失败 docker: Error response from daemon: manifest for xxx not found: manifest unknown: manifest unknown
+
+```sh
+kiki@kiki-vm:~$ docker run --name=zlmedia --rm -id --net=host -p 1935:1935 -p 8080:80 -p 8554:554 -p 10000:10000 -p 10000:10000/udp -p 8000:8000/udp zlmediakit/zlmediakit:Release.last
+Unable to find image 'zlmediakit/zlmediakit:Release.last' locally
+docker: Error response from daemon: manifest for zlmediakit/zlmediakit:Release.last not found: manifest unknown: manifest unknown.
+See 'docker run --help'
+```
+
+说明镜像库可能对应的标签，可以先去 [dockerhub 官网](https://hub.docker.com/u/library) 搜索想要拉取的镜像，支持模糊搜索，然后切换到 `tag` 页面查看最新的标签，指定标签拉取镜像即可。
