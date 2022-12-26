@@ -56,4 +56,6 @@ docker inspect --format="{{json .NetworkSettings}}" <container-id> | jq
 docker inspect --format="{{json .NetworkSettings.Ports}}" <container-id> | jq
 ## 查看容器的网络 ip、网关等信息
 docker inspect --format="{{json .NetworkSettings.Networks}}" <container-id> | jq
+## 查看镜像配置的环境变量
+docker inspect xxx --format="{{json .Config.Env}}" | jq
 ```
