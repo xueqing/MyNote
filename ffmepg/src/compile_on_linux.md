@@ -133,4 +133,5 @@ sudo apt-get install -y libsdl2-dev
 make examples
 # 在 .bashrc 添加 ffmpeg 库路径
 # export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/kiki/ffmpeg/libx264/lib:/home/kiki/ffmpeg/libx265/lib:/home/kiki/ffmpeg/ffmpeg-4.1/lib
+# export PKG_CONFIG_PATH=/home/kiki/ffmpeg/libx264/lib/pkgconfig:/home/kiki/ffmpeg/libx265/lib/pkgconfig:/home/kiki/ffmpeg/ffmpeg-4.1/lib/pkgconfig:$PKG_CONFIG_PATH
 ```
