@@ -93,3 +93,42 @@ sudo systemctl status rabbitmq-server
 # 如果需要管理最大连接数，修改配置文件
 sudo vim /etc/default/rabbitmq-server
 ```
+
+## 6 编译源码
+
+- 环境：Linux
+- 源码地址：
+  - rabbitmq-c <https://github.com/alanxz/rabbitmq-c.git>
+  - SimpleAmqpClient <https://github.com/alanxz/SimpleAmqpClient.git>
+
+### 编译 rabbitmq-c
+
+```sh
+# git checkut v0.9.0-master
+mkdir build
+cd build
+cmake ..
+```
+
+### 编译 SimpleAmqpClient
+
+```sh
+mkdir build
+cd build
+cmake ..
+## 如果找不到 boost 库: 报错
+## Imported targets not available for Boost version
+# cmake -DBoost_INCLUDE_DIR=local_boost_header_dir/ -DBoost_LIBRARY_DIR=local_boost_library_dir/ ..
+## 如果报错 ERROR: Boost_LIBRARYDIR is not the correct spelling.  The proper spelling is BOOST_LIBRARYDIR.
+## 修改对应的 cmake 文件，比如 /usr/share/cmake-3.5/Modules/FindBoost.cmake，
+## 注释掉 _Boost_CHECK_SPELLING(Boost_LIBRARYDIR)
+## 如果找不到 rabbitmqc 库: 报错
+## Rabbitmqc_INCLUDE_DIR=Rabbitmqc_INCLUDE_DIR-NOTFOUND
+## Rabbitmqc_LIBRARY=Rabbitmqc_LIBRARY-NOTFOUND
+# cmake -DBoost_INCLUDE_DIR=local_boost_header_dir/ -DBoost_LIBRARY_DIR=local_boost_library_dir/ -DRabbitmqc_INCLUDE_DIR=local_rabbitmqc_header_dir/ -DRabbitmqc_LIBRARY=/local_rabbitmqc_library_dir/librabbitmq.so.4.3.0 ..
+## v2.4.0 编译报错
+## SimpleAmqpClient/src/Channel.cpp:185:1: error: prototype for ‘AmqpClient::Channel::Channel(const string&, int, const string&, const string&, const string&, int, const string&, const string&, const string&)’ does not match any in class ‘AmqpClient::Channel’
+## 切换到较新版本
+# git checkut eefabcdb25b6adf841dcc226abfdce94c27a4446
+make
+```
