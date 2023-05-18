@@ -45,7 +45,7 @@ class Task
 
     // 返回值大于 0：返回值对应的微秒之后发送 kIdleEvent 给本任务
     // 返回 0 ：不要再调用本任务
-    // 返回 -1：删除本任务
+    // 返回 -1：删除本任务，delete Task*
     virtual SInt64 Run() = 0;// 完成一个任务的句柄
     void Signal(EventFlags eventFlags);// 给任务发送一个事件，把任务加入任务线程的队列，等待完成
     void SetTaskName(char* name);// 设置任务的名称，主要用于日志输出
