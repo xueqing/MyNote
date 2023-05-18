@@ -4,6 +4,7 @@
   - [QtCreator pro 文件参数](#qtcreator-pro-文件参数)
   - [QtCreator 帮助文档](#qtcreator-帮助文档)
   - [QtCreator 使用](#qtcreator-使用)
+  - [QtCreator Build 阶段编译参数控制](#qtcreator-build-阶段编译参数控制)
 
 ## QtCreator pro 文件参数
 
@@ -44,3 +45,7 @@
 - 新建类
 - find/replace
 - compile output
+
+## QtCreator Build 阶段编译参数控制
+
+可以添加 `DEFINES+=XXX`，之后可以在源码中添加 `#ifdef XXX` 或 `#if XXX` 来控制是否启用某个代码段。
