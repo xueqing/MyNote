@@ -1,12 +1,13 @@
 # 补丁
 
-- [补丁](#%e8%a1%a5%e4%b8%81)
-  - [普通补丁](#%e6%99%ae%e9%80%9a%e8%a1%a5%e4%b8%81)
-  - [正式补丁 git format-patch](#%e6%ad%a3%e5%bc%8f%e8%a1%a5%e4%b8%81-git-format-patch)
-    - [参数](#%e5%8f%82%e6%95%b0)
-    - [用于邮件发送](#%e7%94%a8%e4%ba%8e%e9%82%ae%e4%bb%b6%e5%8f%91%e9%80%81)
-    - [应用 patch](#%e5%ba%94%e7%94%a8-patch)
-  - [参考](#%e5%8f%82%e8%80%83)
+- [补丁](#补丁)
+  - [普通补丁](#普通补丁)
+  - [正式补丁 git format-patch](#正式补丁-git-format-patch)
+    - [参数](#参数)
+    - [用于邮件发送](#用于邮件发送)
+    - [应用 patch](#应用-patch)
+      - [git apply 报错 “git cannot apply binary patch xxx without full index line”](#git-apply-报错-git-cannot-apply-binary-patch-xxx-without-full-index-line)
+  - [参考](#参考)
 
 ## 普通补丁
 
@@ -75,6 +76,10 @@ git apply --directory=patch_dest_dir/ path_to_patch_file.patch
 # 提取 R1 和 R2 之间的提交，使用 git am 来 cherry-pick 提交应用到当前分支
 git format-patch -k --stdout R1..R2 | git am -3 -k
 ```
+
+#### git apply 报错 “git cannot apply binary patch xxx without full index line”
+
+切换到想要创建补丁的分支，运行命令 `git diff-index commit-id --binary > xxx.patch`，然后再切换到想要应用的分支，运行命令 `git apply xxx.patch`。
 
 ## 参考
 
