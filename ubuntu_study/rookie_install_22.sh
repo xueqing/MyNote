@@ -142,10 +142,14 @@ echo set completion-ignore-case on | sudo tee -a /etc/inputrc
 ## switch to "Ubuntu on Xorg" before login
 
 # install npm tsc
-sudp apt install -y npm
+sudo apt install -y npm
 sudo npm install -g nrm
 # nrm use taobao
 
 ## if system crashes when copy files from windows to ubuntu,
 # sudo apt install open-vm-tools open-vm-tools-desktop
 # switch to 
+
+# install plocate to support 'locate' command
+sudo apt install -y plocate
+## sudo updatedb
