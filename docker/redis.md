@@ -50,4 +50,10 @@ docker exec -it redis /bin/bash
 # 连接 redis
 ## -h ip_addr 指定 redis 的 ip，不指定默认连接 127.0.0.1
 redis-cli -h ip_addr
+## 上面连接到主机 IP 时，报错 no route to host
+### 关闭防火墙
+systemctl stop firewalld.service
+### 重启 redis 镜像可能报错 iptables failed
+### 重启 docker
+systemctl restart docker.service
 ```
