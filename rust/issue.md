@@ -1,10 +1,16 @@
 # rust 学习遇到的问题
 
 - [rust 学习遇到的问题](#rust-学习遇到的问题)
-  - [在 mac 上安装 rust 之后编译报错](#在-mac-上安装-rust-之后编译报错)
+  - [在 mac 上安装 rust 之后编译报错 xcrun: error: invalid active developer path](#在-mac-上安装-rust-之后编译报错-xcrun-error-invalid-active-developer-path)
   - [执行 cargo search 报错 You're using an RSA key with SHA-1, which is no longer allowed](#执行-cargo-search-报错-youre-using-an-rsa-key-with-sha-1-which-is-no-longer-allowed)
 
-## 在 mac 上安装 rust 之后编译报错
+## 在 mac 上安装 rust 之后编译报错 xcrun: error: invalid active developer path
+
+原因是没有安装 Xcode。执行下面的命令
+
+```sh
+xcode-select --install
+```
 
 ## 执行 cargo search 报错 You're using an RSA key with SHA-1, which is no longer allowed
 
