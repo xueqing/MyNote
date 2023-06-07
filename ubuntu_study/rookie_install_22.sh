@@ -2,6 +2,8 @@
 
 # install pre-requisite
 sudo apt-get install -y vim git gitk git-gui curl net-tools cmake cmake-curses-gui
+# install mount utils
+sudo apt install -y cifs-utils nfs-common
 
 # config git account
 ## generate ssh key
@@ -76,20 +78,19 @@ sudo gpasswd -a kiki wireshark
 # install gcc/g++
 sudo apt-get install -y gcc g++
 # install gcc-5/g++-5
-## sudo vim /etc/apt/sources.list
-## deb http://dk.archive.ubuntu.com/ubuntu/ xenial main
-## deb http://dk.archive.ubuntu.com/ubuntu/ xenial universe
-## sudo apt update
+echo "deb http://dk.archive.ubuntu.com/ubuntu/ xenial main" | sudo tee -a /etc/apt/sources.list
+echo "deb http://dk.archive.ubuntu.com/ubuntu/ xenial universe" | sudo tee -a /etc/apt/sources.list
+sudo apt update
 ### if "... NO_PUBKEY 40976EAF437D05B5 NO_PUBKEY 3B4FE6ACC0B21F32 ..." error happens,
 ### refer <https://askubuntu.com/questions/13065/how-do-i-fix-the-gpg-error-no-pubkey>
-## sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 40976EAF437D05B5 3B4FE6ACC0B21F32
-## sudo apt-get update
-## sudo apt-get install -y g++-5 gcc-5
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 40976EAF437D05B5 3B4FE6ACC0B21F32
+sudo apt-get update
+sudo apt-get install -y g++-5 gcc-5
 ## switch version
-## sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 50
-## sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 40
-## sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-11 50
-## sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 40
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 50
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 40
+sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-11 50
+sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-5 40
 ## delete version options
 # sudo update-alternatives --remove gcc /usr/bin/gcc-4.5
 
@@ -103,6 +104,7 @@ sudo gpasswd -a kiki docker
 newgrp docker
 ## test
 docker version
+echo '{ "insecure-registries":["dockerhub.bmi:5000"] }' | sudo tee -a /etc/docker/daemon.json
 
 # install gvm, namely go version manager
 ## install dependencies
@@ -153,3 +155,5 @@ sudo npm install -g nrm
 # install plocate to support 'locate' command
 sudo apt install -y plocate
 ## sudo updatedb
+
+sudo apt-get -y install pkg-config
