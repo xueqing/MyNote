@@ -11,17 +11,18 @@
 
 ```shell
 #!/usr/bin/expect
-set timeout 100                     ## 设置超时时间， -1 可无限等待
-set filename [lindex $argv 0]       ## 接收输入参数，保存文件名
-set machineURL [lindex $argv 1]     ## 接收输入参数，保存远程机器的上传的 URL，包括用户名，IP 地址和路径
-set machinePWD [lindex $argv 2]     ## 接收输入参数，保存远程机器的密码
-spawn scp $filename $machineURL     ## 执行 scp 命令
+set timeout 100                 ## 设置超时时间， -1 可无限等待
+set filename [lindex $argv 0]   ## 接收输入参数，保存文件名
+set machineURL [lindex $argv 1] ## 接收输入参数，保存远程机器的上传的 URL，包括用户名，IP 地址和路径
+set machinePWD [lindex $argv 2] ## 接收输入参数，保存远程机器的密码
+spawn scp $filename $machineURL ## 执行 scp 命令
 expect {
-"yes/no" { send "yes\r"; exp_continue}  ## 如果出现"yes/no"，则输入"yes"，然后继续这个循环
-"password:" { send "$machinePWD\r" }    ## 如果出现"password:"，则输入保存的密码，然后退出这个循环，继续往下
+    "yes/no" { send "yes\n";exp_continue }  ## 如果出现"yes/no"，则输入"yes"，然后继续这个循环
+    "password: " { send "$machinePWD\n" }   ## 如果出现"password:"，则输入保存的密码，然后退出这个循环，继续往下
 }
-expect 100%                         ## 出现 100% 表明上传成功
-expect eof                          ## 等待结束标记，由 spawn 启动的命令在结束时回产生一个 eof 标记
+expect 100%       ## 出现 100% 表明上传成功
+set timeout 3
+expect eof        ## 等待结束标记，由 spawn 启动的命令在结束时回产生一个 eof 标记
 ```
 
 **注意：** expect 不能正确解释 shell 的 glob 模式，所以执行类似 `spawn scp -r /home/user/dir1/ cluster_server:` 的命令会出错。解决方法：
