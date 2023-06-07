@@ -77,7 +77,7 @@ Error response from daemon: Get https://myregistrydomain.com:5000/v2/: http: ser
 # 参考 https://github.com/docker/docker.github.io/blob/master/registry/insecure.md 设置 http 连接
 # 修改或创建 /etc/docker/daemon.json
 # 添加 { "insecure-registries":["myregistrydomain.com:5000"] }
-kiki@ubuntu:~$ sudo vim /etc/docker/daemon.json
+kiki@ubuntu:~$ echo '{ "insecure-registries":["myregistrydomain.com:5000"] }' | sudo tee -a /etc/docker/daemon.json
 # 重启 docker 服务
 kiki@ubuntu:~$ sudo service docker restart
 kiki@ubuntu:~$ docker pull myregistrydomain.com:5000/image_name
