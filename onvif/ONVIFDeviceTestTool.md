@@ -15,9 +15,11 @@
  xmlns:soap="http://www.w3.org/2003/05/soap-envelope"
  xmlns:trt="http://www.onvif.org/ver10/media/wsdl"
  xmlns:tt="http://www.onvif.org/ver10/schema">
-  <soap:Body>
-    <trt:GetVideoSourceConfigurations/>
-  </soap:Body>
+	<soap:Body>
+        <trt:GetOSDs>
+            <trt:ConfigurationToken>VideoSourceConfigurationToken006</trt:ConfigurationToken>
+        </trt:GetOSDs>
+    </soap:Body>
 </soap:Envelope>
 ```
 
